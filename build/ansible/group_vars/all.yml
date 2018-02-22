@@ -1,0 +1,479 @@
+---
+
+template_files:
+  - src: DOCKERFILES/Dockerfile-base.j2
+    dst: "../../Dockerfiles/base/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-mods.j2
+    dst: "../../Dockerfiles/mods/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-prod.j2
+    dst: "../../Dockerfiles/prod/Dockerfile-{{ php_version }}"
+
+
+
+# Adds self-validating checks to Dockerfile
+# turn off for final build
+debug: True
+
+
+php_all_versions:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+
+
+php_conf_dir: /usr/local/etc/php.d
+
+
+###
+### Available GIT extensions
+###
+### <ext>:
+###   enabled: []
+###   disabled: []
+###   all:
+###     git_url: Url for git clone
+###     git_ref: git branch tag, commit or shell command to retrieve a tag or commit
+###     command: command to install
+###     alt_module: alternative module name to enable (precedence over <ext>.so)
+###     build_dep:
+###     run_dep:
+###
+php_git_extensions:
+  phalcon:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      git_ref: phalcon-v2.0.13
+    all:
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+      command: cd build && ./install
+  uploadprogress:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4, 5.5, 5.6]
+    all:
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      git_ref: master
+      command: phpize && ./configure --enable-uploadprogress && make -j$(getconf _NPROCESSORS_ONLN) && make install
+
+###
+### Available PECL extensions
+###
+### <ext>:
+###   enabled: []
+###   disabled: []
+###   all:
+###     command: alternative command to install (precedence over <alt_name> and <ext>
+###     alt_name: alternative name of <ext> to install (precedence over <ext>
+###     alt_module: alternative module name to enable (precedence over <ext>.so)
+###     build_dep:
+###     run_dep:
+###
+php_pecl_extensions:
+  #apc:
+  #  enabled: "{{ php_all_versions }}"
+  #  disabled: [5.5, 5.6, 7.0, 7.1, 7.2]
+  #apcu_bc:
+  #  enabled: "{{ php_all_versions }}"
+  #  disabled: [5.4, 5.5, 5.6]
+  #  all:
+  #    alt_module: apc
+  apcu:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: apcu-4.0.11
+    5.5:
+      alt_name: apcu-4.0.11
+    5.6:
+      alt_name: apcu-4.0.11
+  amqp:
+    enabled: "{{ php_all_versions }}"
+    7.2:
+      run_dep: [librabbitmq4]
+    all:
+      command: echo "/usr" | pecl install amqp
+      build_dep: [librabbitmq-dev]
+      run_dep: [librabbitmq1]
+  igbinary:
+    enabled: "{{ php_all_versions }}"
+  imagick:
+    enabled: "{{ php_all_versions }}"
+    7.2:
+      run_dep: [libmagickwand-6.q16-3]
+    all:
+      build_dep: [libmagickwand-dev]
+      run_dep: [libmagickwand-6.q16-2]
+  mcrypt:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4, 5.5, 5.6, 7.0, 7.1] # Already avail by default
+    7.2:
+      alt_name: mcrypt-1.0.1
+      build_dep: [libmcrypt-dev]
+      run_dep: [libmcrypt4]
+  memcache:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.0, 7.1, 7.2]
+    all:
+      build_dep: [zlib1g-dev]
+  memcached:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: memcached-2.2.0
+    5.5:
+      alt_name: memcached-2.2.0
+    5.6:
+      alt_name: memcached-2.2.0
+    all:
+      build_dep: [zlib1g-dev, libmemcached-dev]
+      run_dep: [libmemcachedutil2]
+  mongodb:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: mongodb-1.2.11
+      build_dep: [libssl-dev]
+  msgpack:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: msgpack-0.5.7
+    5.5:
+      alt_name: msgpack-0.5.7
+    5.6:
+      alt_name: msgpack-0.5.7
+  redis:
+    enabled: "{{ php_all_versions }}"
+  swoole:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: swoole-1.9.23
+    5.5:
+      alt_name: swoole-1.9.23
+    5.6:
+      alt_name: swoole-1.9.23
+    7.2:
+      run_dep: [libnghttp2-14]
+    all:
+      build_dep: [libnghttp2-dev, libssl-dev, libnghttp2-5]
+      run_dep: [libnghttp2-5]
+  uploadprogress:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.2, 7.1, 7.0]
+  xdebug:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      alt_name: xdebug-2.4.1
+    5.5:
+      alt_name: xdebug-2.5.5
+    5.6:
+      alt_name: xdebug-2.5.5
+
+
+###
+### PHP Built-in Modules to enable
+###
+### will use e.g. 5.6 for PHP 5.6 as specific configuration
+### or if not available, use all
+###
+### module-name:
+###   enabled: [ what php versions it is enabled for]
+###   disabled: [ what php versions it is disabled for] (precedence over enabled)
+###   '5.6':
+###     command: command to execute prior installation
+###     configure: custom configure command
+###     build_dep:
+###     run_dep:
+###   all:
+###     command:
+###     configure:
+###     build_dep:
+###     run_dep:
+###
+php_builtin_extensions:
+  bcmath:
+    enabled: "{{ php_all_versions }}"
+  bz2:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libbz2-dev]
+  calendar:
+    enabled: "{{ php_all_versions }}"
+  ctype:
+    enabled: "{{ php_all_versions }}"
+  curl:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libcurl4-openssl-dev]
+  dba:
+    enabled: "{{ php_all_versions }}"
+  dom:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  enchant:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+  exif:
+    enabled: "{{ php_all_versions }}"
+  fileinfo:
+    enabled: "{{ php_all_versions }}"
+  filter:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # Available by default
+  ftp:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev]
+  gd:
+    enabled: "{{ php_all_versions }}"
+    7.2:
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+    7.1:
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    7.0:
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    all:
+      command: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+  gettext:
+    enabled: "{{ php_all_versions }}"
+  gmp:
+    enabled: "{{ php_all_versions }}"
+    all:
+      command: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
+      build_dep: [libgmp-dev]
+  hash:
+    enabled: "{{ php_all_versions }}"
+  iconv:
+    enabled: "{{ php_all_versions }}"
+  imap:
+    enabled: "{{ php_all_versions }}"
+    all:
+      command: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
+      configure: --with-kerberos --with-imap-ssl --with-imap
+      build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
+      run_dep: [libc-client2007e]
+  interbase:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4]
+    all:
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  intl:
+    enabled: "{{ php_all_versions }}"
+    7.2:
+      run_dep: [libicu57]
+    all:
+      build_dep: [libicu-dev]
+      run_dep: [libicu52]
+  json:
+    enabled: "{{ php_all_versions }}"
+  ldap:
+    enabled: "{{ php_all_versions }}"
+    all:
+      command: ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/
+      configure: --with-ldap --with-ldap-sasl
+      build_dep: [libldap2-dev, libsasl2-dev]
+  libxml:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # Available by default
+  mbstring:
+    enabled: "{{ php_all_versions }}"
+  mcrypt:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.2]
+    7.2:
+      build_dep: []
+      run_dep: []
+    all:
+      run_dep: [libmcrypt4]
+      build_dep: [libmcrypt-dev]
+  mysql:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.0, 7.1, 7.2]
+  mysqli:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.0, 7.1, 7.2]
+  mysqlnd:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # Available by default
+  oci8:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
+  odbc:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
+  opcache:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4]
+  openssl:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # Available by default
+  pcntl:
+    enabled: "{{ php_all_versions }}"
+  pcre:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # Available by default
+  pdo:
+    enabled: "{{ php_all_versions }}"
+  pdo_dblib:
+    enabled: "{{ php_all_versions }}"
+    all:
+      command: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
+      build_dep: [freetds-dev]
+      run_dep: [libsybdb5]
+  pdo_firebird:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  pdo_mysql:
+    enabled: "{{ php_all_versions }}"
+  pdo_oci:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
+  pdo_odbc:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # TODO: Build errors
+  pdo_pgsql:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  pdo_sqlite:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libsqlite3-dev]
+  pgsql:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  phar:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libssl-dev]
+  posix:
+    enabled: "{{ php_all_versions }}"
+  pspell:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libpspell-dev]
+      run_dep: [libaspell15]
+  readline:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4]
+    all:
+      build_dep: [libedit-dev, libreadline-dev]
+  recode:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [librecode-dev]
+      run_dep: [librecode0]
+  session:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-mm
+      build_dep: [libmm-dev]
+  shmop:
+    enabled: "{{ php_all_versions }}"
+  simplexml:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  snmp:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev, libsnmp-dev, snmp]
+      run_dep: [snmp]
+  soap:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  sockets:
+    enabled: "{{ php_all_versions }}"
+  sodium:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4, 5.5, 5.6, 7.0, 7.1]
+    all:
+      build_dep: [libsodium-dev]
+  spl:
+    enabled: "{{ php_all_versions }}"
+    disabled: "{{ php_all_versions }}" # TODO: Did not work
+  sysvmsg:
+    enabled: "{{ php_all_versions }}"
+  sysvsem:
+    enabled: "{{ php_all_versions }}"
+  sysvshm:
+    enabled: "{{ php_all_versions }}"
+  tidy:
+    enabled: "{{ php_all_versions }}"
+    7.2:
+      run_dep: [libtidy5]
+    all:
+      build_dep: [libtidy-dev]
+      run_dep: [libtidy-0.99-0]
+  tokenizer:
+    enabled: "{{ php_all_versions }}"
+  wddx:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xml:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlreader:
+    enabled: "{{ php_all_versions }}"
+    disabled: [7.0, 7.1, 7.2] # build errors
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlrpc:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlwriter:
+    enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xsl:
+    enabled: "{{ php_all_versions }}"
+    all:
+      build_dep: [libxslt-dev]
+      run_dep: [libxslt1.1]
+  zip:
+    enabled: "{{ php_all_versions }}"
+    5.4:
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    5.5:
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    7.2:
+      run_dep: [libzip4]
+    all:
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
+      build_dep: [zlib1g-dev, libzip-dev]
+      run_dep: [libzip2]

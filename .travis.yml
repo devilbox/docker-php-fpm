@@ -1,35 +1,293 @@
 ---
-env:
-  matrix:
-    v=5.4
-    v=5.5
-    v=5.6
-    v=7.0
-    v=7.1
-    v=7.2
+sudo: required
+language: python
+services:
+  - docker
 
-stages:
-  - base
-  - mods
-  - prod
-  - work
+env:
+  global:
+    - IMAGE: devilbox/php-fpm
+    # travis encrypt DOCKER_USERNAME=user
+    # travis encrypt DOCKER_PASSWORD=pass
+    # Must be regenerated when repository name/owner changes
+    # DOCKER_USERNAME
+    - secure: "Y7xt3qZW9Zwrsgdd/aCf8ZqA7I039506ZDf/u/WVzGwNHta5YJJ7XYy8XG7XugyqGGXRVpfBiaqmDH4xsPLXyHXdOt2G38GXZHZXIgJOiEJ6aUfpdUxyeu8XIXkD2MDMmc3Kb27Yub/OadxRMLWEflzRnSXXs3KJ8TsbPHh0yRWDMsmHYOYl16gDGUX1izLkEx4J+9iA3+JwIFZk8by/OUuIIQ93bSNORpwHT8A1j7Y1kh8kYkPZ6nRxWO8xrc2wI1Rbp0X+ivLnOotxDZo53UI/0KroeSckDpoWfoz+B7mP+M+5B6kGlI2pKDNQB/ErYvnya6PdtFSS9skbvepR4tBhUOZDDY7NMRg9m3w0b9T1no+g3A4LBGXy6+OZZoiYAGy9LvqMhFkINqbBhRBX+mZhtG0pNXunfcu5dk81Ni/XpXDiy9JU98jItwsRj4SeaPfSt0LUNNXMS/fEwZyTy6TihN1CM3krJpV30Ic5rN64FRnrRjUuNU4lJ/W36yUhM29gb13ahh+f7sDsYoCzMwDM9HFe0YLb3ar3mW1lb3FuUugU2f2EupgCPY60X2XrY9aSgCfbdiVsA84dbLtRfHTPG7UbEcJW5RH8HS+9qVZBK+AcPqon9jbOJRVh7q99YW+R8X/XeyYpz7amacVmRus80+toZ16bbU7D2Qgjdek="
+    # DOCKER_PASSWORD
+    - secure: "ZRrVOVOkSCS2UxEi1HNF1iKefK4sDT/sPRl1HxMQjLnRRaAMdG0aRnBwQf2YAM2qzhCfN85qt6zZtC4awc2mHiZ88JrAZxBjK6xj4BwOyLbDuzpBsKXnx8Nix+wyYYKSjsC3LOYrsUe+4rvkw3tVvVaX8G2llojwdksF34VDmmHBmzCG/Bsexk7UqC+qw0PZm7BtctQO+IL0btmMDijRDElxfR+AuPvf9JdkhYzw9TOO7Jqd53NssNVGyL+XSV0dfGn8PkZTp1e8D+28pLK4oGVog+Wk7Cq94hSGjk5AkWKvL5441rupG1AA8K3njeDNMKdov4o+dmnkAH7Jh8tjShMhNhoxHce3IzpczjhoE1EyYQcyPf1qdfhV35Xv096iWX5809pp1MZF2oE5eism8JaU9NpGClryVbKVKtup8ko9/tCqz01Czq5Vue40feMkGtdePulg59OhyyPLYldsObw8QlZydkrmgVZe6b+GyybeiHraTfDq4pvTgUrC4Cmm5J3IB5Ig1THEiYKHfRJ5hSSMDDODeBXc8Xh6mFssEVshNx/jbUQWuAVYQFw/GIquVHxr6btbevrWIoD+zmqcc0L98u9pYH8w7b+gMgVJNCC4QQz2NCGGWw9l9/TmLrKJgeXbG18n8D314le1zuna6/VfH9pXIlbNO4hgz5NLHJk="
+  matrix:
+    - PHP=5.5
+    - PHP=5.5
+    - PHP=5.6
+    - PHP=7.0
+    - PHP=7.1
+    - PHP=7.2
+      #stages:
+      #  - generate
+      #  - PHP 5.4
+      #  - PHP 5.5
+      #  - PHP 5.6
+      #  - PHP 7.0
+      #  - PHP 7.1
+      #  - PHP 7.2
+
+
+# TODO: No need for stages anymore, use simple build matrix and don't repease the code!!
+install:
+  # Get newer docker version
+  - max=100; i=0; while [ $i -lt $max ]; do if sudo apt-get update; then break; else i=$((i+1)); fi done
+  - max=100; i=0; while [ $i -lt $max ]; do if sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce; then break; else i=$((i+1)); fi done
+  - docker version
+
 
 before_script:
-  # Regenerate Dockerfiles and make sure nothing has changed (every stage)
-  - make generate
-  - git diff-index --quiet HEAD || { echo "Build Changes"; git diff; git status; false; }
-
-jobs:
-  include:
-    - stage: base
-      script:
-        - echo "${v}-base"
-    - stage: mods
-      script:
-        - echo "${v}-mods"
-    - stage: prod
-      script:
-        - echo "${v}-prod"
-    - stage: work
-      script:
-        - echo "${v}-work"
+  # Build (multiple tries due to network outages)
+  - max=100; i=0; while [ $i -lt $max ]; do if make build-base-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - max=100; i=0; while [ $i -lt $max ]; do if make build-mods-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - max=100; i=0; while [ $i -lt $max ]; do if make build-prod-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - max=100; i=0; while [ $i -lt $max ]; do if make build-work-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+script:
+  # Test
+  - true
+after_success:
+  # Push
+  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+      docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
+      if [ "${TRAVIS_BRANCH}" == "master" ]; then
+        docker push "${IMAGE}:${PHP}-base";
+        docker push "${IMAGE}:${PHP}-mods";
+        docker push "${IMAGE}:${PHP}-prod";
+        docker push "${IMAGE}:${PHP}-work";
+      elif [[ ${TRAVIS_BRANCH} =~ ^(release-[.0-9]+)$ ]]; then
+        docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}" &&
+        docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}" &&
+        docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}" &&
+        docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}" &&
+        docker push "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}";
+        docker push "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}";
+        docker push "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}";
+        docker push "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}";
+      elif [ -n "${TRAVIS_TAG}" ]; then
+        docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_TAG}" &&
+        docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}" &&
+        docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}" &&
+        docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_TAG}" &&
+        docker push "${IMAGE}:${PHP}-base-${TRAVIS_TAG}";
+        docker push "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}";
+        docker push "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}";
+        docker push "${IMAGE}:${PHP}-work-${TRAVIS_TAG}";
+      else
+        echo "Skipping push to dockerhub on normal branches";
+      fi
+    else
+      echo "Skipping push to dockerhub on PR";
+    fi
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #jobs:
+    #  include:
+    #    ############################################################
+    #    # TEST
+    #    ############################################################
+    #    - stage: generate
+    #      env: All
+    #      install: skip
+    #      before_script: skip
+    #      script:
+    #        # Regenerate Dockerfiles and make sure nothing has changed (every stage)
+    #        - pip install ansible
+    #        - make generate
+    #        - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+    #    ############################################################
+    #    # BUILD BASE IMAGE
+    #    ############################################################
+    #    - stage: PHP 5.4
+    #      env: PHP=5.4
+    #      before_script:
+    #        # Build (multiple tries due to network outages)
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-base-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-mods-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-prod-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-work-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+    #      script:
+    #        # Test
+    #        - true
+    #      after_success:
+    #        # Push
+    #        - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+    #            docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
+    #            if [ "${TRAVIS_BRANCH}" == "master" ]; then
+    #              docker push "${IMAGE}:${PHP}-base";
+    #              docker push "${IMAGE}:${PHP}-mods";
+    #              docker push "${IMAGE}:${PHP}-prod";
+    #              docker push "${IMAGE}:${PHP}-work";
+    #            elif [[ ${TRAVIS_BRANCH} =~ ^(release-[.0-9]+)$ ]]; then
+    #              docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}" &&
+    #              docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}" &&
+    #              docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}" &&
+    #              docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}" &&
+    #              docker push "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}";
+    #              docker push "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}";
+    #              docker push "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}";
+    #              docker push "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}";
+    #            elif [ -n "${TRAVIS_TAG}" ]; then
+    #              docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_TAG}" &&
+    #              docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}" &&
+    #              docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}" &&
+    #              docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_TAG}" &&
+    #              docker push "${IMAGE}:${PHP}-base-${TRAVIS_TAG}";
+    #              docker push "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}";
+    #              docker push "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}";
+    #              docker push "${IMAGE}:${PHP}-work-${TRAVIS_TAG}";
+    #            else
+    #              echo "Skipping push to dockerhub on normal branches";
+    #            fi
+    #          else
+    #            echo "Skipping push to dockerhub on PR";
+    #          fi
+    #    - stage: Build base image
+    #      env: PHP=5.5 t=base
+    #      before_script:
+    #        # Build
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-${t}-${PHP//.}; then break; else i=$((i+1)); fi; done
+    #      script:
+    #        # Test
+    #        - result=1; false
+    #      after_success:
+    #        # Push
+    #        - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+    #        - docker push "${IMAGE}:${PHP}-${t}";
+    #
+    #    - stage: Build base image
+    #      env: PHP=5.6 t=base
+    #      script:
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-${t}-${PHP//.}; then break; else i=$((i+1)); fi
+    #        - if [ $i -gt 98 ]; then false; fi
+    #        - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+    #        - docker push "${IMAGE}:${PHP}-${t}"
+    #
+    #    - stage: Build base image
+    #      env: PHP=7.0 t=base
+    #      script:
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-${t}-${PHP//.}; then break; else i=$((i+1)); fi
+    #        - if [ $i -gt 98 ]; then false; fi
+    #        - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+    #        - docker push "${IMAGE}:${PHP}-${t}"
+    #
+    #    - stage: Build base image
+    #      env: PHP=7.1 t=base
+    #      script:
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-${t}-${PHP//.}; then break; else i=$((i+1)); fi
+    #        - if [ $i -gt 98 ]; then false; fi
+    #        - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+    #        - docker push "${IMAGE}:${PHP}-${t}"
+    #
+    #    - stage: Build base image
+    #      env: PHP=7.2 t=base
+    #      script:
+    #        - max=100; i=0; while [ $i -lt $max ]; do if make build-${t}-${PHP//.}; then break; else i=$((i+1)); fi
+    #        - if [ $i -gt 98 ]; then false; fi
+    #        - docker login --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+    #        - docker push "${IMAGE}:${PHP}-${t}"
+    #    ############################################################
+    #    # BUILD MODS IMAGE
+    #    ############################################################
+    #    - stage: Build mods image
+    #      env: PHP-5.4
+    #      script:
+    #        - make build-mods-54
+    #
+    #    - stage: Build mods image
+    #      env: PHP-5.5
+    #      script:
+    #        - make build-mods-55
+    #
+    #    - stage: Build mods image
+    #      env: PHP-5.6
+    #      script:
+    #        - make build-mods-56
+    #
+    #    - stage: Build mods image
+    #      env: PHP-7.0
+    #      script:
+    #        - make build-mods-70
+    #
+    #    - stage: Build mods image
+    #      env: PHP-7.1
+    #      script:
+    #        - make build-mods-71
+    #
+    #    - stage: Build mods image
+    #      env: PHP-7.2
+    #      script:
+    #        - make build-mods-72
+    #    ############################################################
+    #    # BUILD PROD IMAGE
+    #    ############################################################
+    #    - stage: Build prod image
+    #      env: PHP-5.4
+    #      script:
+    #        - make build-prod-5.4
+    #
+    #    - stage: Build prod image
+    #      env: PHP-5.5
+    #      script:
+    #        - make build-prod-5.5
+    #
+    #    - stage: Build prod image
+    #      env: PHP-5.6
+    #      script:
+    #        - make build-prod-5.6
+    #
+    #    - stage: Build prod image
+    #      env: PHP-7.0
+    #      script:
+    #        - make build-prod-7.0
+    #
+    #    - stage: Build prod image
+    #      env: PHP-7.1
+    #      script:
+    #        - make build-prod-7.1
+    #
+    #    - stage: Build prod image
+    #      env: PHP-7.2
+    #      script:
+    #        - make build-prod-7.2
+    #    ############################################################
+    #    # BUILD WORK IMAGE
+    #    ############################################################
+    #    - stage: Build work image
+    #      env: PHP-5.4
+    #      script:
+    #        - make build-work-5.4
+    #
+    #    - stage: Build work image
+    #      env: PHP-5.5
+    #      script:
+    #        - make build-work-5.5
+    #
+    #    - stage: Build work image
+    #      env: PHP-5.6
+    #      script:
+    #        - make build-work-5.6
+    #
+    #    - stage: Build work image
+    #      env: PHP-7.0
+    #      script:
+    #        - make build-work-7.0
+    #
+    #    - stage: Build work image
+    #      env: PHP-7.1
+    #      script:
+    #        - make build-work-7.1
+    #
+    #    - stage: Build work image
+    #      env: PHP-7.2
+    #      script:
+    #        - make build-work-7.2
