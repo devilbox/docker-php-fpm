@@ -1,0 +1,313 @@
+# Auto-generated via Ansible
+FROM devilbox/php-fpm:5.4-prod
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+LABEL \
+	name="cytopia's PHP-FPM 5.4 Image" \
+	image="devilbox/php-fpm" \
+	tag="5.4-work" \
+	vendor="devilbox" \
+	license="MIT"
+
+
+###
+### Envs (Already set in parent container)
+###
+ENV BASH_PROFILE=".bashrc"
+
+
+###
+### Install Tools
+###
+
+# System dev tools
+RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		ack-grep \
+		aspell \
+		autoconf \
+		automake \
+		bash-completion \
+		bzip2 \
+		coreutils \
+		curl \
+		dnsutils \
+		dos2unix \
+		file \
+		gcc \
+		git \
+		git-svn \
+		hostname \
+		htop \
+		imagemagick \
+		iputils-ping \
+		less \
+		libc-dev \
+		make \
+#		mongo-tools \
+		mongodb-clients \
+		moreutils \
+		mysql-client \
+		nano \
+		net-tools \
+		netcat \
+		postgresql-client \
+		python-pip \
+		rubygems \
+		ruby-dev \
+		shellcheck \
+		silversearcher-ag \
+		subversion \
+		sudo \
+		tig \
+		vim \
+		w3m \
+		wget \
+		whois \
+		xz-utils \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+	&& rm -rf /var/lib/apt/lists/*
+
+## Node / NPM
+#RUN set -x \
+#	&& mkdir -p /usr/local/src \
+#	&& VERSION="$( curl -Lq https://nodejs.org 2>/dev/null | grep LTS | grep -Eo 'data-version.*.' | grep -oE 'v[0-9.]+' )" \
+#	&& wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=30 \
+#		-P /usr/local/src https://nodejs.org/dist/${VERSION}/node-${VERSION}-linux-x64.tar.xz \
+#	&& unxz /usr/local/src/node-${VERSION}-linux-x64.tar.xz \
+#	&& tar xvf /usr/local/src/node-${VERSION}-linux-x64.tar -C /usr/local/src \
+#	&& ln -s /usr/local/src/node-${VERSION}-linux-x64 /usr/local/node \
+#	&& ln -s /usr/local/node/bin/* /usr/local/bin/ \
+#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64.tar* \
+#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/LICENSE \
+#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/*.md \
+#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/include \
+#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/share \
+#	&& npm --version | grep -E '[.0-9]+' \
+#	&& node --version | grep -E '[.0-9]+' \
+#	&& rm -rf /root/.config
+#
+## Composer
+#RUN set -x \
+#	&& curl -sS https://getcomposer.org/installer | php \
+#	&& mv composer.phar /usr/local/bin/composer \
+#	&& composer self-update
+##	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
+##	&& rm -rf /root/.composer
+#
+## Drush
+#RUN set -x \
+#	&& DRUSH_VERSION="$( curl -q https://api.github.com/repos/drush-ops/drush/releases 2>/dev/null | grep tag_name | grep -Eo '\"[0-9.]+\"' | head -1 | sed 's/\"//g' )" \
+#	&& mkdir -p /usr/local/src \
+#	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+#	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush \
+#	&& v="${DRUSH_VERSION}" su ${MY_USER} -p -c 'cd /usr/local/src/drush && git checkout ${v}' \
+#	&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush && composer install --no-interaction --no-progress' \
+#	&& ln -s /usr/local/src/drush/drush /usr/local/bin/drush \
+#	&& drush --version | grep -E '[.0-9]+' \
+#	&& rm -rf /usr/local/src/drush/.git \
+#	&& rm -rf /usr/local/src/drush/docs \
+#	&& rm -rf /usr/local/src/drush/examples \
+#	&& rm -rf /usr/local/src/drush/misc \
+#	&& rm -rf /usr/local/src/drush/tests \
+#	&& rm -rf /root/.drush \
+#	&& rm -rf /home/${MY_USER}/.composer
+#
+## Drupal Console
+#RUN set -x \
+#	&& curl https://drupalconsole.com/installer -L -o drupal.phar \
+#	&& mv drupal.phar /usr/local/bin/drupal \
+#	&& chmod +x /usr/local/bin/drupal
+##	&& drupal --version | grep -E 'version\s*[.0-9]'
+#
+## WP-CLI
+#RUN set -x \
+#	&& curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+#	&& mv wp-cli.phar /usr/local/bin/wp \
+#	&& chmod +x /usr/local/bin/wp \
+#	&& wp cli update \
+#	&& wp --allow-root --version | grep -E '[.0-9]+'
+#
+## Symfony CLI
+#RUN set -x \
+#	&& curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
+#	&& chmod +x /usr/local/bin/symfony \
+#	&& symfony --version | grep -E 'version\s*[.0-9]+'
+#
+## Laravel CLI
+#RUN set -x \
+#	&& mkdir -p /usr/local/src \
+#	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+#	&& cd /usr/local/src/laravel-installer \
+#	&& git checkout $(git describe --abbrev=0 --tags) \
+#	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
+#	&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+#	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+#	&& rm -rf /usr/local/src/laravel-installer/laravel/.git
+##	&& laravel --version | grep -E 'version\s*[.0-9]+' \
+##	&& rm -rf /home/${MY_USER}/.composer
+#
+## Phalcon DevTools
+##RUN set -x \
+##	&& mkdir -p /usr/local/src \
+##	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+##	&& cd /usr/local/src/phalcon-devtools \
+##	&& git checkout $(git tag | grep 'v3.0' | sort -V | tail -1) \
+##	&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+##	&& ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+##	&& cd / \
+##	&& rm -rf /usr/local/src/phalcon-devtools/.git \
+##	&& phalcon commands | grep -E '[.0-9]+'
+#
+## Mysqldump-secure
+#RUN set -x \
+#	&& mkdir -p /usr/local/src \
+#	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+#	&& cd /usr/local/src/mysqldump-secure \
+#	&& git checkout $(git describe --abbrev=0 --tags) \
+#	&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+#	&& touch /var/log/mysqldump-secure.log \
+#	&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+#	&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+#	&& chmod 0400 /etc/mysqldump-secure.conf \
+#	&& chmod 0400 /etc/mysqldump-secure.cnf \
+#	&& chmod 0644 /var/log/mysqldump-secure.log \
+#	&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+#	&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+#	&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+#	&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+#	&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+#	&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+#	\
+#	&& cd / \
+#	&& rm -rf /usr/local/src/mysqldump-secure \
+#	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
+#
+## Awesome-CI
+#RUN set -x \
+#	&& mkdir -p /usr/local/src \
+#	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+#	&& cd /usr/local/src/awesome-ci \
+#	&& git checkout $(git describe --abbrev=0 --tags) \
+#	&& ./configure --prefix=/usr/local \
+#	&& make install \
+#	&& cd / \
+#	&& rm -rf /usr/local/src/awesome-ci
+#
+## Awesome-CI requirements
+#RUN set -x \
+#	&& gem install mdl \
+#	&& gem install scss_lint \
+#	&& npm install -g eslint \
+#	&& npm install -g jsonlint \
+#	&& npm install -g mdlint \
+#	&& npm install -g gulp \
+#	&& rm -rf /root/.gem \
+#	&& rm -rf /root/.npm \
+#	&& rm -rf /root/.config \
+#	&& rm -rf /tmp/*
+#
+## Grunt
+#RUN set -x \
+#	&& npm install -g grunt \
+#	&& npm install -g grunt-cli \
+#	&& /usr/local/node/bin/grunt --version | grep -E 'v[.0-9]+' \
+#	&& rm -rf /root/.npm \
+#	&& rm -rf /root/.config \
+#	&& rm -rf /tmp/*
+#
+## Webpack
+#RUN set -x \
+#	&& npm install -g --save-dev webpack \
+#	&& /usr/local/node/bin/webpack --version | grep -E '[.0-9]+' \
+#	&& rm -rf /root/.npm \
+#	&& rm -rf /root/.config \
+#	&& rm -rf /tmp/*
+#
+## Linuxbrew
+#RUN set -x \
+#	&& mkdir -p /usr/local/src \
+#	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+#	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+#		'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+#		'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+#		'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
+#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' | grep -E 'HOMEBREW_VERSION:\s*[.0-9]+' \
+#	&& rm -rf /home/${MY_USER}/.cache
+#
+#
+#
+####
+#### Configure Bash
+####
+#RUN \
+#	{ \
+#		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+#		echo "export PATH"; \
+#		echo ". /etc/bash-devilbox"; \
+#		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
+#		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
+#		echo "        if [ -r \"\${f}\" ]; then"; \
+#		echo "            . \"\${f}\""; \
+#		echo "        fi"; \
+#		echo "    done"; \
+#		echo "    unset f"; \
+#		echo "fi"; \
+#	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+#	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
+#
+
+
+###
+### Verify
+###
+RUN set -x \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.4' \
+	&& /usr/local/sbin/php-fpm --test \
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+
+###
+### Copy files
+###
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+
+
+###
+### Volumes
+###
+VOLUME /etc/bash-custom.d
+VOLUME /etc/php-custom.d
+VOLUME /etc/php-modules.d
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+
+
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Entrypoint
+###
+ENTRYPOINT ["/docker-entrypoint.sh"]

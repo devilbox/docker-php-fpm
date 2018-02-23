@@ -7,6 +7,9 @@ template_files:
     dst: "../../Dockerfiles/mods/Dockerfile-{{ php_version }}"
   - src: DOCKERFILES/Dockerfile-prod.j2
     dst: "../../Dockerfiles/prod/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-work.j2
+    dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
+
 
 
 
