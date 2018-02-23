@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  gather_facts: False
+  roles:
+    - template
+  tags:
+    - template
