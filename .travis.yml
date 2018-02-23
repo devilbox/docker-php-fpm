@@ -42,27 +42,27 @@ install:
 
 
 ###
-### Build
+### Check generation changes, build and test
 ###
 before_script:
+  # Regenerate Dockerfiles and make sure nothing has changed (every stage)
+  - pip install ansible
+  - make generate
+  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+
   # Build (multiple tries due to network outages)
   - max=100; i=0; while [ $i -lt $max ]; do if make build-base-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
   - max=100; i=0; while [ $i -lt $max ]; do if make build-mods-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
   - max=100; i=0; while [ $i -lt $max ]; do if make build-prod-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
   - max=100; i=0; while [ $i -lt $max ]; do if make build-work-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
 
-
-###
-### Test
-###
-script:
+  # Test
   - true
 
-
 ###
-### Push
+### Push to Dockerhub
 ###
-after_success:
+script:
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
       docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
