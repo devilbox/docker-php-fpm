@@ -26,6 +26,8 @@ ENV BASH_PROFILE=".bashrc"
 
 # System dev tools
 RUN set -x \
+	&& mkdir -p /usr/share/man/man1 \
+	&& mkdir -p /usr/share/man/man7 \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		ack-grep \
@@ -71,7 +73,10 @@ RUN set -x \
 		whois \
 		xz-utils \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /usr/share/man/man1 \
+	&& rm -rf /usr/share/man/man7
+
 
 ## Node / NPM
 #RUN set -x \
