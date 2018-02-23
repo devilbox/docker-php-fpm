@@ -308,6 +308,12 @@ EXPOSE 9000
 
 
 ###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+
+###
 ### Entrypoint
 ###
 ENTRYPOINT ["/docker-entrypoint.sh"]
