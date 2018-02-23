@@ -157,7 +157,7 @@ php_pecl_extensions:
     7.2:
       run_dep: [libnghttp2-14]
     all:
-      build_dep: [libnghttp2-dev, libssl-dev, libnghttp2-5]
+      build_dep: [libnghttp2-dev, libssl-dev]
       run_dep: [libnghttp2-5]
   uploadprogress:
     enabled: "{{ php_all_versions }}"
@@ -344,6 +344,9 @@ php_builtin_extensions:
       run_dep: [libfbclient2]
   pdo_mysql:
     enabled: "{{ php_all_versions }}"
+    all:
+      configure: --with-zlib-dir=/usr
+      build_dep: [zlib1g-dev]
   pdo_oci:
     enabled: "{{ php_all_versions }}"
     disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
