@@ -1,12 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e
 set -u
-set -x
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 
+print_usage() {
+	echo "Usage: gen-readme.sh"
+	echo "       gen-readme.sh 5.4"
+	echo "       gen-readme.sh 5.5"
+	echo "       gen-readme.sh 5.6"
+	echo "       gen-readme.sh 7.0"
+	echo "       gen-readme.sh 7.1"
+	echo "       gen-readme.sh 7.2"
+}
 
 get_modules() {
 	tag="${1}"
@@ -24,22 +32,35 @@ get_modules() {
 	echo "${PHP_MODULES}"
 }
 
+update_readme() {
+	v="${1}"
+	sed -i'' "s|<td id=\"${v//.}-base\">.*<\/td>|<td id=\"${v//.}-base\">$( get_modules "${v}-base" )<\/td>|g" "${CWD}/../README.md"
+	sed -i'' "s|<td id=\"${v//.}-mods\">.*<\/td>|<td id=\"${v//.}-mods\">$( get_modules "${v}-mods" )<\/td>|g" "${CWD}/../README.md"
+}
 
-sed -i'' "s|<td id=\"54-base\">.*<\/td>|<td id=\"54-base\">$( get_modules "5.4-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"54-mods\">.*<\/td>|<td id=\"54-mods\">$( get_modules "5.4-mods" )<\/td>|g" "${CWD}/../README.md"
 
-sed -i'' "s|<td id=\"55-base\">.*<\/td>|<td id=\"55-base\">$( get_modules "5.5-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"55-mods\">.*<\/td>|<td id=\"55-mods\">$( get_modules "5.5-mods" )<\/td>|g" "${CWD}/../README.md"
-
-sed -i'' "s|<td id=\"56-base\">.*<\/td>|<td id=\"56-base\">$( get_modules "5.6-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"56-mods\">.*<\/td>|<td id=\"56-mods\">$( get_modules "5.6-mods" )<\/td>|g" "${CWD}/../README.md"
-
-sed -i'' "s|<td id=\"70-base\">.*<\/td>|<td id=\"70-base\">$( get_modules "7.0-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"70-mods\">.*<\/td>|<td id=\"70-mods\">$( get_modules "7.0-mods" )<\/td>|g" "${CWD}/../README.md"
-
-sed -i'' "s|<td id=\"71-base\">.*<\/td>|<td id=\"71-base\">$( get_modules "7.1-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"71-mods\">.*<\/td>|<td id=\"71-mods\">$( get_modules "7.1-mods" )<\/td>|g" "${CWD}/../README.md"
-
-sed -i'' "s|<td id=\"72-base\">.*<\/td>|<td id=\"72-base\">$( get_modules "7.2-base" )<\/td>|g" "${CWD}/../README.md"
-sed -i'' "s|<td id=\"72-mods\">.*<\/td>|<td id=\"72-mods\">$( get_modules "7.2-mods" )<\/td>|g" "${CWD}/../README.md"
-
+if [ "${#}" -eq "0" ]; then
+	update_readme "5.4"
+	update_readme "5.5"
+	update_readme "5.6"
+	update_readme "7.0"
+	update_readme "7.1"
+	update_readme "7.2"
+elif [ "${#}" -gt "1" ]; then
+	echo "Error, invalid number of arguments."
+	print_usage
+	exit 1
+else
+	if [ "${1}" != "5.4" ] \
+	&& [ "${1}" != "5.5" ] \
+	&& [ "${1}" != "5.6" ] \
+	&& [ "${1}" != "7.0" ] \
+	&& [ "${1}" != "7.1" ] \
+	&& [ "${1}" != "7.2" ]; then
+		echo "Error, invalid argument."
+		print_usage
+		exit 1
+	else
+		update_readme "${1}"
+	fi
+fi

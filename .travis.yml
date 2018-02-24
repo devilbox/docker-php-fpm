@@ -56,8 +56,13 @@ before_script:
   - max=100; i=0; while [ $i -lt $max ]; do if make build-prod-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
   - max=100; i=0; while [ $i -lt $max ]; do if make build-work-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
 
-  # Test
+  # Test if PHP modules have changed
+  - ./build/gen-readme.sh "${PHP}"
+  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+
+  # Integration tests
   - true
+
 
 ###
 ### Push to Dockerhub
