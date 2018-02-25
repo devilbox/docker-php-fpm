@@ -18,132 +18,43 @@ LABEL \
 ### Envs
 ###
 ENV BUILD_DEPS \
-{# ---- PHP Built-in Extensions ---- #}
-{% for ext in php_builtin_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_builtin_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_builtin_extensions[ext]) or (php_version not in php_builtin_extensions[ext]['disabled']) %}
-{# Version specific build_deps available #}
-{% if php_version in php_builtin_extensions[ext] and 'build_dep' in php_builtin_extensions[ext][php_version] %}
-{% for dep in php_builtin_extensions[ext][php_version]['build_dep'] %}
-	{{ dep }} \
+{# Loop over enabled build dependencies #}
+{% for ext in extensions_enabled %}
+	{# Not disabled #}
+	{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+		{# Version specific build dependency available? #}
+		{% if php_version in extensions_available[ext] and 'build_dep' in extensions_available[ext][php_version] %}
+			{% for build_dep in extensions_available[ext][php_version]['build_dep'] %}
+				{{ build_dep }} \
+			{% endfor %}
+		{# Generic build dependency available? #}
+		{% elif 'all' in extensions_available[ext] and 'build_dep' in extensions_available[ext]['all'] %}
+			{% for build_dep in extensions_available[ext]['all']['build_dep'] %}
+				{{ build_dep }} \
+			{% endfor %}
+		{% endif %}
+	{% endif %}
 {% endfor %}
-{# General build_deps available? #}
-{% elif 'all' in php_builtin_extensions[ext] and 'build_dep' in php_builtin_extensions[ext]['all'] %}
-{% for dep in php_builtin_extensions[ext]['all']['build_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP PECL Extensions ---- #}
-{% for ext in php_pecl_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_pecl_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_pecl_extensions[ext]) or (php_version not in php_pecl_extensions[ext]['disabled']) %}
-{# Version specific build_deps available #}
-{% if php_version in php_pecl_extensions[ext] and 'build_dep' in php_pecl_extensions[ext][php_version] %}
-{% for dep in php_pecl_extensions[ext][php_version]['build_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{# General build_deps available? #}
-{% elif 'all' in php_pecl_extensions[ext] and 'build_dep' in php_pecl_extensions[ext]['all'] %}
-{% for dep in php_pecl_extensions[ext]['all']['build_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP GIT Extensions git requirement ---- #}
-{% if php_git_extensions %}
-	git \
-{% endif %}
-{# ---- PHP GIT Extensions ---- #}
-{% for ext in php_git_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_git_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_git_extensions[ext]) or (php_version not in php_git_extensions[ext]['disabled']) %}
-{# Version specific build_deps available #}
-{% if php_version in php_git_extensions[ext] and 'build_dep' in php_git_extensions[ext][php_version] %}
-{% for dep in php_git_extensions[ext][php_version]['build_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{# General build_deps available? #}
-{% elif 'all' in php_git_extensions[ext] and 'build_dep' in php_git_extensions[ext]['all'] %}
-{% for dep in php_git_extensions[ext]['all']['build_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-	ca-certificates
+	ca-certificates \
+	git
 
 ENV RUN_DEPS \
-{# ---- PHP Built-in Extensions ---- #}
-{% for ext in php_builtin_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_builtin_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_builtin_extensions[ext]) or (php_version not in php_builtin_extensions[ext]['disabled']) %}
-{# Version specific run_deps available #}
-{% if php_version in php_builtin_extensions[ext] and 'run_dep' in php_builtin_extensions[ext][php_version] %}
-{% for dep in php_builtin_extensions[ext][php_version]['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{# General config available? #}
-{% elif 'all' in php_builtin_extensions[ext] and 'run_dep' in php_builtin_extensions[ext]['all'] %}
-{% for dep in php_builtin_extensions[ext]['all']['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP PECL Extensions ---- #}
-{% for ext in php_pecl_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_pecl_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_pecl_extensions[ext]) or (php_version not in php_pecl_extensions[ext]['disabled']) %}
-{# Version specific run_deps available #}
-{% if php_version in php_pecl_extensions[ext] and 'run_dep' in php_pecl_extensions[ext][php_version] %}
-{% for dep in php_pecl_extensions[ext][php_version]['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{# General run_deps available? #}
-{% elif 'all' in php_pecl_extensions[ext] and 'run_dep' in php_pecl_extensions[ext]['all'] %}
-{% for dep in php_pecl_extensions[ext]['all']['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP GIT Extensions ---- #}
-{% for ext in php_git_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_git_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_git_extensions[ext]) or (php_version not in php_git_extensions[ext]['disabled']) %}
-{# Version specific run_deps available #}
-{% if php_version in php_git_extensions[ext] and 'run_dep' in php_git_extensions[ext][php_version] %}
-{% for dep in php_git_extensions[ext][php_version]['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{# General run_deps available? #}
-{% elif 'all' in php_git_extensions[ext] and 'run_dep' in php_git_extensions[ext]['all'] %}
-{% for dep in php_git_extensions[ext]['all']['run_dep'] %}
-	{{ dep }} \
-{% endfor %}
-{% endif %}
-{% endif %}
-{% endif %}
+{# Loop over enabled run-time dependencies #}
+{% for ext in extensions_enabled %}
+	{# Not disabled #}
+	{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+		{# Version specific run-time dependency available? #}
+		{% if php_version in extensions_available[ext] and 'run_dep' in extensions_available[ext][php_version] %}
+			{% for run_dep in extensions_available[ext][php_version]['run_dep'] %}
+				{{ run_dep }} \
+			{% endfor %}
+		{# Generic run-time dependency available? #}
+		{% elif 'all' in extensions_available[ext] and 'run_dep' in extensions_available[ext]['all'] %}
+			{% for run_dep in extensions_available[ext]['all']['run_dep'] %}
+				{{ run_dep }} \
+			{% endfor %}
+		{% endif %}
+	{% endif %}
 {% endfor %}
 	ca-certificates
 
@@ -157,109 +68,104 @@ RUN set -x \
 		${BUILD_DEPS} \
 	\
 	\
-{# ---- PHP Built-in Extensions ---- #}
-{% for ext in php_builtin_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_builtin_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_builtin_extensions[ext]) or (php_version not in php_builtin_extensions[ext]['disabled']) %}
-{# Version specific command available #}
-{% if php_version in php_builtin_extensions[ext] and 'command' in php_builtin_extensions[ext][php_version] %}
-	&& {{ php_builtin_extensions[ext][php_version]['command'] }} \
-{# General command available? #}
-{% elif 'all' in php_builtin_extensions[ext] and 'command' in php_builtin_extensions[ext]['all'] %}
-	&& {{ php_builtin_extensions[ext]['all']['command'] }} \
-{% endif %}
-{# Version specific configure available #}
-{% if php_version in php_builtin_extensions[ext] and 'configure' in php_builtin_extensions[ext][php_version] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ php_builtin_extensions[ext][php_version]['configure'] }} \
-{# General configure available? #}
-{% elif 'all' in php_builtin_extensions[ext] and 'configure' in php_builtin_extensions[ext]['all'] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ php_builtin_extensions[ext]['all']['configure'] }} \
-{% endif %}
-	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
-	\
-{# ---- PHP PECL Extensions ---- #}
-{% for ext in php_pecl_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_pecl_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_pecl_extensions[ext]) or (php_version not in php_pecl_extensions[ext]['disabled']) %}
-{# Version specific command available #}
-{% if php_version in php_pecl_extensions[ext] and 'command' in php_pecl_extensions[ext][php_version] %}
-	&& {{ php_pecl_extensions[ext][php_version]['command'] }} \
-{# General command available? #}
-{% elif 'all' in php_pecl_extensions[ext] and 'command' in php_pecl_extensions[ext]['all'] %}
-	&& {{ php_pecl_extensions[ext]['all']['command'] }} \
-{# Version specific name available #}
-{% elif php_version in php_pecl_extensions[ext] and 'alt_name' in php_pecl_extensions[ext][php_version] %}
-	&& pecl install {{ php_pecl_extensions[ext][php_version]['alt_name'] }} \
-{# General name available? #}
-{% elif 'all' in php_pecl_extensions[ext] and 'alt_name' in php_pecl_extensions[ext]['all'] %}
-	&& pecl install {{ php_pecl_extensions[ext]['all']['alt_name'] }} \
-{% else %}
-	&& pecl install {{ ext }} \
-{% endif %}
-{# Version specific module available #}
-{% if php_version in php_pecl_extensions[ext] and 'alt_module' in php_pecl_extensions[ext][php_version] %}
-	&& docker-php-ext-enable {{ php_pecl_extensions[ext][php_version]['alt_module'] }} \
-{# General module available? #}
-{% elif 'all' in php_pecl_extensions[ext] and 'alt_module' in php_pecl_extensions[ext]['all'] %}
-	&& docker-php-ext-enable {{ php_pecl_extensions[ext]['all']['alt_module'] }} \
-{% else %}
-	&& docker-php-ext-enable {{ ext }} \
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
-	\
-{# ---- PHP GIT Extensions ---- #}
-{% for ext in php_git_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_git_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_git_extensions[ext]) or (php_version not in php_git_extensions[ext]['disabled']) %}
-{# Version specific url available #}
-{% if php_version in php_git_extensions[ext] and 'git_url' in php_git_extensions[ext][php_version] %}
-	&& git clone -v {{ php_git_extensions[ext][php_version]['git_url'] }} /tmp/{{ ext }} \
-{# General url available? #}
-{% else  %}
-	&& git clone -v {{ php_git_extensions[ext]['all']['git_url'] }} /tmp/{{ ext }} \
-{% endif %}
-{# Version specific ref available #}
-{% if php_version in php_git_extensions[ext] and 'git_ref' in php_git_extensions[ext][php_version] %}
-	&& cd /tmp/{{ ext }} \
-	&& git checkout {{ php_git_extensions[ext][php_version]['git_ref'] }} \
-{# General ref available? #}
-{% elif 'all' in php_git_extensions[ext] and 'git_ref' in php_git_extensions[ext]['all'] %}
-	&& cd /tmp/{{ ext }} \
-	&& git checkout {{ php_git_extensions[ext]['all']['git_ref'] }} \
-{% endif %}
-{# Version specific command available #}
-{% if php_version in php_git_extensions[ext] and 'command' in php_git_extensions[ext][php_version] %}
-	&& cd /tmp/{{ ext }} && {{ php_git_extensions[ext][php_version]['command'] }} \
-{# General command available? #}
-{% else  %}
-	&& cd /tmp/{{ ext }} && {{ php_git_extensions[ext]['all']['command'] }} \
-{% endif %}
-{# Version specific module available #}
-{% if php_version in php_git_extensions[ext] and 'alt_module' in php_git_extensions[ext][php_version] %}
-	&& docker-php-ext-enable {{ php_git_extensions[ext][php_version]['alt_module'] }} \
-{# General module available? #}
-{% elif 'all' in php_git_extensions[ext] and 'alt_module' in php_git_extensions[ext]['all'] %}
-	&& docker-php-ext-enable {{ php_git_extensions[ext]['all']['alt_module'] }} \
-{% else %}
-	&& docker-php-ext-enable {{ ext }} \
-{% endif %}
-{# Cleanup #}
-	&& cd / && rm -rf /tmp/{{ ext }} \
-{% endif %}
-{% endif %}
+{# Loop over enabled extensions #}
+{% for ext in extensions_enabled %}
+	{# Not disabled #}
+	{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+
+
+		{# ---------- Pre Command ---------- #}
+		{# Version specific pre-command available? #}
+		{% if php_version in extensions_available[ext] and 'pre' in extensions_available[ext][php_version] %}
+			&& {{ extensions_available[ext][php_version]['pre'] }} \
+		{# Generic pre-command available? #}
+		{% elif 'all' in extensions_available[ext] and 'pre' in extensions_available[ext]['all'] %}
+			&& {{ extensions_available[ext]['all']['pre'] }} \
+		{% endif %}
+
+		{# ---------- Installation (specific) ---------- #}
+		{% if php_version in extensions_available[ext] and 'type' in extensions_available[ext][php_version] %}
+
+			{# ---- 1.) Builtin ---- #}
+			{% if extensions_available[ext][php_version]['type'] == 'builtin' %}
+				{% if 'configure' in extensions_available[ext][php_version] %}
+					&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} \
+				{% endif %}
+				&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+
+			{# ---- 2.) PECL ---- #}
+			{% elif extensions_available[ext][php_version]['type'] == 'pecl' %}
+				{% if 'command' in extensions_available[ext][php_version] %}
+					&& {{ extensions_available[ext][php_version]['command'] }} \
+				{% else %}
+					&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} \
+				{% endif %}
+				&& docker-php-ext-enable {{ ext }} \
+
+			{# ---- 3.) GIT ---- #}
+			{% elif extensions_available[ext][php_version]['type'] == 'git' %}
+				&& git clone -v {{ extensions_available[ext][php_version]['git_url'] }} /tmp/{{ ext }} \
+				&& cd /tmp/{{ ext }} \
+				{% if 'git_ref' in extensions_available[ext][php_version] %}
+					&& git checkout {{ extensions_available[ext][php_version]['git_ref'] }} \
+				{% endif %}
+				{% if 'command' in extensions_available[ext][php_version] %}
+					&& {{ extensions_available[ext][php_version]['command'] }} \
+				{% else %}
+					&& phpize \
+					&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} \
+					&& make -j$(getconf _NPROCESSORS_ONLN) \
+					&& make install \
+				{% endif %}
+				&& docker-php-ext-enable {{ ext }} \
+				&& cd / && rm -rf /tmp/{{ ext }} \
+			{% endif %}
+
+
+		{# ---------- Installation (generic) ---------- #}
+		{% elif 'all' in extensions_available[ext] and 'type' in extensions_available[ext]['all'] %}
+
+			{# ---- 1.) Builtin ---- #}
+			{% if extensions_available[ext]['all']['type'] == 'builtin' %}
+				{% if 'configure' in extensions_available[ext]['all'] %}
+					&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
+				{% endif %}
+				&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+
+			{# ---- 2.) PECL ---- #}
+			{% elif extensions_available[ext]['all']['type'] == 'pecl' %}
+				{% if 'command' in extensions_available[ext]['all'] %}
+					&& {{ extensions_available[ext]['all']['command'] }} \
+				{% else %}
+					&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} \
+				{% endif %}
+				&& docker-php-ext-enable {{ ext }} \
+
+			{# ---- 3.) GIT ---- #}
+			{% elif extensions_available[ext]['all']['type'] == 'git' %}
+				&& git clone -v {{ extensions_available[ext]['all']['git_url'] }} /tmp/{{ ext }} \
+				&& cd /tmp/{{ ext }} \
+				{% if 'git_ref' in extensions_available[ext]['all'] %}
+					&& git checkout {{ extensions_available[ext]['all']['git_ref'] }} \
+				{% endif %}
+				{% if 'command' in extensions_available[ext]['all'] %}
+					&& {{ extensions_available[ext]['all']['command'] }} \
+				{% else %}
+					&& phpize \
+					&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} \
+					&& make -j$(getconf _NPROCESSORS_ONLN) \
+					&& make install \
+				{% endif %}
+				&& docker-php-ext-enable {{ ext }} \
+				&& cd / && rm -rf /tmp/{{ ext }} \
+			{% endif %}
+
+
+		{% endif %}
+
+
+
+	{% endif %}
 {% endfor %}
 	\
 	\
@@ -285,53 +191,17 @@ RUN set -x \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
 
 RUN set -x \
-{# ---- PHP Built-in Extensions ---- #}
-{% for ext in php_builtin_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_builtin_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_builtin_extensions[ext]) or (php_version not in php_builtin_extensions[ext]['disabled']) %}
-{% if ext == 'opcache' %}
-	&& php -m | grep -oiE '^Zend Opcache$' \
-	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
-{% else %}
-	&& php -m | grep -oiE '^{{ ext }}$' \
-	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP PECL Extensions ---- #}
-{% for ext in php_pecl_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_pecl_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_pecl_extensions[ext]) or (php_version not in php_pecl_extensions[ext]['disabled']) %}
-{% if ext == 'opcache' %}
-	&& php -m | grep -oiE '^Zend Opcache$' \
-	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
-{% else %}
-	&& php -m | grep -oiE '^{{ ext }}$' \
-	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
-{# ---- PHP GIT Extensions ---- #}
-{% for ext in php_git_extensions.keys() %}
-{# Enabled #}
-{% if php_version in php_git_extensions[ext]['enabled'] %}
-{# Not Disabled #}
-{% if ('disabled' not in php_git_extensions[ext]) or (php_version not in php_git_extensions[ext]['disabled']) %}
-{% if ext == 'opcache' %}
-	&& php -m | grep -oiE '^Zend Opcache$' \
-	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
-{% else %}
-	&& php -m | grep -oiE '^{{ ext }}$' \
-	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
-{% endif %}
-{% endif %}
-{% endif %}
+{% for ext in extensions_enabled %}
+	{# Not disabled #}
+	{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+		{% if ext == 'opcache' %}
+			&& php -m | grep -oiE '^Zend Opcache$' \
+			&& php-fpm -m | grep -oiE '^Zend Opcache$' \
+		{% else %}
+			&& php -m | grep -oiE '^{{ ext }}$' \
+			&& php-fpm -m | grep -oiE '^{{ ext }}$' \
+		{% endif %}
+	{% endif %}
 {% endfor %}
 	&& true
 
