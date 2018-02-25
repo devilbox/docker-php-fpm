@@ -45,6 +45,14 @@ php_conf_dir: /usr/local/etc/php.d
 ###     run_dep:
 ###
 php_git_extensions:
+  memcache:
+    enabled: "{{ php_all_versions }}"
+    disabled: [5.4, 5.5, 5.6] # Officiel memcache is installed via pecl for 5.4, 5.5 and 5.6
+    all:
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      git_ref: NON_BLOCKING_IO_php7
+      command: phpize && ./configure --with-zlib-dir=/usr && make -j$(getconf _NPROCESSORS_ONLN) && make install
+      build_dep: [zlib1g-dev]
   phalcon:
     enabled: "{{ php_all_versions }}"
     5.4:
@@ -110,14 +118,14 @@ php_pecl_extensions:
       run_dep: [libmagickwand-6.q16-2]
   mcrypt:
     enabled: "{{ php_all_versions }}"
-    disabled: [5.4, 5.5, 5.6, 7.0, 7.1] # Already avail by default
+    disabled: [5.4, 5.5, 5.6, 7.0, 7.1] # Already avail by default in other versions
     7.2:
       alt_name: mcrypt-1.0.1
       build_dep: [libmcrypt-dev]
       run_dep: [libmcrypt4]
   memcache:
     enabled: "{{ php_all_versions }}"
-    disabled: [7.0, 7.1, 7.2]
+    disabled: [7.0, 7.1, 7.2] # PHP7 uses unofficial git clone (see above)
     all:
       build_dep: [zlib1g-dev]
   memcached:
@@ -308,7 +316,7 @@ php_builtin_extensions:
     disabled: [7.0, 7.1, 7.2]
   mysqli:
     enabled: "{{ php_all_versions }}"
-    disabled: [7.0, 7.1, 7.2]
+    #disabled: [7.0, 7.1, 7.2]
   mysqlnd:
     enabled: "{{ php_all_versions }}"
     disabled: "{{ php_all_versions }}" # Available by default
