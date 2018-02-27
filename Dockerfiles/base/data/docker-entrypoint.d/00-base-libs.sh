@@ -1,13 +1,8 @@
-#!/bin/sh
-#
-# Available global variables:
-#   + MY_USER
-#   + MY_GROUP
-#   + DEBUG_LEVEL
-
+#!/usr/bin/env bash
 
 set -e
 set -u
+set -o pipefail
 
 
 ############################################################
@@ -18,38 +13,31 @@ set -u
 ### Log to stdout/stderr
 ###
 log() {
-	log_lvl="${1}"
-	log_msg="${2}"
+	local type="${1}"     # ok, warn or err
+	local message="${2}"  # msg to print
+	local debug="${3}"    # 0: only warn and error, >0: ok and info
 
-	log_clr_ok="\033[0;32m"
-	log_clr_info="\033[0;34m"
-	log_clr_warn="\033[0;33m"
-	log_clr_err="\033[0;31m"
-	log_clr_rst="\033[0m"
+	local clr_ok="\033[0;32m"
+	local clr_info="\033[0;34m"
+	local clr_warn="\033[0;33m"
+	local clr_err="\033[0;31m"
+	local clr_rst="\033[0m"
 
-	if [ "${log_lvl}" = "ok" ]; then
-		if [ "${DEBUG_LEVEL}" -gt "0" ]; then
-			printf "${log_clr_ok}[OK]   %s${log_clr_rst}\n" "${log_msg}"
+	if [ "${type}" = "ok" ]; then
+		if [ "${debug}" -gt "0" ]; then
+			printf "${clr_ok}[OK]   %s${clr_rst}\n" "${message}"
 		fi
-	elif [ "${log_lvl}" = "info" ]; then
-		if [ "${DEBUG_LEVEL}" -gt "0" ]; then
-			printf "${log_clr_info}[INFO] %s${log_clr_rst}\n" "${log_msg}"
+	elif [ "${type}" = "info" ]; then
+		if [ "${debug}" -gt "0" ]; then
+			printf "${clr_info}[INFO] %s${clr_rst}\n" "${message}"
 		fi
-	elif [ "${log_lvl}" = "warn" ]; then
-		printf "${log_clr_warn}[WARN] %s${log_clr_rst}\n" "${log_msg}" 1>&2	# stdout -> stderr
-	elif [ "${log_lvl}" = "err" ]; then
-		printf "${log_clr_err}[ERR]  %s${log_clr_rst}\n" "${log_msg}" 1>&2	# stdout -> stderr
+	elif [ "${type}" = "warn" ]; then
+		printf "${clr_warn}[WARN] %s${clr_rst}\n" "${message}" 1>&2	# stdout -> stderr
+	elif [ "${type}" = "err" ]; then
+		printf "${clr_err}[ERR]  %s${clr_rst}\n" "${message}" 1>&2	# stdout -> stderr
 	else
-		printf "${log_clr_err}[???]  %s${log_clr_rst}\n" "${log_msg}" 1>&2	# stdout -> stderr
+		printf "${clr_err}[???]  %s${clr_rst}\n" "${message}" 1>&2	# stdout -> stderr
 	fi
-
-	unset -v log_lvl
-	unset -v log_msg
-	unset -v log_clr_ok
-	unset -v log_clr_info
-	unset -v log_clr_warn
-	unset -v log_clr_err
-	unset -v log_clr_rst
 }
 
 
@@ -57,29 +45,25 @@ log() {
 ### Wrapper for run_run command
 ###
 run() {
-	run_cmd="${1}"
+	local cmd="${1}"      # command to execute
+	local debug="${2}"    # show commands if debug level > 1
 
-	run_clr_red="\033[0;31m"
-	run_clr_green="\033[0;32m"
-	run_clr_reset="\033[0m"
+	local clr_red="\033[0;31m"
+	local clr_green="\033[0;32m"
+	local clr_reset="\033[0m"
 
-	if [ "${DEBUG_LEVEL}" -gt "1" ]; then
-		printf "${run_clr_red}%s \$ ${run_clr_green}${run_cmd}${run_clr_reset}\n" "$( whoami )"
+	if [ "${debug}" -gt "1" ]; then
+		printf "${clr_red}%s \$ ${clr_green}${cmd}${clr_reset}\n" "$( whoami )"
 	fi
-	/bin/sh -c "LANG=C LC_ALL=C ${run_cmd}"
-
-	unset -v run_cmd
-	unset -v run_clr_red
-	unset -v run_clr_green
-	unset -v run_clr_reset
+	/bin/sh -c "LANG=C LC_ALL=C ${cmd}"
 }
 
 
 ###
-### Is argument an integer?
+### Is argument a positive integer?
 ###
 isint() {
-	echo "${1}" | grep -Eq '^([0-9]|[1-9][0-9]*)$'
+	test -n "${1##*[!0-9]*}"
 }
 
 
@@ -87,11 +71,7 @@ isint() {
 ### Is env variable set?
 ###
 env_set() {
-	if set | grep "^${1}=" >/dev/null 2>&1; then
-		return 0
-	else
-		return 1
-	fi
+	printenv "${1}" >/dev/null 2>&1
 }
 
 
@@ -99,42 +79,25 @@ env_set() {
 ### Get env variable by name
 ###
 env_get() {
-	if ! env_set "${1}"; then
-		return 1
+	local env_name="${1}"
+
+	# Did we have a default value specified?
+	if [ "${#}" -gt "1" ]; then
+		if ! env_set "${env_name}"; then
+			echo "${2}"
+			return 0
+		fi
 	fi
-
-	env_get_value="$( set | grep "^${1}=" | awk -F '=' '{for (i=2; i<NF; i++) printf $i "="; print $NF}' )"
-
-	# Remove surrounding quotes
-	env_get_value="$( echo "${env_get_value}" | sed "s/^'//g" )"
-	env_get_value="$( echo "${env_get_value}" | sed 's/^"//g' )"
-
-	env_get_value="$( echo "${env_get_value}" | sed "s/'$//g" )"
-	env_get_value="$( echo "${env_get_value}" | sed 's/"$//g' )"
-
-	echo "${env_get_value}"
-	unset -v env_get_value
+	# Just output the env value
+	printenv "${1}"
 }
-
 
 
 ############################################################
 # Sanity Checks
 ############################################################
 
-if ! command -v grep >/dev/null 2>&1; then
-	log "err" "grep not found, but required."
-	exit 1
-fi
-if ! command -v sed >/dev/null 2>&1; then
-	log "err" "sed not found, but required."
-	exit 1
-fi
-if ! command -v awk >/dev/null 2>&1; then
-	log "err" "awk not found, but required."
-	exit 1
-fi
-if ! command -v getent >/dev/null 2>&1; then
-	log "err" "getent not found, but required."
+if ! command -v printenv >/dev/null 2>&1; then
+	log "err" "printenv not found, but required." "1"
 	exit 1
 fi

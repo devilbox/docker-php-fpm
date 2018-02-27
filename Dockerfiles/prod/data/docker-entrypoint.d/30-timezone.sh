@@ -1,13 +1,8 @@
-#!/bin/sh
-#
-# Available global variables:
-#   + MY_USER
-#   + MY_GROUP
-#   + DEBUG_LEVEL
-
+#!/usr/bin/env bash
 
 set -e
 set -u
+set -o pipefail
 
 
 ############################################################
@@ -18,43 +13,33 @@ set -u
 ### Change Timezone
 ###
 set_timezone() {
-	tz_env_varname="${1}"
-	tz_php_ini="${2}"
+	local env_varname="${1}"
+	local php_conf_dir="${2}"
+	local debug="${3}"
+	local timezone=
 
-	if ! env_set "${tz_env_varname}"; then
-		log "info" "\$${tz_env_varname} not set."
-		log "info" "Setting PHP: timezone=UTC"
-		run "sed -i'' 's|^[[:space:]]*;*[[:space:]]*date\.timezone[[:space:]]*=.*$|date.timezone = UTF|g' ${tz_php_ini}"
+	if ! env_set "${env_varname}"; then
+		log "info" "\$${env_varname} not set." "${debug}"
+		# Unix Time
+		log "info" "Setting container timezone to: UTC" "${debug}"
+		run "ln -sf /usr/share/zoneinfo/UTC /etc/localtime" "${debug}"
+		# PHP Time
+		log "info" "Setting PHP: timezone=UTC" "${debug}"
+		run "echo 'date.timezone = UTC' > ${php_conf_dir}/devilbox-runtime.ini" "${debug}"
 	else
-		tz_timezone="$( env_get "${tz_env_varname}" )"
-		if [ -f "/usr/share/zoneinfo/${tz_timezone}" ]; then
+		timezone="$( env_get "${env_varname}" )"
+		if [ -f "/usr/share/zoneinfo/${timezone}" ]; then
 			# Unix Time
-			log "info" "Setting container timezone to: ${tz_timezone}"
-			run "rm /etc/localtime"
-			run "ln -s /usr/share/zoneinfo/${tz_timezone} /etc/localtime"
-
+			log "info" "Setting container timezone to: ${timezone}" "${debug}"
+			run "ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime" "${debug}"
 			# PHP Time
-			log "info" "Setting PHP: timezone=${tz_timezone}"
-			run "sed -i'' 's|^[[:space:]]*;*[[:space:]]*date\.timezone[[:space:]]*=.*$|date.timezone = ${tz_timezone}|g' ${tz_php_ini}"
+			log "info" "Setting PHP: timezone=${timezone}" "${debug}"
+			run "echo 'date.timezone = ${timezone}' > ${php_conf_dir}/devilbox-runtime.ini" "${debug}"
 		else
-			log "err" "Invalid timezone for \$${tz_env_varname}."
-			log "err" "\$TIMEZONE: '${tz_timezone}' does not exist."
+			log "err" "Invalid timezone for \$${env_varname}." "${debug}"
+			log "err" "Timezone '${timezone}' does not exist." "${debug}"
 			exit 1
 		fi
 	fi
-	log "info" "Docker date set to: $(date)"
-
-	unset -v tz_env_varname
-	unset -v tz_php_ini
-	unset -v tz_timezone
+	log "info" "Docker date set to: $(date)" "${debug}"
 }
-
-
-############################################################
-# Sanity Checks
-############################################################
-
-if ! command -v sed >/dev/null 2>&1; then
-	echo "sed not found, but required."
-	exit 1
-fi
