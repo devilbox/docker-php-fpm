@@ -1,4 +1,4 @@
-# Auto-generated via Ansible
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
 FROM devilbox/php-fpm:7.0-prod
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
@@ -15,7 +15,7 @@ LABEL \
 
 
 ###
-### Envs (Already set in parent container)
+### Envs
 ###
 ENV BASH_PROFILE=".bashrc"
 
@@ -23,9 +23,20 @@ ENV BASH_PROFILE=".bashrc"
 ###
 ### Install Tools
 ###
-
-# System dev tools
 RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		dirmngr \
+		gnupg \
+	&& echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
+	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
+	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
+	&& curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add - \
+	&& echo "deb http://deb.nodesource.com/node_8.x jessie main" > /etc/apt/sources.list.d/node.list \
+	&& curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add - \
+	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		ack-grep \
@@ -49,14 +60,15 @@ RUN set -x \
 		less \
 		libc-dev \
 		make \
-#		mongo-tools \
-		mongodb-clients \
+		mongodb-org-shell \
+		mongodb-org-tools \
 		moreutils \
 		mysql-client \
 		nano \
 		net-tools \
 		netcat \
-#		postgresql-client \
+		nodejs \
+		postgresql-client \
 		python-pip \
 		rubygems \
 		ruby-dev \
@@ -73,33 +85,69 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
 	&& rm -rf /var/lib/apt/lists/*
 
-## Node / NPM
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& VERSION="$( curl -Lq https://nodejs.org 2>/dev/null | grep LTS | grep -Eo 'data-version.*.' | grep -oE 'v[0-9.]+' )" \
-#	&& wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=30 \
-#		-P /usr/local/src https://nodejs.org/dist/${VERSION}/node-${VERSION}-linux-x64.tar.xz \
-#	&& unxz /usr/local/src/node-${VERSION}-linux-x64.tar.xz \
-#	&& tar xvf /usr/local/src/node-${VERSION}-linux-x64.tar -C /usr/local/src \
-#	&& ln -s /usr/local/src/node-${VERSION}-linux-x64 /usr/local/node \
-#	&& ln -s /usr/local/node/bin/* /usr/local/bin/ \
-#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64.tar* \
-#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/LICENSE \
-#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/*.md \
-#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/include \
-#	&& rm -rf /usr/local/src/node-${VERSION}-linux-x64/share \
-#	&& npm --version | grep -E '[.0-9]+' \
-#	&& node --version | grep -E '[.0-9]+' \
-#	&& rm -rf /root/.config
-#
-## Composer
-#RUN set -x \
-#	&& curl -sS https://getcomposer.org/installer | php \
-#	&& mv composer.phar /usr/local/bin/composer \
-#	&& composer self-update
-##	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
-##	&& rm -rf /root/.composer
-#
+
+# composer
+RUN set -x true \
+	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+	&& true
+# drush
+RUN set -x true \
+	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+&& cd /usr/local/src/drush \
+&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush && composer install --no-interaction --no-progress' \
+&& ln -s /usr/local/src/drush/drush /usr/local/bin/drush \
+&& rm -rf /usr/local/src/drush/.git \
+&& rm -rf /usr/local/src/drush/docs \
+&& rm -rf /usr/local/src/drush/examples \
+&& rm -rf /usr/local/src/drush/misc \
+&& rm -rf /usr/local/src/drush/tests \
+&& rm -rf /home/${MY_USER}/.composer \
+ \
+	&& true
+# drupalconsole
+RUN set -x true \
+	&& curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
+	&& chmod +x /usr/local/bin/drupal \
+	&& true
+# wpcli
+RUN set -x true \
+	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
+	&& true
+# symfony
+RUN set -x true \
+	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
+	&& chmod +x /usr/local/bin/symfony \
+	&& true
+# laravel
+RUN set -x true \
+	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+&& cd /usr/local/src/laravel-installer \
+&& git checkout v2.0.0 \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+&& rm -rf /usr/local/src/laravel-installer/laravel/.git \
+ \
+	&& true
+# phalcon
+RUN set -x true \
+	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+&& cd /usr/local/src/phalcon-devtools \
+&& git checkout $(git describe --abbrev=0 --tags) \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+&& ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+&& cd / \
+&& rm -rf /usr/local/src/phalcon-devtools/.git \
+ \
+	&& true
+
 ## Drush
 #RUN set -x \
 #	&& DRUSH_VERSION="$( curl -q https://api.github.com/repos/drush-ops/drush/releases 2>/dev/null | grep tag_name | grep -Eo '\"[0-9.]+\"' | head -1 | sed 's/\"//g' )" \
@@ -277,6 +325,16 @@ RUN set -x \
 	&& /usr/local/sbin/php-fpm --test \
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+RUN set -x \
+	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' && rm -rf /root/.composer \
+	&& drush --version | grep -E '[.0-9]+' && rm -rf /root/.drush \
+	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
+	&& wp --allow-root --version | grep -E '[.0-9]+' \
+	&& symfony --version | grep -E 'version\s*[.0-9]+' \
+	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
+	&& phalcon commands | grep -E '[.0-9]+' \
+	&& true
 
 
 ###

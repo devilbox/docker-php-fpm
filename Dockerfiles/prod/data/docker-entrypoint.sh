@@ -72,7 +72,7 @@ set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 ###
 ### Setup postfix
 ###
-set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
+set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###

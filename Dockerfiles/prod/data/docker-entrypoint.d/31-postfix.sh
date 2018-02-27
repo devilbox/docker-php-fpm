@@ -16,17 +16,29 @@ set_postfix() {
 	local env_varname="${1}"
 	local username="${2}"
 	local groupname="${3}"
-	local debug="${4}"
+	local php_ini_dir="${4}"
+	local debug="${5}"
 
+	local php_ini_file="${php_ini_dir}/devilbox-runtime-sendmail.ini"
 	local catch_all=
 
 	if ! env_set "${env_varname}"; then
 		log "info" "\$${env_varname} not set." "${debug}"
 		log "info" "Postfix will not be started." "${debug}"
+		echo "" > "${php_ini_file}"
 	else
 		catch_all="$( env_get "${env_varname}" )"
 		if [ "${catch_all}" = "1" ]; then
 			log "info" "Enabling postfix catch-all" "${debug}"
+
+			# Configure PHP
+			{
+				echo "[mail function]";
+				echo "sendmail_path = $( which sendmail ) -t -i";
+				echo ";mail.force_extra_parameters =";
+				echo "mail.add_x_header = On";
+				echo "mail.log = /var/log/php/mail.log";
+			} > "${php_ini_file}"
 
 			# Add Mail dir/file if it does not exist
 			if [ ! -d "/var/mail" ]; then
@@ -64,6 +76,10 @@ set_postfix() {
 # Sanity Checks
 ############################################################
 
+if ! command -v sendmail >/dev/null 2>&1; then
+	log "err" "sendmail not found, but required." "1"
+	exit 1
+fi
 if ! command -v postconf >/dev/null 2>&1; then
 	log "err" "postconf not found, but required." "1"
 	exit 1

@@ -27,8 +27,201 @@ php_all_versions:
   - 7.2
 
 
-php_conf_dir: /usr/local/etc/php.d
 
+################################################################################
+# Defines for Dockerfile "work"
+################################################################################
+
+
+###
+### Apt repositories to actually enable
+###
+apt_repositories_enabled:
+  - backports
+  - git
+  - mongo
+  - node
+  - pgsql
+
+
+###
+### Software to actually install
+###
+software_enabled:
+  - composer
+  - drush
+  - drupalconsole
+  - wpcli
+  - symfony
+  - laravel
+  - phalcon
+
+
+
+
+###
+### All available extra repositories
+###
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   deb:       Deb line to add to sources list
+#   key:       [optional] Key id to add for repository
+#   pre:       [optional] Run custom command to add gpg key for repository
+#
+apt_repositories_available:
+  backports:
+    all:
+      deb: deb http://ftp.debian.org/debian jessie-backports main
+  git:
+    disabled: []
+    7.2:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    all:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
+      key: A1715D88E1DF1F24
+  mongo:
+    #disabled: [7.2]
+    all:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+  node:
+    disabled: []
+    7.2:
+      deb: deb http://deb.nodesource.com/node_8.x stretch main
+    all:
+      deb: deb http://deb.nodesource.com/node_8.x jessie main
+      pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
+  pgsql:
+    #disabled: [7.2]
+    7.2:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+    all:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      pre: curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add -
+
+
+###
+### All available software
+###
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   pre:       [optional] Run command before 'command:' statement
+#   command:   Command to execute
+#   pre:       [optional] Run command after 'command:' statement
+#
+software_available:
+  composer:
+    check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' && rm -rf /root/.composer
+    all:
+      command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  drush:
+    check: drush --version | grep -E '[.0-9]+' && rm -rf /root/.drush
+    5.5:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
+    5.4:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
+    all:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush && composer install --no-interaction --no-progress' \
+        && ln -s /usr/local/src/drush/drush /usr/local/bin/drush \
+        && rm -rf /usr/local/src/drush/.git \
+        && rm -rf /usr/local/src/drush/docs \
+        && rm -rf /usr/local/src/drush/examples \
+        && rm -rf /usr/local/src/drush/misc \
+        && rm -rf /usr/local/src/drush/tests \
+        && rm -rf /home/${MY_USER}/.composer \
+  drupalconsole:
+    disabled: [5.4]
+    check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
+    all:
+      command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
+      post: chmod +x /usr/local/bin/drupal
+  laravel:
+    check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
+    7.0:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.6:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.5:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.4:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v1.3.7 \
+    all:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout $(git describe --abbrev=0 --tags) \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+        && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+        && rm -rf /usr/local/src/laravel-installer/laravel/.git \
+  phalcon:
+    check: phalcon commands | grep -E '[.0-9]+'
+    5.4:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v2.0.9 \
+    all:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout $(git describe --abbrev=0 --tags) \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
+  symfony:
+    check: symfony --version | grep -E 'version\s*[.0-9]+'
+    all:
+      command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
+      post: chmod +x /usr/local/bin/symfony
+  wpcli:
+    check: wp --allow-root --version | grep -E '[.0-9]+'
+    all:
+      command: curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
+
+
+
+
+
+
+################################################################################
+# Defines for Dockerfile "mods"
+################################################################################
 
 ###
 ### Extensions to actually enable
@@ -120,7 +313,6 @@ extensions_enabled:
 ###
 ### All available php modules
 ###
-
 # all: is generic version of defines
 # 7.2: is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
