@@ -42,6 +42,7 @@ apt_repositories_enabled:
   - mongo
   - node
   - pgsql
+  - yarn
 
 
 ###
@@ -54,6 +55,7 @@ software_enabled:
   - awesomeci
   - drush
   - drupalconsole
+  - gitflow
   - grunt
   - laravel
   - linuxbrew
@@ -84,31 +86,31 @@ apt_repositories_available:
     all:
       deb: deb http://ftp.debian.org/debian jessie-backports main
   git:
-    disabled: []
     7.2:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
   mongo:
-    #disabled: [7.2]
     all:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
       key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
   node:
-    disabled: []
     7.2:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
     all:
       deb: deb http://deb.nodesource.com/node_8.x jessie main
       pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
   pgsql:
-    #disabled: [7.2]
     7.2:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
       pre: curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add -
+  yarn:
+    all:
+      deb: deb http://dl.yarnpkg.com/debian/ stable main
+      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 
 
 ###
@@ -187,6 +189,14 @@ software_available:
     all:
       command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
+  gitflow:
+    check: git-flow version | grep -E '[.0-9]+'
+    all:
+      command: |
+        git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+        && cd /tmp/gitflow \
+        && make install \
+        && cd / && rm -rf /tmp/gitflow \
   grunt:
     check: grunt --version | grep -E '[.0-9]+'
     all:

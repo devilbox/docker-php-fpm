@@ -1,14 +1,8 @@
-#!/bin/sh
-#
-# Available global variables:
-#   + MY_USER
-#   + MY_GROUP
-#   + DEBUG_LEVEL
-
+#!/usr/bin/env bash
 
 set -e
 set -u
-
+set -o pipefail
 
 
 ############################################################
@@ -19,65 +13,54 @@ set -u
 ### Setup Postfix for catch-all
 ###
 fix_mds_permissions() {
-	mds_cfg=/etc/mysqldump-secure.conf
-	mds_cnf=/etc/mysqldump-secure.cnf
-	mds_log=/var/log/mysqldump-secure.log
-	mds_dir=/shared/backups/mysql
+	local debug="${1}"
+	local mds_cfg=/etc/mysqldump-secure.conf
+	local mds_cnf=/etc/mysqldump-secure.cnf
+	local mds_log=/var/log/mysqldump-secure.log
+	local mds_dir=/shared/backups/mysql
 
 	if [ ! -d "${mds_dir}" ]; then
-		run "mkdir -p ${mds_dir}"
+		run "mkdir -p ${mds_dir}" "${debug}"
 	fi
 
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_cfg}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_cnf}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_log}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_dir}"
-
-	unset -v mds_cfg
-	unset -v mds_cnf
-	unset -v mds_log
-	unset -v mds_dir
+	run "chown ${MY_USER}:${MY_GROUP} ${mds_cfg}" "${debug}"
+	run "chown ${MY_USER}:${MY_GROUP} ${mds_cnf}" "${debug}"
+	run "chown ${MY_USER}:${MY_GROUP} ${mds_log}" "${debug}"
+	run "chown ${MY_USER}:${MY_GROUP} ${mds_dir}" "${debug}"
 }
 
 set_mds_settings() {
-	mds_user_var="${1}"
-	mds_pass_var="${2}"
-	mds_host_var="${3}"
+	local mds_user_var="${1}"
+	local mds_pass_var="${2}"
+	local mds_host_var="${3}"
+	local debug="${4}"
 
-	mds_cnf=/etc/mysqldump-secure.cnf
+	local mds_cnf=/etc/mysqldump-secure.cnf
 
 	# MySQL user
 	if ! env_set "${mds_user_var}"; then
-		log "info" "\$${mds_user_var} not set for mysqldump-secure. Keeping default user."
+		log "info" "\$${mds_user_var} not set for mysqldump-secure. Keeping default user." "${debug}"
 	else
 		mds_user_val="$( env_get "${mds_user_var}" )"
-		log "info" "\$${mds_user_var} set for mysqldump-secure. Changing to '${mds_user_val}'"
-		run "sed -i'' 's/^user.*/user = ${mds_user_val}/g' ${mds_cnf}"
+		log "info" "\$${mds_user_var} set for mysqldump-secure. Changing to '${mds_user_val}'" "${debug}"
+		run "sed -i'' 's/^user.*/user = ${mds_user_val}/g' ${mds_cnf}" "${debug}"
 	fi
 
 	# MySQL pass
 	if ! env_set "${mds_pass_var}"; then
-		log "info" "\$${mds_pass_var} not set for mysqldump-secure. Keeping default password."
+		log "info" "\$${mds_pass_var} not set for mysqldump-secure. Keeping default password." "${debug}"
 	else
 		mds_pass_val="$( env_get "${mds_pass_var}" )"
-		log "info" "\$${mds_pass_var} set for mysqldump-secure. Changing to '******'"
-		run "sed -i'' 's/^password.*/password = ${mds_pass_val}/g' ${mds_cnf}"
+		log "info" "\$${mds_pass_var} set for mysqldump-secure. Changing to '******'" "${debug}"
+		run "sed -i'' 's/^password.*/password = ${mds_pass_val}/g' ${mds_cnf}" "${debug}"
 	fi
 
 	# MySQL host
 	if ! env_set "${mds_host_var}"; then
-		log "info" "\$${mds_host_var} not set for mysqldump-secure. Keeping default host."
+		log "info" "\$${mds_host_var} not set for mysqldump-secure. Keeping default host." "${debug}"
 	else
 		mds_host_val="$( env_get "${mds_host_var}" )"
-		log "info" "\$${mds_host_var} set for mysqldump-secure. Changing to '${mds_host_val}'"
-		run "sed -i'' 's/^host.*/host = ${mds_host_val}/g' ${mds_cnf}"
+		log "info" "\$${mds_host_var} set for mysqldump-secure. Changing to '${mds_host_val}'" "${debug}"
+		run "sed -i'' 's/^host.*/host = ${mds_host_val}/g' ${mds_cnf}" "${debug}"
 	fi
-
-	unset -v mds_user_var
-	unset -v mds_pass_var
-	unset -v mds_host_var
-	unset -v mds_user_val
-	unset -v mds_pass_val
-	unset -v mds_host_val
-	unset -v mds_cnf
 }

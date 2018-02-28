@@ -69,6 +69,7 @@ RUN set -x \
 		file \
 		gcc \
 		git \
+		git-flow \
 		git-svn \
 		hostname \
 		htop \
@@ -99,6 +100,7 @@ RUN set -x \
 		wget \
 		whois \
 		xz-utils \
+		yarn \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
 	&& rm -rf /var/lib/apt/lists/*
 
