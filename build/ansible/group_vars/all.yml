@@ -48,14 +48,22 @@ apt_repositories_enabled:
 ### Software to actually install
 ###
 software_enabled:
+  # Composer needs to be first, others rely on it
   - composer
+  # Normal packages start here
+  - awesomeci
   - drush
   - drupalconsole
-  - wpcli
-  - symfony
+  - grunt
   - laravel
+  - linuxbrew
+  - mysqldumpsecure
   - phalcon
-
+  - symfony
+  - webpack
+  - wpcli
+  # Cleanup needs to be last
+  - cleanup
 
 
 
@@ -109,6 +117,7 @@ apt_repositories_available:
 # all: is generic version of defines
 # 7.2: is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
+# check:    [optional] Include a check command to test if it was installed successfully
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
 #   pre:       [optional] Run command before 'command:' statement
@@ -116,12 +125,38 @@ apt_repositories_available:
 #   pre:       [optional] Run command after 'command:' statement
 #
 software_available:
+  awesomeci:
+    check: |
+      mdl --version | grep -E '[.0-9]+' \
+      && scss-lint --version | grep -E '[.0-9]+' \
+      && eslint -v | grep -E '[.0-9]+' \
+      && jsonlint --version | grep -E '[.0-9]+' \
+      && mdlint --version | grep -E '[.0-9]+' \
+      && gulp --version | grep -E '[.0-9]+' \
+    all:
+      command: |
+        git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+        && cd /usr/local/src/awesome-ci \
+        && git checkout $(git describe --abbrev=0 --tags) \
+        && ./configure --prefix=/usr/local \
+        && make install \
+        && cd / \
+        && rm -rf /usr/local/src/awesome-ci \
+      # awesome-ci requirements
+      post: |
+        gem install mixlib-config -v 2.2.4 \
+        && gem install mdl \
+        && gem install scss_lint \
+        && npm install -g eslint \
+        && npm install -g jsonlint \
+        && npm install -g mdlint \
+        && npm install -g gulp \
   composer:
-    check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' && rm -rf /root/.composer
+    check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
     all:
       command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   drush:
-    check: drush --version | grep -E '[.0-9]+' && rm -rf /root/.drush
+    check: drush --version | grep -E '[.0-9]+'
     5.5:
       pre: |
         git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
@@ -146,13 +181,16 @@ software_available:
         && rm -rf /usr/local/src/drush/examples \
         && rm -rf /usr/local/src/drush/misc \
         && rm -rf /usr/local/src/drush/tests \
-        && rm -rf /home/${MY_USER}/.composer \
   drupalconsole:
     disabled: [5.4]
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
     all:
       command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
+  grunt:
+    check: grunt --version | grep -E '[.0-9]+'
+    all:
+      command: npm install -g grunt grunt-cli
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
     7.0:
@@ -185,6 +223,44 @@ software_available:
         && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
         && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
         && rm -rf /usr/local/src/laravel-installer/laravel/.git \
+  linuxbrew:
+    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+'
+    all:
+      command: |
+        git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+        && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
+        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+  mysqldumpsecure:
+    check: mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
+    all:
+      command: |
+        git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+        && cd /usr/local/src/mysqldump-secure \
+        && git checkout $(git describe --abbrev=0 --tags) \
+        && cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+        && cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+        && cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+        && touch /var/log/mysqldump-secure.log \
+        && chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+        && chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+        && chmod 0400 /etc/mysqldump-secure.conf \
+        && chmod 0400 /etc/mysqldump-secure.cnf \
+        && chmod 0644 /var/log/mysqldump-secure.log \
+        && sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+        && cd / \
+        && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
     check: phalcon commands | grep -E '[.0-9]+'
     5.4:
@@ -213,10 +289,32 @@ software_available:
     all:
       command: curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
-
-
-
-
+  webpack:
+    check: webpack --version | grep -E '[.0-9]+'
+    all:
+      command: npm install -g webpack webpack-cli
+  cleanup:
+    all:
+      command: |
+        rm -rf /home/${MY_USER}/.*json \
+        && rm -rf /home/${MY_USER}/.cache \
+        && rm -rf /home/${MY_USER}/.composer \
+        && rm -rf /home/${MY_USER}/.config \
+        && rm -rf /home/${MY_USER}/.drush \
+        && rm -rf /home/${MY_USER}/.gem \
+        && rm -rf /home/${MY_USER}/.npm \
+        && rm -rf /home/${MY_USER}/.subversion \
+        \
+        && rm -rf /root/.*json \
+        && rm -rf /root/.cache \
+        && rm -rf /root/.composer \
+        && rm -rf /root/.config \
+        && rm -rf /root/.drush \
+        && rm -rf /root/.gem \
+        && rm -rf /root/.npm \
+        && rm -rf /root/.subversion \
+        \
+        && rm -rf /tmp/* \
 
 
 ################################################################################

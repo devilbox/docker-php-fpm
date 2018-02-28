@@ -103,11 +103,11 @@ RUN set -x \
 	&& rm -rf /var/lib/apt/lists/*
 
 
+RUN set -x \
 {% for tool in software_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
 # {{ tool }}
-RUN set -x true \
 {# Version specific pre-command available? #}
 {% if php_version in software_available[tool] and 'pre' in software_available[tool][php_version] %}
 	&& {{ software_available[tool][php_version]['pre'] }} \
@@ -129,113 +129,29 @@ RUN set -x true \
 {% elif 'all' in software_available[tool] and 'post' in software_available[tool]['all'] %}
 	&& {{ software_available[tool]['all']['post'] }} \
 {% endif %}
-	&& true
 {% endif %}
 {% endfor %}
+	&& true
 
-## Mysqldump-secure
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
-#	&& cd /usr/local/src/mysqldump-secure \
-#	&& git checkout $(git describe --abbrev=0 --tags) \
-#	&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
-#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
-#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
-#	&& touch /var/log/mysqldump-secure.log \
-#	&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
-#	&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
-#	&& chmod 0400 /etc/mysqldump-secure.conf \
-#	&& chmod 0400 /etc/mysqldump-secure.cnf \
-#	&& chmod 0644 /var/log/mysqldump-secure.log \
-#	&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
-#	\
-#	&& cd / \
-#	&& rm -rf /usr/local/src/mysqldump-secure \
-#	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
-#
-## Awesome-CI
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
-#	&& cd /usr/local/src/awesome-ci \
-#	&& git checkout $(git describe --abbrev=0 --tags) \
-#	&& ./configure --prefix=/usr/local \
-#	&& make install \
-#	&& cd / \
-#	&& rm -rf /usr/local/src/awesome-ci
-#
-## Awesome-CI requirements
-#RUN set -x \
-#	&& gem install mdl \
-#	&& gem install scss_lint \
-#	&& npm install -g eslint \
-#	&& npm install -g jsonlint \
-#	&& npm install -g mdlint \
-#	&& npm install -g gulp \
-#	&& rm -rf /root/.gem \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Grunt
-#RUN set -x \
-#	&& npm install -g grunt \
-#	&& npm install -g grunt-cli \
-#	&& /usr/local/node/bin/grunt --version | grep -E 'v[.0-9]+' \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Webpack
-#RUN set -x \
-#	&& npm install -g --save-dev webpack \
-#	&& /usr/local/node/bin/webpack --version | grep -E '[.0-9]+' \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Linuxbrew
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-#	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
-#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' | grep -E 'HOMEBREW_VERSION:\s*[.0-9]+' \
-#	&& rm -rf /home/${MY_USER}/.cache
-#
-#
-#
-####
-#### Configure Bash
-####
-#RUN \
-#	{ \
-#		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
-#		echo "export PATH"; \
-#		echo ". /etc/bash-devilbox"; \
-#		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
-#		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
-#		echo "        if [ -r \"\${f}\" ]; then"; \
-#		echo "            . \"\${f}\""; \
-#		echo "        fi"; \
-#		echo "    done"; \
-#		echo "    unset f"; \
-#		echo "fi"; \
-#	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
-#	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
-#
+
+###
+### Configure Bash
+###
+RUN \
+	{ \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "export PATH"; \
+		echo ". /etc/bash-devilbox"; \
+		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
+		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
 
 
 {% if debug %}
@@ -252,7 +168,9 @@ RUN set -x \
 {% for tool in software_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
+{% if 'check' in software_available[tool] %}
 	&& {{ software_available[tool]['check'] }} \
+{% endif %}
 {% endif %}
 {% endfor %}
 	&& true
@@ -268,7 +186,6 @@ COPY ./data/bash-devilbox /etc/bash-devilbox
 COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
 
 
-
 ###
 ### Volumes
 ###
@@ -278,7 +195,6 @@ VOLUME /etc/php-modules.d
 VOLUME /shared/backups
 VOLUME /var/log/php
 VOLUME /var/mail
-
 
 
 ###

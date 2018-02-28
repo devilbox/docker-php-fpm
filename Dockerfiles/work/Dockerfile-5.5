@@ -86,12 +86,27 @@ RUN set -x \
 	&& rm -rf /var/lib/apt/lists/*
 
 
+RUN set -x \
 # composer
-RUN set -x true \
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-	&& true
+# awesomeci
+	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+&& cd /usr/local/src/awesome-ci \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& ./configure --prefix=/usr/local \
+&& make install \
+&& cd / \
+&& rm -rf /usr/local/src/awesome-ci \
+ \
+	&& gem install mixlib-config -v 2.2.4 \
+&& gem install mdl \
+&& gem install scss_lint \
+&& npm install -g eslint \
+&& npm install -g jsonlint \
+&& npm install -g mdlint \
+&& npm install -g gulp \
+ \
 # drush
-RUN set -x true \
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
 && cd /usr/local/src/drush \
 && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
@@ -104,26 +119,13 @@ RUN set -x true \
 && rm -rf /usr/local/src/drush/examples \
 && rm -rf /usr/local/src/drush/misc \
 && rm -rf /usr/local/src/drush/tests \
-&& rm -rf /home/${MY_USER}/.composer \
  \
-	&& true
 # drupalconsole
-RUN set -x true \
 	&& curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
 	&& chmod +x /usr/local/bin/drupal \
-	&& true
-# wpcli
-RUN set -x true \
-	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
-	&& chmod +x /usr/local/bin/wp \
-	&& true
-# symfony
-RUN set -x true \
-	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
-	&& chmod +x /usr/local/bin/symfony \
-	&& true
+# grunt
+	&& npm install -g grunt grunt-cli \
 # laravel
-RUN set -x true \
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
 && cd /usr/local/src/laravel-installer \
 && git checkout v2.0.0 \
@@ -133,9 +135,41 @@ RUN set -x true \
 && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
-	&& true
+# linuxbrew
+	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+	'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+	'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
+&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+ \
+# mysqldumpsecure
+	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+&& cd /usr/local/src/mysqldump-secure \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+&& touch /var/log/mysqldump-secure.log \
+&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+&& chmod 0400 /etc/mysqldump-secure.conf \
+&& chmod 0400 /etc/mysqldump-secure.cnf \
+&& chmod 0644 /var/log/mysqldump-secure.log \
+&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+&& cd / \
+&& rm -rf /usr/local/src/mysqldump-secure \
+ \
 # phalcon
-RUN set -x true \
 	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
 && cd /usr/local/src/phalcon-devtools \
 && git checkout $(git describe --abbrev=0 --tags) \
@@ -146,111 +180,56 @@ RUN set -x true \
 && cd / \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \
+# symfony
+	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
+	&& chmod +x /usr/local/bin/symfony \
+# webpack
+	&& npm install -g webpack webpack-cli \
+# wpcli
+	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
+# cleanup
+	&& rm -rf /home/${MY_USER}/.*json \
+&& rm -rf /home/${MY_USER}/.cache \
+&& rm -rf /home/${MY_USER}/.composer \
+&& rm -rf /home/${MY_USER}/.config \
+&& rm -rf /home/${MY_USER}/.drush \
+&& rm -rf /home/${MY_USER}/.gem \
+&& rm -rf /home/${MY_USER}/.npm \
+&& rm -rf /home/${MY_USER}/.subversion \
+\
+&& rm -rf /root/.*json \
+&& rm -rf /root/.cache \
+&& rm -rf /root/.composer \
+&& rm -rf /root/.config \
+&& rm -rf /root/.drush \
+&& rm -rf /root/.gem \
+&& rm -rf /root/.npm \
+&& rm -rf /root/.subversion \
+\
+&& rm -rf /tmp/* \
+ \
 	&& true
 
-## Mysqldump-secure
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
-#	&& cd /usr/local/src/mysqldump-secure \
-#	&& git checkout $(git describe --abbrev=0 --tags) \
-#	&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
-#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
-#	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
-#	&& touch /var/log/mysqldump-secure.log \
-#	&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
-#	&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
-#	&& chmod 0400 /etc/mysqldump-secure.conf \
-#	&& chmod 0400 /etc/mysqldump-secure.cnf \
-#	&& chmod 0644 /var/log/mysqldump-secure.log \
-#	&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
-#	&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
-#	\
-#	&& cd / \
-#	&& rm -rf /usr/local/src/mysqldump-secure \
-#	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
-#
-## Awesome-CI
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
-#	&& cd /usr/local/src/awesome-ci \
-#	&& git checkout $(git describe --abbrev=0 --tags) \
-#	&& ./configure --prefix=/usr/local \
-#	&& make install \
-#	&& cd / \
-#	&& rm -rf /usr/local/src/awesome-ci
-#
-## Awesome-CI requirements
-#RUN set -x \
-#	&& gem install mdl \
-#	&& gem install scss_lint \
-#	&& npm install -g eslint \
-#	&& npm install -g jsonlint \
-#	&& npm install -g mdlint \
-#	&& npm install -g gulp \
-#	&& rm -rf /root/.gem \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Grunt
-#RUN set -x \
-#	&& npm install -g grunt \
-#	&& npm install -g grunt-cli \
-#	&& /usr/local/node/bin/grunt --version | grep -E 'v[.0-9]+' \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Webpack
-#RUN set -x \
-#	&& npm install -g --save-dev webpack \
-#	&& /usr/local/node/bin/webpack --version | grep -E '[.0-9]+' \
-#	&& rm -rf /root/.npm \
-#	&& rm -rf /root/.config \
-#	&& rm -rf /tmp/*
-#
-## Linuxbrew
-#RUN set -x \
-#	&& mkdir -p /usr/local/src \
-#	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-#	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-#	&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-#		'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
-#	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' | grep -E 'HOMEBREW_VERSION:\s*[.0-9]+' \
-#	&& rm -rf /home/${MY_USER}/.cache
-#
-#
-#
-####
-#### Configure Bash
-####
-#RUN \
-#	{ \
-#		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
-#		echo "export PATH"; \
-#		echo ". /etc/bash-devilbox"; \
-#		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
-#		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
-#		echo "        if [ -r \"\${f}\" ]; then"; \
-#		echo "            . \"\${f}\""; \
-#		echo "        fi"; \
-#		echo "    done"; \
-#		echo "    unset f"; \
-#		echo "fi"; \
-#	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
-#	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
-#
+
+###
+### Configure Bash
+###
+RUN \
+	{ \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "export PATH"; \
+		echo ". /etc/bash-devilbox"; \
+		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
+		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
 
 
 ###
@@ -263,13 +242,24 @@ RUN set -x \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
 
 RUN set -x \
-	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' && rm -rf /root/.composer \
-	&& drush --version | grep -E '[.0-9]+' && rm -rf /root/.drush \
+	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
+	&& mdl --version | grep -E '[.0-9]+' \
+&& scss-lint --version | grep -E '[.0-9]+' \
+&& eslint -v | grep -E '[.0-9]+' \
+&& jsonlint --version | grep -E '[.0-9]+' \
+&& mdlint --version | grep -E '[.0-9]+' \
+&& gulp --version | grep -E '[.0-9]+' \
+ \
+	&& drush --version | grep -E '[.0-9]+' \
 	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
-	&& wp --allow-root --version | grep -E '[.0-9]+' \
-	&& symfony --version | grep -E 'version\s*[.0-9]+' \
+	&& grunt --version | grep -E '[.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
+	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
+	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phalcon commands | grep -E '[.0-9]+' \
+	&& symfony --version | grep -E 'version\s*[.0-9]+' \
+	&& webpack --version | grep -E '[.0-9]+' \
+	&& wp --allow-root --version | grep -E '[.0-9]+' \
 	&& true
 
 
@@ -282,7 +272,6 @@ COPY ./data/bash-devilbox /etc/bash-devilbox
 COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
 
 
-
 ###
 ### Volumes
 ###
@@ -292,7 +281,6 @@ VOLUME /etc/php-modules.d
 VOLUME /shared/backups
 VOLUME /var/log/php
 VOLUME /var/mail
-
 
 
 ###
