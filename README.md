@@ -1,8 +1,95 @@
 # Docker PHP-FPM images
 
+<h2><img id="options" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Options</h2>
 
+### Environment variables
 
-## Available PHP Modules
+Have a look at the following table to see all supported environment variables for each Docker image flavour.
+
+<table>
+ <thead>
+  <tr>
+   <th>Image</th>
+   <th>Env Variable</th>
+   <th>Type</th>
+   <th>Default</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td rowspan="3"><strong>base</strong><br/><br/><strong>mods</strong><br/><br/><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td><code>DEBUG_ENTRYPOINT</code></td>
+   <td>int</td>
+   <td><code>0</code></td>
+   <td>Set debug level for startup.<br/><sub><code>0</code> Only warnings and errors are shown.<br/><code>1</code> All log messages are shown<br/><code>2</code> All log messages and executed commands are shown.</sub></td>
+  </tr>
+  <tr>
+   <td><code>NEW_UID</code></td>
+   <td>int</td>
+   <td><code>1000</code></td>
+   <td>Assign the PHP-FPM user a new <code>uid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local user.<br/><sub>(Type <code>id</code> for your uid).</sub></td>
+  </tr>
+  <tr>
+   <td><code>NEW_GID</code></td>
+   <td>int</td>
+   <td><code>1000</code></td>
+   <td>Assign the PHP-FPM group a new <code>gid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local group.<br/><sub>(Type <code>id</code> for your gid).</sub></td>
+  </tr>
+  <tr>
+   <td colspan="5"></td>
+  </tr>
+  <tr>
+   <td rowspan="4"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td><code>TIMEZONE</code></td>
+   <td>string</td>
+   <td><code>UTC</code></td>
+   <td>Set docker OS timezone as well as PHP timezone.<br/>(Example: <code>Europe/Berlin</code>)</td>
+  </tr>
+  <tr>
+   <td><code>DOCKER_LOGS</code></td>
+   <td>bool</td>
+   <td><code>1</code></td>
+   <td>By default all Docker images are configured to output their PHP-FPM access and error logs to stdout and stderr. Those which support it can change the behaviour to log into files inside the container. Their respective directories are available as volumes that can be mounted to the host computer. This feature might help developer who are more comfortable with tailing or searching through actual files instead of using docker logs.<br/><br/>Set this variable to <code>0</code> in order to enable logging to files. Log files are avilable under <code>/var/log/php/</code> which is also a docker volume that can be mounted locally.</td>
+  </tr>
+  <tr>
+   <td><code>ENABLE_MAIL</code></td>
+   <td>bool</td>
+   <td><code>0</code></td>
+   <td>Enable local email catch-all.<br/>Postfix will be configured for local delivery and all mails sent (even to real domains) will be catched locally. No email will ever go out. They will all be stored in a local devilbox account.<br/>Value: <code>0</code> or <code>1</code></td>
+  </tr>
+  <tr>
+   <td><code>FORWARD_PORTS_TO_LOCALHOST</code></td>
+   <td>string</td>
+   <td></td>
+   <td>List of remote ports to forward to 127.0.0.1.<br/><strong>Format:</strong><br/><sub><code>&lt;local-port&gt;:&lt;remote-host&gt;:&lt;remote-port&gt;</code></sub><br/>You can separate multiple entries by comma.<br/><strong>Example:</strong><br/><sub><code>3306:mysqlhost:3306, 6379:192.0.1.1:6379</code></sub></td>
+  </tr>
+  <tr>
+   <td colspan="5"></td>
+  </tr>
+  <tr>
+   <td rowspan="3"><strong>work</strong></td>
+   <td><code>MYSQL_BACKUP_USER</code></td>
+   <td>string</td>
+   <td><code>''</code></td>
+   <td>Username for mysql backups used for bundled <a href="https://mysqldump-secure.org" >mysqldump-secure</a></td>
+  </tr>
+  <tr>
+   <td><code>MYSQL_BACKUP_PASS</code></td>
+   <td>string</td>
+   <td><code>''</code></td>
+   <td>Password for mysql backups used for bundled <a href="https://mysqldump-secure.org" >mysqldump-secure</a></td>
+  </tr>
+  <tr>
+   <td><code>MYSQL_BACKUP_HOST</code></td>
+   <td>string</td>
+   <td><code>''</code></td>
+   <td>Hostname for mysql backups used for bundled <a href="https://mysqldump-secure.org" >mysqldump-secure</a></td>
+  </tr>
+ </tbody>
+</table>
+
+<h2><img id="modules" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Modules</h2>
 
 <table>
  <thead>

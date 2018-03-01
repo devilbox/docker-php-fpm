@@ -52,9 +52,16 @@ before_script:
 
   # Build (multiple tries due to network outages)
   - max=100; i=0; while [ $i -lt $max ]; do if make build-base-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - make test-base-${PHP//.}
+
   - max=100; i=0; while [ $i -lt $max ]; do if make build-mods-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - make test-mods-${PHP//.}
+
   - max=100; i=0; while [ $i -lt $max ]; do if make build-prod-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - make test-prod-${PHP//.}
+
   - max=100; i=0; while [ $i -lt $max ]; do if make build-work-${PHP//.}; then break; else i=$((i+1)); fi; done; if [ $i -gt 98 ]; then false; fi
+  - make test-work-${PHP//.}
 
   # Test if PHP modules have changed
   - ./build/gen-readme.sh "${PHP}"

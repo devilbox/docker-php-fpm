@@ -13,7 +13,10 @@ set -o pipefail
 ### Setup Postfix for catch-all
 ###
 fix_mds_permissions() {
-	local debug="${1}"
+	local user="${1}"
+	local group="${2}"
+	local debug="${3}"
+
 	local mds_cfg=/etc/mysqldump-secure.conf
 	local mds_cnf=/etc/mysqldump-secure.cnf
 	local mds_log=/var/log/mysqldump-secure.log
@@ -23,10 +26,10 @@ fix_mds_permissions() {
 		run "mkdir -p ${mds_dir}" "${debug}"
 	fi
 
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_cfg}" "${debug}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_cnf}" "${debug}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_log}" "${debug}"
-	run "chown ${MY_USER}:${MY_GROUP} ${mds_dir}" "${debug}"
+	run "chown ${user}:${group} ${mds_cfg}" "${debug}"
+	run "chown ${user}:${group} ${mds_cnf}" "${debug}"
+	run "chown ${user}:${group} ${mds_log}" "${debug}"
+	run "chown ${user}:${group} ${mds_dir}" "${debug}"
 }
 
 set_mds_settings() {

@@ -134,7 +134,7 @@ copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 ###
 ### mysqldump-secure
 ###
-fix_mds_permissions "${DEBUG_LEVEL}"
+fix_mds_permissions "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
 set_mds_settings "MYSQL_BACKUP_USER" "MYSQL_BACKUP_PASS" "MYSQL_BACKUP_HOST" "${DEBUG_LEVEL}"
 
 
