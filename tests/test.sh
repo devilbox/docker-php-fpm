@@ -20,12 +20,6 @@ IFS=$'\n'
 # Current directory
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-# Array of tests to run
-declare -a BASE_TESTS=()
-declare -a MODS_TESTS=()
-declare -a PROD_TESTS=()
-declare -a WORK_TESTS=()
-
 
 ###
 ### Source libs
@@ -44,34 +38,11 @@ fi
 
 
 ###
-### Find test files
-###
-FILES="$( find ${CWD} -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
-for f in ${FILES}; do
-	BASE_TESTS+=("${f}")
-done
-
-FILES="$( find ${CWD} -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
-for f in ${FILES}; do
-	MODS_TESTS+=("${f}")
-done
-
-FILES="$( find ${CWD} -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
-for f in ${FILES}; do
-	PROD_TESTS+=("${f}")
-done
-
-FILES="$( find ${CWD} -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
-for f in ${FILES}; do
-	WORK_TESTS+=("${f}")
-done
-
-
-###
 ### Run tests
 ###
 if [ "${2}" = "base" ] || [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
-	for t in "${BASE_TESTS[@]}"; do
+	TESTS="$( find ${CWD} -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
+	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
@@ -80,7 +51,8 @@ if [ "${2}" = "base" ] || [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}"
 fi
 
 if [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
-	for t in "${MODS_TESTS[@]}"; do
+	TESTS="$( find ${CWD} -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
+	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
@@ -89,7 +61,8 @@ if [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
 fi
 
 if [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
-	for t in "${PROD_TESTS[@]}"; do
+	TESTS="$( find ${CWD} -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
+	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
@@ -98,7 +71,8 @@ if [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
 fi
 
 if [ "${2}" = "work" ]; then
-	for t in "${WORK_TESTS[@]}"; do
+	TESTS="$( find ${CWD} -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
+	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
