@@ -117,7 +117,7 @@ function docker_run() {
 
 	# If it fails, start again in foreground to fail again, but show errors
 	if ! docker exec -it ${did} ls >/dev/null 2>&1; then
-		docker run "${args}" "${image_name}" "1"
+		run "docker run --name $( get_random_name ) ${args} ${image_name}" "1"
 		return 1
 	fi
 

@@ -18,6 +18,7 @@ _log_to_dockerlogs() {
 		echo "access.log = /proc/self/fd/2"
 	} > "${conf_logfile}"
 }
+
 _log_to_files() {
 	local conf_logfile="${1}"
 	local log_dir="${2}"
@@ -36,6 +37,7 @@ _log_to_files() {
 		run "touch ${log_dir}/php-fpm.error" "${debug}"
 	fi
 	run "chown -R ${user}:${group} ${log_dir}" "${debug}"
+	run "chmod 0755 ${log_dir}" "${debug}"
 	{
 		echo "[global]"
 		echo "error_log = ${log_dir}/php-fpm.error"
@@ -77,10 +79,10 @@ set_docker_logs() {
 
 		# Keep docker logs
 		elif [ "${docker_logs}" = "1" ]; then
-			log "info" "\$${env_varname} set to 1. Logging to docker logs (stdout and stderr)."
+			log "info" "\$${env_varname} set to 1. Logging to docker logs (stdout and stderr)." "${debug}"
 			_log_to_dockerlogs "${conf_logfile}"
 		else
-			log "err" "Invalid value for \$${env_varname}. Can only be 0 or 1. Provided: ${docker_logs}"
+			log "err" "Invalid value for \$${env_varname}. Can only be 0 or 1. Provided: ${docker_logs}" "${debug}"
 			exit 1
 		fi
 	fi
