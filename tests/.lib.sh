@@ -151,6 +151,21 @@ function docker_exec() {
 
 
 ###
+### Get docker name
+###
+function docker_name() {
+	local did="${1}"
+	local name=
+	name="$( docker ps | grep "${did}" | awk '{print $(NF)}' )"
+
+	if [ -z "${name}" ]; then
+		return 1
+	fi
+	echo "${name}"
+}
+
+
+###
 ### Stop container
 ###
 function docker_stop() {

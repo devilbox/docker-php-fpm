@@ -89,6 +89,76 @@ Have a look at the following table to see all supported environment variables fo
  </tbody>
 </table>
 
+### Volumes
+
+Have a look at the following table to see all offered volumes for each Docker image flavour.
+
+<table>
+ <thead>
+  <tr>
+   <th>Image</th>
+   <th width="200">Volumes</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td rowspan="4"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td><code>/etc/php-custom.d</code></td>
+   <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
+  </tr>
+  <tr>
+   <td><code>/etc/php-modules.d</code></td>
+   <td>Mount this directory into your host computer and add custo <code>\*.so</code> files in order to add your php modules.<br/><br/><strong>Note:</strong>Your should then also provide a custom <code>\*.ini</code> file in order to actually load your custom provided module.</td>
+  </tr>
+  <tr>
+   <td><code>/var/log/php</code></td>
+   <td>When setting environment variable <code>DOCKER_LOGS</code> to <code>0</code>, log files will be available under this directory.</td>
+  </tr>
+  <tr>
+   <td><code>/var/mail</code></td>
+   <td>Emails caught be the postfix catch-all (<code>ENABLE_MAIL=1</code>) will be available in this directory.</td>
+  </tr>
+  <tr>
+   <td colspan="3"></td>
+  </tr>
+  <tr>
+   <td rowspan="2"><strong>work</strong></td>
+   <td><code>/etc/bash-custom.d</code></td>
+   <td>Mount this directory into your host computer and add custom configuration files for <code>bash</code> and other tools.</td>
+  </tr>
+  <tr>
+   <td><code>/shared/backups</code></td>
+   <td>Mount this directory into your host computer to access MySQL backups created by <a href="https://mysqldump-secure.org" >mysqldump-secure</a>.</td>
+  </tr>
+ </tbody>
+</table>
+
+
+### Ports
+
+Have a look at the following table to see all offered exposed ports for each Docker image flavour.
+
+<table>
+ <thead>
+  <tr>
+   <th>Image</th>
+   <th width="200">Port</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td rowspan="1"><strong>base</strong><br/><strong>mods</strong><br/><strong>prod</strong><br/><strong>work</strong></td>
+   <td><code>9000</code></td>
+   <td>PHP-FPM listening port</td>
+  </tr>
+ </tbody>
+</table>
+
+
+
+
 <h2><img id="modules" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Modules</h2>
 
 <table>

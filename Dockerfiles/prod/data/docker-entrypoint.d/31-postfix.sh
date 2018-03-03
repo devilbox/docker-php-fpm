@@ -29,7 +29,7 @@ set_postfix() {
 	else
 		catch_all="$( env_get "${env_varname}" )"
 		if [ "${catch_all}" = "1" ]; then
-			log "info" "Enabling postfix catch-all" "${debug}"
+			log "info" "\$${env_varname} set to 1. Enabling postfix catch-all" "${debug}"
 
 			# Configure PHP
 			{
@@ -61,11 +61,10 @@ set_postfix() {
 			run "newaliases" "${debug}"
 
 		elif [ "${catch_all}" = "0" ]; then
-			log "info" "Disabling postfix catch-all" "${debug}"
+			log "info" "\$${env_varname} set to 0. Disabling postfix catch-all" "${debug}"
 
 		else
-			log "err" "Invalid value for \$${env_varname}" "${debug}"
-			log "err" "Only 1 (for on) or 0 (for off) are allowed" "${debug}"
+			log "err" "Invalid value for \$${env_varname}. Can only be 0 or 1. Prodived: ${catch_all}" "${debug}"
 			exit 1
 		fi
 	fi
