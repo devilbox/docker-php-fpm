@@ -33,6 +33,10 @@ CONTAINER="nginx:stable"
 
 FINDME="am_i_really_working"
 echo "<?php echo '${FINDME}';" > "${DOC_ROOT_HOST}/index.php"
+
+# Fix mount permissions
+chmod 0777 "${CONFIG_HOST}"
+chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
 # Pull Image
