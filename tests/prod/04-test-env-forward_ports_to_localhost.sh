@@ -22,9 +22,13 @@ FLAVOUR="${3}"
 ###
 ### Socat forwarding
 ###
+CONTAINER="mysql:5.6"
+
+# Pull Container
+run "docker pull ${CONTAINER}"
 
 # Start mysql container
-mdid="$( docker_run "mysql:5.6" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
+mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
 mname="$( docker_name "${mdid}" )"
 run "sleep 5"
 
@@ -40,8 +44,8 @@ fi
 
 # Test connectivity
 docker_exec "${did}" "ping -c 1 ${mname}"
-#docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
-#docker_exec "${did}" "echo | nc -w 1 127.0.0.1 3306"
+docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
+docker_exec "${did}" "echo | nc -w 1 127.0.0.1 3306"
 
 # Only work container has mysql binary installed
 if [ "${FLAVOUR}" = "work" ]; then

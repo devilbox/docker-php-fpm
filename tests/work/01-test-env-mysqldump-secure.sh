@@ -24,9 +24,13 @@ FLAVOUR="${3}"
 ###
 MYSQL_ROOT_PASSWORD="toor"
 MOUNTPOINT="$( mktemp --directory )"
+CONTAINER="mysql:5.6"
+
+# Pull Container
+run "docker pull ${CONTAINER}"
 
 # Start mysql container
-mdid="$( docker_run "mysql:5.6" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" )"
+mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" )"
 mname="$( docker_name "${mdid}" )"
 run "sleep 5"
 

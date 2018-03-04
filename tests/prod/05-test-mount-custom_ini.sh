@@ -32,9 +32,13 @@ CONFIG_CONT="/etc/nginx/conf.d"
 PHP_INI_HOST="$( mktemp -d )"
 PHP_INI_CONT="/etc/php-custom.d"
 
+CONTAINER="nginx:stable"
+
 echo "post_max_size = 17M" > "${PHP_INI_HOST}/post.ini"
 echo "<?php phpinfo();" > "${DOC_ROOT_HOST}/index.php"
 
+# Pull container
+run "docker pull ${CONTAINER}"
 
 # Start PHP-FPM
 did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"
@@ -59,7 +63,7 @@ name="$( docker_name "${did}" )"
 
 
 # Start Nginx
-ndid="$( docker_run "nginx:stable" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
+ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
 # Check entrypoint
 if ! run "docker logs ${did} | grep 'post.ini'"; then
