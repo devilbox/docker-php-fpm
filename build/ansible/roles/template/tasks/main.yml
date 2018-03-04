@@ -5,6 +5,6 @@
     src: "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
-    mode: 0644
+    mode: 0664
   with_items:
     - "{{ template_files }}"
