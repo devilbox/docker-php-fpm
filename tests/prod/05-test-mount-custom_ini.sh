@@ -37,11 +37,17 @@ CONTAINER="nginx:stable"
 echo "post_max_size = 17M" > "${PHP_INI_HOST}/post.ini"
 echo "<?php phpinfo();" > "${DOC_ROOT_HOST}/index.php"
 
+# Fix mount permissions
+chmod 0777 "${CONFIG_HOST}"
+chmod 0777 "${PHP_INI_HOST}"
+chmod 0777 "${DOC_ROOT_HOST}"
+chmod 0644 "${DOC_ROOT_HOST}/index.php"
+
 # Pull container
 run "docker pull ${CONTAINER}"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"
 name="$( docker_name "${did}" )"
 
 # Nginx.conf
@@ -82,9 +88,29 @@ if ! run "docker logs ${did} | grep 'post.ini'"; then
 fi
 
 # Check PHP connectivity
-if ! run "curl -q -4 127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
+if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
+	# Info
+	run "netstat -tuln"
+	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "docker ps --no-trunc"
+	docker_exec "${ndid}" "nginx -t"
+
+	# Show logs
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
+
+	# Ensure file is available
+	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+
+	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+
+	# Nginx configuration
+	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+
+	# Shutdown
 	docker_stop "${ndid}" || true
 	docker_stop "${did}"  || true
 	rm -rf "${DOC_ROOT_HOST}"
@@ -96,9 +122,14 @@ fi
 
 # Check modified php.ini
 if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M'"; then
+	# Info
 	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
+
+	# Show logs
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
+
+	# Shutdown
 	docker_stop "${ndid}" || true
 	docker_stop "${did}"  || true
 	rm -rf "${DOC_ROOT_HOST}"
@@ -109,10 +140,29 @@ if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M
 fi
 
 # Check modified php.ini
-if ! run "curl -q -4 127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
-	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
+if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
+	# Info
+	run "netstat -tuln"
+	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "docker ps --no-trunc"
+	docker_exec "${ndid}" "nginx -t"
+
+	# Show logs
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
+
+	# Ensure file is available
+	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+
+	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+
+	# Nginx configuration
+	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+
+	# Shutdown
 	docker_stop "${ndid}" || true
 	docker_stop "${did}"  || true
 	rm -rf "${DOC_ROOT_HOST}"

@@ -43,7 +43,7 @@ chmod 0644 "${DOC_ROOT_HOST}/index.php"
 run "docker pull ${CONTAINER}"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"
 name="$( docker_name "${did}" )"
 
 # Nginx.conf

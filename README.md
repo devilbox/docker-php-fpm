@@ -28,13 +28,13 @@ Have a look at the following table to see all supported environment variables fo
    <td><code>NEW_UID</code></td>
    <td>int</td>
    <td><code>1000</code></td>
-   <td>Assign the PHP-FPM user a new <code>uid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local user.<br/><sub>(Type <code>id</code> for your uid).</sub></td>
+   <td>Assign the PHP-FPM user a new <code>uid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local user.<br/><sub>(Type <code>id -u</code> for your uid).</sub></td>
   </tr>
   <tr>
    <td><code>NEW_GID</code></td>
    <td>int</td>
    <td><code>1000</code></td>
-   <td>Assign the PHP-FPM group a new <code>gid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local group.<br/><sub>(Type <code>id</code> for your gid).</sub></td>
+   <td>Assign the PHP-FPM group a new <code>gid</code> in order to syncronize file system permissions with your host computer and the Docker container. You should use a value that matches your host systems local group.<br/><sub>(Type <code>id -g</code> for your gid).</sub></td>
   </tr>
   <tr>
    <td colspan="5"></td>
