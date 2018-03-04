@@ -47,8 +47,8 @@ run "sleep 10"
 
 # Test connectivity
 docker_exec "${did}" "ping -c 1 ${mname}"
-docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
-docker_exec "${did}" "echo | nc -w 1 127.0.0.1 3306"
+#docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
+#docker_exec "${did}" "echo | nc -w 1 127.0.0.1 3306"
 
 # Only work container has mysql binary installed
 if [ "${FLAVOUR}" = "work" ]; then
