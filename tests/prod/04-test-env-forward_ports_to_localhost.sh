@@ -42,6 +42,9 @@ if ! run "docker logs ${did} 2>&1 | grep 'Forwarding ${mname}:3306'"; then
 	exit 1
 fi
 
+# Wait for both containers to come up
+run "sleep 10"
+
 # Test connectivity
 docker_exec "${did}" "ping -c 1 ${mname}"
 docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
