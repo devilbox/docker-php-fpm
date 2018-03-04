@@ -32,7 +32,8 @@ CONFIG_CONT="/etc/nginx/conf.d"
 CONTAINER="nginx:stable"
 
 FINDME="am_i_really_working"
-echo "${FINDME}" > "${DOC_ROOT_HOST}/index.php"
+echo "<?php echo '${FINDME}';" > "${DOC_ROOT_HOST}/index.php"
+chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
 # Pull Image
 run "docker pull ${CONTAINER}"
@@ -66,11 +67,21 @@ run "sleep 10"
 
 # Check PHP connectivity
 if ! run "curl -q http://localhost:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
+
+	# Info
+	run "netstat -tuln"
+	run "curl http://localhost:${WWW_PORT}/index.php" || true
+	run "docker ps --no-trunc"
+	docker_exec "${ndid}" "nginx -t"
+
 	# Show logs
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
 
 	# Ensure file is available
+	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+
 	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
 	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
 
