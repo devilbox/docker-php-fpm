@@ -61,8 +61,11 @@ name="$( docker_name "${did}" )"
 # Start Nginx
 ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
+# Wait for both containers to be up and running
+run "sleep 10"
+
 # Check PHP connectivity
-if ! run "curl -q 127.0.0.1:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
+if ! run "curl -q localhost:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
