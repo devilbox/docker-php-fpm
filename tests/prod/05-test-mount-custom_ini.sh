@@ -82,7 +82,7 @@ if ! run "docker logs ${did} | grep 'post.ini'"; then
 fi
 
 # Check PHP connectivity
-if ! run "curl -q localhost:${WWW_PORT}/index.php >/dev/null 2>&1"; then
+if ! run "curl -q -4 127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
@@ -109,7 +109,7 @@ if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M
 fi
 
 # Check modified php.ini
-if ! run "curl -q localhost:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
+if ! run "curl -q -4 127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
 	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true

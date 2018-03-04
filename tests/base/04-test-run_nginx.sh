@@ -66,11 +66,12 @@ ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CO
 run "sleep 10"
 
 # Check PHP connectivity
-if ! run "curl -q http://localhost:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
+if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
 
 	# Info
 	run "netstat -tuln"
-	run "curl http://localhost:${WWW_PORT}/index.php" || true
+	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
 	run "docker ps --no-trunc"
 	docker_exec "${ndid}" "nginx -t"
 
