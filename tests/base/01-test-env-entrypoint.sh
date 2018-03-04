@@ -19,11 +19,11 @@ FLAVOUR="${3}"
 # Tests
 ############################################################
 
-
 ###
 ### Debug == 0
 ###
 did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=0" )"
+
 if ! run_fail "docker logs ${did} 2>&1 | grep 'Debug level'"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true

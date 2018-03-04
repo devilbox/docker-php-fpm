@@ -63,26 +63,26 @@ ndid="$( docker_run "nginx:stable" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CO
 
 # Check entrypoint
 if ! run "docker logs ${did} | grep 'post.ini'"; then
-	run "rm -rf ${DOC_ROOT_HOST}"
-	run "rm -rf ${CONFIG_HOST}"
-	run "rm -rf ${PHP_INI_HOST}"
 	docker_logs "${ndid}" || true
-	docker_logs "${did}" || true
+	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	rm -rf "${PHP_INI_HOST}"
 	echo "Failed"
 	exit 1
 fi
 
 # Check PHP connectivity
 if ! run "curl -q 127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
-	run "rm -rf ${DOC_ROOT_HOST}"
-	run "rm -rf ${CONFIG_HOST}"
-	run "rm -rf ${PHP_INI_HOST}"
 	docker_logs "${ndid}" || true
-	docker_logs "${did}" || true
+	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	rm -rf "${PHP_INI_HOST}"
 	echo "Failed"
 	exit 1
 fi
@@ -90,13 +90,13 @@ fi
 # Check modified php.ini
 if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M'"; then
 	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
-	run "rm -rf ${DOC_ROOT_HOST}"
-	run "rm -rf ${CONFIG_HOST}"
-	run "rm -rf ${PHP_INI_HOST}"
 	docker_logs "${ndid}" || true
-	docker_logs "${did}" || true
+	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	rm -rf "${PHP_INI_HOST}"
 	echo "Failed"
 	exit 1
 fi
@@ -104,13 +104,13 @@ fi
 # Check modified php.ini
 if ! run "curl -q 127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
 	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
-	run "rm -rf ${DOC_ROOT_HOST}"
-	run "rm -rf ${CONFIG_HOST}"
-	run "rm -rf ${PHP_INI_HOST}"
 	docker_logs "${ndid}" || true
-	docker_logs "${did}" || true
+	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	rm -rf "${PHP_INI_HOST}"
 	echo "Failed"
 	exit 1
 fi
@@ -119,6 +119,6 @@ fi
 # Cleanup
 docker_stop "${did}"
 docker_stop "${ndid}"
-run "rm -rf ${DOC_ROOT_HOST}"
-run "rm -rf ${CONFIG_HOST}"
-run "rm -rf ${PHP_INI_HOST}"
+rm -rf "${DOC_ROOT_HOST}"
+rm -rf "${CONFIG_HOST}"
+rm -rf "${PHP_INI_HOST}"

@@ -31,12 +31,13 @@ if ! run "docker logs ${did} 2>&1 | grep -q '1005'"; then
 	exit 1
 fi
 if ! docker_exec "${did}" "id | grep 'uid=1005'" "--user=devilbox"; then
-	docker_logs "${did}"
+	docker_logs "${did}" || true
 	docker_stop "${did}" || true
 	echo "Failed"
 	exit 1
 fi
 docker_stop "${did}"
+
 
 ###
 ### uid: 1000 (same uid)
@@ -50,12 +51,13 @@ if ! run "docker logs ${did} 2>&1 | grep -q '1000'"; then
 	exit 1
 fi
 if ! docker_exec "${did}" "id | grep 'uid=1000'" "--user=devilbox"; then
-	docker_logs "${did}"
+	docker_logs "${did}" || true
 	docker_stop "${did}" || true
 	echo "Failed"
 	exit 1
 fi
 docker_stop "${did}"
+
 
 ###
 ### uid: 33 (existing uid)
@@ -69,7 +71,7 @@ if ! run "docker logs ${did} 2>&1 | grep -q '33'"; then
 	exit 1
 fi
 if ! docker_exec "${did}" "id | grep 'uid=33'" "--user=devilbox"; then
-	docker_logs "${did}"
+	docker_logs "${did}" || true
 	docker_stop "${did}" || true
 	echo "Failed"
 	exit 1

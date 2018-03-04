@@ -29,6 +29,7 @@ run "sleep 10"
 if ! run "docker logs ${did} 2>&1 | grep -q 'ENABLE_MAIL'"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -38,6 +39,7 @@ if [ ! -f "${MOUNTPOINT}/devilbox" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -46,6 +48,7 @@ if [ ! -r "${MOUNTPOINT}/devilbox" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -57,10 +60,11 @@ run "sleep 5"
 if ! run "grep 'the subject' ${MOUNTPOINT}/devilbox"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	run "cat ${MOUNTPOINT}/devilbox"
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
-	"run cat ${MOUNTPOINT}/devilbox"
 	exit 1
 fi
 
 docker_stop "${did}"
-run "rm -rf ${MOUNTPOINT}" || true
+rm -rf "${MOUNTPOINT}"

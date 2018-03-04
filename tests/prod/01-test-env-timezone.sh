@@ -23,6 +23,7 @@ FLAVOUR="${3}"
 ### Europe/Berlin
 ###
 did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin" )"
+
 if ! run "docker logs ${did} 2>&1 | grep -q 'Europe/Berlin'"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true

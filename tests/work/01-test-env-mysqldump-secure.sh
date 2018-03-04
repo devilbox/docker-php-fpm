@@ -38,11 +38,11 @@ docker_exec "${did}" mysqldump-secure
 if [ ! -d "${MOUNTPOINT}/mysql" ]; then
 	echo "MySQL backup dir does not exist: ${MOUNTPOINT}/mysql"
 	ls -lap ${MOUNTPOINT}/
-	docker_logs "${did}"
-	docker_logs "${mdid}"
-	docker_stop "${did}"
-	docker_stop "${mdid}"
-	run "rm -rf ${MOUNTPOINT}" || true
+	docker_logs "${did}"  || true
+	docker_logs "${mdid}" || true
+	docker_stop "${did}"  || true
+	docker_stop "${mdid}" || true
+	rm -rf "${MOUNTPOINT}"
 	exit 1
 fi
 
@@ -51,4 +51,4 @@ run "ls -lap ${MOUNTPOINT}/mysql/ | grep -E 'mysql\.sql\.gz\.info'"
 
 docker_stop "${did}"
 docker_stop "${mdid}"
-run "rm -rf ${MOUNTPOINT}" || true
+rm -rf "${MOUNTPOINT}"

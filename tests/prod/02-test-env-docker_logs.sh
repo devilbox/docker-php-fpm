@@ -29,6 +29,7 @@ run "sleep 10"
 if ! run "docker logs ${did} 2>&1 | grep -q 'DOCKER_LOGS'"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -38,6 +39,7 @@ if [ -f "${MOUNTPOINT}/php-fpm.access" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -46,15 +48,14 @@ if [ -f "${MOUNTPOINT}/php-fpm.error" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
 
 run "ls -lap ${MOUNTPOINT}/"
-
 docker_stop "${did}"
-run "rm -rf ${MOUNTPOINT}" || true
-
+rm -rf "${MOUNTPOINT}"
 
 
 ###
@@ -67,6 +68,7 @@ run "sleep 10"
 if ! run "docker logs ${did} 2>&1 | grep -q 'DOCKER_LOGS'"; then
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -76,6 +78,7 @@ if [ ! -f "${MOUNTPOINT}/php-fpm.access" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -84,6 +87,7 @@ if [ ! -r "${MOUNTPOINT}/php-fpm.access" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -93,6 +97,7 @@ if [ ! -f "${MOUNTPOINT}/php-fpm.error" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
@@ -101,12 +106,12 @@ if [ ! -r "${MOUNTPOINT}/php-fpm.error" ]; then
 	ls -lap ${MOUNTPOINT}/
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
+	rm -rf "${MOUNTPOINT}"
 	echo "Failed"
 	exit 1
 fi
 
 run "ls -lap ${MOUNTPOINT}/"
 run "cat ${MOUNTPOINT}/*"
-
 docker_stop "${did}"
-run "rm -rf ${MOUNTPOINT}" || true
+rm -rf "${MOUNTPOINT}"
