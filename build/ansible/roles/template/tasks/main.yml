@@ -1,0 +1,10 @@
+---
+
+- name: render template
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    force: True
+    mode: 0664
+  with_items:
+    - "{{ template_files }}"

@@ -1,0 +1,217 @@
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
+FROM devilbox/php-fpm:{{ php_version }}-prod
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+LABEL \
+	name="cytopia's PHP-FPM {{ php_version }} Image" \
+	image="devilbox/php-fpm" \
+	tag="{{ php_version }}-work" \
+	vendor="devilbox" \
+	license="MIT"
+
+
+###
+### Envs
+###
+ENV BASH_PROFILE=".bashrc"
+
+
+###
+### Install Tools
+###
+RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		dirmngr \
+		gnupg \
+{% for repo in apt_repositories_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in apt_repositories_available[repo]) or (php_version not in apt_repositories_available[repo]['disabled']) %}
+{# Version specific pre-command available? #}
+{% if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] %}
+	&& {{ apt_repositories_available[repo][php_version]['pre'] }} \
+{# Generic pre-command available? #}
+{% elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] %}
+	&& {{ apt_repositories_available[repo]['all']['pre'] }} \
+{% endif %}
+{# Version specific key available? #}
+{% if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] %}
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
+{# Generic key available? #}
+{% elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] %}
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
+{% endif %}
+{# Version specific repository available? #}
+{% if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] %}
+	&& echo "{{ apt_repositories_available[repo][php_version]['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
+{# Generic repository available? #}
+{% else %}
+	&& echo "{{ apt_repositories_available[repo]['all']['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
+{% endif %}
+{% endif %}
+{% endfor %}
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		ack-grep \
+		aspell \
+		autoconf \
+		automake \
+		bash-completion \
+		bzip2 \
+		coreutils \
+		curl \
+		dnsutils \
+		dos2unix \
+		file \
+		gcc \
+		git \
+		git-flow \
+		git-svn \
+		hostname \
+		htop \
+		imagemagick \
+		iputils-ping \
+		less \
+		libc-dev \
+		make \
+		mongodb-org-shell \
+		mongodb-org-tools \
+		moreutils \
+		mysql-client \
+		nano \
+		net-tools \
+		netcat \
+		nodejs \
+		postgresql-client \
+		python-pip \
+		rubygems \
+		ruby-dev \
+		shellcheck \
+		silversearcher-ag \
+		subversion \
+		sudo \
+		tig \
+		vim \
+		w3m \
+		wget \
+		whois \
+		xz-utils \
+		yarn \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+RUN set -x \
+{% for tool in software_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific pre-command available? #}
+{% if php_version in software_available[tool] and 'pre' in software_available[tool][php_version] %}
+	&& {{ software_available[tool][php_version]['pre'] }} \
+{# Generic pre-command available? #}
+{% elif 'all' in software_available[tool] and 'pre' in software_available[tool]['all'] %}
+	&& {{ software_available[tool]['all']['pre'] }} \
+{% endif %}
+{# Version specific command available? #}
+{% if php_version in software_available[tool] and 'command' in software_available[tool][php_version] %}
+	&& {{ software_available[tool][php_version]['command'] }} \
+{# Generic command available? #}
+{% else %}
+	&& {{ software_available[tool]['all']['command'] }} \
+{% endif %}
+{# Version specific post-command available? #}
+{% if php_version in software_available[tool] and 'post' in software_available[tool][php_version] %}
+	&& {{ software_available[tool][php_version]['post'] }} \
+{# Generic post-command available? #}
+{% elif 'all' in software_available[tool] and 'post' in software_available[tool]['all'] %}
+	&& {{ software_available[tool]['all']['post'] }} \
+{% endif %}
+{% endif %}
+{% endfor %}
+	&& true
+
+
+###
+### Configure Bash
+###
+RUN \
+	{ \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "export PATH"; \
+		echo ". /etc/bash-devilbox"; \
+		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
+		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
+
+
+{% if debug %}
+###
+### Verify
+###
+RUN set -x \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& /usr/local/sbin/php-fpm --test \
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+RUN set -x \
+{% for tool in software_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
+{% if 'check' in software_available[tool] %}
+	&& {{ software_available[tool]['check'] }} \
+{% endif %}
+{% endif %}
+{% endfor %}
+	&& true
+
+
+{% endif %}
+###
+### Copy files
+###
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+
+###
+### Volumes
+###
+VOLUME /etc/bash-custom.d
+VOLUME /etc/php-custom.d
+VOLUME /etc/php-modules.d
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+
+###
+### Entrypoint
+###
+ENTRYPOINT ["/docker-entrypoint.sh"]

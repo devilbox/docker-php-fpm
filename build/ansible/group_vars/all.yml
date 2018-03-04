@@ -1,0 +1,893 @@
+---
+
+template_files:
+  - src: DOCKERFILES/Dockerfile-base.j2
+    dst: "../../Dockerfiles/base/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-mods.j2
+    dst: "../../Dockerfiles/mods/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-prod.j2
+    dst: "../../Dockerfiles/prod/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-work.j2
+    dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
+
+
+
+
+# Adds self-validating checks to Dockerfile
+# turn off for final build
+debug: True
+
+
+php_all_versions:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+
+
+
+################################################################################
+# Defines for Dockerfile "work"
+################################################################################
+
+
+###
+### Apt repositories to actually enable
+###
+apt_repositories_enabled:
+  - backports
+  - git
+  - mongo
+  - node
+  - pgsql
+  - yarn
+
+
+###
+### Software to actually install
+###
+software_enabled:
+  # Composer needs to be first, others rely on it
+  - composer
+  # Normal packages start here
+  - awesomeci
+  - drush
+  - drupalconsole
+  - gitflow
+  - grunt
+  - laravel
+  - linuxbrew
+  - mysqldumpsecure
+  - phalcon
+  - symfony
+  - webpack
+  - wpcli
+  # Cleanup needs to be last
+  - cleanup
+
+
+
+###
+### All available extra repositories
+###
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   deb:       Deb line to add to sources list
+#   key:       [optional] Key id to add for repository
+#   pre:       [optional] Run custom command to add gpg key for repository
+#
+apt_repositories_available:
+  backports:
+    all:
+      deb: deb http://ftp.debian.org/debian jessie-backports main
+  git:
+    7.2:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    all:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
+      key: A1715D88E1DF1F24
+  mongo:
+    all:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+  node:
+    7.2:
+      deb: deb http://deb.nodesource.com/node_8.x stretch main
+    all:
+      deb: deb http://deb.nodesource.com/node_8.x jessie main
+      pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
+  pgsql:
+    7.2:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+    all:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      pre: curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add -
+  yarn:
+    all:
+      deb: deb http://dl.yarnpkg.com/debian/ stable main
+      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+
+
+###
+### All available software
+###
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+# check:    [optional] Include a check command to test if it was installed successfully
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   pre:       [optional] Run command before 'command:' statement
+#   command:   Command to execute
+#   pre:       [optional] Run command after 'command:' statement
+#
+software_available:
+  awesomeci:
+    check: |
+      mdl --version | grep -E '[.0-9]+' \
+      && scss-lint --version | grep -E '[.0-9]+' \
+      && eslint -v | grep -E '[.0-9]+' \
+      && jsonlint --version | grep -E '[.0-9]+' \
+      && mdlint --version | grep -E '[.0-9]+' \
+      && gulp --version | grep -E '[.0-9]+' \
+    all:
+      command: |
+        git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+        && cd /usr/local/src/awesome-ci \
+        && git checkout $(git describe --abbrev=0 --tags) \
+        && ./configure --prefix=/usr/local \
+        && make install \
+        && cd / \
+        && rm -rf /usr/local/src/awesome-ci \
+      # awesome-ci requirements
+      post: |
+        gem install mixlib-config -v 2.2.4 \
+        && gem install mdl \
+        && gem install scss_lint \
+        && npm install -g eslint \
+        && npm install -g jsonlint \
+        && npm install -g mdlint \
+        && npm install -g gulp \
+  composer:
+    check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
+    all:
+      command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  drush:
+    check: drush --version | grep -E '[.0-9]+'
+    5.5:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
+    5.4:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
+    all:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush && composer install --no-interaction --no-progress' \
+        && ln -s /usr/local/src/drush/drush /usr/local/bin/drush \
+        && rm -rf /usr/local/src/drush/.git \
+        && rm -rf /usr/local/src/drush/docs \
+        && rm -rf /usr/local/src/drush/examples \
+        && rm -rf /usr/local/src/drush/misc \
+        && rm -rf /usr/local/src/drush/tests \
+  drupalconsole:
+    disabled: [5.4]
+    check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
+    all:
+      command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
+      post: chmod +x /usr/local/bin/drupal
+  gitflow:
+    check: git-flow version | grep -E '[.0-9]+'
+    all:
+      command: |
+        git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+        && cd /tmp/gitflow \
+        && make install \
+        && cd / && rm -rf /tmp/gitflow \
+  grunt:
+    check: grunt --version | grep -E '[.0-9]+'
+    all:
+      command: npm install -g grunt grunt-cli
+  laravel:
+    check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
+    7.0:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.6:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.5:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v2.0.0 \
+    5.4:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v1.3.7 \
+    all:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout $(git describe --abbrev=0 --tags) \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+        && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+        && rm -rf /usr/local/src/laravel-installer/laravel/.git \
+  linuxbrew:
+    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+'
+    all:
+      command: |
+        git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+        && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+        	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
+        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+  mysqldumpsecure:
+    check: mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
+    all:
+      command: |
+        git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+        && cd /usr/local/src/mysqldump-secure \
+        && git checkout $(git describe --abbrev=0 --tags) \
+        && cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+        && cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+        && cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+        && touch /var/log/mysqldump-secure.log \
+        && chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+        && chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+        && chmod 0400 /etc/mysqldump-secure.conf \
+        && chmod 0400 /etc/mysqldump-secure.cnf \
+        && chmod 0644 /var/log/mysqldump-secure.log \
+        && sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+        && sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+        && cd / \
+        && rm -rf /usr/local/src/mysqldump-secure \
+  phalcon:
+    check: phalcon commands | grep -E '[.0-9]+'
+    5.4:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v2.0.9 \
+    all:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout $(git describe --abbrev=0 --tags) \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
+  symfony:
+    check: symfony --version | grep -E 'version\s*[.0-9]+'
+    all:
+      command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
+      post: chmod +x /usr/local/bin/symfony
+  wpcli:
+    check: wp --allow-root --version | grep -E '[.0-9]+'
+    all:
+      command: curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
+  webpack:
+    check: webpack --version | grep -E '[.0-9]+'
+    all:
+      command: npm install -g webpack webpack-cli
+  cleanup:
+    all:
+      command: |
+        rm -rf /home/${MY_USER}/.*json \
+        && rm -rf /home/${MY_USER}/.cache \
+        && rm -rf /home/${MY_USER}/.composer \
+        && rm -rf /home/${MY_USER}/.config \
+        && rm -rf /home/${MY_USER}/.drush \
+        && rm -rf /home/${MY_USER}/.gem \
+        && rm -rf /home/${MY_USER}/.npm \
+        && rm -rf /home/${MY_USER}/.subversion \
+        \
+        && rm -rf /root/.*json \
+        && rm -rf /root/.cache \
+        && rm -rf /root/.composer \
+        && rm -rf /root/.config \
+        && rm -rf /root/.drush \
+        && rm -rf /root/.gem \
+        && rm -rf /root/.npm \
+        && rm -rf /root/.subversion \
+        \
+        && rm -rf /tmp/* \
+
+
+################################################################################
+# Defines for Dockerfile "mods"
+################################################################################
+
+###
+### Extensions to actually enable
+###
+extensions_enabled:
+  - amqp
+  - apcu
+  - bcmath
+  - bz2
+  - calendar
+  - ctype
+  - curl
+  - dba
+  - dom
+  - enchant
+  - exif
+  - fileinfo
+  - filter
+  - ftp
+  - gd
+  - gettext
+  - gmp
+  - hash
+  - iconv
+  - igbinary
+  - imagick
+  - imap
+  - interbase
+  - intl
+  - json
+  - ldap
+  - libxml
+  - mbstring
+  - mcrypt
+  - memcache
+  - memcached
+  - mongodb
+  - msgpack
+  - mysql
+  - mysqli
+  - mysqlnd
+  - oci8
+  - odbc
+  - opcache
+  - openssl
+  - pcntl
+  - pcre
+  - pdo
+  - pdo_dblib
+  - pdo_firebird
+  - pdo_mysql
+  - pdo_oci
+  - pdo_odbc
+  - pdo_pgsql
+  - pdo_sqlite
+  - pgsql
+  - phalcon
+  - phar
+  - posix
+  - pspell
+  - readline
+  - recode
+  - redis
+  - session
+  - shmop
+  - simplexml
+  - snmp
+  - soap
+  - sockets
+  - sodium
+  - spl
+  - swoole
+  - sysvmsg
+  - sysvsem
+  - sysvshm
+  - tidy
+  - tokenizer
+  - uploadprogress
+  - wddx
+  - xdebug
+  - xml
+  - xmlreader
+  - xmlrpc
+  - xmlwriter
+  - xsl
+  - zip
+
+
+###
+### All available php modules
+###
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   pre:       [optional] Run command before anything else
+#   build_dep: [optional] Array of build dependencies
+#   run_dep:   [optional] Array of run-time dependencies
+#   type:      [required] One of 'builtin', 'pecl' or 'git'
+#
+# type: builtin
+#   configure: [optional] Add './configure' arguments
+# type: pecl
+#   version:   [optional] Pecl packet version
+#   command:   [optional] Overwrite pecl command (pecl install ext)
+# type: git
+#   git_url:   [required] Git repository URL
+#   git_ref:   [optional] Tag, branch, commit to checkout
+#   configure: [optional] Add './configure' arguments
+#   command:   [optional] Overwrite default command (phpize && ./configure && make && make install)
+extensions_available:
+  amqp:
+    7.2:
+      type: pecl
+      run_dep: [librabbitmq4]
+    all:
+      type: pecl
+      command: echo "/usr" | pecl install amqp
+      build_dep: [librabbitmq-dev]
+      run_dep: [librabbitmq1]
+  apcu:
+    5.4:
+      type: pecl
+      version: 4.0.11
+    5.5:
+      type: pecl
+      version: 4.0.11
+    5.6:
+      type: pecl
+      version: 4.0.11
+    all:
+      type: pecl
+  bcmath:
+    all:
+      type: builtin
+  bz2:
+    all:
+      type: builtin
+      build_dep: [libbz2-dev]
+  calendar:
+    all:
+      type: builtin
+  ctype:
+    all:
+      type: builtin
+  curl:
+    all:
+      type: builtin
+      build_dep: [libcurl4-openssl-dev]
+  dba:
+    all:
+      type: builtin
+  dom:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  enchant:
+    all:
+      type: builtin
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+  exif:
+    all:
+      type: builtin
+  fileinfo:
+    all:
+      type: builtin
+  filter:
+    disabled: "{{ php_all_versions }}" # Available by default
+  ftp:
+    all:
+      type: builtin
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev]
+  gd:
+    7.2:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+    7.1:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    7.0:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+  gettext:
+    all:
+      type: builtin
+  gmp:
+    all:
+      type: builtin
+      pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
+      build_dep: [libgmp-dev]
+  hash:
+    all:
+      type: builtin
+  iconv:
+    all:
+      type: builtin
+  igbinary:
+    all:
+      type: pecl
+  imagick:
+    7.2:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3]
+    all:
+      type: pecl
+      build_dep: [libmagickwand-dev]
+      run_dep: [libmagickwand-6.q16-2]
+  imap:
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
+      configure: --with-kerberos --with-imap-ssl --with-imap
+      build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
+      run_dep: [libc-client2007e]
+  interbase:
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  intl:
+    7.2:
+      type: builtin
+      run_dep: [libicu57]
+    all:
+      type: builtin
+      build_dep: [libicu-dev]
+      run_dep: [libicu52]
+  json:
+    all:
+      type: builtin
+  ldap:
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/
+      configure: --with-ldap --with-ldap-sasl
+      build_dep: [libldap2-dev, libsasl2-dev]
+  libxml:
+    disabled: "{{ php_all_versions }}" # Available by default
+  mbstring:
+    all:
+      type: builtin
+  mcrypt:
+    7.2:
+      type: pecl
+      version: 1.0.1
+    all:
+      type: builtin
+      run_dep: [libmcrypt4]
+      build_dep: [libmcrypt-dev]
+  memcache:
+    7.2:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      configure: --with-zlib-dir=/usr
+    7.1:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      configure: --with-zlib-dir=/usr
+    7.0:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      configure: --with-zlib-dir=/usr
+    all:
+      type: pecl
+      build_dep: [zlib1g-dev]
+  memcached:
+    5.4:
+      type: pecl
+      version: 2.2.0
+    5.5:
+      type: pecl
+      version: 2.2.0
+    5.6:
+      type: pecl
+      version: 2.2.0
+    all:
+      type: pecl
+      build_dep: [zlib1g-dev, libmemcached-dev]
+      run_dep: [libmemcachedutil2]
+  mongodb:
+    5.4:
+      type: pecl
+      version: 1.2.11
+    all:
+      type: pecl
+      build_dep: [libssl-dev]
+  msgpack:
+    5.4:
+      type: pecl
+      version: 0.5.7
+    5.5:
+      type: pecl
+      version: 0.5.7
+    5.6:
+      type: pecl
+      version: 0.5.7
+    all:
+      type: pecl
+  mysql:
+    disabled: [7.0, 7.1, 7.2] # Deprecated in newer versions
+    all:
+      type: builtin
+  mysqli:
+    all:
+      type: builtin
+  mysqlnd:
+    disabled: "{{ php_all_versions }}" # Available by default
+  oci8:
+    disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
+  odbc:
+    disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
+  opcache:
+    5.4:
+      type: pecl
+      command: pecl install zendopcache
+    all:
+      type: builtin
+  openssl:
+    disabled: "{{ php_all_versions }}" # Available by default
+  pcntl:
+    all:
+      type: builtin
+  pcre:
+    disabled: "{{ php_all_versions }}" # Available by default
+  pdo:
+    all:
+      type: builtin
+  pdo_dblib:
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
+      build_dep: [freetds-dev]
+      run_dep: [libsybdb5]
+  pdo_firebird:
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  pdo_mysql:
+    all:
+      type: builtin
+      configure: --with-zlib-dir=/usr
+      build_dep: [zlib1g-dev]
+  pdo_oci:
+    disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
+  pdo_odbc:
+    disabled: "{{ php_all_versions }}" # TODO: Build errors
+  pdo_pgsql:
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  pdo_sqlite:
+    all:
+      type: builtin
+      build_dep: [libsqlite3-dev]
+  pgsql:
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  phalcon:
+    5.4:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.13
+      command: cd build && ./install
+    all:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+      command: cd build && ./install
+  phar:
+    all:
+      type: builtin
+      build_dep: [libssl-dev]
+  posix:
+    all:
+      type: builtin
+  pspell:
+    all:
+      type: builtin
+      build_dep: [libpspell-dev]
+      run_dep: [libaspell15]
+  readline:
+    disabled: [5.4] # Available by default
+    all:
+      type: builtin
+      build_dep: [libedit-dev, libreadline-dev]
+  recode:
+    all:
+      type: builtin
+      build_dep: [librecode-dev]
+      run_dep: [librecode0]
+  redis:
+    all:
+      type: pecl
+  session:
+    all:
+      type: builtin
+      configure: --with-mm
+      build_dep: [libmm-dev]
+  shmop:
+    all:
+      type: builtin
+  simplexml:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  snmp:
+    all:
+      type: builtin
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev, libsnmp-dev, snmp]
+      run_dep: [snmp]
+  soap:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  sockets:
+    all:
+      type: builtin
+  sodium:
+    disabled: [5.4, 5.5, 5.6, 7.0, 7.1]
+    7.2:
+      type: builtin
+      build_dep: [libsodium-dev]
+  spl:
+    disabled: "{{ php_all_versions }}" # TODO: Did not work
+  swoole:
+    5.4:
+      type: pecl
+      version: 1.9.23
+    5.5:
+      type: pecl
+      version: 1.9.23
+    5.6:
+      type: pecl
+      version: 1.9.23
+    7.2:
+      type: pecl
+      run_dep: [libnghttp2-14]
+    all:
+      type: pecl
+      build_dep: [libnghttp2-dev, libssl-dev]
+      run_dep: [libnghttp2-5]
+  sysvmsg:
+    all:
+      type: builtin
+  sysvsem:
+    all:
+      type: builtin
+  sysvshm:
+    all:
+      type: builtin
+  tidy:
+    7.2:
+      type: builtin
+      run_dep: [libtidy5]
+    all:
+      type: builtin
+      build_dep: [libtidy-dev]
+      run_dep: [libtidy-0.99-0]
+  tokenizer:
+    all:
+      type: builtin
+  uploadprogress:
+    7.2:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.1:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.0:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    all:
+      type: pecl
+  wddx:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xdebug:
+    5.4:
+      type: pecl
+      version: 2.4.1
+    5.5:
+      type: pecl
+      version: 2.4.1
+    5.6:
+      type: pecl
+      version: 2.4.1
+    all:
+      type: pecl
+  xml:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlreader:
+    disabled: [7.0, 7.1, 7.2] # Available by default
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlrpc:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlwriter:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xsl:
+    all:
+      type: builtin
+      build_dep: [libxslt-dev]
+      run_dep: [libxslt1.1]
+  zip:
+    5.4:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    5.5:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    7.2:
+      type: builtin
+      run_dep: [libzip4]
+    all:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
+      build_dep: [zlib1g-dev, libzip-dev]
+      run_dep: [libzip2]

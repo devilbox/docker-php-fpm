@@ -1,0 +1,203 @@
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
+FROM devilbox/php-fpm:{{ php_version }}-base
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+LABEL \
+	name="cytopia's PHP-FPM {{ php_version }} Image" \
+	image="devilbox/php-fpm" \
+	tag="{{ php_version }}-mods" \
+	vendor="devilbox" \
+	license="MIT"
+
+
+###
+### Envs
+###
+ENV BUILD_DEPS \
+{# Loop over enabled build dependencies #}
+{% for ext in extensions_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+{# Version specific build dependency available? #}
+{% if php_version in extensions_available[ext] and 'build_dep' in extensions_available[ext][php_version] %}
+{% for build_dep in extensions_available[ext][php_version]['build_dep'] %}
+	{{ build_dep }} \
+{% endfor %}
+{# Generic build dependency available? #}
+{% elif 'all' in extensions_available[ext] and 'build_dep' in extensions_available[ext]['all'] %}
+{% for build_dep in extensions_available[ext]['all']['build_dep'] %}
+	{{ build_dep }} \
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+	ca-certificates \
+	git
+
+ENV RUN_DEPS \
+{# Loop over enabled run-time dependencies #}
+{% for ext in extensions_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+{# Version specific run-time dependency available? #}
+{% if php_version in extensions_available[ext] and 'run_dep' in extensions_available[ext][php_version] %}
+{% for run_dep in extensions_available[ext][php_version]['run_dep'] %}
+	{{ run_dep }} \
+{% endfor %}
+{# Generic run-time dependency available? #}
+{% elif 'all' in extensions_available[ext] and 'run_dep' in extensions_available[ext]['all'] %}
+{% for run_dep in extensions_available[ext]['all']['run_dep'] %}
+	{{ run_dep }} \
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+	ca-certificates
+
+
+###
+### Install
+###
+RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		${BUILD_DEPS} \
+	\
+	\
+{# Loop over enabled extensions #}
+{% for ext in extensions_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+{# ---------- Pre Command ---------- #}
+{# Version specific pre-command available? #}
+{% if php_version in extensions_available[ext] and 'pre' in extensions_available[ext][php_version] %}
+	&& {{ extensions_available[ext][php_version]['pre'] }} \
+{# Generic pre-command available? #}
+{% elif 'all' in extensions_available[ext] and 'pre' in extensions_available[ext]['all'] %}
+	&& {{ extensions_available[ext]['all']['pre'] }} \
+{% endif %}
+{# ---------- Installation (specific) ---------- #}
+{% if php_version in extensions_available[ext] and 'type' in extensions_available[ext][php_version] %}
+{# ---- 1.) Builtin ---- #}
+{% if extensions_available[ext][php_version]['type'] == 'builtin' %}
+{% if 'configure' in extensions_available[ext][php_version] %}
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} \
+{% endif %}
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+{# ---- 2.) PECL ---- #}
+{% elif extensions_available[ext][php_version]['type'] == 'pecl' %}
+{% if 'command' in extensions_available[ext][php_version] %}
+	&& {{ extensions_available[ext][php_version]['command'] }} \
+{% else %}
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} \
+{% endif %}
+	&& docker-php-ext-enable {{ ext }} \
+{# ---- 3.) GIT ---- #}
+{% elif extensions_available[ext][php_version]['type'] == 'git' %}
+	&& git clone -v {{ extensions_available[ext][php_version]['git_url'] }} /tmp/{{ ext }} \
+	&& cd /tmp/{{ ext }} \
+{% if 'git_ref' in extensions_available[ext][php_version] %}
+	&& git checkout {{ extensions_available[ext][php_version]['git_ref'] }} \
+{% endif %}
+{% if 'command' in extensions_available[ext][php_version] %}
+	&& {{ extensions_available[ext][php_version]['command'] }} \
+{% else %}
+	&& phpize \
+	&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+{% endif %}
+	&& docker-php-ext-enable {{ ext }} \
+	&& cd / && rm -rf /tmp/{{ ext }} \
+{% endif %}
+{# ---------- Installation (generic) ---------- #}
+{% elif 'all' in extensions_available[ext] and 'type' in extensions_available[ext]['all'] %}
+{# ---- 1.) Builtin ---- #}
+{% if extensions_available[ext]['all']['type'] == 'builtin' %}
+{% if 'configure' in extensions_available[ext]['all'] %}
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
+{% endif %}
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+{# ---- 2.) PECL ---- #}
+{% elif extensions_available[ext]['all']['type'] == 'pecl' %}
+{% if 'command' in extensions_available[ext]['all'] %}
+	&& {{ extensions_available[ext]['all']['command'] }} \
+{% else %}
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} \
+{% endif %}
+	&& docker-php-ext-enable {{ ext }} \
+{# ---- 3.) GIT ---- #}
+{% elif extensions_available[ext]['all']['type'] == 'git' %}
+	&& git clone -v {{ extensions_available[ext]['all']['git_url'] }} /tmp/{{ ext }} \
+	&& cd /tmp/{{ ext }} \
+{% if 'git_ref' in extensions_available[ext]['all'] %}
+	&& git checkout {{ extensions_available[ext]['all']['git_ref'] }} \
+{% endif %}
+{% if 'command' in extensions_available[ext]['all'] %}
+	&& {{ extensions_available[ext]['all']['command'] }} \
+{% else %}
+	&& phpize \
+	&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+{% endif %}
+	&& docker-php-ext-enable {{ ext }} \
+	&& cd / && rm -rf /tmp/{{ ext }} \
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	\
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+		${BUILD_DEPS} \
+	\
+	\
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		${RUN_DEPS} \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& update-ca-certificates \
+	&& find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true
+
+
+{% if debug %}
+###
+### Verify
+###
+RUN set -x \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& /usr/local/sbin/php-fpm --test \
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+RUN set -x \
+{% for ext in extensions_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
+{% if ext == 'opcache' %}
+	&& php -m | grep -oiE '^Zend Opcache$' \
+	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
+{% else %}
+	&& php -m | grep -oiE '^{{ ext }}$' \
+	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
+{% endif %}
+{% endif %}
+{% endfor %}
+	&& true
+
+
+{% endif %}
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Entrypoint
+###
+ENTRYPOINT ["/docker-entrypoint.sh"]

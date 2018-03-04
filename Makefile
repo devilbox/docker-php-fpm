@@ -258,3 +258,60 @@ pull-from-71:
 	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.1 | sed 's/^FROM//g'; done)
 pull-from-72:
 	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.2 | sed 's/^FROM//g'; done)
+
+
+
+###
+### Tests
+###
+test-base-54:
+	./tests/test.sh 5.4 base
+test-base-55:
+	./tests/test.sh 5.5 base
+test-base-56:
+	./tests/test.sh 5.6 base
+test-base-70:
+	./tests/test.sh 7.0 base
+test-base-71:
+	./tests/test.sh 7.1 base
+test-base-72:
+	./tests/test.sh 7.2 base
+
+test-mods-54:
+	./tests/test.sh 5.4 mods
+test-mods-55:
+	./tests/test.sh 5.5 mods
+test-mods-56:
+	./tests/test.sh 5.6 mods
+test-mods-70:
+	./tests/test.sh 7.0 mods
+test-mods-71:
+	./tests/test.sh 7.1 mods
+test-mods-72:
+	./tests/test.sh 7.2 mods
+
+test-prod-54:
+	./tests/test.sh 5.4 prod
+test-prod-55:
+	./tests/test.sh 5.5 prod
+test-prod-56:
+	./tests/test.sh 5.6 prod
+test-prod-70:
+	./tests/test.sh 7.0 prod
+test-prod-71:
+	./tests/test.sh 7.1 prod
+test-prod-72:
+	./tests/test.sh 7.2 prod
+
+test-work-54:
+	./tests/test.sh 5.4 work
+test-work-55:
+	./tests/test.sh 5.5 work
+test-work-56:
+	./tests/test.sh 5.6 work
+test-work-70:
+	./tests/test.sh 7.0 work
+test-work-71:
+	./tests/test.sh 7.1 work
+test-work-72:
+	./tests/test.sh 7.2 work

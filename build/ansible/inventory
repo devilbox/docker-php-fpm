@@ -1,0 +1,7 @@
+[php]
+php-5.4 php_version=5.4 ansible_connection=local
+php-5.5 php_version=5.5 ansible_connection=local
+php-5.6 php_version=5.6 ansible_connection=local
+php-7.0 php_version=7.0 ansible_connection=local
+php-7.1 php_version=7.1 ansible_connection=local
+php-7.2 php_version=7.2 ansible_connection=local

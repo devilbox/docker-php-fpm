@@ -1,0 +1,60 @@
+# Bash Completion
+if ! shopt -oq posix; then
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+		. /usr/share/bash-completion/bash_completion
+	fi
+fi
+
+# Locale
+export LC_ALL=en_US.UTF-8
+
+# Aliases
+alias ls='ls -p --color=always --group-directories-first'
+alias l='ls -lp --color=always --group-directories-first'
+alias ll='ls -alp --color=always --group-directories-first'
+alias ..='cd ..'
+
+# Nice PS1
+PS1="\[\e[0;31m\]$(whoami)\[\e[0m\]@\[\e[0;36m\]php-$(php -v|head -1|grep -Eo '[0-9.]+'|head -1)\[\e[0m\] in \[\e[0;34m\]\w \[\e[0m\]\$ "
+
+# Show Intro
+echo
+echo "--------------------------------------------------------------------------------"
+echo "                         _            _ _ _               "
+echo "                        | |          (_) | |              "
+echo "                      __| | _____   ___| | |__   _____  __"
+echo "                     / _\` |/ _ \\ \\ / / | | '_ \\ / _ \\ \\/ /"
+echo "                    | (_| |  __/\\ V /| | | |_) | (_) >  < "
+echo "                     \\__,_|\\___| \\_/ |_|_|_.__/ \\___/_/\\_\\"
+echo "                                                          "
+echo "                             http://devilbox.org"
+echo
+echo
+echo "              | Available Tools  | Project website              |"
+echo "              |------------------|------------------------------|"
+echo "              | awesome-ci       | gh: cytopia/awesome-ci       |"
+echo "              | composer         | https://getcomposer.org      |"
+echo "              | druapl-console   | https://drupalconsole.com    |"
+echo "              | drush            | http://www.drush.org         |"
+echo "              | eslint           | https://eslint.org           |"
+echo "              | git              | https://git-scm.com          |"
+echo "              | laravel          | gh: laravel/installer        |"
+echo "              | linuxbrew        | http://linuxbrew.sh          |"
+echo "              | mysqldump-secure | https://mysqldump-secure.org |"
+echo "              | node             | https://nodejs.org           |"
+echo "              | npm              | https://www.npmjs.com        |"
+echo "              | phalcon-devtools | gh: phalcon/phalcon-devtools |"
+echo "              | symfony installer| gh: symfony/symfony-installer|"
+echo "              | webpack          | ghL webpack/webpack          |"
+echo "              | wpcli            | https://wp-cli.org           |"
+echo
+echo
+echo "              | Available Dirs   | Description                  |"
+echo "              |------------------|------------------------------|"
+echo "              | /shared/httpd    | Project base directory       |"
+echo "              | /shared/backups  | Backup directory             |"
+echo "              | /var/mail        | Email directory              |"
+echo "              | /var/log         | Log file directory           |"
+echo
+echo "--------------------------------------------------------------------------------"
+echo
