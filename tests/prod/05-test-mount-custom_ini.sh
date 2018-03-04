@@ -22,7 +22,7 @@ FLAVOUR="${3}"
 ###
 ### Test Nginx with PHP-FPM
 ###
-WWW_PORT="12345"
+WWW_PORT="23254"
 DOC_ROOT_HOST="$( mktemp -d )"
 DOC_ROOT_CONT="/var/www/default"
 
@@ -65,6 +65,9 @@ name="$( docker_name "${did}" )"
 # Start Nginx
 ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
+# Wait for both containers to be up and running
+run "sleep 10"
+
 # Check entrypoint
 if ! run "docker logs ${did} | grep 'post.ini'"; then
 	docker_logs "${ndid}" || true
@@ -79,7 +82,7 @@ if ! run "docker logs ${did} | grep 'post.ini'"; then
 fi
 
 # Check PHP connectivity
-if ! run "curl -q 127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
+if ! run "curl -q localhost:${WWW_PORT}/index.php >/dev/null 2>&1"; then
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
 	docker_stop "${ndid}" || true
@@ -106,7 +109,7 @@ if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M
 fi
 
 # Check modified php.ini
-if ! run "curl -q 127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
+if ! run "curl -q localhost:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
 	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true

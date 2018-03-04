@@ -22,7 +22,7 @@ FLAVOUR="${3}"
 ###
 ### Test Nginx with PHP-FPM
 ###
-WWW_PORT="12345"
+WWW_PORT="23254"
 DOC_ROOT_HOST="$( mktemp -d )"
 DOC_ROOT_CONT="/var/www/default"
 
