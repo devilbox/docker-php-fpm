@@ -22,7 +22,7 @@ FLAVOUR="${3}"
 ###
 ### Test Nginx with PHP-FPM
 ###
-WWW_PORT="23254"
+WWW_PORT="81"
 DOC_ROOT_HOST="$( mktemp -d )"
 DOC_ROOT_CONT="/var/www/default"
 
@@ -65,9 +65,19 @@ ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CO
 run "sleep 10"
 
 # Check PHP connectivity
-if ! run "curl -q localhost:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
+if ! run "curl -q http://localhost:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
+	# Show logs
 	docker_logs "${ndid}" || true
 	docker_logs "${did}"  || true
+
+	# Ensure file is available
+	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+
+	# Nginx configuration
+	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+
+	# Shutdown
 	docker_stop "${ndid}" || true
 	docker_stop "${did}"  || true
 	rm -rf "${DOC_ROOT_HOST}"

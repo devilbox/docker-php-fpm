@@ -42,17 +42,21 @@ install:
 
   # Disable services enabled by default
   # http://docs.travis-ci.com/user/database-setup/#MySQL
-  - sudo /etc/init.d/mysql      stop || true
-  - sudo /etc/init.d/postgresql stop || true
+  - sudo /etc/init.d/httpd      stop || true
   - sudo /etc/init.d/memcached  stop || true
-  - sudo /etc/init.d/redis      stop || true
   - sudo /etc/init.d/mongodb    stop || true
+  - sudo /etc/init.d/mysql      stop || true
+  - sudo /etc/init.d/nginx      stop || true
+  - sudo /etc/init.d/postgresql stop || true
+  - sudo /etc/init.d/redis      stop || true
 
-  - sudo service mysql      stop || true
-  - sudo service postgresql stop || true
+  - sudo service httpd      stop || true
   - sudo service memcached  stop || true
-  - sudo service redis      stop || true
   - sudo service mongodb    stop || true
+  - sudo service mysql      stop || true
+  - sudo service nginx      stop || true
+  - sudo service postgresql stop || true
+  - sudo service redis      stop || true
   - netstat -tulpn
 
 
