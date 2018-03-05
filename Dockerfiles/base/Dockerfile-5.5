@@ -41,6 +41,14 @@ RUN set -x \
 
 
 ###
+### Configure
+###
+RUN set -x \
+	&& rm -rf /usr/local/etc/php-fpm.d \
+	&& mkdir -p /usr/local/etc/php-fpm.d
+
+
+###
 ### Copy files
 ###
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
