@@ -17,7 +17,9 @@ set_postfix() {
 	local username="${2}"
 	local groupname="${3}"
 	local php_ini_dir="${4}"
-	local debug="${5}"
+	local php_mail_log="${5}"
+	local docker_logs="${6}"
+	local debug="${7}"
 
 	local php_ini_file="${php_ini_dir}/devilbox-runtime-sendmail.ini"
 	local catch_all=
@@ -37,8 +39,22 @@ set_postfix() {
 				echo "sendmail_path = $( which sendmail ) -t -i";
 				echo ";mail.force_extra_parameters =";
 				echo "mail.add_x_header = On";
-				echo "mail.log = /var/log/php/mail.log";
+				echo "mail.log = ${php_mail_log}";
 			} > "${php_ini_file}"
+
+			# PHP mail function logs to file
+			if [ "${docker_logs}" != "1" ]; then
+				# Fix PHP mail log file dir/file and permissions
+				if [ ! -d "$( dirname "${php_mail_log}" )" ]; then
+					run "mkdir -p $( dirname "${php_mail_log}" )" "${debug}"
+				fi
+				if [ ! -f "${php_mail_log}" ]; then
+					run "touch ${php_mail_log}" "${debug}"
+				fi
+				run "chown ${username}:${groupname} $( dirname "${php_mail_log}" )" "${debug}"
+				run "chown ${username}:${groupname} ${php_mail_log}" "${debug}"
+				run "chmod 0644 ${php_mail_log}" "${debug}"
+			fi
 
 			# Add Mail dir/file if it does not exist
 			if [ ! -d "/var/mail" ]; then

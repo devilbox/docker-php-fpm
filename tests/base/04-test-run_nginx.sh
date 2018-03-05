@@ -19,9 +19,7 @@ FLAVOUR="${3}"
 # Tests
 ############################################################
 
-###
-### Test Nginx with PHP-FPM
-###
+
 WWW_PORT="81"
 DOC_ROOT_HOST="$( mktemp -d )"
 DOC_ROOT_CONT="/var/www/default"
@@ -69,7 +67,37 @@ ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CO
 # Wait for both containers to be up and running
 run "sleep 10"
 
-# Check PHP connectivity
+
+###
+### Check correct PHP-FPM user
+###
+if ! docker_exec "${did}" "ps aux | grep 'php-fpm: pool' | grep -v grep | awk '{ print \$1 }' | head -1 | grep devilbox"; then
+	docker_exec "${did}" "ps aux"
+
+	# Shutdown
+	docker_stop "${ndid}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	echo "Failed"
+	exit 1
+fi
+if ! docker_exec "${did}" "ps aux | grep 'php-fpm: pool' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
+	docker_exec "${did}" "ps aux"
+
+	# Shutdown
+	docker_stop "${ndid}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	echo "Failed"
+	exit 1
+fi
+
+
+###
+### Test Nginx with PHP-FPM
+###
 if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>&1 | grep '${FINDME}'"; then
 
 	# Info
@@ -102,7 +130,10 @@ if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>&1 | grep '${FINDM
 	exit 1
 fi
 
-# Cleanup
+
+###
+### Clean-up
+###
 docker_stop "${did}"
 docker_stop "${ndid}"
 rm -rf "${DOC_ROOT_HOST}"

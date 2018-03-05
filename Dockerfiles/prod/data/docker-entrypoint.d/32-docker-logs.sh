@@ -52,6 +52,26 @@ _log_to_files() {
 ############################################################
 
 ###
+### Get info if we log to docker logs
+###
+is_docker_logs_enabled() {
+	local env_varname="${1}"
+	if env_set "${env_varname}"; then
+		docker_logs="$( env_get "${env_varname}" )"
+		if [ "${docker_logs}" = "1" ]; then
+			# Use docker logs
+			echo "1"
+			return 0
+		fi
+	fi
+
+	# Use file based logging
+	echo "0"
+	return 1
+}
+
+
+###
 ### Change PHP-FPM logging (file or docker logs)
 ###
 set_docker_logs() {

@@ -21,6 +21,9 @@ CONFIG_DIR="/docker-entrypoint.d"
 # php.ini.d directory
 PHP_INI_DIR="/usr/local/etc/php/conf.d"
 
+# This is the log file for any mail related functions
+PHP_MAIL_LOG="/var/log/mail.log"
+
 # This file holds error and access log definitions
 FPM_CONF_LOGFILE="/usr/local/etc/php-fpm.d/logfiles.conf"
 
@@ -70,12 +73,6 @@ set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
-### Setup postfix
-###
-set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
-
-
-###
 ### Set Logging
 ###
 set_docker_logs \
@@ -85,6 +82,18 @@ set_docker_logs \
 	"${MY_USER}" \
 	"${MY_GROUP}" \
 	"${DEBUG_LEVEL}"
+
+
+###
+### Setup postfix
+###
+if is_docker_logs_enabled "DOCKER_LOGS" >/dev/null; then
+	# PHP mail function should log to stderr
+	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "/proc/self/fd/2" "1" "${DEBUG_LEVEL}"
+else
+	# PHP mail function should log to file
+	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "${PHP_MAIL_LOG}" "0" "${DEBUG_LEVEL}"
+fi
 
 
 ###
@@ -136,6 +145,21 @@ copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 ###
 fix_mds_permissions "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
 set_mds_settings "MYSQL_BACKUP_USER" "MYSQL_BACKUP_PASS" "MYSQL_BACKUP_HOST" "${DEBUG_LEVEL}"
+
+
+###
+### Fix mountpoint permissions
+###
+if [ ! -d "/shared/backups" ]; then
+	run "mkdir -p /shared/backups" "${DEBUG_LEVEL}"
+fi
+if [ ! -d "/shared/httpd" ]; then
+	run "mkdir -p /shared/httpd" "${DEBUG_LEVEL}"
+fi
+run "chown ${MY_USER}:${MY_GROUP} /shared/backups" "${DEBUG_LEVEL}"
+run "chown ${MY_USER}:${MY_GROUP} /shared/httpd" "${DEBUG_LEVEL}"
+run "chmod 0755 /shared/backups" "${DEBUG_LEVEL}"
+run "chmod 0755 /shared/httpd" "${DEBUG_LEVEL}"
 
 
 ###

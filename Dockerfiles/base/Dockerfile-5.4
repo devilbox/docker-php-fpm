@@ -32,12 +32,21 @@ RUN set -x \
 
 
 ###
-### Upgrade
+### Upgrade (install ps)
 ###
 RUN set -x \
 	&& apt-get update \
 	&& apt-get upgrade -y \
+	&& apt-get install --no-install-recommends --no-install-suggests -y procps \
 	&& rm -rf /var/lib/apt/lists/*
+
+
+###
+### Configure
+###
+RUN set -x \
+	&& rm -rf /usr/local/etc/php-fpm.d \
+	&& mkdir -p /usr/local/etc/php-fpm.d
 
 
 ###
