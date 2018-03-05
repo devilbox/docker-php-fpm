@@ -139,6 +139,21 @@ set_mds_settings "MYSQL_BACKUP_USER" "MYSQL_BACKUP_PASS" "MYSQL_BACKUP_HOST" "${
 
 
 ###
+### Fix mountpoint permissions
+###
+if [ ! -d "/shared/backups" ]; then
+	run "mkdir -p /shared/backups"
+fi
+if [ ! -d "/shared/httpd" ]; then
+	run "mkdir -p /shared/httpd"
+fi
+run "chown ${MY_USER}:${MY_GROUP} /shared/backups"
+run "chown ${MY_USER}:${MY_GROUP} /shared/httpd"
+run "chmod 0755 /shared/backups"
+run "chmod 0755 /shared/httpd"
+
+
+###
 ### Startup
 ###
 log "info" "Starting supervisord" "${DEBUG_LEVEL}"
