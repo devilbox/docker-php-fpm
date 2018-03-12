@@ -70,7 +70,7 @@ trap "postfix reload" SIGHUP
 postfix start
 
 # Capture output
-tail -qF -n 0 "${MAILLOG}" &
+tail -qF -n 0 "${MAILLOG}" 2>/dev/null &
 tail_pid="${?}"
 
 
