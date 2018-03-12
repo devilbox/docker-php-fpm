@@ -366,6 +366,7 @@ extensions_enabled:
   - mcrypt
   - memcache
   - memcached
+  - mongo
   - mongodb
   - msgpack
   - mysql
@@ -625,6 +626,12 @@ extensions_available:
       type: pecl
       build_dep: [zlib1g-dev, libmemcached-dev]
       run_dep: [libmemcachedutil2]
+  mongo:
+    disabled: [7.0, 7.1, 7.2] # Deprecated
+    all:
+      type: pecl
+      command: yes | pecl install mongo
+      build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
     5.4:
       type: pecl
