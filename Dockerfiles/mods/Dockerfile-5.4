@@ -46,6 +46,8 @@ ENV BUILD_DEPS \
 	zlib1g-dev \
 	libmemcached-dev \
 	libssl-dev \
+	libsasl2-dev \
+	libssl-dev \
 	freetds-dev \
 	libfbclient2 \
 	libib-util \
@@ -156,6 +158,8 @@ RUN set -x \
 	&& docker-php-ext-enable memcache \
 	&& pecl install memcached-2.2.0 \
 	&& docker-php-ext-enable memcached \
+	&& yes | pecl install mongo \
+	&& docker-php-ext-enable mongo \
 	&& pecl install mongodb-1.2.11 \
 	&& docker-php-ext-enable mongodb \
 	&& pecl install msgpack-0.5.7 \
@@ -301,6 +305,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mongo$' \
+	&& php-fpm -m | grep -oiE '^mongo$' \
 	&& php -m | grep -oiE '^mongodb$' \
 	&& php-fpm -m | grep -oiE '^mongodb$' \
 	&& php -m | grep -oiE '^msgpack$' \
