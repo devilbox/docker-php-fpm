@@ -192,11 +192,11 @@ RUN set -x \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \
 # phpcs
-	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar 2>/dev/null /usr/local/bin/phpcs \
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
 # phpcbf
-	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar 2>/dev/null /usr/local/bin/phpcbf \
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
 # sass

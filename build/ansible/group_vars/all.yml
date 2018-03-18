@@ -297,13 +297,13 @@ software_available:
     check: phpcs --version | grep -E 'version [.0-9]+'
     all:
       command: |
-        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar 2>/dev/null /usr/local/bin/phpcs \
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [.0-9]+'
     all:
       command: |
-        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar 2>/dev/null /usr/local/bin/phpcbf \
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
   sass:
     check: sass --version | grep -E '[.0-9]+'
