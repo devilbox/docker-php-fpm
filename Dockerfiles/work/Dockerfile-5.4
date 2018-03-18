@@ -203,6 +203,10 @@ RUN set -x \
 # wpcli
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
+# yamllint
+	&& apt update && apt install --no-install-recommends --no-install-suggests -y libyaml-dev \
+	&& pip install yamllint \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libyaml-dev && rm -rf /var/lib/apt/lists/* \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
@@ -277,6 +281,7 @@ RUN set -x \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
+	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& true
 
 

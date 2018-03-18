@@ -66,6 +66,7 @@ software_enabled:
   - symfony
   - webpack
   - wpcli
+  - yamllint
   # Cleanup needs to be last
   - cleanup
 
@@ -317,6 +318,12 @@ software_available:
     check: webpack --version | grep -E '[.0-9]+'
     all:
       command: npm install -g webpack webpack-cli
+  yamllint:
+    check: yamllint --version 2>&1 | grep -E '[.0-9]+'
+    all:
+      pre: apt update && apt install --no-install-recommends --no-install-suggests -y libyaml-dev
+      command: pip install yamllint
+      post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libyaml-dev && rm -rf /var/lib/apt/lists/*
   cleanup:
     all:
       command: |
