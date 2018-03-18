@@ -61,6 +61,8 @@ software_enabled:
   - linuxbrew
   - mysqldumpsecure
   - phalcon
+  - phpcs
+  - phpcbf
   - symfony
   - webpack
   - wpcli
@@ -289,6 +291,18 @@ software_available:
         && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
+  phpcs:
+    check: phpcs --version | grep -E 'version [.0-9]+'
+    all:
+      command: |
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar 2>/dev/null /usr/local/bin/phpcs \
+        && chmod +x /usr/local/bin/phpcs \
+  phpcbf:
+    check: phpcbf --version | grep -E 'version [.0-9]+'
+    all:
+      command: |
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar 2>/dev/null /usr/local/bin/phpcbf \
+        && chmod +x /usr/local/bin/phpcbf \
   symfony:
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:
