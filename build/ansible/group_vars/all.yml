@@ -63,6 +63,7 @@ software_enabled:
   - phalcon
   - phpcs
   - phpcbf
+  - sass
   - symfony
   - webpack
   - wpcli
@@ -304,6 +305,10 @@ software_available:
       command: |
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar 2>/dev/null /usr/local/bin/phpcbf \
         && chmod +x /usr/local/bin/phpcbf \
+  sass:
+    check: sass --version | grep -E '[.0-9]+'
+    all:
+      command: gem install sass
   symfony:
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:

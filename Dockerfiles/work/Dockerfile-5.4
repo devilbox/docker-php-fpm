@@ -195,6 +195,8 @@ RUN set -x \
 	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar 2>/dev/null /usr/local/bin/phpcbf \
 && chmod +x /usr/local/bin/phpcbf \
  \
+# sass
+	&& gem install sass \
 # symfony
 	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
@@ -278,6 +280,7 @@ RUN set -x \
 	&& phalcon commands | grep -E '[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
