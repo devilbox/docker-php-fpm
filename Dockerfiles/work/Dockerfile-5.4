@@ -73,6 +73,7 @@ RUN set -x \
 		nodejs \
 		postgresql-client \
 		python-pip \
+		redis-tools \
 		rubygems \
 		ruby-dev \
 		shellcheck \
@@ -187,6 +188,16 @@ RUN set -x \
 && cd / \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \
+# phpcs
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcs \
+ \
+# phpcbf
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcbf \
+ \
+# sass
+	&& gem install sass \
 # symfony
 	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
@@ -195,6 +206,10 @@ RUN set -x \
 # wpcli
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
+# yamllint
+	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
+	&& pip install yamllint \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
@@ -264,9 +279,13 @@ RUN set -x \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phalcon commands | grep -E '[.0-9]+' \
+	&& phpcs --version | grep -E 'version [.0-9]+' \
+	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
+	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& true
 
 

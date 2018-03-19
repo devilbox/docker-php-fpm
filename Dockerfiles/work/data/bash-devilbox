@@ -45,7 +45,7 @@ echo "              | node             | https://nodejs.org           |"
 echo "              | npm              | https://www.npmjs.com        |"
 echo "              | phalcon-devtools | gh: phalcon/phalcon-devtools |"
 echo "              | symfony installer| gh: symfony/symfony-installer|"
-echo "              | webpack          | ghL webpack/webpack          |"
+echo "              | webpack          | gh: webpack/webpack          |"
 echo "              | wpcli            | https://wp-cli.org           |"
 echo
 echo

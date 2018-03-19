@@ -61,9 +61,13 @@ software_enabled:
   - linuxbrew
   - mysqldumpsecure
   - phalcon
+  - phpcs
+  - phpcbf
+  - sass
   - symfony
   - webpack
   - wpcli
+  - yamllint
   # Cleanup needs to be last
   - cleanup
 
@@ -289,6 +293,22 @@ software_available:
         && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
+  phpcs:
+    check: phpcs --version | grep -E 'version [.0-9]+'
+    all:
+      command: |
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcs \
+  phpcbf:
+    check: phpcbf --version | grep -E 'version [.0-9]+'
+    all:
+      command: |
+        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcbf \
+  sass:
+    check: sass --version | grep -E '[.0-9]+'
+    all:
+      command: gem install sass
   symfony:
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:
@@ -303,6 +323,12 @@ software_available:
     check: webpack --version | grep -E '[.0-9]+'
     all:
       command: npm install -g webpack webpack-cli
+  yamllint:
+    check: yamllint --version 2>&1 | grep -E '[.0-9]+'
+    all:
+      pre: apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev
+      command: pip install yamllint
+      post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/*
   cleanup:
     all:
       command: |
