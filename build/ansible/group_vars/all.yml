@@ -326,9 +326,9 @@ software_available:
   yamllint:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
-      pre: apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev libyaml-dev
+      pre: apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev
       command: pip install yamllint
-      post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev libyaml-dev && rm -rf /var/lib/apt/lists/*
+      post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/*
   cleanup:
     all:
       command: |
