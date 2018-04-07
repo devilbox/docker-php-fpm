@@ -56,7 +56,6 @@ ENV BUILD_DEPS \
 	libpq-dev \
 	libsqlite3-dev \
 	libpq-dev \
-	libssl-dev \
 	libpspell-dev \
 	libedit-dev \
 	libreadline-dev \
@@ -175,7 +174,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
@@ -190,7 +188,6 @@ RUN set -x \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
 	&& cd / && rm -rf /tmp/phalcon \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) phar \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) posix \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) readline \
@@ -326,8 +323,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
 	&& php -m | grep -oiE '^pcntl$' \
 	&& php-fpm -m | grep -oiE '^pcntl$' \
-	&& php -m | grep -oiE '^pdo$' \
-	&& php-fpm -m | grep -oiE '^pdo$' \
 	&& php -m | grep -oiE '^pdo_dblib$' \
 	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
 	&& php -m | grep -oiE '^pdo_firebird$' \
@@ -342,8 +337,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^phalcon$' \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
-	&& php -m | grep -oiE '^phar$' \
-	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
 	&& php-fpm -m | grep -oiE '^posix$' \
 	&& php -m | grep -oiE '^pspell$' \
