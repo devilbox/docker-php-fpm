@@ -601,6 +601,9 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu52]
   json:
+    7.0:
+      type: builtin
+      build_dep: [bison]
     all:
       type: builtin
   ldap:
