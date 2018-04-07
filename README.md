@@ -97,15 +97,19 @@ Have a look at the following table to see all offered volumes for each Docker im
  <thead>
   <tr>
    <th>Image</th>
-   <th width="200">Volumes</th>
+   <th width="220">Volumes</th>
    <th>Description</th>
   </tr>
  </thead>
  <tbody>
   <tr>
-   <td rowspan="4"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="5"><strong>prod</strong><br/><br/><strong>work</strong></td>
    <td><code>/etc/php-custom.d</code></td>
    <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
+  </tr>
+  <tr>
+   <td><code>/etc/php-fpm-custom.d</code></td>
+   <td>Mount this directory into your host computer and add custom PHP-FOM <code>\*.conf</code> files in order to alter PHP-FPM behaviour.</td>
   </tr>
   <tr>
    <td><code>/etc/php-modules.d</code></td>
