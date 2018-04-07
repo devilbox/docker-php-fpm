@@ -34,7 +34,7 @@ PHP_CNF_CONT="/etc/php-fpm-custom.d"
 
 CONTAINER="nginx:stable"
 
-echo "php_admin_value[post_max_size] = 17M" > "${PHP_CNF_HOST}/post.conf"
+printf "[www]\nphp_admin_value[memory_limit] = 17M\n" > "${PHP_CNF_HOST}/post.conf"
 echo "<?php phpinfo();" > "${DOC_ROOT_HOST}/index.php"
 
 # Fix mount permissions
@@ -120,31 +120,12 @@ if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; th
 	exit 1
 fi
 
-# Check modified php-fpm.conf
-if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M'"; then
-	# Info
-	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
-
-	# Show logs
-	docker_logs "${ndid}" || true
-	docker_logs "${did}"  || true
-
-	# Shutdown
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
-	rm -rf "${DOC_ROOT_HOST}"
-	rm -rf "${CONFIG_HOST}"
-	rm -rf "${PHP_CNF_HOST}"
-	echo "Failed"
-	exit 1
-fi
 
 # Check modified php-fpm.conf
-if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
+if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep memory_limit | grep '17M'"; then
 	# Info
 	run "netstat -tuln"
-	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
-	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
+	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php | grep memory_limit" || true
 	run "docker ps --no-trunc"
 	docker_exec "${ndid}" "nginx -t"
 
