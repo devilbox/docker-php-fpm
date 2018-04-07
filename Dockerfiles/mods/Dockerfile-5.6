@@ -238,7 +238,7 @@ RUN set -x \
 		${RUN_DEPS} \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& update-ca-certificates \
-	&& find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true
+	&& sh -c "find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true"
 
 
 ###

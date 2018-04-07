@@ -601,6 +601,9 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu52]
   json:
+    7.0:
+      type: builtin
+      build_dep: [bison]
     all:
       type: builtin
   ldap:
@@ -704,6 +707,8 @@ extensions_available:
   pcre:
     disabled: "{{ php_all_versions }}" # Available by default
   pdo:
+    # https://github.com/docker-library/php/issues/618
+    disabled: [7.0] # TODO: Currently disabled due to bug in built
     all:
       type: builtin
   pdo_dblib:
@@ -752,6 +757,8 @@ extensions_available:
       git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
       command: cd build && ./install
   phar:
+    # https://github.com/docker-library/php/issues/618
+    disabled: [7.0] # TODO: Currently disabled due to bug in built
     all:
       type: builtin
       build_dep: [libssl-dev]

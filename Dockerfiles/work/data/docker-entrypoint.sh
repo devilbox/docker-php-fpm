@@ -21,6 +21,9 @@ CONFIG_DIR="/docker-entrypoint.d"
 # php.ini.d directory
 PHP_INI_DIR="/usr/local/etc/php/conf.d"
 
+# php-fpm conf.d directory
+PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
+
 # This is the log file for any mail related functions
 PHP_MAIL_LOG="/var/log/mail.log"
 
@@ -32,6 +35,9 @@ FPM_LOG_DIR="/var/log/php"
 
 # Custom ini dir (to be copied to actual ini dir)
 PHP_CUST_INI_DIR="/etc/php-custom.d"
+
+# Custom PHP-FPM dir (to be copied to actual FPM conf dir)
+PHP_CUST_FPM_DIR="/etc/php-fpm-custom.d"
 
 # Supervisord config directory
 SUPERVISOR_CONFD="/etc/supervisor/conf.d"
@@ -138,6 +144,12 @@ supervisor_add_service "php-fpm"  "/usr/local/sbin/php-fpm" "${SUPERVISOR_CONFD}
 ### Copy custom *.ini files
 ###
 copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
+
+
+###
+### Copy custom PHP-FPM *.conf files
+###
+copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
