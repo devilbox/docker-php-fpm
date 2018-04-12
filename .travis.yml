@@ -95,7 +95,7 @@ before_script:
 ###
 script:
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
-      docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
+      echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin &&
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
         docker push "${IMAGE}:${PHP}-base";
         docker push "${IMAGE}:${PHP}-mods";
