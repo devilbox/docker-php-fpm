@@ -145,8 +145,8 @@ RUN \
 		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
-		echo "if [ -d /etc/bash-custom.d/ ]; then"; \
-		echo "    for f in /etc/bash-custom.d/*.sh ; do"; \
+		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
 		echo "        if [ -r \"\${f}\" ]; then"; \
 		echo "            . \"\${f}\""; \
 		echo "        fi"; \
@@ -193,7 +193,7 @@ COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
 ###
 ### Volumes
 ###
-VOLUME /etc/bash-custom.d
+VOLUME /etc/bashrc-devilbox.d
 VOLUME /etc/php-custom.d
 VOLUME /etc/php-fpm-custom.d
 VOLUME /etc/php-modules.d
