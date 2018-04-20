@@ -128,7 +128,7 @@ Have a look at the following table to see all offered volumes for each Docker im
   </tr>
   <tr>
    <td rowspan="2"><strong>work</strong></td>
-   <td><code>/etc/bash-custom.d</code></td>
+   <td><code>/etc/bashrc-devilbox.d</code></td>
    <td>Mount this directory into your host computer and add custom configuration files for <code>bash</code> and other tools.</td>
   </tr>
   <tr>
