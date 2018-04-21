@@ -46,7 +46,11 @@ RUN set -x \
 ###
 RUN set -x \
 	&& rm -rf /usr/local/etc/php-fpm.d \
-	&& mkdir -p /usr/local/etc/php-fpm.d
+	&& mkdir -p /usr/local/etc/php-fpm.d \
+	&& mkdir -p /var/lib/php/session \
+	&& mkdir -p /var/lib/php/wsdlcache \
+	&& chown -R devilbox:devilbox /var/lib/php/session \
+	&& chown -R devilbox:devilbox /var/lib/php/wsdlcache
 
 
 ###
