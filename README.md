@@ -1,9 +1,10 @@
 # PHP-FPM Docker images
 
 [![Build Status](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg)](https://github.com/devilbox/docker-php-fpm/releases)
 [![Join the chat at https://gitter.im/devilbox/Lobby](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![](https://images.microbadger.com/badges/license/devilbox/php-fpm.svg)](https://microbadger.com/images/devilbox/php-fpm "php-fpm")
 [![Github](https://img.shields.io/badge/github-docker--php--fpm-red.svg)](https://github.com/devilbox/docker-php-fpm)
+[![](https://images.microbadger.com/badges/license/devilbox/php-fpm.svg)](https://microbadger.com/images/devilbox/php-fpm "php-fpm")
 
 **[devilbox/docker-php-fpm](https://github.com/devilbox/docker-php-fpm)**
 
