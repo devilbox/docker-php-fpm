@@ -1,9 +1,5 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
-{% if php_version == 5.3 %}
 FROM devilbox/php-fpm-5.3
-{% else %}
-FROM php:{{ php_version }}-fpm
-{% endif %}
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -11,9 +7,9 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ### Labels
 ###
 LABEL \
-	name="cytopia's PHP-FPM {{ php_version }} Image" \
+	name="cytopia's PHP-FPM 5.3 Image" \
 	image="devilbox/php-fpm" \
-	tag="{{ php_version }}-base" \
+	tag="5.3-base" \
 	vendor="devilbox" \
 	license="MIT"
 
@@ -64,23 +60,19 @@ COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d /docker-entrypoint.d
 COPY ./data/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY ./data/php-fpm.d /usr/local/etc/php-fpm.d
-{% if php_version == 5.3 %}
 COPY ./data/php-fpm.d-docker-5.3.conf /usr/local/etc/php-fpm.d/docker.conf
-{% endif %}
 
 
-{% if debug %}
 ###
 ### Verify
 ###
 RUN set -x \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.3' \
 	&& /usr/local/sbin/php-fpm --test \
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
 
 
-{% endif %}
 ###
 ### Ports
 ###
