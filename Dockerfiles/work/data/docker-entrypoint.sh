@@ -79,6 +79,14 @@ set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
+### PHP-FPM 5.3 Env variables
+###
+if php -v 2>/dev/null | grep -Eoq '^PHP[[:space:]]5\.3'; then
+	set_env_php_fpm "/usr/local/etc/php-fpm.d/env.conf"
+fi
+
+
+###
 ### Set Logging
 ###
 set_docker_logs \

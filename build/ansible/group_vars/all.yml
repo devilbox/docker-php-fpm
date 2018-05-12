@@ -19,6 +19,7 @@ debug: True
 
 
 php_all_versions:
+  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -163,12 +164,17 @@ software_available:
       command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   drush:
     check: drush --version | grep -E '[.0-9]+'
-    5.5:
+    5.3:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout 7.4.0 \
+    5.4:
       pre: |
         git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
         && cd /usr/local/src/drush \
         && git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep ^8 | tail -1) \
-    5.4:
+    5.5:
       pre: |
         git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
         && cd /usr/local/src/drush \
@@ -188,7 +194,7 @@ software_available:
         && rm -rf /usr/local/src/drush/misc \
         && rm -rf /usr/local/src/drush/tests \
   drupalconsole:
-    disabled: [5.4]
+    disabled: [5.3, 5.4]
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
     all:
       command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
@@ -207,7 +213,13 @@ software_available:
       command: npm install -g grunt grunt-cli
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
-    7.0:
+    disabled: [5.3]
+    5.4:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v1.3.7 \
+    5.5:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
@@ -217,16 +229,11 @@ software_available:
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v2.0.0 \
-    5.5:
+    7.0:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v2.0.0 \
-    5.4:
-      pre: |
-        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
-        && cd /usr/local/src/laravel-installer \
-        && git checkout v1.3.7 \
     all:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -277,6 +284,11 @@ software_available:
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
     check: phalcon commands | grep -E '[.0-9]+'
+    5.3:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v2.0.7 \
     5.4:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -295,12 +307,20 @@ software_available:
         && rm -rf /usr/local/src/phalcon-devtools/.git \
   phpcs:
     check: phpcs --version | grep -E 'version [.0-9]+'
+    5.3:
+      command: |
+        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcs \
     all:
       command: |
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [.0-9]+'
+    5.3:
+      command: |
+        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcbf \
     all:
       command: |
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
@@ -310,6 +330,7 @@ software_available:
     all:
       command: gem install sass
   symfony:
+    disabled: [5.3]
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:
       command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
@@ -479,6 +500,9 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq1]
   apcu:
+    5.3:
+      type: pecl
+      version: 4.0.11
     5.4:
       type: pecl
       version: 4.0.11
@@ -534,21 +558,27 @@ extensions_available:
       configure: --with-openssl-dir
       build_dep: [libssl-dev]
   gd:
-    7.2:
+    5.3:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
-    7.1:
-      type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     7.0:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    7.1:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
+    7.2:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
@@ -573,6 +603,11 @@ extensions_available:
     all:
       type: pecl
   imagick:
+    5.3:
+      type: pecl
+      version: 3.3.0
+      build_dep: [libmagickwand-dev]
+      run_dep: [libmagickwand-6.q16-2]
     7.2:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
@@ -626,7 +661,7 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    7.2:
+    7.0:
       type: git
       git_url: https://github.com/websupport-sk/pecl-memcache
       configure: --with-zlib-dir=/usr
@@ -634,7 +669,7 @@ extensions_available:
       type: git
       git_url: https://github.com/websupport-sk/pecl-memcache
       configure: --with-zlib-dir=/usr
-    7.0:
+    7.2:
       type: git
       git_url: https://github.com/websupport-sk/pecl-memcache
       configure: --with-zlib-dir=/usr
@@ -642,6 +677,9 @@ extensions_available:
       type: pecl
       build_dep: [zlib1g-dev]
   memcached:
+    5.3:
+      type: pecl
+      version: 2.2.0
     5.4:
       type: pecl
       version: 2.2.0
@@ -662,13 +700,21 @@ extensions_available:
       command: yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
+    5.3:
+      type: pecl
+      version: 0.6.3
+      build_dep: [libssl-dev, libsasl2-dev]
     5.4:
       type: pecl
       version: 1.2.11
+      build_dep: [libssl-dev, libsasl2-dev]
     all:
       type: pecl
-      build_dep: [libssl-dev]
+      build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
+    5.3:
+      type: pecl
+      version: 0.5.7
     5.4:
       type: pecl
       version: 0.5.7
@@ -684,6 +730,7 @@ extensions_available:
     disabled: [7.0, 7.1, 7.2] # Deprecated in newer versions
     all:
       type: builtin
+      run_dep: [libmysqlclient18]
   mysqli:
     all:
       type: builtin
@@ -694,6 +741,9 @@ extensions_available:
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
+    5.3:
+      type: pecl
+      command: pecl install zendopcache
     5.4:
       type: pecl
       command: pecl install zendopcache
@@ -746,6 +796,11 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
+    5.3:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.9
+      command: cd build && ./install
     5.4:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -771,7 +826,7 @@ extensions_available:
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
   readline:
-    disabled: [5.4] # Available by default
+    disabled: [5.3, 5.4] # Available by default
     all:
       type: builtin
       build_dep: [libedit-dev, libreadline-dev]
@@ -811,13 +866,16 @@ extensions_available:
     all:
       type: builtin
   sodium:
-    disabled: [5.4, 5.5, 5.6, 7.0, 7.1]
+    disabled: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
     7.2:
       type: builtin
       build_dep: [libsodium-dev]
   spl:
     disabled: "{{ php_all_versions }}" # TODO: Did not work
   swoole:
+    5.3:
+      type: pecl
+      version: 1.9.23
     5.4:
       type: pecl
       version: 1.9.23
@@ -855,7 +913,7 @@ extensions_available:
     all:
       type: builtin
   uploadprogress:
-    7.2:
+    7.0:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
@@ -863,7 +921,7 @@ extensions_available:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
-    7.0:
+    7.2:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
@@ -875,6 +933,9 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
+    5.3:
+      type: pecl
+      version: 2.2.7
     5.4:
       type: pecl
       version: 2.4.1
@@ -913,6 +974,11 @@ extensions_available:
       build_dep: [libxslt-dev]
       run_dep: [libxslt1.1]
   zip:
+    5.3:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
     5.4:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
