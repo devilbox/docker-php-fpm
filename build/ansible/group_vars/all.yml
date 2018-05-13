@@ -26,6 +26,7 @@ php_all_versions:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 
 
@@ -93,6 +94,8 @@ apt_repositories_available:
   git:
     7.2:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    7.3:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
@@ -103,11 +106,15 @@ apt_repositories_available:
   node:
     7.2:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
+    7.3:
+      deb: deb http://deb.nodesource.com/node_8.x stretch main
     all:
       deb: deb http://deb.nodesource.com/node_8.x jessie main
       pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
   pgsql:
     7.2:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+    7.3:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
@@ -283,6 +290,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
+    disabled: [7.3]
     check: phalcon commands | grep -E '[.0-9]+'
     5.3:
       pre: |
@@ -491,6 +499,7 @@ extensions_enabled:
 #   command:   [optional] Overwrite default command (phpize && ./configure && make && make install)
 extensions_available:
   amqp:
+    disabled: [7.3]
     7.2:
       type: pecl
       run_dep: [librabbitmq4]
@@ -579,6 +588,11 @@ extensions_available:
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+    7.3:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
@@ -611,6 +625,9 @@ extensions_available:
     7.2:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
+    7.3:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3]
     all:
       type: pecl
       build_dep: [libmagickwand-dev]
@@ -629,6 +646,9 @@ extensions_available:
       run_dep: [libfbclient2]
   intl:
     7.2:
+      type: builtin
+      run_dep: [libicu57]
+    7.3:
       type: builtin
       run_dep: [libicu57]
     all:
@@ -650,10 +670,14 @@ extensions_available:
   libxml:
     disabled: "{{ php_all_versions }}" # Available by default
   mbstring:
+    disabled: [7.3]
     all:
       type: builtin
   mcrypt:
     7.2:
+      type: pecl
+      version: 1.0.1
+    7.3:
       type: pecl
       version: 1.0.1
     all:
@@ -661,6 +685,7 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
+    disabled: [7.3]
     7.0:
       type: git
       git_url: https://github.com/websupport-sk/pecl-memcache
@@ -689,12 +714,17 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.2.0
+    7.3:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: phpize && ./configure --enable-memcached && make && make install
     all:
       type: pecl
       build_dep: [zlib1g-dev, libmemcached-dev]
       run_dep: [libmemcachedutil2]
   mongo:
-    disabled: [7.0, 7.1, 7.2] # Deprecated
+    disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated
     all:
       type: pecl
       command: yes | pecl install mongo
@@ -712,6 +742,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
+    disabled: [7.3]
     5.3:
       type: pecl
       version: 0.5.7
@@ -727,7 +758,7 @@ extensions_available:
     all:
       type: pecl
   mysql:
-    disabled: [7.0, 7.1, 7.2] # Deprecated in newer versions
+    disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated in newer versions
     all:
       type: builtin
       run_dep: [libmysqlclient18]
@@ -796,6 +827,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
+    disabled: [7.3]
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -806,6 +838,12 @@ extensions_available:
       git_url: https://github.com/phalcon/cphalcon
       git_ref: phalcon-v2.0.13
       command: cd build && ./install
+#    7.3:
+#      type: git
+#      git_url: https://github.com/phalcon/cphalcon
+#      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+#      # TODO: Workaround to make it compile on PHP 7.3
+#      command: cd build && echo > php7/64bits/phalcon.zep.c && ./install
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -870,6 +908,9 @@ extensions_available:
     7.2:
       type: builtin
       build_dep: [libsodium-dev]
+    7.3:
+      type: builtin
+      build_dep: [libsodium-dev]
   spl:
     disabled: "{{ php_all_versions }}" # TODO: Did not work
   swoole:
@@ -888,6 +929,9 @@ extensions_available:
     7.2:
       type: pecl
       run_dep: [libnghttp2-14]
+    7.3:
+      type: pecl
+      run_dep: [libnghttp2-14]
     all:
       type: pecl
       build_dep: [libnghttp2-dev, libssl-dev]
@@ -903,6 +947,9 @@ extensions_available:
       type: builtin
   tidy:
     7.2:
+      type: builtin
+      run_dep: [libtidy5]
+    7.3:
       type: builtin
       run_dep: [libtidy5]
     all:
@@ -925,6 +972,10 @@ extensions_available:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
+    7.3:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
     all:
       type: pecl
   wddx:
@@ -933,6 +984,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
+    disabled: [7.3]
     5.3:
       type: pecl
       version: 2.2.7
@@ -953,7 +1005,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xmlreader:
-    disabled: [7.0, 7.1, 7.2] # Available by default
+    disabled: [7.0, 7.1, 7.2, 7.3] # Available by default
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -990,6 +1042,9 @@ extensions_available:
       build_dep: [zlib1g-dev]
       run_dep: []
     7.2:
+      type: builtin
+      run_dep: [libzip4]
+    7.3:
       type: builtin
       run_dep: [libzip4]
     all:

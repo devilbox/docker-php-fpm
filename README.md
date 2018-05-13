@@ -172,7 +172,7 @@ The following table shows a more complete overview about the offered Docker imag
  <tbody>
 
   <tr>
-   <td rowspan="7"><strong>base</strong></td>
+   <td rowspan="8"><strong>base</strong></td>
    <td><code>devilbox/php-fpm:5.3-base</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-base.svg" /></a>
@@ -220,9 +220,16 @@ The following table shows a more complete overview about the offered Docker imag
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.2-base.svg" /></a>
    </td>
   </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.3-base</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:7.3-base.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.3-base.svg" /></a>
+   </td>
+  </tr>
 
   <tr>
-   <td rowspan="7"><strong>mods</strong></td>
+   <td rowspan="8"><strong>mods</strong></td>
    <td><code>devilbox/php-fpm:5.3-mods</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-mods.svg" /></a>
@@ -271,9 +278,16 @@ The following table shows a more complete overview about the offered Docker imag
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.2-mods.svg" /></a>
    </td>
   </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.3-mods</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:7.3-mods.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.3-mods.svg" /></a>
+   </td>
+  </tr>
 
   <tr>
-   <td rowspan="7"><strong>prod</strong></td>
+   <td rowspan="8"><strong>prod</strong></td>
    <td><code>devilbox/php-fpm:5.3-prod</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-prod.svg" /></a>
@@ -322,9 +336,16 @@ The following table shows a more complete overview about the offered Docker imag
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.2-prod.svg" /></a>
    </td>
   </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.3-prod</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:7.3-prod.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.3-prod.svg" /></a>
+   </td>
+  </tr>
 
   <tr>
-   <td rowspan="7"><strong>work</strong></td>
+   <td rowspan="8"><strong>work</strong></td>
    <td><code>devilbox/php-fpm:5.3-work</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-work.svg" /></a>
@@ -371,6 +392,13 @@ The following table shows a more complete overview about the offered Docker imag
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:7.2-work.svg" /></a>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.2-work.svg" /></a>
+   </td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.3-work</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:7.3-work.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:7.3-work.svg" /></a>
    </td>
   </tr>
 
@@ -473,6 +501,11 @@ Check out this table to see which Docker image provides what PHP modules.
    <td id="72-base">Core, ctype, curl, date, dom, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
    <td id="72-mods">amqp, apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, phalcon, Phar, posix, pspell, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
   </tr>
+  <tr>
+   <th>7.3</th>
+   <td id="73-base">Core, ctype, curl, date, dom, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
+   <td id="73-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, mongodb, mysqli, mysqlnd, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+  </tr>
  </tbody>
 </table>
 
@@ -489,6 +522,7 @@ docker pull devilbox/php-fpm:5.6-base
 docker pull devilbox/php-fpm:7.0-base
 docker pull devilbox/php-fpm:7.1-base
 docker pull devilbox/php-fpm:7.2-base
+docker pull devilbox/php-fpm:7.3-base
 ```
 
 Generic PHP-FPM base image. Use it to derive your own php-fpm docker image from it and add more extensions, tools and injectables.<br/><br/><sub>(Does not offer any environment variables except for `NEW_UID` and `NEW_GID`)</sub>
@@ -502,6 +536,7 @@ docker pull devilbox/php-fpm:5.6-mods
 docker pull devilbox/php-fpm:7.0-mods
 docker pull devilbox/php-fpm:7.1-mods
 docker pull devilbox/php-fpm:7.2-mods
+docker pull devilbox/php-fpm:7.3-mods
 ```
 
 Generic PHP-FPM image with fully loaded extensions. Use it to derive your own php-fpm docker image from it and add more extensions, tools and injectables.<br/><br/><sub>(Does not offer any environment variables except for `NEW_UID` and `NEW_GID`)</sub></td>
@@ -515,6 +550,7 @@ docker pull devilbox/php-fpm:5.6-prod
 docker pull devilbox/php-fpm:7.0-prod
 docker pull devilbox/php-fpm:7.1-prod
 docker pull devilbox/php-fpm:7.2-prod
+docker pull devilbox/php-fpm:7.3-prod
 ```
 
 Devilbox production image. This Docker image comes with many injectables, port-forwardings, mail-catch-all and user/group rewriting.
@@ -528,6 +564,7 @@ docker pull devilbox/php-fpm:5.6-work
 docker pull devilbox/php-fpm:7.0-work
 docker pull devilbox/php-fpm:7.1-work
 docker pull devilbox/php-fpm:7.2-work
+docker pull devilbox/php-fpm:7.3-work
 ```
 
 Devilbox development image. Same as prod, but comes with lots of locally installed tools to make development inside the container as convenient as possible. See [Integrated Development Environment](#integrated-development-environment) for more information about this.
