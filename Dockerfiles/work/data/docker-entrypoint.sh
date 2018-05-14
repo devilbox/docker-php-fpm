@@ -183,6 +183,12 @@ run "chmod 0755 /shared/httpd" "${DEBUG_LEVEL}"
 
 
 ###
+### Update ca-certificates
+###
+update_ca_certificates "/ca" "${DEBUG_LEVEL}"
+
+
+###
 ### Startup
 ###
 log "info" "Starting supervisord" "${DEBUG_LEVEL}"
