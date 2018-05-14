@@ -831,6 +831,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>PHP Code Beautifier and Fixer.</td>
   </tr>
   <tr>
+   <td><a href="https://photoncms.com/resources/installing">photon</a></td>
+   <td>Photon CMS cli.</td>
+  </tr>
+  <tr>
    <td><a href="http://sass-lang.com/">sass</a></td>
    <td>Sass CSS compiler.</td>
   </tr>

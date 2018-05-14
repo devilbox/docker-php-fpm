@@ -65,6 +65,7 @@ software_enabled:
   - phalcon
   - phpcs
   - phpcbf
+  - photon
   - sass
   - symfony
   - webpack
@@ -333,6 +334,12 @@ software_available:
       command: |
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
+  photon:
+    check: photon --version | grep -E 'version [.0-9]+'
+    all:
+      command: |
+        COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
+        ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
   sass:
     check: sass --version | grep -E '[.0-9]+'
     all:
