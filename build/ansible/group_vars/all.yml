@@ -336,6 +336,7 @@ software_available:
         && chmod +x /usr/local/bin/phpcbf \
   photon:
     check: photon --version | grep -E 'Installer [.0-9]+'
+    disabled: [5.3, 5.4]
     all:
       command: |
         COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
