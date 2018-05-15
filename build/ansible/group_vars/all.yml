@@ -335,7 +335,7 @@ software_available:
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
   photon:
-    check: photon --version | grep -E 'version [.0-9]+'
+    check: photon --version | grep -E 'Installer [.0-9]+'
     all:
       command: |
         COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
