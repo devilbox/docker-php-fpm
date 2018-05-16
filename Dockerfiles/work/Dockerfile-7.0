@@ -200,6 +200,10 @@ RUN set -x \
 	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
+# photon
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
+&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
+ \
 # sass
 	&& gem install sass \
 # symfony
@@ -286,6 +290,7 @@ RUN set -x \
 	&& phalcon commands | grep -E '[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& photon --version | grep -E 'Installer [.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
