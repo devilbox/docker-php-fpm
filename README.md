@@ -697,13 +697,17 @@ Have a look at the following table to see all offered volumes for each Docker im
    <td colspan="3"></td>
   </tr>
   <tr>
-   <td rowspan="2"><strong>work</strong></td>
+   <td rowspan="3"><strong>work</strong></td>
    <td><code>/etc/bashrc-devilbox.d</code></td>
    <td>Mount this directory into your host computer and add custom configuration files for <code>bash</code> and other tools.</td>
   </tr>
   <tr>
    <td><code>/shared/backups</code></td>
    <td>Mount this directory into your host computer to access MySQL backups created by <a href="https://mysqldump-secure.org" >mysqldump-secure</a>.</td>
+  </tr>
+  <tr>
+   <td><code>/ca</code></td>
+   <td>Mount this directory into your host computer to bake any *.crt file that is located in there as a trusted SSL entity.</td>
   </tr>
  </tbody>
 </table>
