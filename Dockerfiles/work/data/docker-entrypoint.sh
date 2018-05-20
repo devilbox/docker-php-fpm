@@ -161,6 +161,12 @@ copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
+### Disable PHP Modules
+###
+disable_modules "DISABLE_MODULES" "${DEBUG_LEVEL}"
+
+
+###
 ### mysqldump-secure
 ###
 fix_mds_permissions "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
