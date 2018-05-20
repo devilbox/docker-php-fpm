@@ -18,6 +18,7 @@ LABEL \
 ### Envs
 ###
 ENV BUILD_DEPS \
+	wget \
 	librabbitmq-dev \
 	libbz2-dev \
 	libcurl4-openssl-dev \
@@ -118,6 +119,14 @@ RUN set -x \
 		${BUILD_DEPS} \
 	\
 	\
+	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+&& wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+&& tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+&& cd ioncube \
+&& cp "ioncube_loader_lin_5.5.so" "${EXTENSION_DIR}/ioncube.so" \
+&& echo "zend_extension=${EXTENSION_DIR}/ioncube.so" > /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini \
+ \
 	&& echo "/usr" | pecl install amqp \
 	&& docker-php-ext-enable amqp \
 	&& pecl install apcu-4.0.11 \
@@ -251,6 +260,8 @@ RUN set -x \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
 
 RUN set -x \
+	&& php -m | grep -oiE '^ionCube Loader$' \
+	&& php-fpm -m | grep -oiE '^ionCube Loader$' \
 	&& php -m | grep -oiE '^amqp$' \
 	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \

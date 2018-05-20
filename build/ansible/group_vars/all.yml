@@ -398,6 +398,8 @@ software_available:
 ### Extensions to actually enable
 ###
 extensions_enabled:
+  # ioncube must be loaded first
+  - ioncube
   - amqp
   - apcu
   - bcmath
@@ -505,6 +507,8 @@ extensions_enabled:
 #   git_ref:   [optional] Tag, branch, commit to checkout
 #   configure: [optional] Add './configure' arguments
 #   command:   [optional] Overwrite default command (phpize && ./configure && make && make install)
+# type: custom
+#   command:   [required] Custom command to install and enable a module
 extensions_available:
   amqp:
     disabled: [7.3]
@@ -663,6 +667,19 @@ extensions_available:
       type: builtin
       build_dep: [libicu-dev]
       run_dep: [libicu52]
+  ioncube:
+    disabled: [7.3]
+    all:
+      type: custom
+      command: |
+        EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+        && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+        && wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+        && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+        && cd ioncube \
+        && cp "ioncube_loader_lin_{{ php_version }}.so" "${EXTENSION_DIR}/ioncube.so" \
+        && echo "zend_extension=${EXTENSION_DIR}/ioncube.so" > /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini \
+      build_dep: [wget]
   json:
     7.0:
       type: builtin

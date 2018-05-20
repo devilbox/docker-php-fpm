@@ -113,6 +113,9 @@ RUN set -x \
 {% endif %}
 	&& docker-php-ext-enable {{ ext }} \
 	&& cd / && rm -rf /tmp/{{ ext }} \
+{# ---- 4.) CUSTOM ---- #}
+{% elif extensions_available[ext][php_version]['type'] == 'custom' %}
+	&& {{ extensions_available[ext][php_version]['command'] }} \
 {% endif %}
 {# ---------- Installation (generic) ---------- #}
 {% elif 'all' in extensions_available[ext] and 'type' in extensions_available[ext]['all'] %}
@@ -147,6 +150,9 @@ RUN set -x \
 {% endif %}
 	&& docker-php-ext-enable {{ ext }} \
 	&& cd / && rm -rf /tmp/{{ ext }} \
+{# ---- 4.) CUSTOM ---- #}
+{% elif extensions_available[ext]['all']['type'] == 'custom' %}
+	&& {{ extensions_available[ext]['all']['command'] }} \
 {% endif %}
 {% endif %}
 {% endif %}
@@ -181,6 +187,9 @@ RUN set -x \
 {% if ext == 'opcache' %}
 	&& php -m | grep -oiE '^Zend Opcache$' \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
+{% elif ext == 'ioncube' %}
+	&& php -m | grep -oiE '^ionCube Loader$' \
+	&& php-fpm -m | grep -oiE '^ionCube Loader$' \
 {% else %}
 	&& php -m | grep -oiE '^{{ ext }}$' \
 	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
