@@ -610,7 +610,7 @@ Have a look at the following table to see all supported environment variables fo
    <td colspan="5"></td>
   </tr>
   <tr>
-   <td rowspan="5"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="6"><strong>prod</strong><br/><br/><strong>work</strong></td>
    <td><code>TIMEZONE</code></td>
    <td>string</td>
    <td><code>UTC</code></td>
@@ -621,6 +621,12 @@ Have a look at the following table to see all supported environment variables fo
    <td>bool</td>
    <td><code>1</code></td>
    <td>By default all Docker images are configured to output their PHP-FPM access and error logs to stdout and stderr. Those which support it can change the behaviour to log into files inside the container. Their respective directories are available as volumes that can be mounted to the host computer. This feature might help developer who are more comfortable with tailing or searching through actual files instead of using docker logs.<br/><br/>Set this variable to <code>0</code> in order to enable logging to files. Log files are avilable under <code>/var/log/php/</code> which is also a docker volume that can be mounted locally.</td>
+  </tr>
+  <tr>
+   <td><code>ENABLE_MODULES</code></td>
+   <td>string</td>
+   <td><code>''</code></td>
+   <td>Comma separated list of PHP modules to enable, which are not enabled by default.<br/><strong>Example:</strong><br/><code>ENABLE_MODULES=ioncube</code></td>
   </tr>
   <tr>
    <td><code>DISABLE_MODULES</code></td>

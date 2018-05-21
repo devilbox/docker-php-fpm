@@ -161,6 +161,12 @@ copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
+### Enable PHP Modules
+###
+enable_modules "ENABLE_MODULES" "${DEBUG_LEVEL}"
+
+
+###
 ### Disable PHP Modules
 ###
 disable_modules "DISABLE_MODULES" "${DEBUG_LEVEL}"

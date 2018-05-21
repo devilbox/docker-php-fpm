@@ -116,6 +116,16 @@ RUN set -x \
 		${BUILD_DEPS} \
 	\
 	\
+	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+&& tar xvfz ioncube.tar.gz \
+&& cd ioncube \
+&& cp "ioncube_loader_lin_5.4.so" "${EXTENSION_DIR}/ioncube.so" \
+&& cd ../ \
+&& rm -rf ioncube \
+&& rm -rf ioncube.tar.gz \
+ \
 	&& echo "/usr" | pecl install amqp \
 	&& docker-php-ext-enable amqp \
 	&& pecl install apcu-4.0.11 \
