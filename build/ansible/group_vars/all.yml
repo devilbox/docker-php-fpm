@@ -675,13 +675,12 @@ extensions_available:
         EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
         && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
         && curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
-        && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+        && tar xvfz ioncube.tar.gz \
         && cd ioncube \
         && cp "ioncube_loader_lin_{{ php_version }}.so" "${EXTENSION_DIR}/ioncube.so" \
         && cd ../ \
         && rm -rf ioncube \
         && rm -rf ioncube.tar.gz \
-        && echo "zend_extension=${EXTENSION_DIR}/ioncube.so" > /usr/local/etc/php/conf.d/docker-php-ext-ioncube.ini \
   json:
     7.0:
       type: builtin
