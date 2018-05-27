@@ -88,7 +88,7 @@ ENV RUN_DEPS \
 	libxpm4 \
 	libvpx4 \
 	libfreetype6 \
-	libwebp-dev \
+	libwebp6 \
 	libmagickwand-6.q16-3 \
 	libc-client2007e \
 	libfbclient2 \
