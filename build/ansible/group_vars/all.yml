@@ -512,14 +512,17 @@ extensions_enabled:
 extensions_available:
   amqp:
     disabled: [7.3]
-    7.2:
-      type: pecl
-      run_dep: [librabbitmq4]
+    5.3:
+      run_dep: [librabbitmq1]
+    5.4:
+      run_dep: [librabbitmq1]
+    5.5:
+      run_dep: [librabbitmq1]
     all:
       type: pecl
       command: echo "/usr" | pecl install amqp
       build_dep: [librabbitmq-dev]
-      run_dep: [librabbitmq1]
+      run_dep: [librabbitmq4]
   apcu:
     5.3:
       type: pecl
@@ -585,32 +588,40 @@ extensions_available:
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
-    7.0:
-      type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
-    7.1:
-      type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp-dev]
-    7.2:
-      type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
-    7.3:
-      type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
-    all:
+    5.4:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.5:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.6:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.0:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.1:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.2:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    7.3:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
   gettext:
     all:
       type: builtin
@@ -632,18 +643,17 @@ extensions_available:
     5.3:
       type: pecl
       version: 3.3.0
-      build_dep: [libmagickwand-dev]
       run_dep: [libmagickwand-6.q16-2]
-    7.2:
+    5.4:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3]
-    7.3:
+      run_dep: [libmagickwand-6.q16-2]
+    5.5:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3]
+      run_dep: [libmagickwand-6.q16-2]
     all:
       type: pecl
       build_dep: [libmagickwand-dev]
-      run_dep: [libmagickwand-6.q16-2]
+      run_dep: [libmagickwand-6.q16-3]
   imap:
     all:
       type: builtin
@@ -657,16 +667,19 @@ extensions_available:
       build_dep: [libfbclient2, libib-util, firebird-dev]
       run_dep: [libfbclient2]
   intl:
-    7.2:
+    5.3:
       type: builtin
-      run_dep: [libicu57]
-    7.3:
+      run_dep: [libicu52]
+    5.4:
       type: builtin
-      run_dep: [libicu57]
+      run_dep: [libicu52]
+    5.5:
+      type: builtin
+      run_dep: [libicu52]
     all:
       type: builtin
       build_dep: [libicu-dev]
-      run_dep: [libicu52]
+      run_dep: [libicu57]
   ioncube:
     disabled: [7.3]
     all:
@@ -759,11 +772,9 @@ extensions_available:
     5.3:
       type: pecl
       version: 0.6.3
-      build_dep: [libssl-dev, libsasl2-dev]
     5.4:
       type: pecl
       version: 1.2.11
-      build_dep: [libssl-dev, libsasl2-dev]
     all:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
@@ -785,6 +796,9 @@ extensions_available:
       type: pecl
   mysql:
     disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated in newer versions
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
     all:
       type: builtin
       run_dep: [libmysqlclient18]
@@ -877,7 +891,7 @@ extensions_available:
       command: cd build && ./install
   phar:
     # https://github.com/docker-library/php/issues/618
-    disabled: [7.0] # TODO: Currently disabled due to bug in built
+    disabled: [5.6, 7.0] # TODO: Currently disabled due to bug in built
     all:
       type: builtin
       build_dep: [libssl-dev]
@@ -931,10 +945,7 @@ extensions_available:
       type: builtin
   sodium:
     disabled: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
-    7.2:
-      type: builtin
-      build_dep: [libsodium-dev]
-    7.3:
+    all:
       type: builtin
       build_dep: [libsodium-dev]
   spl:
@@ -943,18 +954,20 @@ extensions_available:
     5.3:
       type: pecl
       version: 1.9.23
+      run_dep: [libnghttp2-5]
     5.4:
       type: pecl
       version: 1.9.23
+      run_dep: [libnghttp2-5]
     5.5:
       type: pecl
       version: 1.9.23
+      run_dep: [libnghttp2-5]
     5.6:
       type: pecl
       version: 1.9.23
     7.2:
       type: pecl
-      run_dep: [libnghttp2-14]
     7.3:
       type: git
       git_url: https://github.com/swoole/swoole-src
@@ -981,7 +994,7 @@ extensions_available:
           --enable-mysqlnd \
           --enable-coroutine \
           --enable-picohttpparser \
-          --enable-timewheel \
+          #`--enable-timewheel` \
           #`--enable-hugepage` \
           #`--enable-asan` \
           #`--with-phpx-dir=` \
@@ -997,7 +1010,7 @@ extensions_available:
     all:
       type: pecl
       build_dep: [libnghttp2-dev, libssl-dev]
-      run_dep: [libnghttp2-5]
+      run_dep: [libnghttp2-14]
   sysvmsg:
     all:
       type: builtin
@@ -1008,16 +1021,19 @@ extensions_available:
     all:
       type: builtin
   tidy:
-    7.2:
+    5.3:
       type: builtin
-      run_dep: [libtidy5]
-    7.3:
+      run_dep: [libtidy-0.99-0]
+    5.4:
       type: builtin
-      run_dep: [libtidy5]
+      run_dep: [libtidy-0.99-0]
+    5.5:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
     all:
       type: builtin
       build_dep: [libtidy-dev]
-      run_dep: [libtidy-0.99-0]
+      run_dep: [libtidy5]
   tokenizer:
     all:
       type: builtin
@@ -1103,16 +1119,8 @@ extensions_available:
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
       run_dep: []
-    7.2:
-      type: builtin
-      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
-      run_dep: [libzip4]
-    7.3:
-      type: builtin
-      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
-      run_dep: [libzip4]
     all:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
       build_dep: [zlib1g-dev, libzip-dev]
-      run_dep: [libzip2]
+      run_dep: [libzip4]

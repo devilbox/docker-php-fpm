@@ -129,7 +129,7 @@ RUN set -x \
 && rm -rf ioncube \
 && rm -rf ioncube.tar.gz \
  \
-	&& pecl install amqp \
+	&& echo "/usr" | pecl install amqp \
 	&& docker-php-ext-enable amqp \
 	&& pecl install apcu \
 	&& docker-php-ext-enable apcu \
