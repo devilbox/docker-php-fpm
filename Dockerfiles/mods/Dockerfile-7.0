@@ -215,7 +215,7 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-configure soap --with-libxml-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
-	&& pecl install swoole \
+	&& pecl install swoole-2.2.0 \
 	&& docker-php-ext-enable swoole \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
