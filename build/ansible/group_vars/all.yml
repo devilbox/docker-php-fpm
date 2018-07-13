@@ -61,6 +61,7 @@ software_enabled:
   - grunt
   - laravel
   - linuxbrew
+  - mhsendmail
   - mysqldumpsecure
   - phalcon
   - phpcs
@@ -266,6 +267,12 @@ software_available:
         	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+  mhsendmail:
+    all:
+      command: |
+        wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
+        && chmod +x mhsendmail_linux_amd64 \
+        && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmai \
   mysqldumpsecure:
     check: mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
     all:
