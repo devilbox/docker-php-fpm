@@ -156,6 +156,11 @@ RUN set -x \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
+# mhsendmail
+	&& wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
+&& chmod +x mhsendmail_linux_amd64 \
+&& mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmai \
+ \
 # mysqldumpsecure
 	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
 && cd /usr/local/src/mysqldump-secure \
