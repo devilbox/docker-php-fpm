@@ -112,6 +112,10 @@ RUN set -x \
 && npm install -g mdlint \
 && npm install -g gulp \
  \
+# codeception
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception --dev \
+&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
+ \
 # drush
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
 && cd /usr/local/src/drush \
@@ -274,6 +278,7 @@ RUN set -x \
 && mdlint --version | grep -E '[.0-9]+' \
 && gulp --version | grep -E '[.0-9]+' \
  \
+	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
 	&& drush --version | grep -E '[.0-9]+' \
 	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
 	&& git-flow version | grep -E '[.0-9]+' \
