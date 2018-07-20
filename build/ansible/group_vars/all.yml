@@ -1,5 +1,6 @@
 ---
 
+# All available Docker flavours (for each version)
 template_files:
   - src: DOCKERFILES/Dockerfile-base.j2
     dst: "../../Dockerfiles/base/Dockerfile-{{ php_version }}"
@@ -11,13 +12,12 @@ template_files:
     dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
 
 
-
-
 # Adds self-validating checks to Dockerfile
 # turn off for final build
 debug: True
 
 
+# All available PHP version
 php_all_versions:
   - 5.3
   - 5.4
@@ -28,6 +28,9 @@ php_all_versions:
   - 7.2
   - 7.3
 
+
+# Global variables
+compose_home: /usr/local/src/composer
 
 
 ################################################################################
@@ -55,6 +58,7 @@ software_enabled:
   - composer
   # Normal packages start here
   - awesomeci
+  - codeception
   - drush
   - drupalconsole
   - gitflow
@@ -202,6 +206,12 @@ software_available:
         && rm -rf /usr/local/src/drush/examples \
         && rm -rf /usr/local/src/drush/misc \
         && rm -rf /usr/local/src/drush/tests \
+  codeception:
+    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
+    all:
+      command: |
+        COMPOSER_HOME="{{ compose_home }}" composer global require codeception/codeception --dev \
+        && ln -s {{ compose_home }}/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
   drupalconsole:
     disabled: [5.3, 5.4]
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
@@ -346,8 +356,8 @@ software_available:
     disabled: [5.3, 5.4]
     all:
       command: |
-        COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
-        && ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
+        COMPOSER_HOME="{{ compose_home }}" composer global require "photoncms/installer" \
+        && ln -s {{ compose_home }}/vendor/photoncms/installer/photon /usr/local/bin/photon \
   sass:
     check: sass --version | grep -E '[.0-9]+'
     all:
