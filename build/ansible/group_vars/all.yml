@@ -149,7 +149,10 @@ software_available:
   ansible:
     check: ansible --version | grep -E '^ansible [.0-9]+$'
     all:
-      command: pip install ansible
+      command: |
+        pip install --upgrade pip \
+        && pip install --upgrade setuptools  \
+        && pip install ansible \
   awesomeci:
     check: |
       mdl --version | grep -E '[.0-9]+' \

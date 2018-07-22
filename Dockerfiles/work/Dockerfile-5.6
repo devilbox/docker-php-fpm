@@ -57,13 +57,14 @@ RUN set -x \
 		git \
 		git-flow \
 		git-svn \
-		gnupg \
 		hostname \
 		htop \
 		imagemagick \
 		iputils-ping \
 		less \
 		libc-dev \
+		libffi-dev\
+		libssl-dev\
 		make \
 		mongodb-org-shell \
 		mongodb-org-tools \
@@ -79,7 +80,6 @@ RUN set -x \
 		python-cffi \
 		python-dev \
 		python-pip \
-		python-setuptools \
 		python-wheel \
 		redis-tools \
 		rubygems \
@@ -103,7 +103,10 @@ RUN set -x \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 # ansible
-	&& pip install ansible \
+	&& pip install --upgrade pip \
+&& pip install --upgrade setuptools  \
+&& pip install ansible \
+ \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
 && cd /usr/local/src/awesome-ci \
