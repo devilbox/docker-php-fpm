@@ -57,6 +57,7 @@ software_enabled:
   # Composer needs to be first, others rely on it
   - composer
   # Normal packages start here
+  - ansible
   - awesomeci
   - codeception
   - drush
@@ -145,6 +146,12 @@ apt_repositories_available:
 #   pre:       [optional] Run command after 'command:' statement
 #
 software_available:
+  ansible:
+    check: ansible --version | grep -E '^ansible [.0-9]+$'
+    all:
+      command: |
+        pip install --upgrade setuptools  \
+        && pip install ansible \
   awesomeci:
     check: |
       mdl --version | grep -E '[.0-9]+' \
@@ -270,11 +277,11 @@ software_available:
         git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
         && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-        	'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+            'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-        	'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+            'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-        	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+            'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
   mhsendmail:

@@ -46,6 +46,7 @@ RUN set -x \
 		autoconf \
 		automake \
 		bash-completion \
+		build-essential \
 		bzip2 \
 		coreutils \
 		curl \
@@ -62,6 +63,8 @@ RUN set -x \
 		iputils-ping \
 		less \
 		libc-dev \
+		libffi-dev\
+		libssl-dev\
 		make \
 		mongodb-org-shell \
 		mongodb-org-tools \
@@ -74,7 +77,10 @@ RUN set -x \
 		openssh-client \
 		patch \
 		postgresql-client \
+		python-cffi \
+		python-dev \
 		python-pip \
+		python-wheel \
 		redis-tools \
 		rubygems \
 		ruby-dev \
@@ -96,6 +102,10 @@ RUN set -x \
 RUN set -x \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+# ansible
+	&& pip install --upgrade setuptools  \
+&& pip install ansible \
+ \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
 && cd /usr/local/src/awesome-ci \
@@ -156,11 +166,11 @@ RUN set -x \
 	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
 && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
 && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-	'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
 && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-	'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
 && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-	'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
@@ -272,6 +282,7 @@ RUN set -x \
 
 RUN set -x \
 	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
+	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& mdl --version | grep -E '[.0-9]+' \
 && scss-lint --version | grep -E '[.0-9]+' \
 && eslint -v | grep -E '[.0-9]+' \
