@@ -71,6 +71,7 @@ software_enabled:
   - phalcon
   - phpcs
   - phpcbf
+  - phpunit
   - photon
   - sass
   - symfony
@@ -358,6 +359,32 @@ software_available:
       command: |
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
+  phpunit:
+    check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
+    5.3:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
+    5.4:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
+    5.5:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
+    5.6:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
+    7.0:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
+    all:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
   photon:
     check: photon --version | grep -E 'Installer [.0-9]+'
     disabled: [5.3, 5.4]
