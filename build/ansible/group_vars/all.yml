@@ -65,6 +65,7 @@ software_enabled:
   - gitflow
   - grunt
   - laravel
+  - linkcheck
   - linuxbrew
   - mhsendmail
   - mysqldumpsecure
@@ -271,6 +272,12 @@ software_available:
         && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
         && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
         && rm -rf /usr/local/src/laravel-installer/laravel/.git \
+  linkcheck:
+    check: linkcheck --version | grep -E '^linkcheck\sv[.0-9]+'
+    all:
+      command: |
+        curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+        && chmod +x /usr/local/bin/linkcheck \
   linuxbrew:
     check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+'
     all:
