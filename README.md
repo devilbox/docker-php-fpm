@@ -37,10 +37,11 @@ versions and packed with different types of integrated PHP modules. It also solv
     1. [Environment variables](#environment-variables)
     2. [Volumes](#volumes)
     3. [Ports](#ports)
-5. **[Integrated Development Environment](#integrated-development-environment)**
+5. **[PHP Default Configuration](#php-default-configuration)**
+6. **[Integrated Development Environment](#integrated-development-environment)**
     1. [What toos can you expect](#what-tools-can-you-expect)
     2. [What else is available](#what-else-is-available)
-6. **[Examples](#examples)**
+7. **[Examples](#examples)**
     1. [Provide PHP-FPM port to host](#provide-php-fpm-port-to-host)
     2. [Alter PHP-FPM and system timezone](#alter-php-fpm-and-system-timezone)
     3. [Load custom PHP configuration](#load-custom-php-configuration)
@@ -50,10 +51,10 @@ versions and packed with different types of integrated PHP modules. It also solv
     7. [Launch Postfix for mail-catching](#launch-postfix-for-mail-catching)
     8. [Webserver and PHP-FPM](#webserver-and-php-fpm)
     9. [Create MySQL Backups](#create-mysql-backups)
-7. **[Automated builds](#automated-builds)**
-8. **[Contributing](#contributing)**
-9. **[Credits](#credits)**
-10. **[License](#license)**
+8. **[Automated builds](#automated-builds)**
+9. **[Contributing](#contributing)**
+10. **[Credits](#credits)**
+11. **[License](#license)**
 
 ----
 
@@ -745,6 +746,20 @@ Have a look at the following table to see all offered exposed ports for each Doc
   </tr>
  </tbody>
 </table>
+
+
+
+<h2><img id="php-default-configuration" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> PHP Default Configuration</h2>
+
+Each PHP version is using the same sane default php.ini values, making it pain-free to switch versions and not having to worry about different php.ini settings.
+**Note:** Flavours alway inherit the settings from its parent flavour and will selectively overwrite specific settings.
+
+| Flavour | Applied php.ini files|
+|---------|------------------------------------------|
+| base    | [base.ini](Dockerfiles/base/data/php.d/) |
+| mods    | -                                        |
+| prod    | [prod.ini](Dockerfiles/prod/data/php.d/) |
+| work    | [work.ini](Dockerfiles/work/data/php.d/) |
 
 
 

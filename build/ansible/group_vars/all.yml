@@ -11,6 +11,15 @@ template_files:
   - src: DOCKERFILES/Dockerfile-work.j2
     dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
 
+# PHP.ini files to apply sane defaults
+ini_files:
+  - src: CONFIGURATION/php-base.ini
+    dst: "../../Dockerfiles/base/data/php.d/php-{{ php_version }}.ini"
+  - src: CONFIGURATION/php-prod.ini
+    dst: "../../Dockerfiles/prod/data/php.d/php-{{ php_version }}.ini"
+  - src: CONFIGURATION/php-work.ini
+    dst: "../../Dockerfiles/work/data/php.d/php-{{ php_version }}.ini"
+
 
 # Adds self-validating checks to Dockerfile
 # turn off for final build
