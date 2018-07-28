@@ -10,7 +10,7 @@
     - "{{ template_files }}"
 
 - name: copy php.ini configuration
-  copy:
+  template:
     src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True

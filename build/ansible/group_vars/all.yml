@@ -13,11 +13,11 @@ template_files:
 
 # PHP.ini files to apply sane defaults
 ini_files:
-  - src: CONFIGURATION/php-base.ini
+  - src: CONFIGURATION/php-base.ini.j2
     dst: "../../Dockerfiles/base/data/php.d/php-{{ php_version }}.ini"
-  - src: CONFIGURATION/php-prod.ini
+  - src: CONFIGURATION/php-prod.ini.j2
     dst: "../../Dockerfiles/prod/data/php.d/php-{{ php_version }}.ini"
-  - src: CONFIGURATION/php-work.ini
+  - src: CONFIGURATION/php-work.ini.j2
     dst: "../../Dockerfiles/work/data/php.d/php-{{ php_version }}.ini"
 
 
