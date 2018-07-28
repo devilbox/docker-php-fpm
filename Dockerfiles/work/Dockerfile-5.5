@@ -162,6 +162,10 @@ RUN set -x \
 && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
+# linkcheck
+	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+&& chmod +x /usr/local/bin/linkcheck \
+ \
 # linuxbrew
 	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
 && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
@@ -311,6 +315,7 @@ RUN set -x \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
+	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phalcon commands | grep -E '[.0-9]+' \

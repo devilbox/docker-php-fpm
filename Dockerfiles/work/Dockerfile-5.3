@@ -149,6 +149,10 @@ RUN set -x \
  \
 # grunt
 	&& npm install -g grunt grunt-cli \
+# linkcheck
+	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+&& chmod +x /usr/local/bin/linkcheck \
+ \
 # linuxbrew
 	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
 && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
@@ -289,6 +293,7 @@ RUN set -x \
 	&& drush --version | grep -E '[.0-9]+' \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
+	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phalcon commands | grep -E '[.0-9]+' \
