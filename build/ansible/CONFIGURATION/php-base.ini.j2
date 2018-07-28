@@ -29,7 +29,9 @@ max_file_uploads        = 20
 
 ; Vars
 variables_order         = EGPCS
+{% if not (php_version == 5.2 or php_version == 5.3 ) %}
 max_input_vars          = 8000
+{% endif %}
 max_input_nesting_level = 64
 
 
