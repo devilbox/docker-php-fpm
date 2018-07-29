@@ -2,9 +2,18 @@
 
 - name: render template
   template:
-    src: "{{ item.src }}"
+    src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
-    mode: 0644
+    mode:  0644
   with_items:
     - "{{ template_files }}"
+
+- name: copy php.ini configuration
+  template:
+    src:  "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    force: True
+    mode:  0644
+  with_items:
+    - "{{ ini_files }}"
