@@ -338,6 +338,16 @@ pull-from-73:
 	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.3 | sed 's/^FROM//g'; done)
 
 
+###
+### Test all
+###
+test-all: test-base test-mods test-prod test-work
+
+test-base: test-base-52 test-base-53 test-base-54 test-base-55 test-base-56 test-base-70 test-base-71 test-base-72 test-base-73
+test-mods: test-mods-52 test-mods-53 test-mods-54 test-mods-55 test-mods-56 test-mods-70 test-mods-71 test-mods-72 test-mods-73
+test-prod: test-prod-52 test-prod-53 test-prod-54 test-prod-55 test-prod-56 test-prod-70 test-prod-71 test-prod-72 test-prod-73
+test-work: test-work-52 test-work-53 test-work-54 test-work-55 test-work-56 test-work-70 test-work-71 test-work-72 test-work-73
+
 
 ###
 ### Tests
