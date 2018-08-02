@@ -27,8 +27,8 @@ copy_ini_files() {
 	'
 	for ini_f in ${ini_files}; do
 		ini_name="$( basename "${ini_f}" )"
-		log "info" "PHP.ini: ${ini_name} -> ${ini_dst}/zzz-devilbox-${ini_name}" "${debug}"
-		run "cp ${ini_f} ${ini_dst}/zzz-devilbox-${ini_name}" "${debug}"
+		log "info" "PHP.ini: ${ini_name} -> ${ini_dst}/yyy-devilbox-user-runtime-${ini_name}" "${debug}"
+		run "cp ${ini_f} ${ini_dst}/yyy-devilbox-user-runtime-${ini_name}" "${debug}"
 	done
 	run "find ${ini_dst} -type f -iname '*.ini' -exec chmod 0644 \"{}\" \;" "${debug}"
 }

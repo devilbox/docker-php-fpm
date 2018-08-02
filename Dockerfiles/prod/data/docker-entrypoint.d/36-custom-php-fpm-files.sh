@@ -27,8 +27,8 @@ copy_fpm_files() {
 	'
 	for fpm_f in ${fpm_files}; do
 		fpm_name="$( basename "${fpm_f}" )"
-		log "info" "PHP-FPM.conf: ${fpm_name} -> ${fpm_dst}/zzz-devilbox-${fpm_name}" "${debug}"
-		run "cp ${fpm_f} ${fpm_dst}/zzz-devilbox-${fpm_name}" "${debug}"
+		log "info" "PHP-FPM.conf: ${fpm_name} -> ${fpm_dst}/yyy-devilbox-user-runtime-${fpm_name}" "${debug}"
+		run "cp ${fpm_f} ${fpm_dst}/yyy-devilbox-user-runtime-${fpm_name}" "${debug}"
 	done
 	run "find ${fpm_dst} -type f -iname '*.conf' -exec chmod 0644 \"{}\" \;" "${debug}"
 }

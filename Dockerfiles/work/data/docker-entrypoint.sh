@@ -28,8 +28,8 @@ PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
 PHP_MAIL_LOG="/var/log/mail.log"
 
 # This file holds error and access log definitions
-PHP_FPM_CONF_LOGFILE="${PHP_FPM_DIR}/zzzzzzz-logfiles.conf"
-PHP_INI_CONF_LOGFILE="${PHP_INI_DIR}/zzzzzzz-logfiles.ini"
+PHP_FPM_CONF_LOGFILE="${PHP_FPM_DIR}/zzz-entrypoint-logfiles.conf"
+PHP_INI_CONF_LOGFILE="${PHP_INI_DIR}/zzz-entrypoint-logfiles.ini"
 
 # PHP-FPM log dir
 FPM_LOG_DIR="/var/log/php"

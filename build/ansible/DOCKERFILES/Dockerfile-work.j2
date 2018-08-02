@@ -191,7 +191,7 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
+COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
 COPY ./data/php-fpm.conf/php-fpm-{{ php_version }}.conf /usr/local/etc/php-fpm.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
