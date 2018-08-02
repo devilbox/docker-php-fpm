@@ -59,7 +59,6 @@ RUN set -x \
 ###
 COPY ./data/php-ini.d/php-7.3.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
 COPY ./data/php-fpm.conf/php-fpm-7.3.conf /usr/local/etc/php-fpm.conf
-COPY ./data/php-fpm.d/php-fpm.d-7.3.conf /usr/local/etc/php-fpm.d/php-fpm.d.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d /docker-entrypoint.d

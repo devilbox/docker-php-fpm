@@ -268,7 +268,6 @@ RUN set -x \
 ###
 COPY ./data/php-ini.d/php-5.2.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
 COPY ./data/php-fpm.conf/php-fpm-5.2.conf /usr/local/etc/php-fpm.conf
-COPY ./data/php-fpm.d/php-fpm.d-5.2.conf /usr/local/etc/php-fpm.d/php-fpm.d.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/

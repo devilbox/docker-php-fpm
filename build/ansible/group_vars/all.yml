@@ -23,34 +23,7 @@ php_all_versions:
 ###
 ### PHP settings equal for php.ini and php-fpm.comf (used below)
 ###
-php_settings_all:
-  # ---- Settings for PHP.INI and PHP-FPM.CONF ----
-  base:
-    # Timeouts
-    timeout:                   180
-    # Error reporting
-    error_reporting:           E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
-    xmlrpc_errors:             'Off'
-    report_memleaks:           'On'
-    display_errors:            'Off'
-    display_startup_errors:    'Off'
-    track_errors:              'On'
-    log_errors:                'On'
-    html_errors:               'Off'
-
-  work:
-    # Timeouts
-    timeout:                   180
-    # Error reporting
-    error_reporting:           E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
-    xmlrpc_errors:             'Off'
-    report_memleaks:           'On'
-    display_errors:            'On'
-    display_startup_errors:    'On'
-    track_errors:              'On'
-    log_errors:                'On'
-    html_errors:               'On'
-
+php_timeout: 120
 
 ###
 ### PHP.ini
@@ -61,25 +34,26 @@ php_settings_ini:
     # Memory
     memory_limit:              512M
     # Timeouts
-    max_execution_time:        "{{ php_settings_all.base.timeout }}"
-    max_input_time:            "{{ php_settings_all.base.timeout }}"
+    max_execution_time:        "{{ php_timeout }}"
+    max_input_time:            "{{ php_timeout }}"
     # Uploads
-    post_max_size:             384M
-    upload_max_filesize:       256M
+    # Note: "post_max_size" should be greater than "upload_max_filesize"
+    post_max_size:             72M
+    upload_max_filesize:       64M
     max_file_uploads:          20
     # Variables
     variables_order:           EGPCS
     max_input_vars:            8000
     max_input_nesting_level:   64
     # Error reporting
-    error_reporting:           "{{ php_settings_all.base.error_reporting }}"
-    xmlrpc_errors:             "{{ php_settings_all.base.xmlrpc_errors }}"
-    report_memleaks:           "{{ php_settings_all.base.report_memleaks }}"
-    display_errors:            "{{ php_settings_all.base.display_errors }}"
-    display_startup_errors:    "{{ php_settings_all.base.display_startup_errors }}"
-    track_errors:              "{{ php_settings_all.base.track_errors }}"
-    log_errors:                "{{ php_settings_all.base.log_errors }}"
-    html_errors:               "{{ php_settings_all.base.html_errors }}"
+    error_reporting:           E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'Off'
+    display_startup_errors:    'Off'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'Off'
     # Xdebug settings
     xdebug_default_enable:     'Off'
     xdebug_profiler_enable:    'Off'
@@ -93,14 +67,14 @@ php_settings_ini:
   # ---- Inherits from base and overwrites certain values ----
   work:
     # Error reporting
-    error_reporting:           "{{ php_settings_all.work.error_reporting }}"
-    xmlrpc_errors:             "{{ php_settings_all.work.xmlrpc_errors }}"
-    report_memleaks:           "{{ php_settings_all.work.report_memleaks }}"
-    display_errors:            "{{ php_settings_all.work.display_errors }}"
-    display_startup_errors:    "{{ php_settings_all.work.display_startup_errors }}"
-    track_errors:              "{{ php_settings_all.work.track_errors }}"
-    log_errors:                "{{ php_settings_all.work.log_errors }}"
-    html_errors:               "{{ php_settings_all.work.html_errors }}"
+    error_reporting:           E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'On'
+    display_startup_errors:    'On'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'On'
     # Xdebug settings
     xdebug_default_enable:     'Off'
     xdebug_profiler_enable:    'Off'
@@ -118,48 +92,32 @@ php_settings_fpm:
     clear_env:                 'no'
     catch_workers_output:      'yes'
     # Timeouts
-    request_terminate_timeout: "{{ php_settings_all.work.timeout }}s"
+    request_terminate_timeout: "{{ php_timeout }}s"
     # Network
     listen:                    9000
-    listen_backlog:            1023
+    listen_backlog:            1024
     # Logging
     log_level:                 notice
     error_log:                 /proc/self/fd/2
     access_log:                /proc/self/fd/2
     # Worker
-    pm:                        dynamic
-    pm_max_children:           50
-    pm_start_servers:          10
-    pm_min_spare_servers:      5
-    pm_max_spare_servers:      15
-    pm_max_requests:           500
+    pm:                        ondemand
+    pm_max_children:           50  # pm: dynamic, ondemand or static
+    pm_start_servers:          4   # only for pm: dynamic (min_spare + (max_spare-min_spare)/2
+    pm_min_spare_servers:      2   # only for pm: dynamic
+    pm_max_spare_servers:      6   # only for pm: dynamic
+    pm_max_requests:           500 # pm: dynamic or ondemand
+    pm_process_idle_timeout:   10s # only for pm: ondemand
+
     # User/Group
     user:                      devilbox
     group:                     devilbox
-    # Error reporting
-    error_reporting:           "{{ php_settings_all.base.error_reporting }}"
-    xmlrpc_errors:             "{{ php_settings_all.base.xmlrpc_errors }}"
-    report_memleaks:           "{{ php_settings_all.base.report_memleaks }}"
-    display_errors:            "{{ php_settings_all.base.display_errors }}"
-    display_startup_errors:    "{{ php_settings_all.base.display_startup_errors }}"
-    track_errors:              "{{ php_settings_all.base.track_errors }}"
-    log_errors:                "{{ php_settings_all.base.log_errors }}"
-    html_errors:               "{{ php_settings_all.base.html_errors }}"
   # ---- Inherits from base ----
   mods:
   # ---- Inherits from base ----
   prod:
   # ---- Inherits from base and overwrites certain values ----
   work:
-    # Error reporting
-    error_reporting:           "{{ php_settings_all.work.error_reporting }}"
-    xmlrpc_errors:             "{{ php_settings_all.work.xmlrpc_errors }}"
-    report_memleaks:           "{{ php_settings_all.work.report_memleaks }}"
-    display_errors:            "{{ php_settings_all.work.display_errors }}"
-    display_startup_errors:    "{{ php_settings_all.work.display_startup_errors }}"
-    track_errors:              "{{ php_settings_all.work.track_errors }}"
-    log_errors:                "{{ php_settings_all.work.log_errors }}"
-    html_errors:               "{{ php_settings_all.work.html_errors }}"
 
 
 ###
@@ -190,7 +148,6 @@ template_configurations:
     cfg: "{{ php_settings_ini }}"
     key: work
     alt: base  # Alternative key to use when definition is not set in 'work'
-
   # php-fpm.conf
   - src: CONFIGURATIONS/php-fpm.conf.j2
     dst: "../../Dockerfiles/base/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
@@ -199,18 +156,6 @@ template_configurations:
     alt: base
   - src: CONFIGURATIONS/php-fpm.conf.j2
     dst: "../../Dockerfiles/work/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
-    cfg: "{{ php_settings_fpm }}"
-    key: work
-    alt: base
-
-  # php-fpm.d-conf
-  - src: CONFIGURATIONS/php-fpm.d-conf.j2
-    dst: "../../Dockerfiles/base/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
-    cfg: "{{ php_settings_fpm }}"
-    key: base
-    alt: base
-  - src: CONFIGURATIONS/php-fpm.d-conf.j2
-    dst: "../../Dockerfiles/work/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
     cfg: "{{ php_settings_fpm }}"
     key: work
     alt: base

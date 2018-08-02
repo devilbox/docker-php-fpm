@@ -1,7 +1,129 @@
 {% if not php_version == 5.2 %}
+; ################################################################################
+; ####
+; #### The following settings can be overwritten by later includes
+; ####
+; ################################################################################
+
+
+; ############################################################
+; Timeouts
+; ############################################################
+
+[www]
+; The timeout for serving a single request after which the worker process will be killed.
+; This option should be used when the 'max_execution_time' ini option does not stop script
+; execution for some reason.
+request_terminate_timeout = {{ item.cfg[item.key].request_terminate_timeout | default(item.cfg[item.alt].request_terminate_timeout) }}
+
+
+; ############################################################
+; Logging
+; ############################################################
+
+[global]
+error_log = {{ item.cfg[item.key].error_log | default(item.cfg[item.alt].error_log) }}
+log_level = {{ item.cfg[item.key].log_level | default(item.cfg[item.alt].log_level) }}
+
+[www]
+; if we send this to /proc/self/fd/1, it never appears
+access.log = {{ item.cfg[item.key].access_log | default(item.cfg[item.alt].access_log) }}
+
+
+; ############################################################
+; Worker configuration
+; ############################################################
+
+[www]
+
+; static - the number of child processes is fixed (pm.max_children).
+;
+; dynamic - the number of child processes is set dynamically based on the following directives:
+; pm.max_children, pm.start_servers, pm.min_spare_servers, pm.max_spare_servers.
+;
+; ondemand - the processes spawn on demand (when requested, as opposed to dynamic, where
+; pm.start_servers are started when the service is started.
+pm = {{ item.cfg[item.key].pm | default(item.cfg[item.alt].pm) }}
+
+; The maximum number of child processes to be created
+pm.max_children = {{ item.cfg[item.key].pm_max_children | default(item.cfg[item.alt].pm_max_children) }}
+
+; The number of child processes created on startup. Used only when pm is set to dynamic.
+; Default Value: min_spare_servers + (max_spare_servers - min_spare_servers) / 2.
+pm.start_servers = {{ item.cfg[item.key].pm_start_servers | default(item.cfg[item.alt].pm_start_servers) }}
+
+; The desired minimum number of idle server processes.
+pm.min_spare_servers = {{ item.cfg[item.key].pm_min_spare_servers | default(item.cfg[item.alt].pm_min_spare_servers) }}
+
+; The desired maximum number of idle server processes.
+pm.max_spare_servers = {{ item.cfg[item.key].pm_max_spare_servers | default(item.cfg[item.alt].pm_max_spare_servers) }}
+
+; The number of requests each child process should execute before respawning.
+; This can be useful to work around memory leaks in 3rd party libraries.
+; For endless request processing specify '0'. Equivalent to PHP_FCGI_MAX_REQUESTS.
+; Default value: 0.
+pm.max_requests = {{ item.cfg[item.key].pm_max_requests | default(item.cfg[item.alt].pm_max_requests) }}
+
+; The number of seconds after which an idle process will be killed. Used only when pm is set to ondemand
+pm.process_idle_timeout = {{ item.cfg[item.key].pm_process_idle_timeout | default(item.cfg[item.alt].pm_process_idle_timeout) }}
+
+
+; ############################################################
+; Include
+; ############################################################
+
+
+[global]
+include   = /usr/local/etc/php-fpm.d/*.conf
+
+
+; ################################################################################
+; ####
+; #### The following settings overwrite any includes again
+; ####
+; ################################################################################
+
+
+; ############################################################
+; Required for Dockerization
+; ############################################################
+
 [global]
 daemonize = no
-include   = /usr/local/etc/php-fpm.d/*.conf
+
+[www]
+{# This value is available since PHP >=5.4 #}
+{% if not php_version == 5.3 %}
+; Keep env variables set by docker
+clear_env = {{ item.cfg[item.key].clear_env | default(item.cfg[item.alt].clear_env) }}
+{% endif %}
+
+; Redirect worker stdout and stderr into main error log. If not set, stdout and
+; stderr will be redirected to /dev/null according to FastCGI specs.
+; Note: on highloaded environement, this can cause some delay in the page
+; process time (several ms).
+; Default Value: no
+catch_workers_output = {{ item.cfg[item.key].catch_workers_output | default(item.cfg[item.alt].catch_workers_output) }}
+
+
+; ############################################################
+; User and Group
+; ############################################################
+
+[www]
+user  = {{ item.cfg[item.key].user | default(item.cfg[item.alt].user) }}
+group = {{ item.cfg[item.key].group | default(item.cfg[item.alt].group) }}
+
+
+; ############################################################
+; Networking
+; ############################################################
+
+[www]
+; Ensure to listen here
+listen         = {{ item.cfg[item.key].listen  | default(item.cfg[item.alt].listen)}}
+{# Available since PHP >= 5.4 #}
+listen.backlog = {{ item.cfg[item.key].listen_backlog | default(item.cfg[item.alt].listen_backlog) }}
 {% else %}
 {# PHP-FPM 5.2 uses XML format for configuration #}
 <?xml version="1.0" ?>
@@ -56,16 +178,6 @@ include   = /usr/local/etc/php-fpm.d/*.conf
 			</value>
 
 			Additional php.ini defines, specific to this pool of workers.
-			<value name="php_defines">
-				<value name="error_reporting">E_ALL</value>
-				<value name="xmlrpc_errors">{{          item.cfg[item.key].xmlrpc_errors          | default(item.cfg[item.alt].xmlrpc_errors) }}</value>
-				<value name="report_memleaks">{{        item.cfg[item.key].report_memleaks        | default(item.cfg[item.alt].report_memleaks) }}</value>
-				<value name="display_errors">{{         item.cfg[item.key].display_errors         | default(item.cfg[item.alt].display_errors) }}</value>
-				<value name="display_startup_errors">{{ item.cfg[item.key].display_startup_errors | default(item.cfg[item.alt].display_startup_errors) }}</value>
-				<value name="track_errors">{{           item.cfg[item.key].track_errors           | default(item.cfg[item.alt].track_errors) }}</value>
-				<value name="log_errors">{{             item.cfg[item.key].log_errors             | default(item.cfg[item.alt].log_errors) }}</value>
-				<value name="html_errors">{{            item.cfg[item.key].html_errors            | default(item.cfg[item.alt].html_errors) }}</value>
-			</value>
 
 			Unix user of processes
 			<value name="user">{{ item.cfg[item.key].user | default(item.cfg[item.alt].user) }}</value>
