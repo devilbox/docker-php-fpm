@@ -47,3 +47,10 @@ track_errors            = {{ item.cfg[item.key].track_errors | default(item.cfg[
 {% endif %}
 log_errors              = {{ item.cfg[item.key].log_errors   | default(item.cfg[item.alt].log_errors) }}
 html_errors             = {{ item.cfg[item.key].html_errors  | default(item.cfg[item.alt].html_errors) }}
+
+
+; Xdebug settings
+xdebug.default_enable   = {{ item.cfg[item.key].xdebug_default_enable   | default(item.cfg[item.alt].xdebug_default_enable) }}
+xdebug.profiler_enable  = {{ item.cfg[item.key].xdebug_profiler_enable  | default(item.cfg[item.alt].xdebug_profiler_enable) }}
+xdebug.remote_enable    = {{ item.cfg[item.key].xdebug_remote_enable    | default(item.cfg[item.alt].xdebug_remote_enable) }}
+xdebug.remote_autostart = {{ item.cfg[item.key].xdebug_remote_autostart | default(item.cfg[item.alt].xdebug_remote_autostart) }}

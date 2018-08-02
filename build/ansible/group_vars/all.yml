@@ -80,6 +80,12 @@ php_settings_ini:
     track_errors:              "{{ php_settings_all.base.track_errors }}"
     log_errors:                "{{ php_settings_all.base.log_errors }}"
     html_errors:               "{{ php_settings_all.base.html_errors }}"
+    # Xdebug settings
+    xdebug_default_enable:     'Off'
+    xdebug_profiler_enable:    'Off'
+    xdebug_remote_enable:      'Off'
+    xdebug_remote_autostart:   'Off'
+
   # ---- Inherits from base ----
   mods:
   # ---- Inherits from base ----
@@ -95,6 +101,11 @@ php_settings_ini:
     track_errors:              "{{ php_settings_all.work.track_errors }}"
     log_errors:                "{{ php_settings_all.work.log_errors }}"
     html_errors:               "{{ php_settings_all.work.html_errors }}"
+    # Xdebug settings
+    xdebug_default_enable:     'Off'
+    xdebug_profiler_enable:    'Off'
+    xdebug_remote_enable:      'Off'
+    xdebug_remote_autostart:   'Off'
 
 
 ###
