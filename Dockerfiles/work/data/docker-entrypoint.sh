@@ -28,7 +28,8 @@ PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
 PHP_MAIL_LOG="/var/log/mail.log"
 
 # This file holds error and access log definitions
-FPM_CONF_LOGFILE="/usr/local/etc/php-fpm.d/logfiles.conf"
+PHP_FPM_CONF_LOGFILE="${PHP_FPM_DIR}/zzzzzzz-logfiles.conf"
+PHP_INI_CONF_LOGFILE="${PHP_INI_DIR}/zzzzzzz-logfiles.ini"
 
 # PHP-FPM log dir
 FPM_LOG_DIR="/var/log/php"
@@ -92,7 +93,8 @@ fi
 set_docker_logs \
 	"DOCKER_LOGS" \
 	"${FPM_LOG_DIR}" \
-	"${FPM_CONF_LOGFILE}" \
+	"${PHP_FPM_CONF_LOGFILE}" \
+	"${PHP_INI_CONF_LOGFILE}" \
 	"${MY_USER}" \
 	"${MY_GROUP}" \
 	"${DEBUG_LEVEL}"
