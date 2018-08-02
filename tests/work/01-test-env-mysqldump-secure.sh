@@ -32,7 +32,7 @@ run "docker pull ${CONTAINER}"
 # Start mysql container
 mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" )"
 mname="$( docker_name "${mdid}" )"
-run "sleep 5"
+run "sleep 10"
 
 # Start PHP-FPM container
 did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e FORWARD_PORTS_TO_LOCALHOST=3306:${mname}:3306 -e MYSQL_BACKUP_USER=root -e MYSQL_BACKUP_PASS=${MYSQL_ROOT_PASSWORD} -e MYSQL_BACKUP_HOST=127.0.0.1 -v ${MOUNTPOINT}:/shared/backups --link ${mname}" )"
