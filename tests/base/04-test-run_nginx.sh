@@ -71,7 +71,7 @@ run "sleep 10"
 ###
 ### Check correct PHP-FPM user
 ###
-if ! docker_exec "${did}" "ps auxw | grep 'php-fpm: pool' | grep -v grep | awk '{ print \$1 }' | head -1 | grep devilbox"; then
+if ! docker_exec "${did}" "ps auxw | grep -E '(php-fpm: pool|php-cgi)' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
 	docker_exec "${did}" "ps auxw"
 
 	# Shutdown
@@ -82,17 +82,7 @@ if ! docker_exec "${did}" "ps auxw | grep 'php-fpm: pool' | grep -v grep | awk '
 	echo "Failed"
 	exit 1
 fi
-if ! docker_exec "${did}" "ps auxw | grep 'php-fpm: pool' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
-	docker_exec "${did}" "ps auxw"
 
-	# Shutdown
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
-	rm -rf "${DOC_ROOT_HOST}"
-	rm -rf "${CONFIG_HOST}"
-	echo "Failed"
-	exit 1
-fi
 
 
 ###
