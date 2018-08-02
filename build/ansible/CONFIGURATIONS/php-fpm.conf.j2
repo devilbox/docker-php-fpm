@@ -57,7 +57,7 @@ include   = /usr/local/etc/php-fpm.d/*.conf
 
 			Additional php.ini defines, specific to this pool of workers.
 			<value name="php_defines">
-				<value name="error_reporting">{{        item.cfg[item.key].error_reporting        | default(item.cfg[item.alt].error_reporting) }}</value>
+				<value name="error_reporting">E_ALL</value>
 				<value name="xmlrpc_errors">{{          item.cfg[item.key].xmlrpc_errors          | default(item.cfg[item.alt].xmlrpc_errors) }}</value>
 				<value name="report_memleaks">{{        item.cfg[item.key].report_memleaks        | default(item.cfg[item.alt].report_memleaks) }}</value>
 				<value name="display_errors">{{         item.cfg[item.key].display_errors         | default(item.cfg[item.alt].display_errors) }}</value>
