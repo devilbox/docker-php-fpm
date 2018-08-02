@@ -789,14 +789,14 @@ Have a look at the following table to see all offered exposed ports for each Doc
 <h2><img id="php-default-configuration" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> PHP Default Configuration</h2>
 
 Each PHP version is using the same sane default php.ini values, making it pain-free to switch versions and not having to worry about different php.ini settings.
-**Note:** Flavours alway inherit the settings from its parent flavour and will selectively overwrite specific settings.
+**Note:** Flavours alway inherit the settings from its parent flavour if they have no own configuration.
 
 | Flavour | Applied php.ini files|
 |---------|------------------------------------------|
-| base    | [php.ini](Dockerfiles/base/data/php-ini.d/) [php-fpm.conf](Dockerfiles/base/data/php-fpm.conf/) [php-fpm.d](Dockerfiles/base/data/php-fpm.d/) |
-| mods    | -                                        |
-| prod    | -                                        |
-| work    | [php.ini](Dockerfiles/work/data/php-ini.d/) [php-fpm.conf](Dockerfiles/work/data/php-fpm.conf/) [php-fpm.d](Dockerfiles/work/data/php-fpm.d/) |
+| base    | [php.ini](Dockerfiles/base/data/php-ini.d/) and [php-fpm.conf](Dockerfiles/base/data/php-fpm.conf/) |
+| mods    | inherits from base                       |
+| prod    | inherits from base                       |
+| work    | [php.ini](Dockerfiles/work/data/php-ini.d/) [php-fpm.conf](Dockerfiles/work/data/php-fpm.conf/) |
 
 
 
