@@ -1,5 +1,5 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
-FROM php:5.4-fpm
+FROM devilbox/php-fpm-5.2
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -7,9 +7,9 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ### Labels
 ###
 LABEL \
-	name="cytopia's PHP-FPM 5.4 Image" \
+	name="cytopia's PHP-FPM 5.2 Image" \
 	image="devilbox/php-fpm" \
-	tag="5.4-base" \
+	tag="5.2-base" \
 	vendor="devilbox" \
 	license="MIT"
 
@@ -21,7 +21,7 @@ ENV MY_USER="devilbox" \
 	MY_GROUP="devilbox" \
 	MY_UID="1000" \
 	MY_GID="1000" \
-	PHP_VERSION="5.4"
+	PHP_VERSION="5.2"
 
 
 ###
@@ -57,9 +57,9 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php-ini.d/php-5.4.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
-COPY ./data/php-fpm.conf/php-fpm-5.4.conf /usr/local/etc/php-fpm.conf
-COPY ./data/php-fpm.d/php-fpm.d-5.4.conf /usr/local/etc/php-fpm.d/php-fpm.d.conf
+COPY ./data/php-ini.d/php-5.2.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
+COPY ./data/php-fpm.conf/php-fpm-5.2.conf /usr/local/etc/php-fpm.conf
+COPY ./data/php-fpm.d/php-fpm.d-5.2.conf /usr/local/etc/php-fpm.d/php-fpm.d.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d /docker-entrypoint.d
@@ -69,7 +69,7 @@ COPY ./data/docker-entrypoint.d /docker-entrypoint.d
 ### Verify
 ###
 RUN set -x \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.4' \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.2' \
 	&& /usr/local/sbin/php-fpm --test \
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
 	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi

@@ -1,0 +1,328 @@
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
+FROM devilbox/php-fpm:5.2-prod
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+LABEL \
+	name="cytopia's PHP-FPM 5.2 Image" \
+	image="devilbox/php-fpm" \
+	tag="5.2-work" \
+	vendor="devilbox" \
+	license="MIT"
+
+
+###
+### Envs
+###
+ENV BASH_PROFILE=".bashrc"
+
+
+###
+### Install Tools
+###
+RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		dirmngr \
+		gnupg \
+	&& echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
+	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
+	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
+	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
+	&& curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add - \
+	&& echo "deb http://deb.nodesource.com/node_8.x jessie main" > /etc/apt/sources.list.d/node.list \
+	&& curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add - \
+	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		ack-grep \
+		aspell \
+		autoconf \
+		automake \
+		bash-completion \
+		build-essential \
+		bzip2 \
+		coreutils \
+		curl \
+		dnsutils \
+		dos2unix \
+		file \
+		gcc \
+		git \
+		git-flow \
+		git-svn \
+		hostname \
+		htop \
+		imagemagick \
+		iputils-ping \
+		less \
+		libc-dev \
+		libffi-dev\
+		libssl-dev\
+		make \
+		mongodb-org-shell \
+		mongodb-org-tools \
+		moreutils \
+		mysql-client \
+		nano \
+		net-tools \
+		netcat \
+		nodejs \
+		openssh-client \
+		patch \
+		postgresql-client \
+		python-cffi \
+		python-dev \
+		python-pip \
+		python-wheel \
+		redis-tools \
+		rubygems \
+		ruby-dev \
+		shellcheck \
+		silversearcher-ag \
+		subversion \
+		sudo \
+		tig \
+		vim \
+		w3m \
+		wget \
+		whois \
+		xz-utils \
+		yarn \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+RUN set -x \
+# ansible
+	&& pip install --upgrade setuptools  \
+&& pip install ansible \
+ \
+# awesomeci
+	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+&& cd /usr/local/src/awesome-ci \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& ./configure --prefix=/usr/local \
+&& make install \
+&& cd / \
+&& rm -rf /usr/local/src/awesome-ci \
+ \
+	&& gem install mixlib-config -v 2.2.4 \
+&& gem install mdl \
+&& gem install scss_lint \
+&& npm install -g eslint \
+&& npm install -g jsonlint \
+&& npm install -g mdlint \
+&& npm install -g gulp \
+ \
+# gitflow
+	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+&& cd /tmp/gitflow \
+&& make install \
+&& cd / && rm -rf /tmp/gitflow \
+ \
+# grunt
+	&& npm install -g grunt grunt-cli \
+# linkcheck
+	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+&& chmod +x /usr/local/bin/linkcheck \
+ \
+# linuxbrew
+	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
+&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+ \
+# mhsendmail
+	&& wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
+&& chmod +x mhsendmail_linux_amd64 \
+&& mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmai \
+ \
+# mysqldumpsecure
+	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+&& cd /usr/local/src/mysqldump-secure \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+&& touch /var/log/mysqldump-secure.log \
+&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+&& chmod 0400 /etc/mysqldump-secure.conf \
+&& chmod 0400 /etc/mysqldump-secure.cnf \
+&& chmod 0644 /var/log/mysqldump-secure.log \
+&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+&& cd / \
+&& rm -rf /usr/local/src/mysqldump-secure \
+ \
+# phalcon
+	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+&& cd /usr/local/src/phalcon-devtools \
+&& git checkout v2.0.7 \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+&& ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+&& cd / \
+&& rm -rf /usr/local/src/phalcon-devtools/.git \
+ \
+# phpcs
+	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcs \
+ \
+# phpcbf
+	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcbf \
+ \
+# phpunit
+	&& curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+&& chmod +x /usr/local/bin/phpunit \
+ \
+# sass
+	&& gem install sass \
+# webpack
+	&& npm install -g webpack webpack-cli \
+# wpcli
+	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
+# yamllint
+	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
+	&& pip install yamllint \
+	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
+# cleanup
+	&& rm -rf /home/${MY_USER}/.*json \
+&& rm -rf /home/${MY_USER}/.cache \
+&& rm -rf /home/${MY_USER}/.composer \
+&& rm -rf /home/${MY_USER}/.config \
+&& rm -rf /home/${MY_USER}/.drush \
+&& rm -rf /home/${MY_USER}/.gem \
+&& rm -rf /home/${MY_USER}/.npm \
+&& rm -rf /home/${MY_USER}/.subversion \
+\
+&& rm -rf /root/.*json \
+&& rm -rf /root/.cache \
+&& rm -rf /root/.composer \
+&& rm -rf /root/.config \
+&& rm -rf /root/.drush \
+&& rm -rf /root/.gem \
+&& rm -rf /root/.npm \
+&& rm -rf /root/.subversion \
+\
+&& rm -rf /tmp/* \
+ \
+	&& true
+
+
+###
+### Configure Bash
+###
+RUN \
+	{ \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "export PATH"; \
+		echo ". /etc/bash-devilbox"; \
+		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
+
+
+###
+### Verify
+###
+RUN set -x \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.2' \
+	&& /usr/local/sbin/php-fpm --test \
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+RUN set -x \
+	&& ansible --version | grep -E '^ansible [.0-9]+$' \
+	&& mdl --version | grep -E '[.0-9]+' \
+&& scss-lint --version | grep -E '[.0-9]+' \
+&& eslint -v | grep -E '[.0-9]+' \
+&& jsonlint --version | grep -E '[.0-9]+' \
+&& mdlint --version | grep -E '[.0-9]+' \
+&& gulp --version | grep -E '[.0-9]+' \
+ \
+	&& git-flow version | grep -E '[.0-9]+' \
+	&& grunt --version | grep -E '[.0-9]+' \
+	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
+	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
+	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
+	&& phalcon commands | grep -E '[.0-9]+' \
+	&& phpcs --version | grep -E 'version [.0-9]+' \
+	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
+	&& sass --version | grep -E '[.0-9]+' \
+	&& webpack --version | grep -E '[.0-9]+' \
+	&& wp --allow-root --version | grep -E '[.0-9]+' \
+	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
+	&& true
+
+
+###
+### Copy files
+###
+COPY ./data/php-ini.d/php-5.2.ini /usr/local/etc/php/conf.d/yyy-devilbox.ini
+COPY ./data/php-fpm.conf/php-fpm-5.2.conf /usr/local/etc/php-fpm.conf
+COPY ./data/php-fpm.d/php-fpm.d-5.2.conf /usr/local/etc/php-fpm.d/php-fpm.d.conf
+
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+
+
+###
+### Volumes
+###
+VOLUME /etc/bashrc-devilbox.d
+VOLUME /etc/php-custom.d
+VOLUME /etc/php-fpm-custom.d
+VOLUME /etc/php-modules.d
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+
+###
+### Entrypoint
+###
+ENTRYPOINT ["/docker-entrypoint.sh"]

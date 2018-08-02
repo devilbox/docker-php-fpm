@@ -204,12 +204,6 @@ template_configurations:
     key: work
     alt: base
 
-  # php-fpm.conf (only applied to base and fully inherited)
-  #
-  #    # php-fpm.d/php-fpm.d.conf (only applied to base and full inherited)
-  #  - src: CONFIGURATIONS/php-fpm.d/php-fpm-base.d.conf.j2
-  #    dst: "../../Dockerfiles/base/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
-
 
 ###
 ### Variables to be used in this file (group_vars/all.yml)
@@ -370,11 +364,18 @@ software_available:
         && npm install -g mdlint \
         && npm install -g gulp \
   composer:
+    disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
     all:
       command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   drush:
+    disabled: [5.2]
     check: drush --version | grep -E '[.0-9]+'
+    5.2:
+      pre: |
+        git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
+        && cd /usr/local/src/drush \
+        && git checkout 7.4.0 \
     5.3:
       pre: |
         git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
@@ -405,13 +406,14 @@ software_available:
         && rm -rf /usr/local/src/drush/misc \
         && rm -rf /usr/local/src/drush/tests \
   codeception:
+    disabled: [5.2]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
     all:
       command: |
         COMPOSER_HOME="{{ compose_home }}" composer global require codeception/codeception --dev \
         && ln -s {{ compose_home }}/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
   drupalconsole:
-    disabled: [5.3, 5.4]
+    disabled: [5.2, 5.3, 5.4]
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
     all:
       command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
@@ -430,7 +432,7 @@ software_available:
       command: npm install -g grunt grunt-cli
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
-    disabled: [5.3]
+    disabled: [5.2, 5.3]
     5.4:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -514,6 +516,11 @@ software_available:
   phalcon:
     disabled: [7.3]
     check: phalcon commands | grep -E '[.0-9]+'
+    5.2:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v2.0.7 \
     5.3:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -537,6 +544,10 @@ software_available:
         && rm -rf /usr/local/src/phalcon-devtools/.git \
   phpcs:
     check: phpcs --version | grep -E 'version [.0-9]+'
+    5.2:
+      command: |
+        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcs \
     5.3:
       command: |
         curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
@@ -547,6 +558,10 @@ software_available:
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [.0-9]+'
+    5.2:
+      command: |
+        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        && chmod +x /usr/local/bin/phpcbf \
     5.3:
       command: |
         curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
@@ -557,6 +572,10 @@ software_available:
         && chmod +x /usr/local/bin/phpcbf \
   phpunit:
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
+    5.2:
+      command: |
+        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        && chmod +x /usr/local/bin/phpunit \
     5.3:
       command: |
         curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
@@ -582,8 +601,8 @@ software_available:
         curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
   photon:
+    disabled: [5.2, 5.3, 5.4]
     check: photon --version | grep -E 'Installer [.0-9]+'
-    disabled: [5.3, 5.4]
     all:
       command: |
         COMPOSER_HOME="{{ compose_home }}" composer global require "photoncms/installer" \
@@ -593,7 +612,7 @@ software_available:
     all:
       command: gem install sass
   symfony:
-    disabled: [5.3]
+    disabled: [5.2, 5.3]
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:
       command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
@@ -759,6 +778,10 @@ extensions_enabled:
 extensions_available:
   amqp:
     disabled: [7.3]
+    5.2:
+      run_dep: [librabbitmq1]
+      type: pecl
+      version: 1.4.0
     5.3:
       run_dep: [librabbitmq1]
     5.4:
@@ -771,6 +794,7 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq4]
   apcu:
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 4.0.11
@@ -811,6 +835,9 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   enchant:
+    5.2:
+      type: pecl
+      command: echo "/usr" | pecl install enchant
     all:
       type: builtin
       build_dep: [libenchant-dev]
@@ -819,6 +846,9 @@ extensions_available:
     all:
       type: builtin
   fileinfo:
+    5.2:
+      type: pecl
+      build_dep: [libmagic-dev]
     all:
       type: builtin
   filter:
@@ -829,6 +859,17 @@ extensions_available:
       configure: --with-openssl-dir
       build_dep: [libssl-dev]
   gd:
+    5.2:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.3:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
@@ -873,6 +914,7 @@ extensions_available:
     all:
       type: builtin
   gmp:
+    disabled: [5.2]
     all:
       type: builtin
       pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
@@ -887,6 +929,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 3.3.0
@@ -914,6 +957,9 @@ extensions_available:
       build_dep: [libfbclient2, libib-util, firebird-dev]
       run_dep: [libfbclient2]
   intl:
+    5.2:
+      type: pecl
+      run_dep: [libicu52]
     5.3:
       type: builtin
       run_dep: [libicu52]
@@ -988,6 +1034,9 @@ extensions_available:
       type: pecl
       build_dep: [zlib1g-dev]
   memcached:
+    5.2:
+      type: pecl
+      version: 2.1.0
     5.3:
       type: pecl
       version: 2.2.0
@@ -1011,11 +1060,15 @@ extensions_available:
       run_dep: [libmemcachedutil2]
   mongo:
     disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated
+    5.2:
+      type: pecl
+      command: yes | pecl install mongo-1.5.8
     all:
       type: pecl
       command: yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 0.6.3
@@ -1027,6 +1080,9 @@ extensions_available:
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
     disabled: [7.3]
+    5.2:
+      type: pecl
+      version: 0.5.7
     5.3:
       type: pecl
       version: 0.5.7
@@ -1059,6 +1115,9 @@ extensions_available:
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
+    5.2:
+      type: pecl
+      command: pecl install zendopcache
     5.3:
       type: pecl
       command: pecl install zendopcache
@@ -1114,7 +1173,12 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [7.3]
+    disabled: [5.2, 7.3]
+    5.2:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.9
+      command: cd build && ./install
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -1139,6 +1203,8 @@ extensions_available:
   phar:
     # https://github.com/docker-library/php/issues/618
     disabled: [5.6, 7.0] # TODO: Currently disabled due to bug in built
+    5.2:
+      type: pecl
     all:
       type: builtin
       build_dep: [libssl-dev]
@@ -1151,7 +1217,7 @@ extensions_available:
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
   readline:
-    disabled: [5.3, 5.4] # Available by default
+    disabled: [5.2, 5.3, 5.4] # Available by default
     all:
       type: builtin
       build_dep: [libedit-dev, libreadline-dev]
@@ -1161,6 +1227,9 @@ extensions_available:
       build_dep: [librecode-dev]
       run_dep: [librecode0]
   redis:
+    5.2:
+      type: pecl
+      version: 2.2.7
     all:
       type: pecl
   session:
@@ -1191,13 +1260,14 @@ extensions_available:
     all:
       type: builtin
   sodium:
-    disabled: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
     all:
       type: builtin
       build_dep: [libsodium-dev]
   spl:
     disabled: "{{ php_all_versions }}" # TODO: Did not work
   swoole:
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 1.9.23
@@ -1269,6 +1339,9 @@ extensions_available:
     all:
       type: builtin
   tidy:
+    5.2:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
     5.3:
       type: builtin
       run_dep: [libtidy-0.99-0]
@@ -1311,6 +1384,9 @@ extensions_available:
       build_dep: [libxml2-dev]
   xdebug:
     disabled: [7.3]
+    5.2:
+      type: pecl
+      version: 2.2.7
     5.3:
       type: pecl
       version: 2.2.7
@@ -1352,6 +1428,11 @@ extensions_available:
       build_dep: [libxslt-dev]
       run_dep: [libxslt1.1]
   zip:
+    5.2:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
     5.3:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
