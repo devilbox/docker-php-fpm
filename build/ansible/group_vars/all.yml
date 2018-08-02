@@ -525,13 +525,8 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [7.3]
+    disabled: [5.2, 7.3]
     check: phalcon commands | grep -E '[.0-9]+'
-    5.2:
-      pre: |
-        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
-        && cd /usr/local/src/phalcon-devtools \
-        && git checkout v2.0.7 \
     5.3:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -582,11 +577,8 @@ software_available:
         curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
   phpunit:
+    disabled: [5.2]
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
-    5.2:
-      command: |
-        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
-        && chmod +x /usr/local/bin/phpunit \
     5.3:
       command: |
         curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
@@ -1185,11 +1177,6 @@ extensions_available:
       run_dep: [libpq5]
   phalcon:
     disabled: [5.2, 7.3]
-    5.2:
-      type: git
-      git_url: https://github.com/phalcon/cphalcon
-      git_ref: phalcon-v2.0.9
-      command: cd build && ./install
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon

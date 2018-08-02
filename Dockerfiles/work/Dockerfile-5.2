@@ -172,17 +172,6 @@ RUN set -x \
 && cd / \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
-# phalcon
-	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
-&& cd /usr/local/src/phalcon-devtools \
-&& git checkout v2.0.7 \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
-&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-&& ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
-&& cd / \
-&& rm -rf /usr/local/src/phalcon-devtools/.git \
- \
 # phpcs
 	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
@@ -190,10 +179,6 @@ RUN set -x \
 # phpcbf
 	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
- \
-# phpunit
-	&& curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
-&& chmod +x /usr/local/bin/phpunit \
  \
 # sass
 	&& gem install sass \
@@ -273,10 +258,8 @@ RUN set -x \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
-	&& phalcon commands | grep -E '[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
-	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
