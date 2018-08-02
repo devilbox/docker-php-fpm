@@ -89,9 +89,6 @@ before_script:
   - ./build/gen-readme.sh "${PHP}"
   - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
-  # Integration tests
-  - true
-
 
 ###
 ### Push to Dockerhub
