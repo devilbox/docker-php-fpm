@@ -91,20 +91,4 @@ pm.max_requests = {{ item.cfg[item.key].pm_max_requests | default(item.cfg[item.
 [www]
 user  = {{ item.cfg[item.key].user | default(item.cfg[item.alt].user) }}
 group = {{ item.cfg[item.key].group | default(item.cfg[item.alt].group) }}
-
-
-; ############################################################
-; PHP settings
-; ############################################################
-php_value[error_reporting]       = {{ item.cfg[item.key].error_reporting         | default(item.cfg[item.alt].error_reporting) }}
-php_flag[xmlrpc_errors]          = {{ item.cfg[item.key].xmlrpc_errors           | default(item.cfg[item.alt].xmlrpc_errors) }}
-php_flag[report_memleaks]        = {{ item.cfg[item.key].report_memleaks         | default(item.cfg[item.alt].report_memleaks) }}
-php_flag[display_errors]         = {{ item.cfg[item.key].display_errors          | default(item.cfg[item.alt].display_errors) }}
-php_flag[display_startup_errors] = {{ item.cfg[item.key].display_startup_errors  | default(item.cfg[item.alt].display_startup_errors) }}
-{# Only available before PHP 7.2 #}
-{% if php_version == 5.2 or php_version == 5.3 or php_version == 5.4 or php_version == 5.5 or php_version == 5.6 or php_version == 7.0 or php_version == 7.1 %}
-php_flag[track_errors]           = {{ item.cfg[item.key].track_errors            | default(item.cfg[item.alt].track_errors) }}
-{% endif %}
-php_flag[log_errors]             = {{ item.cfg[item.key].log_errors              | default(item.cfg[item.alt].log_errors) }}
-php_flag[html_errors]            = {{ item.cfg[item.key].html_errors             | default(item.cfg[item.alt].html_errors) }}
 {% endif %}
