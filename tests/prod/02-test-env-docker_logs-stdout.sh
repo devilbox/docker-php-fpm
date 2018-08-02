@@ -122,38 +122,43 @@ if [ -f "${LOG_DIR_HOST}/php-fpm.error" ]; then
 	exit 1
 fi
 
-if ! run "docker logs ${did} 2>&1 | grep -q 'GET /ok.php'"; then
-	echo "Error no access log string for 'GET /ok.php' found in stderr"
-	docker_logs "${did}" || true
-	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
-	rm -rf "${LOG_DIR_HOST}"
-	rm -rf "${CFG_DIR_HOST}"
-	rm -rf "${WWW_DIR_HOST}"
-	echo "Failed"
-	exit 1
-fi
-if ! run "docker logs ${did} 2>&1 | grep -q 'GET /fail.php'"; then
-	echo "Error no access log string for 'GET /fail.php' found in stderr"
-	docker_logs "${did}" || true
-	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
-	rm -rf "${LOG_DIR_HOST}"
-	rm -rf "${CFG_DIR_HOST}"
-	rm -rf "${WWW_DIR_HOST}"
-	echo "Failed"
-	exit 1
-fi
-if ! run "docker logs ${did} 2>&1 | grep -q '/var/www/default/fail.php'"; then
-	echo "Error no error message found in stderr"
-	docker_logs "${did}" || true
-	docker_stop "${ndid}" || true
-	docker_stop "${did}" || true
-	rm -rf "${LOG_DIR_HOST}"
-	rm -rf "${CFG_DIR_HOST}"
-	rm -rf "${WWW_DIR_HOST}"
-	echo "Failed"
-	exit 1
+###
+### PHP 5.2 still does not show any errors
+###
+if [ "${VERSION}" != "5.2" ]; then
+	if ! run "docker logs ${did} 2>&1 | grep -q 'GET /ok.php'"; then
+		echo "Error no access log string for 'GET /ok.php' found in stderr"
+		docker_logs "${did}" || true
+		docker_stop "${ndid}" || true
+		docker_stop "${did}" || true
+		rm -rf "${LOG_DIR_HOST}"
+		rm -rf "${CFG_DIR_HOST}"
+		rm -rf "${WWW_DIR_HOST}"
+		echo "Failed"
+		exit 1
+	fi
+	if ! run "docker logs ${did} 2>&1 | grep -q 'GET /fail.php'"; then
+		echo "Error no access log string for 'GET /fail.php' found in stderr"
+		docker_logs "${did}" || true
+		docker_stop "${ndid}" || true
+		docker_stop "${did}" || true
+		rm -rf "${LOG_DIR_HOST}"
+		rm -rf "${CFG_DIR_HOST}"
+		rm -rf "${WWW_DIR_HOST}"
+		echo "Failed"
+		exit 1
+	fi
+	if ! run "docker logs ${did} 2>&1 | grep -q '/var/www/default/fail.php'"; then
+		echo "Error no error message found in stderr"
+		docker_logs "${did}" || true
+		docker_stop "${ndid}" || true
+		docker_stop "${did}" || true
+		rm -rf "${LOG_DIR_HOST}"
+		rm -rf "${CFG_DIR_HOST}"
+		rm -rf "${WWW_DIR_HOST}"
+		echo "Failed"
+		exit 1
+	fi
 fi
 
 

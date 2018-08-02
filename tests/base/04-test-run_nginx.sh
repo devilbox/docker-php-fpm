@@ -71,6 +71,12 @@ run "sleep 10"
 ###
 ### Check correct PHP-FPM user
 ###
+
+# On pm = ondemand, there will be no child process, so we need to create some traffic
+# in order to have child proccesses spawn
+for i in $(seq 1 10); do
+	curl http://127.0.0.1:${WWW_PORT}/index.php?${i} >/dev/null 2>&1 &
+done
 if ! docker_exec "${did}" "ps auxw | grep -E '(php-fpm: pool|php-cgi)' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
 	docker_exec "${did}" "ps auxw"
 
