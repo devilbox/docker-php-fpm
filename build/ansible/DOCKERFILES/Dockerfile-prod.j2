@@ -50,7 +50,6 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/yyy-devilbox-03-prod.ini
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/postfix.sh /usr/local/sbin/postfix.sh

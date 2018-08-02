@@ -1,33 +1,15 @@
 ---
 
-# All available Docker flavours (for each version)
-template_files:
-  - src: DOCKERFILES/Dockerfile-base.j2
-    dst: "../../Dockerfiles/base/Dockerfile-{{ php_version }}"
-  - src: DOCKERFILES/Dockerfile-mods.j2
-    dst: "../../Dockerfiles/mods/Dockerfile-{{ php_version }}"
-  - src: DOCKERFILES/Dockerfile-prod.j2
-    dst: "../../Dockerfiles/prod/Dockerfile-{{ php_version }}"
-  - src: DOCKERFILES/Dockerfile-work.j2
-    dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
-
-# PHP.ini files to apply sane defaults
-ini_files:
-  - src: CONFIGURATION/php-base.ini.j2
-    dst: "../../Dockerfiles/base/data/php.d/php-{{ php_version }}.ini"
-  - src: CONFIGURATION/php-prod.ini.j2
-    dst: "../../Dockerfiles/prod/data/php.d/php-{{ php_version }}.ini"
-  - src: CONFIGURATION/php-work.ini.j2
-    dst: "../../Dockerfiles/work/data/php.d/php-{{ php_version }}.ini"
+################################################################################
+# Variables for rendering Dockerfiles and configuration
+################################################################################
 
 
-# Adds self-validating checks to Dockerfile
-# turn off for final build
-debug: True
-
-
-# All available PHP version
+###
+### Available PHP versions
+###
 php_all_versions:
+  - 5.2
   - 5.3
   - 5.4
   - 5.5
@@ -37,6 +19,205 @@ php_all_versions:
   - 7.2
   - 7.3
 
+
+###
+### PHP settings equal for php.ini and php-fpm.comf (used below)
+###
+php_settings_all:
+  # ---- Settings for PHP.INI and PHP-FPM.CONF ----
+  base:
+    # Timeouts
+    timeout:                   180
+    # Error reporting
+    error_reporting:           E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'Off'
+    display_startup_errors:    'Off'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'Off'
+
+  work:
+    # Timeouts
+    timeout:                   180
+    # Error reporting
+    error_reporting:           E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'On'
+    display_startup_errors:    'On'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'On'
+
+
+###
+### PHP.ini
+###
+php_settings_ini:
+  # ---- Sane default ----
+  base:
+    # Memory
+    memory_limit:              512M
+    # Timeouts
+    max_execution_time:        "{{ php_settings_all.base.timeout }}"
+    max_input_time:            "{{ php_settings_all.base.timeout }}"
+    # Uploads
+    post_max_size:             384M
+    upload_max_filesize:       256M
+    max_file_uploads:          20
+    # Variables
+    variables_order:           EGPCS
+    max_input_vars:            8000
+    max_input_nesting_level:   64
+    # Error reporting
+    error_reporting:           "{{ php_settings_all.base.error_reporting }}"
+    xmlrpc_errors:             "{{ php_settings_all.base.xmlrpc_errors }}"
+    report_memleaks:           "{{ php_settings_all.base.report_memleaks }}"
+    display_errors:            "{{ php_settings_all.base.display_errors }}"
+    display_startup_errors:    "{{ php_settings_all.base.display_startup_errors }}"
+    track_errors:              "{{ php_settings_all.base.track_errors }}"
+    log_errors:                "{{ php_settings_all.base.log_errors }}"
+    html_errors:               "{{ php_settings_all.base.html_errors }}"
+  # ---- Inherits from base ----
+  mods:
+  # ---- Inherits from base ----
+  prod:
+  # ---- Inherits from base and overwrites certain values ----
+  work:
+    # Error reporting
+    error_reporting:           "{{ php_settings_all.work.error_reporting }}"
+    xmlrpc_errors:             "{{ php_settings_all.work.xmlrpc_errors }}"
+    report_memleaks:           "{{ php_settings_all.work.report_memleaks }}"
+    display_errors:            "{{ php_settings_all.work.display_errors }}"
+    display_startup_errors:    "{{ php_settings_all.work.display_startup_errors }}"
+    track_errors:              "{{ php_settings_all.work.track_errors }}"
+    log_errors:                "{{ php_settings_all.work.log_errors }}"
+    html_errors:               "{{ php_settings_all.work.html_errors }}"
+
+
+###
+### PHP-FPM.conf
+###
+php_settings_fpm:
+  # ---- Sane default ----
+  base:
+    # Docker
+    clear_env:                 'no'
+    catch_workers_output:      'yes'
+    # Timeouts
+    request_terminate_timeout: "{{ php_settings_all.work.timeout }}s"
+    # Network
+    listen:                    9000
+    listen_backlog:            1023
+    # Logging
+    log_level:                 notice
+    error_log:                 /proc/self/fd/2
+    access_log:                /proc/self/fd/2
+    # Worker
+    pm:                        dynamic
+    pm_max_children:           50
+    pm_start_servers:          10
+    pm_min_spare_servers:      5
+    pm_max_spare_servers:      15
+    pm_max_requests:           500
+    # User/Group
+    user:                      devilbox
+    group:                     devilbox
+    # Error reporting
+    error_reporting:           "{{ php_settings_all.base.error_reporting }}"
+    xmlrpc_errors:             "{{ php_settings_all.base.xmlrpc_errors }}"
+    report_memleaks:           "{{ php_settings_all.base.report_memleaks }}"
+    display_errors:            "{{ php_settings_all.base.display_errors }}"
+    display_startup_errors:    "{{ php_settings_all.base.display_startup_errors }}"
+    track_errors:              "{{ php_settings_all.base.track_errors }}"
+    log_errors:                "{{ php_settings_all.base.log_errors }}"
+    html_errors:               "{{ php_settings_all.base.html_errors }}"
+  # ---- Inherits from base ----
+  mods:
+  # ---- Inherits from base ----
+  prod:
+  # ---- Inherits from base and overwrites certain values ----
+  work:
+    # Error reporting
+    error_reporting:           "{{ php_settings_all.work.error_reporting }}"
+    xmlrpc_errors:             "{{ php_settings_all.work.xmlrpc_errors }}"
+    report_memleaks:           "{{ php_settings_all.work.report_memleaks }}"
+    display_errors:            "{{ php_settings_all.work.display_errors }}"
+    display_startup_errors:    "{{ php_settings_all.work.display_startup_errors }}"
+    track_errors:              "{{ php_settings_all.work.track_errors }}"
+    log_errors:                "{{ php_settings_all.work.log_errors }}"
+    html_errors:               "{{ php_settings_all.work.html_errors }}"
+
+
+###
+### Templates for PHP flavours (base, mods, prod and work) for all PHP versions
+###
+
+# Dockerfiles for base, mods, prod and work
+template_dockerfiles:
+  - src: DOCKERFILES/Dockerfile-base.j2
+    dst: "../../Dockerfiles/base/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-mods.j2
+    dst: "../../Dockerfiles/mods/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-prod.j2
+    dst: "../../Dockerfiles/prod/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-work.j2
+    dst: "../../Dockerfiles/work/Dockerfile-{{ php_version }}"
+
+# Configuration files for base, mods, prod and work
+template_configurations:
+  # php.ini
+  - src: CONFIGURATIONS/php.ini.j2
+    dst: "../../Dockerfiles/base/data/php-ini.d/php-{{ php_version }}.ini"
+    cfg: "{{ php_settings_ini }}"
+    key: base
+    alt: base
+  - src: CONFIGURATIONS/php.ini.j2
+    dst: "../../Dockerfiles/work/data/php-ini.d/php-{{ php_version }}.ini"
+    cfg: "{{ php_settings_ini }}"
+    key: work
+    alt: base  # Alternative key to use when definition is not set in 'work'
+
+  # php-fpm.conf
+  - src: CONFIGURATIONS/php-fpm.conf.j2
+    dst: "../../Dockerfiles/base/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
+    cfg: "{{ php_settings_fpm }}"
+    key: base
+    alt: base
+  - src: CONFIGURATIONS/php-fpm.conf.j2
+    dst: "../../Dockerfiles/work/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
+    cfg: "{{ php_settings_fpm }}"
+    key: work
+    alt: base
+
+  # php-fpm.d-conf
+  - src: CONFIGURATIONS/php-fpm.d-conf.j2
+    dst: "../../Dockerfiles/base/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
+    cfg: "{{ php_settings_fpm }}"
+    key: base
+    alt: base
+  - src: CONFIGURATIONS/php-fpm.d-conf.j2
+    dst: "../../Dockerfiles/work/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
+    cfg: "{{ php_settings_fpm }}"
+    key: work
+    alt: base
+
+  # php-fpm.conf (only applied to base and fully inherited)
+  #
+  #    # php-fpm.d/php-fpm.d.conf (only applied to base and full inherited)
+  #  - src: CONFIGURATIONS/php-fpm.d/php-fpm-base.d.conf.j2
+  #    dst: "../../Dockerfiles/base/data/php-fpm.d/php-fpm.d-{{ php_version }}.conf"
+
+
+###
+### Variables to be used in this file (group_vars/all.yml)
+###
+
+# Adds self-validating checks to Dockerfile
+# turn off for final build
+debug: True
 
 # Global variables
 compose_home: /usr/local/src/composer
@@ -90,7 +271,6 @@ software_enabled:
   - yamllint
   # Cleanup needs to be last
   - cleanup
-
 
 
 ###

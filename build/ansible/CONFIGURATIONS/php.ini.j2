@@ -1,0 +1,49 @@
+; ############################################################
+; # Devilbox PHP defaults for {{ php_version }}-{{ item.key }}
+; ############################################################
+
+; Each PHP flavour (base, mods, prod, work) might have its own php.ini.
+; If none is present, the one from the previous flavour is inherited.
+
+
+[PHP]
+
+; Memory
+; Note: "memory_limit" should be larger than "post_max_size"
+memory_limit            = {{ item.cfg[item.key].memory_limit | default(item.cfg[item.alt].memory_limit) }}
+
+
+; Timeouts
+max_execution_time      = {{ item.cfg[item.key].max_execution_time | default(item.cfg[item.alt].max_execution_time) }}
+max_input_time          = {{ item.cfg[item.key].max_input_time     | default(item.cfg[item.alt].max_input_time) }}
+
+
+; Uploads
+; Note: "post_max_size" should be greater than "upload_max_filesize"
+post_max_size           = {{ item.cfg[item.key].post_max_size       | default(item.cfg[item.alt].post_max_size) }}
+upload_max_filesize     = {{ item.cfg[item.key].upload_max_filesize | default(item.cfg[item.alt].upload_max_filesize) }}
+max_file_uploads        = {{ item.cfg[item.key].max_file_uploads    | default(item.cfg[item.alt].max_file_uploads) }}
+
+
+; Vars
+variables_order         = {{ item.cfg[item.key].variables_order         | default(item.cfg[item.alt].variables_order) }}
+{# Only available since PHP >=5.4 #}
+{% if not (php_version == 5.2 or php_version == 5.3 ) %}
+max_input_vars          = {{ item.cfg[item.key].max_input_vars          | default(item.cfg[item.alt].max_input_vars) }}
+{% endif %}
+max_input_nesting_level = {{ item.cfg[item.key].max_input_nesting_level | default(item.cfg[item.alt].max_input_nesting_level) }}
+
+
+; Error reporting
+; Note: error_log is dynamic and handled during start to set appropriate setting
+error_reporting         = {{ item.cfg[item.key].error_reporting        | default(item.cfg[item.alt].error_reporting) }}
+xmlrpc_errors           = {{ item.cfg[item.key].xmlrpc_errors          | default(item.cfg[item.alt].xmlrpc_errors) }}
+report_memleaks         = {{ item.cfg[item.key].report_memleaks        | default(item.cfg[item.alt].report_memleaks) }}
+display_errors          = {{ item.cfg[item.key].display_errors         | default(item.cfg[item.alt].display_errors) }}
+display_startup_errors  = {{ item.cfg[item.key].display_startup_errors | default(item.cfg[item.alt].display_startup_errors) }}
+{# Only available before PHP 7.2 #}
+{% if php_version == 5.2 or php_version == 5.3 or php_version == 5.4 or php_version == 5.5 or php_version == 5.6 or php_version == 7.0 or php_version == 7.1 %}
+track_errors            = {{ item.cfg[item.key].track_errors | default(item.cfg[item.alt].track_errors) }}
+{% endif %}
+log_errors              = {{ item.cfg[item.key].log_errors   | default(item.cfg[item.alt].log_errors) }}
+html_errors             = {{ item.cfg[item.key].html_errors  | default(item.cfg[item.alt].html_errors) }}
