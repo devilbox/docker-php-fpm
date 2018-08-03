@@ -18,6 +18,11 @@ FLAVOUR="${3}"
 ############################################################
 # Tests
 ############################################################
+if [ "${VERSION}" != "5.2" ]; then
+	echo "Skipping tests for PHP 5.2"
+	exit 0
+fi
+
 
 ###
 ### Test Nginx with PHP-FPM
@@ -34,24 +39,7 @@ PHP_CNF_CONT="/etc/php-fpm-custom.d"
 
 CONTAINER="nginx:stable"
 
-if [ "${VERSION}" = "5.2" ]; then
-	{
-		echo '<?xml version="1.0" ?>';
-		echo '<configuration>';
-		echo '  <workers>';
-		echo '    <section name="pool">';
-		echo '      <value name="php_defines">';
-		echo '        <value name="php_admin_value[memory_limit]">17M</value>';
-		echo '        <value name="php_value[memory_limit]">17M</value>';
-		echo '        <value name="memory_limit">17M</value>';
-		echo '      </value>';
-		echo '    </section>';
-		echo '  </workers>';
-		echo '</configuration>';
-	} > "${PHP_CNF_HOST}/post.conf"
-else
-	printf "[www]\nphp_admin_value[memory_limit] = 17M\n" > "${PHP_CNF_HOST}/post.conf"
-fi
+printf "[www]\nphp_admin_value[memory_limit] = 17M\n" > "${PHP_CNF_HOST}/post.conf"
 echo "<?php phpinfo();" > "${DOC_ROOT_HOST}/index.php"
 
 # Fix mount permissions
@@ -139,38 +127,35 @@ fi
 
 
 # Check modified php-fpm.conf
-# Does not work with PHP 5.2
-if [ "${VERSION}" != "5.2" ]; then
-	if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep memory_limit | grep '17M'"; then
-		# Info
-		run "netstat -tuln"
-		run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php | grep memory_limit" || true
-		run "docker ps --no-trunc"
-		docker_exec "${ndid}" "nginx -t"
+if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep memory_limit | grep '17M'"; then
+	# Info
+	run "netstat -tuln"
+	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php | grep memory_limit" || true
+	run "docker ps --no-trunc"
+	docker_exec "${ndid}" "nginx -t"
 
-		# Show logs
-		docker_logs "${ndid}" || true
-		docker_logs "${did}"  || true
+	# Show logs
+	docker_logs "${ndid}" || true
+	docker_logs "${did}"  || true
 
-		# Ensure file is available
-		docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
-		docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+	# Ensure file is available
+	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
 
-		docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
-		docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
 
-		# Nginx configuration
-		docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+	# Nginx configuration
+	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
 
-		# Shutdown
-		docker_stop "${ndid}" || true
-		docker_stop "${did}"  || true
-		rm -rf "${DOC_ROOT_HOST}"
-		rm -rf "${CONFIG_HOST}"
-		rm -rf "${PHP_CNF_HOST}"
-		echo "Failed"
-		exit 1
-	fi
+	# Shutdown
+	docker_stop "${ndid}" || true
+	docker_stop "${did}"  || true
+	rm -rf "${DOC_ROOT_HOST}"
+	rm -rf "${CONFIG_HOST}"
+	rm -rf "${PHP_CNF_HOST}"
+	echo "Failed"
+	exit 1
 fi
 
 
