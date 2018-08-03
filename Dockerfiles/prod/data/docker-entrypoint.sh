@@ -80,9 +80,9 @@ set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
-### PHP-FPM 5.3 Env variables
+### PHP-FPM 5.2 and PHP-FPM 5.3 Env variables fix
 ###
-if php -v 2>/dev/null | grep -Eoq '^PHP[[:space:]]5\.3'; then
+if php -v 2>/dev/null | grep -Eoq '^PHP[[:space:]]5\.(2|3)'; then
 	set_env_php_fpm "/usr/local/etc/php-fpm.d/env.conf"
 fi
 
@@ -159,7 +159,11 @@ copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 ###
 ### Copy custom PHP-FPM *.conf files
 ###
-copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
+if [ "${PHP_VERSION}" = "5.2" ]; then
+	copy_fpm_5_2_conf_file "${PHP_CUST_FPM_DIR}/php-fpm.xml" "${DEBUG_LEVEL}"
+else
+	copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
+fi
 
 
 ###

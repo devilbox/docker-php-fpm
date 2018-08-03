@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# PHP FPM 5.3 does not allow to pass through environment variables
+# PHP FPM 5.2 and PHP-FPM 5.3 do not allow to pass through environment variables
 # This is a hacky shell script to create:
 #   env[NAME]='VALUE' entries for PHP FPM config out of all current env vars
 

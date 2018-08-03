@@ -33,6 +33,22 @@ copy_fpm_files() {
 	run "find ${fpm_dst} -type f -iname '*.conf' -exec chmod 0644 \"{}\" \;" "${debug}"
 }
 
+###
+### Copy php-fpm.conf for PHP 5.2
+### Note: PHP 5.2 does not allow includes and comes in XML format,
+###       we must therefore copy the file to its main file /usr/local/etc/php-fpm.conf
+###
+copy_fpm_5_2_conf_file() {
+	local fpm_src="${1}"
+	local fpm_dst="/usr/local/etc/php-fpm.conf"
+	local debug="${2}"
+
+	if [ -f "${fpm_src}" ]; then
+		log "info" "PHP-FPM.conf (PHP 5.2): php-fpm.xml -> ${fpm_dst}" "${debug}"
+		run "cp ${fpm_src} ${fpm_dst}" "${debug}"
+	fi
+}
+
 
 ############################################################
 # Sanity Checks
