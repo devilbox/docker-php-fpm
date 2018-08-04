@@ -173,12 +173,19 @@ The following table shows a more complete overview about the offered Docker imag
  <tbody>
 
   <tr>
-   <td rowspan="8"><strong>base</strong></td>
+   <td rowspan="9"><strong>base</strong></td>
+   <td><code>devilbox/php-fpm:5.2-base</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.2-base.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:5.2-base.svg" /></a>
+   </td>
+  </tr>
    <td><code>devilbox/php-fpm:5.3-base</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-base.svg" /></a>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:5.3-base.svg" /></a>
    </td>
+  </tr>
   </tr>
    <td><code>devilbox/php-fpm:5.4-base</code></td>
    <td>
@@ -230,7 +237,14 @@ The following table shows a more complete overview about the offered Docker imag
   </tr>
 
   <tr>
-   <td rowspan="8"><strong>mods</strong></td>
+   <td rowspan="9"><strong>mods</strong></td>
+   <td><code>devilbox/php-fpm:5.2-mods</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.2-mods.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:5.2-mods.svg" /></a>
+   </td>
+  </tr>
+  <tr>
    <td><code>devilbox/php-fpm:5.3-mods</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-mods.svg" /></a>
@@ -288,7 +302,14 @@ The following table shows a more complete overview about the offered Docker imag
   </tr>
 
   <tr>
-   <td rowspan="8"><strong>prod</strong></td>
+   <td rowspan="9"><strong>prod</strong></td>
+   <td><code>devilbox/php-fpm:5.2-prod</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.2-prod.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:5.2-prod.svg" /></a>
+   </td>
+  </tr>
+  <tr>
    <td><code>devilbox/php-fpm:5.3-prod</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-prod.svg" /></a>
@@ -346,7 +367,14 @@ The following table shows a more complete overview about the offered Docker imag
   </tr>
 
   <tr>
-   <td rowspan="8"><strong>work</strong></td>
+   <td rowspan="9"><strong>work</strong></td>
+   <td><code>devilbox/php-fpm:5.2-work</code></td>
+   <td>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.2-work.svg" /></a>
+    <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/version/devilbox/php-fpm:5.2-work.svg" /></a>
+   </td>
+  </tr>
+  <tr>
    <td><code>devilbox/php-fpm:5.3-work</code></td>
    <td>
     <a href="https://microbadger.com/images/devilbox/php-fpm"><img src="https://images.microbadger.com/badges/image/devilbox/php-fpm:5.3-work.svg" /></a>
@@ -468,6 +496,11 @@ Check out this table to see which Docker image provides what PHP modules.
  </thead>
  <tbody>
   <tr>
+   <th>5.2</th>
+   <td id="52-base">ctype, curl, date, dom, filter, hash, iconv, json, libxml, mbstring, mysql, mysqli, openssl, pcre, PDO, pdo_mysql, pdo_sqlite, posix, readline, Reflection, session, SimpleXML, soap, SPL, SQLite, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
+   <td id="52-mods">amqp, bcmath, bz2, calendar, ctype, curl, date, dba, dom, enchant, exif, fileinfo, filter, ftp, gd, gettext, hash, iconv, igbinary, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongo, msgpack, mysql, mysqli, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, SPL, SQLite, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+  </tr>
+  <tr>
    <th>5.3</th>
    <td id="53-base">Core, ctype, curl, date, dom, ereg, fileinfo, filter, hash, iconv, json, libxml, mysql, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, recode, Reflection, session, SimpleXML, SPL, SQLite, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
    <td id="53-mods">amqp, apc, apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, ereg, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongo, mongodb, msgpack, mysql, mysqli, mysqlnd, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, phalcon, Phar, posix, pspell, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, SPL, SQLite, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
@@ -516,6 +549,7 @@ Check out this table to see which Docker image provides what PHP modules.
 
 #### Image: base
 ```shell
+docker pull devilbox/php-fpm:5.2-base
 docker pull devilbox/php-fpm:5.3-base
 docker pull devilbox/php-fpm:5.4-base
 docker pull devilbox/php-fpm:5.5-base
@@ -530,6 +564,7 @@ Generic PHP-FPM base image. Use it to derive your own php-fpm docker image from 
 
 #### Image: mods
 ```shell
+docker pull devilbox/php-fpm:5.2-mods
 docker pull devilbox/php-fpm:5.3-mods
 docker pull devilbox/php-fpm:5.4-mods
 docker pull devilbox/php-fpm:5.5-mods
@@ -544,6 +579,7 @@ Generic PHP-FPM image with fully loaded extensions. Use it to derive your own ph
 
 #### Image: prod
 ```shell
+docker pull devilbox/php-fpm:5.2-prod
 docker pull devilbox/php-fpm:5.3-prod
 docker pull devilbox/php-fpm:5.4-prod
 docker pull devilbox/php-fpm:5.5-prod
@@ -558,6 +594,7 @@ Devilbox production image. This Docker image comes with many injectables, port-f
 
 #### Image: work
 ```shell
+docker pull devilbox/php-fpm:5.2-work
 docker pull devilbox/php-fpm:5.3-work
 docker pull devilbox/php-fpm:5.4-work
 docker pull devilbox/php-fpm:5.5-work
@@ -752,14 +789,14 @@ Have a look at the following table to see all offered exposed ports for each Doc
 <h2><img id="php-default-configuration" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> PHP Default Configuration</h2>
 
 Each PHP version is using the same sane default php.ini values, making it pain-free to switch versions and not having to worry about different php.ini settings.
-**Note:** Flavours alway inherit the settings from its parent flavour and will selectively overwrite specific settings.
+**Note:** Flavours alway inherit the settings from its parent flavour if they have no own configuration.
 
 | Flavour | Applied php.ini files|
 |---------|------------------------------------------|
-| base    | [base.ini](Dockerfiles/base/data/php.d/) |
-| mods    | -                                        |
-| prod    | [prod.ini](Dockerfiles/prod/data/php.d/) |
-| work    | [work.ini](Dockerfiles/work/data/php.d/) |
+| base    | [php.ini](Dockerfiles/base/data/php-ini.d/) and [php-fpm.conf](Dockerfiles/base/data/php-fpm.conf/) |
+| mods    | inherits from base                       |
+| prod    | inherits from base                       |
+| work    | [php.ini](Dockerfiles/work/data/php-ini.d/) [php-fpm.conf](Dockerfiles/work/data/php-fpm.conf/) |
 
 
 
@@ -782,8 +819,16 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   </tr>
  </thead>
   <tr>
+   <td><a href="https://www.ansible.com/">Ansible</a></td>
+   <td>Automation tool.</td>
+  </tr>
+  <tr>
    <td><a href="https://github.com/cytopia/awesome-ci">awesome-ci</a></td>
    <td>Various linting and source code analyzing tools.</td>
+  </tr>
+  <tr>
+   <td><a href="https://codeception.com/">codeception</a></td>
+   <td>Elegant and efficient testing for PHP.</td>
   </tr>
   <tr>
    <td><a href="https://getcomposer.org">composer</a></td>
@@ -824,6 +869,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   <tr>
    <td><a href="https://github.com/laravel/installer">laravel installer</a></td>
    <td>A CLI tool to easily install and manage the laravel framework.</td>
+  </tr>
+  <tr>
+   <td><a href="https://github.com/cytopia/linkcheck">linkcheck</a></td>
+   <td>Search for URLs in files (optionally limited by extension) and validate their HTTP status code.</td>
   </tr>
   <tr>
    <td><a href="http://linuxbrew.sh">linuxbrew</a></td>
@@ -872,6 +921,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   <tr>
    <td><a href="https://github.com/brigade/scss-lint">scss-lint</a></td>
    <td>Sass/CSS command line linter.</td>
+  </tr>
+  <tr>
+   <td><a href="https://www.openssh.com/">ssh</a></td>
+   <td>OpenSSH command line client.</td>
   </tr>
   <tr>
    <td><a href="https://github.com/symfony/symfony-installer">symfony installer</a></td>

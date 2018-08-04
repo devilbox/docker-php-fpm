@@ -1,19 +1,19 @@
 ---
 
-- name: render template
+- name: generate Dockerfiles
   template:
     src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
     mode:  0644
   with_items:
-    - "{{ template_files }}"
+    - "{{ template_dockerfiles }}"
 
-- name: copy php.ini configuration
+- name: generate php configuration files
   template:
     src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
     mode:  0644
   with_items:
-    - "{{ ini_files }}"
+    - "{{ template_configurations }}"

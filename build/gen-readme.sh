@@ -14,6 +14,7 @@ CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 ###
 print_usage() {
 	echo "Usage: gen-readme.sh"
+	echo "       gen-readme.sh 5.2"
 	echo "       gen-readme.sh 5.3"
 	echo "       gen-readme.sh 5.4"
 	echo "       gen-readme.sh 5.5"
@@ -63,6 +64,7 @@ update_readme() {
 ###
 if [ "${#}" -eq "0" ]; then
 	# Update PHP modules for all versions at once
+	update_readme "5.2"
 	update_readme "5.3"
 	update_readme "5.4"
 	update_readme "5.5"
@@ -77,8 +79,9 @@ elif [ "${#}" -gt "1" ]; then
 	print_usage
 	exit 1
 else
-	if [ "${1}" != "5.3" ] \
-	if [ "${1}" != "5.4" ] \
+	if [ "${1}" != "5.2" ] \
+	&& [ "${1}" != "5.3" ] \
+	&& [ "${1}" != "5.4" ] \
 	&& [ "${1}" != "5.5" ] \
 	&& [ "${1}" != "5.6" ] \
 	&& [ "${1}" != "7.0" ] \

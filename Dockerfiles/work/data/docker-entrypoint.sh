@@ -28,7 +28,8 @@ PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
 PHP_MAIL_LOG="/var/log/mail.log"
 
 # This file holds error and access log definitions
-FPM_CONF_LOGFILE="/usr/local/etc/php-fpm.d/logfiles.conf"
+PHP_FPM_CONF_LOGFILE="${PHP_FPM_DIR}/zzz-entrypoint-logfiles.conf"
+PHP_INI_CONF_LOGFILE="${PHP_INI_DIR}/zzz-entrypoint-logfiles.ini"
 
 # PHP-FPM log dir
 FPM_LOG_DIR="/var/log/php"
@@ -79,9 +80,9 @@ set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
-### PHP-FPM 5.3 Env variables
+### PHP-FPM 5.2 and PHP-FPM 5.3 Env variables fix
 ###
-if php -v 2>/dev/null | grep -Eoq '^PHP[[:space:]]5\.3'; then
+if php -v 2>/dev/null | grep -Eoq '^PHP[[:space:]]5\.(2|3)'; then
 	set_env_php_fpm "/usr/local/etc/php-fpm.d/env.conf"
 fi
 
@@ -92,7 +93,8 @@ fi
 set_docker_logs \
 	"DOCKER_LOGS" \
 	"${FPM_LOG_DIR}" \
-	"${FPM_CONF_LOGFILE}" \
+	"${PHP_FPM_CONF_LOGFILE}" \
+	"${PHP_INI_CONF_LOGFILE}" \
 	"${MY_USER}" \
 	"${MY_GROUP}" \
 	"${DEBUG_LEVEL}"
@@ -157,7 +159,11 @@ copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
 ###
 ### Copy custom PHP-FPM *.conf files
 ###
+if [ "${PHP_VERSION}" = "5.2" ]; then
+	copy_fpm_5_2_conf_file "${PHP_CUST_FPM_DIR}/php-fpm.xml" "${DEBUG_LEVEL}"
+else
 copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
+fi
 
 
 ###

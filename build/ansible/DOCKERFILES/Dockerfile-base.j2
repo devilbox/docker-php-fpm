@@ -1,5 +1,7 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
-{% if php_version == 5.3 %}
+{% if php_version == 5.2 %}
+FROM devilbox/php-fpm-5.2
+{% elif php_version == 5.3 %}
 FROM devilbox/php-fpm-5.3
 {% elif php_version == 7.3 %}
 FROM devilbox/php-fpm-7.3
@@ -26,7 +28,8 @@ LABEL \
 ENV MY_USER="devilbox" \
 	MY_GROUP="devilbox" \
 	MY_UID="1000" \
-	MY_GID="1000"
+	MY_GID="1000" \
+	PHP_VERSION="{{ php_version }}"
 
 
 ###
@@ -62,14 +65,11 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/yyy-devilbox-01-base.ini
+COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-{{ php_version }}.conf /usr/local/etc/php-fpm.conf
+
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d /docker-entrypoint.d
-COPY ./data/php-fpm.conf /usr/local/etc/php-fpm.conf
-COPY ./data/php-fpm.d /usr/local/etc/php-fpm.d
-{% if php_version == 5.3 %}
-COPY ./data/php-fpm.d-docker-5.3.conf /usr/local/etc/php-fpm.d/docker.conf
-{% endif %}
 
 
 {% if debug %}

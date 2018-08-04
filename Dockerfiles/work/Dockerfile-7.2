@@ -65,6 +65,7 @@ RUN set -x \
 		libc-dev \
 		libffi-dev\
 		libssl-dev\
+		libyaml-dev \
 		make \
 		mongodb-org-shell \
 		mongodb-org-tools \
@@ -334,11 +335,14 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php.d/php-7.2.ini /usr/local/etc/php/conf.d/yyy-devilbox-04-work.ini
+COPY ./data/php-ini.d/php-7.2.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-7.2.conf /usr/local/etc/php-fpm.conf
+
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/bash-devilbox /etc/bash-devilbox
 COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
 
 
 ###

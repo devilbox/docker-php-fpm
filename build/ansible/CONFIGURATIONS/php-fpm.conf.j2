@@ -1,0 +1,301 @@
+{% if not php_version == 5.2 %}
+; ################################################################################
+; ####
+; #### The following settings can be overwritten by later includes
+; ####
+; ################################################################################
+
+
+; ############################################################
+; Timeouts
+; ############################################################
+
+[www]
+; The timeout for serving a single request after which the worker process will be killed.
+; This option should be used when the 'max_execution_time' ini option does not stop script
+; execution for some reason.
+request_terminate_timeout = {{ item.cfg[item.key].request_terminate_timeout | default(item.cfg[item.alt].request_terminate_timeout) }}
+
+
+; ############################################################
+; Logging
+; ############################################################
+
+[global]
+error_log = {{ item.cfg[item.key].error_log | default(item.cfg[item.alt].error_log) }}
+log_level = {{ item.cfg[item.key].log_level | default(item.cfg[item.alt].log_level) }}
+
+[www]
+; if we send this to /proc/self/fd/1, it never appears
+access.log = {{ item.cfg[item.key].access_log | default(item.cfg[item.alt].access_log) }}
+
+
+; ############################################################
+; Backlog configuration
+; ############################################################
+
+[www]
+; A maximum of backlog incoming connections will be queued for processing.
+; If a connection request arrives with the queue full the client may receive an error with an
+; indication of ECONNREFUSED, or, if the underlying protocol supports retransmission,
+; the request may be ignored so that retries may succeed.
+
+; This should not be greater than `cat /proc/sys/net/core/somaxconn`, otherwise connections
+; are silently truncated
+listen.backlog = {{ item.cfg[item.key].listen_backlog | default(item.cfg[item.alt].listen_backlog) }}
+
+
+; ############################################################
+; Worker configuration
+; ############################################################
+
+[www]
+; static - the number of child processes is fixed (pm.max_children).
+;
+; dynamic - the number of child processes is set dynamically based on the following directives:
+; pm.max_children, pm.start_servers, pm.min_spare_servers, pm.max_spare_servers.
+;
+; ondemand - the processes spawn on demand (when requested, as opposed to dynamic, where
+; pm.start_servers are started when the service is started.
+pm = {{ item.cfg[item.key].pm | default(item.cfg[item.alt].pm) }}
+
+; The maximum number of child processes to be created
+pm.max_children = {{ item.cfg[item.key].pm_max_children | default(item.cfg[item.alt].pm_max_children) }}
+
+; The number of child processes created on startup. Used only when pm is set to dynamic.
+; Default Value: min_spare_servers + (max_spare_servers - min_spare_servers) / 2.
+pm.start_servers = {{ item.cfg[item.key].pm_start_servers | default(item.cfg[item.alt].pm_start_servers) }}
+
+; The desired minimum number of idle server processes.
+pm.min_spare_servers = {{ item.cfg[item.key].pm_min_spare_servers | default(item.cfg[item.alt].pm_min_spare_servers) }}
+
+; The desired maximum number of idle server processes.
+pm.max_spare_servers = {{ item.cfg[item.key].pm_max_spare_servers | default(item.cfg[item.alt].pm_max_spare_servers) }}
+
+; The number of requests each child process should execute before respawning.
+; This can be useful to work around memory leaks in 3rd party libraries.
+; For endless request processing specify '0'. Equivalent to PHP_FCGI_MAX_REQUESTS.
+; Default value: 0.
+pm.max_requests = {{ item.cfg[item.key].pm_max_requests | default(item.cfg[item.alt].pm_max_requests) }}
+
+; The number of seconds after which an idle process will be killed. Used only when pm is set to ondemand
+pm.process_idle_timeout = {{ item.cfg[item.key].pm_process_idle_timeout | default(item.cfg[item.alt].pm_process_idle_timeout) }}
+
+
+; ############################################################
+; Include
+; ############################################################
+
+
+[global]
+include   = /usr/local/etc/php-fpm.d/*.conf
+
+
+; ################################################################################
+; ####
+; #### The following settings overwrite any includes again
+; ####
+; ################################################################################
+
+
+; ############################################################
+; Required for Dockerization
+; ############################################################
+
+[global]
+daemonize = no
+
+[www]
+{# This value is available since PHP >=5.4 #}
+{% if not php_version == 5.3 %}
+; Keep env variables set by docker
+clear_env = {{ item.cfg[item.key].clear_env | default(item.cfg[item.alt].clear_env) }}
+{% endif %}
+
+; Redirect worker stdout and stderr into main error log. If not set, stdout and
+; stderr will be redirected to /dev/null according to FastCGI specs.
+; Note: on highloaded environement, this can cause some delay in the page
+; process time (several ms).
+; Default Value: no
+catch_workers_output = {{ item.cfg[item.key].catch_workers_output | default(item.cfg[item.alt].catch_workers_output) }}
+
+
+; ############################################################
+; User and Group
+; ############################################################
+
+[www]
+user  = {{ item.cfg[item.key].user | default(item.cfg[item.alt].user) }}
+group = {{ item.cfg[item.key].group | default(item.cfg[item.alt].group) }}
+
+
+; ############################################################
+; Networking
+; ############################################################
+
+[www]
+; Ensure to listen here
+listen         = {{ item.cfg[item.key].listen  | default(item.cfg[item.alt].listen)}}
+{% else %}
+{# PHP-FPM 5.2 uses XML format for configuration #}
+<?xml version="1.0" ?>
+<configuration>
+
+	All relative paths in this config are relative to php's install prefix
+
+	<section name="global_options">
+		Pid file
+		<value name="pid_file">/var/run/php-fpm.pid</value>
+
+		Error log file
+		<value name="error_log">{{ item.cfg[item.key].error_log | default(item.cfg[item.alt].error_log) }}</value>
+
+		Log level
+		<value name="log_level">{{ item.cfg[item.key].log_level | default(item.cfg[item.alt].log_level) }}</value>
+
+		When this amount of php processes exited with SIGSEGV or SIGBUS ...
+		<value name="emergency_restart_threshold">10</value>
+
+		... in a less than this interval of time, a graceful restart will be initiated.
+		Useful to work around accidental curruptions in accelerator's shared memory.
+		<value name="emergency_restart_interval">1m</value>
+
+		Time limit on waiting child's reaction on signals from master
+		<value name="process_control_timeout">5s</value>
+
+		Set to 'no' to debug fpm
+		<value name="daemonize">no</value>
+	</section>
+
+	<workers>
+
+		<section name="pool">
+
+			Name of pool. Used in logs and stats.
+			<value name="name">www</value>
+
+			Address to accept fastcgi requests on.
+			Valid syntax is 'ip.ad.re.ss:port' or just 'port' or '/path/to/unix/socket'
+			<value name="listen_address">0.0.0.0:{{ item.cfg[item.key].listen | default(item.cfg[item.alt].listen) }}</value>
+
+			<value name="listen_options">
+				Set listen(2) backlog
+				<value name="backlog">{{ item.cfg[item.key].listen_backlog | default(item.cfg[item.alt].listen_backlog) }}</value>
+				Set permissions for unix socket, if one used.
+				In Linux read/write permissions must be set in order to allow connections from web server.
+				Many BSD-derrived systems allow connections regardless of permissions.
+				<value name="owner"></value>
+				<value name="group"></value>
+				<value name="mode">0666</value>
+			</value>
+
+			Additional php.ini defines, specific to this pool of workers.
+			<value name="php_defines">
+				<value name="error_reporting">{% if item.key == 'base' %}6135{% else %}-1{% endif %}</value>
+				<value name="xmlrpc_errors">0</value>
+				<value name="report_memleaks">1</value>
+				<value name="display_errors">{% if item.key == 'base' %}0{% else %}1{% endif %}</value>
+				<value name="display_startup_errors">{% if item.key == 'base' %}0{% else %}1{% endif %}</value>
+				<value name="track_errors">1</value>
+				<value name="log_errors">1</value>
+				<value name="html_errors">{% if item.key == 'base' %}0{% else %}1{% endif %}</value>
+			</value>
+
+			Unix user of processes
+			<value name="user">{{ item.cfg[item.key].user | default(item.cfg[item.alt].user) }}</value>
+
+			Unix group of processes
+			<value name="group">{{ item.cfg[item.key].group | default(item.cfg[item.alt].group) }}</value>
+
+			Process manager settings
+			<value name="pm">
+
+				Sets style of controling worker process count.
+				Valid values are 'static' and 'apache-like'
+				<value name="style">apache-like</value>
+
+				Sets the limit on the number of simultaneous requests that will be served.
+				Equivalent to Apache MaxClients directive.
+				Equivalent to PHP_FCGI_CHILDREN environment in original php.fcgi
+				Used with any pm_style.
+				<!--<value name="max_children">{{ item.cfg[item.key].pm_max_children | default(item.cfg[item.alt].pm_max_children) }}</value>-->
+				<value name="max_children">5</value>
+
+				Settings group for 'apache-like' pm style
+				<value name="apache_like">
+					Sets the number of server processes created on startup.
+					Used only when 'apache-like' pm_style is selected
+					<!--<value name="StartServers">{{ item.cfg[item.key].pm_start_servers | default(item.cfg[item.alt].pm_start_servers) }}</value>-->
+					<value name="StartServers">3</value>
+
+					Sets the desired minimum number of idle server processes.
+					Used only when 'apache-like' pm_style is selected
+					<!--<value name="MinSpareServers">{{ item.cfg[item.key].pm_min_spare_servers | default(item.cfg[item.alt].pm_min_spare_servers) }}</value>-->
+					<value name="MinSpareServers">2</value>
+
+					Sets the desired maximum number of idle server processes.
+					Used only when 'apache-like' pm_style is selected
+					<!--<value name="MaxSpareServers">{{ item.cfg[item.key].pm_max_spare_servers | default(item.cfg[item.alt].pm_max_spare_servers) }}</value>-->
+					<value name="MaxSpareServers">4</value>
+				</value>
+
+			</value>
+
+			The timeout (in seconds) for serving a single request after which the worker process will be terminated
+			Should be used when 'max_execution_time' ini option does not stop script execution for some reason
+			'0s' means 'off'
+			<value name="request_terminate_timeout">{{ item.cfg[item.key].request_terminate_timeout | default(item.cfg[item.alt].request_terminate_timeout) }}</value>
+
+			The timeout (in seconds) for serving of single request after which a php backtrace will be dumped to slow.log file
+			'0s' means 'off'
+			<value name="request_slowlog_timeout">0s</value>
+
+			The log file for slow requests
+			<value name="slowlog">{{ item.cfg[item.key].error_log | default(item.cfg[item.alt].error_log) }}</value>
+
+			Set open file desc rlimit
+			<value name="rlimit_files">1024</value>
+
+			Set max core size rlimit
+			<value name="rlimit_core">0</value>
+
+			Chroot to this directory at the start, absolute path
+			<value name="chroot"></value>
+
+			Chdir to this directory at the start, absolute path
+			<value name="chdir"></value>
+
+			Redirect workers' stdout and stderr into main error log.
+			If not set, they will be redirected to /dev/null, according to FastCGI specs
+			<value name="catch_workers_output">{{ item.cfg[item.key].catch_workers_output | default(item.cfg[item.alt].catch_workers_output) }}</value>
+
+			How much requests each process should execute before respawn.
+			Useful to work around memory leaks in 3rd party libraries.
+			For endless request processing please specify 0
+			Equivalent to PHP_FCGI_MAX_REQUESTS
+			<value name="max_requests">{{ item.cfg[item.key].pm_max_requests | default(item.cfg[item.alt].pm_max_requests) }}</value>
+
+			Comma separated list of ipv4 addresses of FastCGI clients that allowed to connect.
+			Equivalent to FCGI_WEB_SERVER_ADDRS environment in original php.fcgi (5.2.2+)
+			Makes sense only with AF_INET listening socket.
+			<!-- <value name="allowed_clients">127.0.0.1</value> -->
+
+			Pass environment variables like LD_LIBRARY_PATH
+			All $VARIABLEs are taken from current environment
+			<value name="environment">
+				<value name="HOSTNAME">$HOSTNAME</value>
+				<value name="PATH">/usr/local/bin:/usr/bin:/bin</value>
+				<value name="TMP">/tmp</value>
+				<value name="TMPDIR">/tmp</value>
+				<value name="TEMP">/tmp</value>
+				<value name="OSTYPE">$OSTYPE</value>
+				<value name="MACHTYPE">$MACHTYPE</value>
+				<value name="MALLOC_CHECK_">2</value>
+			</value>
+
+		</section>
+
+	</workers>
+
+</configuration>
+{% endif %}

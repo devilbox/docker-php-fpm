@@ -1,0 +1,86 @@
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
+FROM devilbox/php-fpm-5.2
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+LABEL \
+	name="cytopia's PHP-FPM 5.2 Image" \
+	image="devilbox/php-fpm" \
+	tag="5.2-base" \
+	vendor="devilbox" \
+	license="MIT"
+
+
+###
+### Envs
+###
+ENV MY_USER="devilbox" \
+	MY_GROUP="devilbox" \
+	MY_UID="1000" \
+	MY_GID="1000" \
+	PHP_VERSION="5.2"
+
+
+###
+### User/Group
+###
+RUN set -x \
+	&& groupadd -g ${MY_GID} -r ${MY_GROUP} \
+	&& useradd -u ${MY_UID} -m -s /bin/bash -g ${MY_GROUP} ${MY_USER}
+
+
+###
+### Upgrade (install ps)
+###
+RUN set -x \
+	&& apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get install --no-install-recommends --no-install-suggests -y procps \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+###
+### Configure
+###
+RUN set -x \
+	&& rm -rf /usr/local/etc/php-fpm.d \
+	&& mkdir -p /usr/local/etc/php-fpm.d \
+	&& mkdir -p /var/lib/php/session \
+	&& mkdir -p /var/lib/php/wsdlcache \
+	&& chown -R devilbox:devilbox /var/lib/php/session \
+	&& chown -R devilbox:devilbox /var/lib/php/wsdlcache
+
+
+###
+### Copy files
+###
+COPY ./data/php-ini.d/php-5.2.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-5.2.conf /usr/local/etc/php-fpm.conf
+
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d /docker-entrypoint.d
+
+
+###
+### Verify
+###
+RUN set -x \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.2' \
+	&& /usr/local/sbin/php-fpm --test \
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+
+
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Entrypoint
+###
+ENTRYPOINT ["/docker-entrypoint.sh"]
