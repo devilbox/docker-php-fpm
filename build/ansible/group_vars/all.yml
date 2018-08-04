@@ -96,7 +96,7 @@ php_settings_fpm:
     # Network
     listen:                    9000
     # Backlog
-    listen_backlog:            128
+    listen_backlog:            1024
     # Logging
     log_level:                 notice
     error_log:                 /proc/self/fd/2
