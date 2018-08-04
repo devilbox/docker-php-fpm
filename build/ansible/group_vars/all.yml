@@ -95,7 +95,8 @@ php_settings_fpm:
     request_terminate_timeout: "{{ php_timeout }}s"
     # Network
     listen:                    9000
-    listen_backlog:            1024
+    # Backlog
+    listen_backlog:            128
     # Logging
     log_level:                 notice
     error_log:                 /proc/self/fd/2

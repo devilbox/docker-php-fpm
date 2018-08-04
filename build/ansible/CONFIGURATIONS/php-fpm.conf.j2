@@ -31,11 +31,25 @@ access.log = {{ item.cfg[item.key].access_log | default(item.cfg[item.alt].acces
 
 
 ; ############################################################
+; Backlog configuration
+; ############################################################
+
+[www]
+; A maximum of backlog incoming connections will be queued for processing.
+; If a connection request arrives with the queue full the client may receive an error with an
+; indication of ECONNREFUSED, or, if the underlying protocol supports retransmission,
+; the request may be ignored so that retries may succeed.
+
+; This should not be greater than `cat /proc/sys/net/core/somaxconn`, otherwise connections
+; are silently truncated
+listen.backlog = {{ item.cfg[item.key].listen_backlog | default(item.cfg[item.alt].listen_backlog) }}
+
+
+; ############################################################
 ; Worker configuration
 ; ############################################################
 
 [www]
-
 ; static - the number of child processes is fixed (pm.max_children).
 ;
 ; dynamic - the number of child processes is set dynamically based on the following directives:
@@ -122,8 +136,6 @@ group = {{ item.cfg[item.key].group | default(item.cfg[item.alt].group) }}
 [www]
 ; Ensure to listen here
 listen         = {{ item.cfg[item.key].listen  | default(item.cfg[item.alt].listen)}}
-{# Available since PHP >= 5.4 #}
-listen.backlog = {{ item.cfg[item.key].listen_backlog | default(item.cfg[item.alt].listen_backlog) }}
 {% else %}
 {# PHP-FPM 5.2 uses XML format for configuration #}
 <?xml version="1.0" ?>
