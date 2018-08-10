@@ -24,9 +24,10 @@ disable_modules() {
 
 		if [ -z "${mods}" ]; then
 			log "info" "\$${mod_varname} set, but empty. Not disabling any PHP modules." "${debug}"
-		else
-			log "info" "Disabling the following PHP modules: ${mods}" "${debug}"
+			return 0
 		fi
+
+		log "info" "Disabling the following PHP modules: ${mods}" "${debug}"
 
 		while read -r mod; do
 			mod="$( echo "${mod}" | xargs )" # trim
