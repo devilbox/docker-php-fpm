@@ -186,9 +186,6 @@ RUN set -x \
 	&& gem install sass \
 # webpack
 	&& npm install -g webpack webpack-cli \
-# wpcli
-	&& curl https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp \
-	&& chmod +x /usr/local/bin/wp \
 # yamllint
 	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
 	&& pip install yamllint \
@@ -264,7 +261,6 @@ RUN set -x \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
-	&& wp --allow-root --version | grep -E '[.0-9]+' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& true
 
