@@ -27,9 +27,10 @@ enable_modules() {
 
 		if [ -z "${mods}" ]; then
 			log "info" "\$${mod_varname} set, but empty. Not enabling any PHP modules." "${debug}"
-		else
-			log "info" "Enabling the following PHP modules: ${mods}" "${debug}"
+			return 0
 		fi
+
+		log "info" "Enabling the following PHP modules: ${mods}" "${debug}"
 
 		while read -r mod; do
 			mod="$( echo "${mod}" | xargs )" # trim
