@@ -567,8 +567,13 @@ software_available:
       command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
       post: chmod +x /usr/local/bin/symfony
   wpcli:
-    disabled: [5.2]
     check: wp --allow-root --version | grep -E '[.0-9]+'
+    5.2:
+      command: curl https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
+    5.3:
+      command: curl https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
     all:
       command: curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
