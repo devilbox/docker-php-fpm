@@ -823,6 +823,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Automation tool.</td>
   </tr>
   <tr>
+   <td><a href="https://asgardcms.com/install">asgardcms</a></td>
+   <td>AsgardCMS cli installer.</td>
+  </tr>
+  <tr>
    <td><a href="https://github.com/cytopia/awesome-ci">awesome-ci</a></td>
    <td>Various linting and source code analyzing tools.</td>
   </tr>
