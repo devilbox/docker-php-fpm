@@ -108,6 +108,10 @@ RUN set -x \
 	&& pip install --upgrade setuptools  \
 && pip install ansible \
  \
+# asgardcms
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require asgardcms/asgardcms-installer \
+&& ln -s /usr/local/src/composer/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/asgardcms \
+ \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
 && cd /usr/local/src/awesome-ci \
@@ -304,6 +308,7 @@ RUN set -x \
 RUN set -x \
 	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
+	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+' \
 	&& mdl --version | grep -E '[.0-9]+' \
 && scss-lint --version | grep -E '[.0-9]+' \
 && eslint -v | grep -E '[.0-9]+' \

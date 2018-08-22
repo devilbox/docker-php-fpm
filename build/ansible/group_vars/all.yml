@@ -199,6 +199,7 @@ software_enabled:
   - composer
   # Normal packages start here
   - ansible
+  - asgardcms
   - awesomeci
   - codeception
   - drush
@@ -288,6 +289,13 @@ apt_repositories_available:
 #   pre:       [optional] Run command after 'command:' statement
 #
 software_available:
+  asgardcms:
+    disabled: [5.2, 5.3, 5.4]
+    check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+'
+    all:
+      command: |
+        COMPOSER_HOME="{{ compose_home }}" composer global require asgardcms/asgardcms-installer \
+        && ln -s {{ compose_home }}/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/asgardcms \
   ansible:
     check: ansible --version | grep -E '^ansible [.0-9]+$'
     all:
