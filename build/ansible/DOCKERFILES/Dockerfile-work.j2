@@ -113,6 +113,7 @@ RUN set -x \
 		whois \
 		xz-utils \
 		yarn \
+		zsh \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
 	&& rm -rf /var/lib/apt/lists/*
 
