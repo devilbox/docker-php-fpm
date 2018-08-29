@@ -69,6 +69,9 @@ set_postfix() {
 			run "chown ${username}:${groupname} /var/mail" "${debug}"
 			run "chown ${username}:${groupname} /var/mail/${username}" "${debug}"
 
+			# warning: specify "strict_mailbox_ownership = no" to ignore mailbox ownership mismatch
+			run "postconf -e 'strict_mailbox_ownership=no'" "${debug}"
+
 			# Postfix configuration
 			run "postconf -e 'inet_protocols=ipv4'" "${debug}"
 			run "postconf -e 'virtual_alias_maps=pcre:/etc/postfix/virtual'" "${debug}"
