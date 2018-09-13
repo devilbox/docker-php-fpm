@@ -839,6 +839,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Dependency Manager for PHP.</td>
   </tr>
   <tr>
+   <td><a href="https://deployer.org/">deployer</a></td>
+   <td>Deployment tool for PHP.</td>
+  </tr>
+  <tr>
    <td><a href="https://drupalconsole.com">drupal-console</a></td>
    <td>The Drupal CLI. A tool to generate boilerplate code, interact with and debug Drupal.</td>
   </tr>
