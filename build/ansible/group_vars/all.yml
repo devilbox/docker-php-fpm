@@ -202,6 +202,7 @@ software_enabled:
   - asgardcms
   - awesomeci
   - codeception
+  - deployer
   - drush
   - drupalconsole
   - gitflow
@@ -333,6 +334,12 @@ software_available:
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
     all:
       command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  deployer:
+    disabled: [5.2, 5.3]
+    check: dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+'
+    all:
+      command: curl https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
   drush:
     disabled: [5.2]
     check: drush --version | grep -E '[.0-9]+'
