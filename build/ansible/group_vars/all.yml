@@ -335,7 +335,7 @@ software_available:
     all:
       command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   deployer:
-    disabled: []
+    disabled: [5.2, 5.3]
     check: dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+'
     all:
       command: curl https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
