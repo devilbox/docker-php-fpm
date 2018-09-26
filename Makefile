@@ -319,23 +319,23 @@ rebuild-work-73:
 ### Pull base FROM images
 ###
 pull-from-52:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.2 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.2 | sed 's/^FROM\s*//g';)
 pull-from-53:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.3 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.3 | sed 's/^FROM\s*//g';)
 pull-from-54:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.4 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.4 | sed 's/^FROM\s*//g';)
 pull-from-55:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.5 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.5 | sed 's/^FROM\s*//g';)
 pull-from-56:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.6 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.6 | sed 's/^FROM\s*//g';)
 pull-from-70:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.0 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.0 | sed 's/^FROM\s*//g';)
 pull-from-71:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.1 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.1 | sed 's/^FROM\s*//g';)
 pull-from-72:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.2 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.2 | sed 's/^FROM\s*//g';)
 pull-from-73:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.3 | sed 's/^FROM//g'; done)
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.3 | sed 's/^FROM\s*//g';)
 
 
 ###
