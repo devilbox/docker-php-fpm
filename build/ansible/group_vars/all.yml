@@ -693,6 +693,7 @@ extensions_enabled:
   - readline
   - recode
   - redis
+  - rdkafka
   - session
   - shmop
   - simplexml
@@ -1195,6 +1196,12 @@ extensions_available:
       version: 2.2.7
     all:
       type: pecl
+  rdkafka:
+    disabled: [5.2]
+    all:
+      type: pecl
+      build_dep: [librdkafka-dev]
+      run_dep: [librdkafka1]
   session:
     all:
       type: builtin
