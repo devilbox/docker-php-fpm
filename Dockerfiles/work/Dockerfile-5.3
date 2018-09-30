@@ -133,19 +133,19 @@ RUN set -x \
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception --dev \
 && ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
  \
-# drush
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush \
-&& cd /usr/local/src/drush \
+# drush7
+	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
+&& cd /usr/local/src/drush7 \
 && git checkout 7.4.0 \
  \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush && composer install --no-interaction --no-progress' \
-&& ln -s /usr/local/src/drush/drush /usr/local/bin/drush \
-&& rm -rf /usr/local/src/drush/.git \
-&& rm -rf /usr/local/src/drush/docs \
-&& rm -rf /usr/local/src/drush/examples \
-&& rm -rf /usr/local/src/drush/misc \
-&& rm -rf /usr/local/src/drush/tests \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress' \
+&& ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
+&& rm -rf /usr/local/src/drush7/.git \
+&& rm -rf /usr/local/src/drush7/docs \
+&& rm -rf /usr/local/src/drush7/examples \
+&& rm -rf /usr/local/src/drush7/misc \
+&& rm -rf /usr/local/src/drush7/tests \
  \
 # gitflow
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
@@ -296,7 +296,7 @@ RUN set -x \
 && gulp --version | grep -E '[.0-9]+' \
  \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
-	&& drush --version | grep -E '[.0-9]+' \
+	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
