@@ -24,38 +24,45 @@ ENV BASH_PROFILE=".bashrc"
 ### Install Tools
 ###
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		dirmngr \
 		gnupg \
-{% for repo in apt_repositories_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in apt_repositories_available[repo]) or (php_version not in apt_repositories_available[repo]['disabled']) %}
-{# Version specific pre-command available? #}
-{% if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] %}
+{% for repo in apt_repositories_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in apt_repositories_available[repo]) or (php_version not in apt_repositories_available[repo]['disabled']) -%}
+		{#- Version specific pre-command available? -#}
+		{%- if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] %}
 	&& {{ apt_repositories_available[repo][php_version]['pre'] }} \
-{# Generic pre-command available? #}
-{% elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] %}
+{# #}
+		{#- Generic pre-command available? -#}
+		{%- elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] %}
 	&& {{ apt_repositories_available[repo]['all']['pre'] }} \
-{% endif %}
-{# Version specific key available? #}
-{% if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] %}
+{# #}
+		{%- endif -%}
+		{#- Version specific key available? -#}
+		{%- if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] %}
 	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
-{# Generic key available? #}
-{% elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] %}
+{# #}
+		{#- Generic key available? -#}
+		{%- elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] %}
 	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
-{% endif %}
-{# Version specific repository available? #}
-{% if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] %}
+{# #}
+		{%- endif -%}
+		{#- Version specific repository available? -#}
+		{%- if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] %}
 	&& echo "{{ apt_repositories_available[repo][php_version]['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-{# Generic repository available? #}
-{% else %}
+{# #}
+		{#- Generic repository available? -#}
+		{%- else %}
 	&& echo "{{ apt_repositories_available[repo]['all']['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-{% endif %}
-{% endif %}
-{% endfor %}
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+{# #}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		ack-grep \
 		aspell \
 		autoconf \
@@ -115,9 +122,11 @@ RUN set -x \
 		whois \
 		wkhtmltopdf \
 		xz-utils \
+{% if php_version != 5.2 %}
 		yarn \
+{% endif %}
 		zsh \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/*
 
 
@@ -177,10 +186,20 @@ RUN \
 ### Verify
 ###
 RUN set -x \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
 	&& /usr/local/sbin/php-fpm --test \
+	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
 
 RUN set -x \
 {% for tool in software_enabled %}

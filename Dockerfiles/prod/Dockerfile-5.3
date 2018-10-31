@@ -18,15 +18,16 @@ LABEL \
 ### Install
 ###
 RUN set -x \
-	&& apt-get update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		locales-all \
 		postfix \
 		postfix-pcre \
 		rsyslog \
 		socat \
 		supervisor \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& rm -rf /etc/supervisor* \
@@ -39,10 +40,20 @@ RUN set -x \
 ### Verify
 ###
 RUN set -x \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.3' \
 	&& /usr/local/sbin/php-fpm --test \
+	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
 
 
 ###

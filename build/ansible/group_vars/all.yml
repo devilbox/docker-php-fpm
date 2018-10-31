@@ -740,26 +740,28 @@ extensions_enabled:
 ###
 # all: is generic version of defines
 # 7.2: is specific version of defines
-# disabled: [optional] Array of PHP versions for which to disable this module
+# disabled:      [optional] Array of PHP versions for which to disable this module
+# already_avail: [optional] Array of PHP versions for which we don't install the module, but
+#                the dependencies, as it is already loaded by core
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
-#   pre:       [optional] Run command before anything else
-#   build_dep: [optional] Array of build dependencies
-#   run_dep:   [optional] Array of run-time dependencies
-#   type:      [required] One of 'builtin', 'pecl' or 'git'
+#   pre:         [optional] Run command before anything else
+#   build_dep:   [optional] Array of build dependencies
+#   run_dep:     [optional] Array of run-time dependencies
+#   type:        [required] One of 'builtin', 'pecl' or 'git'
 #
 # type: builtin
-#   configure: [optional] Add './configure' arguments
+#   configure:   [optional] Add './configure' arguments
 # type: pecl
-#   version:   [optional] Pecl packet version
-#   command:   [optional] Overwrite pecl command (pecl install ext)
+#   version:     [optional] Pecl packet version
+#   command:     [optional] Overwrite pecl command (pecl install ext)
 # type: git
-#   git_url:   [required] Git repository URL
-#   git_ref:   [optional] Tag, branch, commit to checkout
-#   configure: [optional] Add './configure' arguments
-#   command:   [optional] Overwrite default command (phpize && ./configure && make && make install)
+#   git_url:     [required] Git repository URL
+#   git_ref:     [optional] Tag, branch, commit to checkout
+#   configure:   [optional] Add './configure' arguments
+#   command:     [optional] Overwrite default command (phpize && ./configure && make && make install)
 # type: custom
-#   command:   [required] Custom command to install and enable a module
+#   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
     disabled: [7.3]
@@ -805,9 +807,11 @@ extensions_available:
     all:
       type: builtin
   ctype:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   curl:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       build_dep: [libcurl4-openssl-dev]
@@ -815,6 +819,7 @@ extensions_available:
     all:
       type: builtin
   dom:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -831,14 +836,16 @@ extensions_available:
     all:
       type: builtin
   fileinfo:
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     5.2:
       type: pecl
       build_dep: [libmagic-dev]
     all:
       type: builtin
   filter:
-    disabled: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}" # Available by default
   ftp:
+    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-openssl-dir
@@ -905,12 +912,17 @@ extensions_available:
       pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
       build_dep: [libgmp-dev]
   hash:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   iconv:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   igbinary:
+    5.2:
+      type: pecl
+      version: 2.0.7
     all:
       type: pecl
   imagick:
@@ -973,6 +985,7 @@ extensions_available:
         && rm -rf ioncube \
         && rm -rf ioncube.tar.gz \
   json:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     7.0:
       type: builtin
       build_dep: [bison]
@@ -985,9 +998,9 @@ extensions_available:
       configure: --with-ldap --with-ldap-sasl
       build_dep: [libldap2-dev, libsasl2-dev]
   libxml:
-    disabled: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}" # Available by default
   mbstring:
-    disabled: [7.3]
+    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   mcrypt:
@@ -1083,6 +1096,7 @@ extensions_available:
     all:
       type: pecl
   mysql:
+    already_avail: [5.2, 5.3]
     disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated in newer versions
     5.6:
       type: builtin
@@ -1091,10 +1105,12 @@ extensions_available:
       type: builtin
       run_dep: [libmysqlclient18]
   mysqli:
+    already_avail: [5.2]
     all:
       type: builtin
   mysqlnd:
-    disabled: "{{ php_all_versions }}" # Available by default
+    disabled: [5.2]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
   oci8:
     disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
   odbc:
@@ -1112,15 +1128,16 @@ extensions_available:
     all:
       type: builtin
   openssl:
-    disabled: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}" # Available by default
   pcntl:
     all:
       type: builtin
   pcre:
-    disabled: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}" # Available by default
   pdo:
     # https://github.com/docker-library/php/issues/618
-    disabled: [7.0] # TODO: Currently disabled due to bug in built
+    #disabled: [7.0] # TODO: Currently disabled due to bug in built
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3]
     all:
       type: builtin
   pdo_dblib:
@@ -1135,12 +1152,16 @@ extensions_available:
       build_dep: [libfbclient2, libib-util, firebird-dev]
       run_dep: [libfbclient2]
   pdo_mysql:
+    already_avail: [5.2]
     all:
       type: builtin
       configure: --with-zlib-dir=/usr
       build_dep: [zlib1g-dev]
   pdo_oci:
     disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
+    #    disabled: [5.2]
+    #    all:
+    #      type: builtin
   pdo_odbc:
     disabled: "{{ php_all_versions }}" # TODO: Build errors
   pdo_pgsql:
@@ -1149,6 +1170,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   pdo_sqlite:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       build_dep: [libsqlite3-dev]
@@ -1183,12 +1205,14 @@ extensions_available:
   phar:
     # https://github.com/docker-library/php/issues/618
     disabled: [5.6, 7.0] # TODO: Currently disabled due to bug in built
+    already_avail: [5.3, 5.4, 5.5, 7.1, 7.2, 7.3]
     5.2:
       type: pecl
     all:
       type: builtin
       build_dep: [libssl-dev]
   posix:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   pspell:
@@ -1197,11 +1221,13 @@ extensions_available:
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
   readline:
-    disabled: [5.2, 5.3, 5.4] # Available by default
+    disabled: [5.3]
+    already_avail: [5.2, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       build_dep: [libedit-dev, libreadline-dev]
   recode:
+    already_avail: [5.3, 5.4]
     all:
       type: builtin
       build_dep: [librecode-dev]
@@ -1219,6 +1245,7 @@ extensions_available:
       build_dep: [librdkafka-dev]
       run_dep: [librdkafka1]
   session:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-mm
@@ -1227,6 +1254,7 @@ extensions_available:
     all:
       type: builtin
   simplexml:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1238,6 +1266,7 @@ extensions_available:
       build_dep: [libssl-dev, libsnmp-dev, snmp]
       run_dep: [snmp]
   soap:
+    already_avail: [5.2]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1247,6 +1276,7 @@ extensions_available:
       type: builtin
   sodium:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
+    already_avail: [7.2, 7.3]
     all:
       type: builtin
       build_dep: [libsodium-dev]
@@ -1342,6 +1372,7 @@ extensions_available:
       build_dep: [libtidy-dev]
       run_dep: [libtidy5]
   tokenizer:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
   uploadprogress:
@@ -1388,12 +1419,13 @@ extensions_available:
     all:
       type: pecl
   xml:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xmlreader:
-    disabled: [7.0, 7.1, 7.2, 7.3] # Available by default
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1404,6 +1436,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
       build_dep: [libxml2-dev]
   xmlwriter:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr

@@ -18,96 +18,70 @@ LABEL \
 ### Envs
 ###
 ENV BUILD_DEPS \
-	librabbitmq-dev \
-	libbz2-dev \
-	libcurl4-openssl-dev \
-	libxml2-dev \
-	libenchant-dev \
-	libssl-dev \
-	libpng-dev \
-	libjpeg-dev \
-	libxpm-dev \
-	libvpx-dev \
-	zlib1g-dev \
-	libfreetype6-dev \
-	libwebp-dev \
-	libgmp-dev \
-	libmagickwand-dev \
-	libc-client-dev \
-	libkrb5-dev \
-	libcurl4-openssl-dev \
-	libfbclient2 \
-	libib-util \
 	firebird-dev \
-	libicu-dev \
-	libldap2-dev \
-	libsasl2-dev \
-	libmcrypt-dev \
-	zlib1g-dev \
-	zlib1g-dev \
-	libmemcached-dev \
-	libssl-dev \
-	libsasl2-dev \
 	freetds-dev \
+	libbz2-dev \
+	libc-client-dev \
+	libcurl4-openssl-dev \
+	libenchant-dev \
 	libfbclient2 \
+	libfreetype6-dev \
+	libgmp-dev \
 	libib-util \
-	firebird-dev \
-	zlib1g-dev \
-	libpq-dev \
-	libsqlite3-dev \
-	libpq-dev \
-	libssl-dev \
-	libpspell-dev \
-	libedit-dev \
-	libreadline-dev \
-	librecode-dev \
-	librdkafka-dev \
-	libmm-dev \
-	libxml2-dev \
-	libssl-dev \
-	libsnmp-dev \
-	snmp \
-	libxml2-dev \
+	libicu-dev \
+	libjpeg-dev \
+	libkrb5-dev \
+	libldap2-dev \
+	libmagickwand-dev \
+	libmcrypt-dev \
+	libmemcached-dev \
 	libnghttp2-dev \
+	libpng-dev \
+	libpq-dev \
+	libpspell-dev \
+	librabbitmq-dev \
+	librdkafka-dev \
+	librecode-dev \
+	libsasl2-dev \
+	libsnmp-dev \
 	libssl-dev \
 	libtidy-dev \
+	libvpx-dev \
+	libwebp-dev \
 	libxml2-dev \
-	libxml2-dev \
-	libxml2-dev \
-	libxml2-dev \
+	libxpm-dev \
 	libxslt-dev \
-	zlib1g-dev \
 	libzip-dev \
+	snmp \
+	zlib1g-dev \
 	ca-certificates \
 	git
 
 ENV RUN_DEPS \
-	librabbitmq4 \
-	libenchant1c2a \
-	libpng16-16 \
-	libjpeg62-turbo \
-	libxpm4 \
-	libvpx4 \
-	libfreetype6 \
-	libwebp6 \
-	libmagickwand-6.q16-3 \
+	libaspell15 \
 	libc-client2007e \
+	libenchant1c2a \
 	libfbclient2 \
+	libfreetype6 \
 	libicu57 \
+	libjpeg62-turbo \
+	libmagickwand-6.q16-3 \
 	libmcrypt4 \
 	libmemcachedutil2 \
-	libsybdb5 \
-	libfbclient2 \
-	libpq5 \
-	libpq5 \
-	libaspell15 \
-	librecode0 \
-	librdkafka1 \
-	snmp \
 	libnghttp2-14 \
+	libpng16-16 \
+	libpq5 \
+	librabbitmq4 \
+	librdkafka1 \
+	librecode0 \
+	libsybdb5 \
 	libtidy5 \
+	libvpx4 \
+	libwebp6 \
+	libxpm4 \
 	libxslt1.1 \
 	libzip4 \
+	snmp \
 	ca-certificates
 
 
@@ -115,8 +89,9 @@ ENV RUN_DEPS \
 ### Install
 ###
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		${BUILD_DEPS} \
 	\
 	\
@@ -137,24 +112,15 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ctype \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) curl \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
-	&& /usr/local/bin/docker-php-ext-configure dom --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dom \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) fileinfo \
-	&& /usr/local/bin/docker-php-ext-configure ftp --with-openssl-dir \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ftp \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-configure gd --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
 	&& ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) hash \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) iconv \
 	&& pecl install igbinary \
 	&& docker-php-ext-enable igbinary \
 	&& pecl install imagick \
@@ -164,11 +130,9 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) json \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mbstring \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
 	&& git clone -v https://github.com/websupport-sk/pecl-memcache /tmp/memcache \
 	&& cd /tmp/memcache \
@@ -187,14 +151,12 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
 	&& /usr/local/bin/docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_sqlite \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
 	&& git clone -v https://github.com/phalcon/cphalcon /tmp/phalcon \
 	&& cd /tmp/phalcon \
@@ -202,20 +164,13 @@ RUN set -x \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
 	&& cd / && rm -rf /tmp/phalcon \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) phar \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) posix \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) readline \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
 	&& pecl install redis \
 	&& docker-php-ext-enable redis \
 	&& pecl install rdkafka \
 	&& docker-php-ext-enable rdkafka \
-	&& /usr/local/bin/docker-php-ext-configure session --with-mm \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) session \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
-	&& /usr/local/bin/docker-php-ext-configure simplexml --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) simplexml \
 	&& /usr/local/bin/docker-php-ext-configure snmp --with-openssl-dir \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
 	&& /usr/local/bin/docker-php-ext-configure soap --with-libxml-dir=/usr \
@@ -227,7 +182,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tokenizer \
 	&& git clone -v https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
 	&& cd /tmp/uploadprogress \
 	&& phpize \
@@ -240,23 +194,15 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
 	&& pecl install xdebug \
 	&& docker-php-ext-enable xdebug \
-	&& /usr/local/bin/docker-php-ext-configure xml --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xml \
 	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
-	&& /usr/local/bin/docker-php-ext-configure xmlwriter --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlwriter \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
 	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
 	\
-	\
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
-		${BUILD_DEPS} \
-	\
-	\
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
-		${RUN_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${BUILD_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests ${RUN_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& update-ca-certificates \
 	&& sh -c "find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true"
@@ -266,12 +212,21 @@ RUN set -x \
 ### Verify
 ###
 RUN set -x \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^7.1' \
 	&& /usr/local/sbin/php-fpm --test \
+	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
-
-RUN set -x \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini \
+	\
 	&& php -m | grep -oiE '^amqp$' \
 	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \
@@ -296,6 +251,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^fileinfo$' \
 	&& php-fpm -m | grep -oiE '^fileinfo$' \
+	&& php -m | grep -oiE '^filter$' \
+	&& php-fpm -m | grep -oiE '^filter$' \
 	&& php -m | grep -oiE '^ftp$' \
 	&& php-fpm -m | grep -oiE '^ftp$' \
 	&& php -m | grep -oiE '^gd$' \
@@ -322,6 +279,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^json$' \
 	&& php -m | grep -oiE '^ldap$' \
 	&& php-fpm -m | grep -oiE '^ldap$' \
+	&& php -m | grep -oiE '^libxml$' \
+	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^mcrypt$' \
@@ -336,10 +295,16 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
+	&& php -m | grep -oiE '^mysqlnd$' \
+	&& php-fpm -m | grep -oiE '^mysqlnd$' \
 	&& php -m | grep -oiE '^Zend Opcache$' \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
+	&& php -m | grep -oiE '^openssl$' \
+	&& php-fpm -m | grep -oiE '^openssl$' \
 	&& php -m | grep -oiE '^pcntl$' \
 	&& php-fpm -m | grep -oiE '^pcntl$' \
+	&& php -m | grep -oiE '^pcre$' \
+	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^pdo$' \
 	&& php-fpm -m | grep -oiE '^pdo$' \
 	&& php -m | grep -oiE '^pdo_dblib$' \
@@ -402,6 +367,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
+	&& php -m | grep -oiE '^xmlreader$' \
+	&& php-fpm -m | grep -oiE '^xmlreader$' \
 	&& php -m | grep -oiE '^xmlrpc$' \
 	&& php-fpm -m | grep -oiE '^xmlrpc$' \
 	&& php -m | grep -oiE '^xmlwriter$' \
