@@ -18,96 +18,67 @@ LABEL \
 ### Envs
 ###
 ENV BUILD_DEPS \
-	librabbitmq-dev \
+	firebird-dev \
+	freetds-dev \
 	libbz2-dev \
+	libc-client-dev \
 	libcurl4-openssl-dev \
-	libxml2-dev \
 	libenchant-dev \
-	libssl-dev \
-	libpng-dev \
-	libjpeg-dev \
-	libxpm-dev \
-	libvpx-dev \
-	zlib1g-dev \
+	libfbclient2 \
 	libfreetype6-dev \
 	libgmp-dev \
-	libmagickwand-dev \
-	libc-client-dev \
-	libkrb5-dev \
-	libcurl4-openssl-dev \
-	libfbclient2 \
 	libib-util \
-	firebird-dev \
 	libicu-dev \
+	libjpeg-dev \
+	libkrb5-dev \
 	libldap2-dev \
-	libsasl2-dev \
+	libmagickwand-dev \
 	libmcrypt-dev \
-	zlib1g-dev \
-	zlib1g-dev \
 	libmemcached-dev \
-	libssl-dev \
-	libsasl2-dev \
-	libssl-dev \
-	libsasl2-dev \
-	freetds-dev \
-	libfbclient2 \
-	libib-util \
-	firebird-dev \
-	zlib1g-dev \
-	libpq-dev \
-	libsqlite3-dev \
-	libpq-dev \
-	libssl-dev \
-	libpspell-dev \
-	libedit-dev \
-	libreadline-dev \
-	librecode-dev \
-	librdkafka-dev \
-	libmm-dev \
-	libxml2-dev \
-	libssl-dev \
-	libsnmp-dev \
-	snmp \
-	libxml2-dev \
 	libnghttp2-dev \
+	libpng-dev \
+	libpq-dev \
+	libpspell-dev \
+	librabbitmq-dev \
+	librdkafka-dev \
+	librecode-dev \
+	libsasl2-dev \
+	libsnmp-dev \
 	libssl-dev \
 	libtidy-dev \
+	libvpx-dev \
 	libxml2-dev \
-	libxml2-dev \
-	libxml2-dev \
-	libxml2-dev \
-	libxml2-dev \
+	libxpm-dev \
 	libxslt-dev \
+	snmp \
 	zlib1g-dev \
 	ca-certificates \
 	git
 
 ENV RUN_DEPS \
-	librabbitmq1 \
-	libenchant1c2a \
-	libpng12-0 \
-	libjpeg62-turbo \
-	libxpm4 \
-	libvpx1 \
-	libfreetype6 \
-	libmagickwand-6.q16-2 \
+	libaspell15 \
 	libc-client2007e \
+	libenchant1c2a \
 	libfbclient2 \
+	libfreetype6 \
 	libicu52 \
+	libjpeg62-turbo \
+	libmagickwand-6.q16-2 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libmysqlclient18 \
-	libsybdb5 \
-	libfbclient2 \
-	libpq5 \
-	libpq5 \
-	libaspell15 \
-	librecode0 \
-	librdkafka1 \
-	snmp \
 	libnghttp2-5 \
+	libpng12-0 \
+	libpq5 \
+	librabbitmq1 \
+	librdkafka1 \
+	librecode0 \
+	libsybdb5 \
 	libtidy-0.99-0 \
+	libvpx1 \
+	libxpm4 \
 	libxslt1.1 \
+	snmp \
 	ca-certificates
 
 
@@ -115,8 +86,9 @@ ENV RUN_DEPS \
 ### Install
 ###
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		${BUILD_DEPS} \
 	\
 	\
@@ -130,141 +102,436 @@ RUN set -x \
 && rm -rf ioncube \
 && rm -rf ioncube.tar.gz \
  \
+	\
+	&& rm -rf /usr/local/lib/php/test/ioncube || true \
+	&& rm -rf /usr/local/lib/php/doc/ioncube || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& echo "/usr" | pecl install amqp \
 	&& docker-php-ext-enable amqp \
+	\
+	&& rm -rf /usr/local/lib/php/test/amqp || true \
+	&& rm -rf /usr/local/lib/php/doc/amqp || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install apcu-4.0.11 \
 	&& docker-php-ext-enable apcu \
+	\
+	&& rm -rf /usr/local/lib/php/test/apcu || true \
+	&& rm -rf /usr/local/lib/php/doc/apcu || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
+	\
+	&& rm -rf /usr/local/lib/php/test/bcmath || true \
+	&& rm -rf /usr/local/lib/php/doc/bcmath || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
+	\
+	&& rm -rf /usr/local/lib/php/test/bz2 || true \
+	&& rm -rf /usr/local/lib/php/doc/bz2 || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ctype \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) curl \
+	\
+	&& rm -rf /usr/local/lib/php/test/calendar || true \
+	&& rm -rf /usr/local/lib/php/doc/calendar || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/ctype || true \
+	&& rm -rf /usr/local/lib/php/doc/ctype || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/curl || true \
+	&& rm -rf /usr/local/lib/php/doc/curl || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
-	&& /usr/local/bin/docker-php-ext-configure dom --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dom \
+	\
+	&& rm -rf /usr/local/lib/php/test/dba || true \
+	&& rm -rf /usr/local/lib/php/doc/dba || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/dom || true \
+	&& rm -rf /usr/local/lib/php/doc/dom || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
+	\
+	&& rm -rf /usr/local/lib/php/test/enchant || true \
+	&& rm -rf /usr/local/lib/php/doc/enchant || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) fileinfo \
-	&& /usr/local/bin/docker-php-ext-configure ftp --with-openssl-dir \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ftp \
+	\
+	&& rm -rf /usr/local/lib/php/test/exif || true \
+	&& rm -rf /usr/local/lib/php/doc/exif || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/fileinfo || true \
+	&& rm -rf /usr/local/lib/php/doc/fileinfo || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/filter || true \
+	&& rm -rf /usr/local/lib/php/doc/filter || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/ftp || true \
+	&& rm -rf /usr/local/lib/php/doc/ftp || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-configure gd --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
+	\
+	&& rm -rf /usr/local/lib/php/test/gd || true \
+	&& rm -rf /usr/local/lib/php/doc/gd || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
+	\
+	&& rm -rf /usr/local/lib/php/test/gettext || true \
+	&& rm -rf /usr/local/lib/php/doc/gettext || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) hash \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) iconv \
+	\
+	&& rm -rf /usr/local/lib/php/test/gmp || true \
+	&& rm -rf /usr/local/lib/php/doc/gmp || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/hash || true \
+	&& rm -rf /usr/local/lib/php/doc/hash || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/iconv || true \
+	&& rm -rf /usr/local/lib/php/doc/iconv || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install igbinary \
 	&& docker-php-ext-enable igbinary \
+	\
+	&& rm -rf /usr/local/lib/php/test/igbinary || true \
+	&& rm -rf /usr/local/lib/php/doc/igbinary || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install imagick \
 	&& docker-php-ext-enable imagick \
+	\
+	&& rm -rf /usr/local/lib/php/test/imagick || true \
+	&& rm -rf /usr/local/lib/php/doc/imagick || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
+	\
+	&& rm -rf /usr/local/lib/php/test/imap || true \
+	&& rm -rf /usr/local/lib/php/doc/imap || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
+	\
+	&& rm -rf /usr/local/lib/php/test/interbase || true \
+	&& rm -rf /usr/local/lib/php/doc/interbase || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) json \
+	\
+	&& rm -rf /usr/local/lib/php/test/intl || true \
+	&& rm -rf /usr/local/lib/php/doc/intl || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/json || true \
+	&& rm -rf /usr/local/lib/php/doc/json || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mbstring \
+	\
+	&& rm -rf /usr/local/lib/php/test/ldap || true \
+	&& rm -rf /usr/local/lib/php/doc/ldap || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/libxml || true \
+	&& rm -rf /usr/local/lib/php/doc/libxml || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/mbstring || true \
+	&& rm -rf /usr/local/lib/php/doc/mbstring || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
+	\
+	&& rm -rf /usr/local/lib/php/test/mcrypt || true \
+	&& rm -rf /usr/local/lib/php/doc/mcrypt || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install memcache \
 	&& docker-php-ext-enable memcache \
+	\
+	&& rm -rf /usr/local/lib/php/test/memcache || true \
+	&& rm -rf /usr/local/lib/php/doc/memcache || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install memcached-2.2.0 \
 	&& docker-php-ext-enable memcached \
+	\
+	&& rm -rf /usr/local/lib/php/test/memcached || true \
+	&& rm -rf /usr/local/lib/php/doc/memcached || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& yes | pecl install mongo \
 	&& docker-php-ext-enable mongo \
+	\
+	&& rm -rf /usr/local/lib/php/test/mongo || true \
+	&& rm -rf /usr/local/lib/php/doc/mongo || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install mongodb \
 	&& docker-php-ext-enable mongodb \
+	\
+	&& rm -rf /usr/local/lib/php/test/mongodb || true \
+	&& rm -rf /usr/local/lib/php/doc/mongodb || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install msgpack-0.5.7 \
 	&& docker-php-ext-enable msgpack \
+	\
+	&& rm -rf /usr/local/lib/php/test/msgpack || true \
+	&& rm -rf /usr/local/lib/php/doc/msgpack || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
+	\
+	&& rm -rf /usr/local/lib/php/test/mysql || true \
+	&& rm -rf /usr/local/lib/php/doc/mysql || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
+	\
+	&& rm -rf /usr/local/lib/php/test/mysqli || true \
+	&& rm -rf /usr/local/lib/php/doc/mysqli || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/mysqlnd || true \
+	&& rm -rf /usr/local/lib/php/doc/mysqlnd || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
+	\
+	&& rm -rf /usr/local/lib/php/test/opcache || true \
+	&& rm -rf /usr/local/lib/php/doc/opcache || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/openssl || true \
+	&& rm -rf /usr/local/lib/php/doc/openssl || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo \
+	\
+	&& rm -rf /usr/local/lib/php/test/pcntl || true \
+	&& rm -rf /usr/local/lib/php/doc/pcntl || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/pcre || true \
+	&& rm -rf /usr/local/lib/php/doc/pcre || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo_dblib || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo_dblib || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo_firebird || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo_firebird || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo_mysql || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo_mysql || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_sqlite \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo_pgsql || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo_pgsql || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/pdo_sqlite || true \
+	&& rm -rf /usr/local/lib/php/doc/pdo_sqlite || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
+	\
+	&& rm -rf /usr/local/lib/php/test/pgsql || true \
+	&& rm -rf /usr/local/lib/php/doc/pgsql || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& git clone -v https://github.com/phalcon/cphalcon /tmp/phalcon \
 	&& cd /tmp/phalcon \
 	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
-	&& cd / && rm -rf /tmp/phalcon \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) phar \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) posix \
+	\
+	&& rm -rf /usr/local/lib/php/test/phalcon || true \
+	&& rm -rf /usr/local/lib/php/doc/phalcon || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/phar || true \
+	&& rm -rf /usr/local/lib/php/doc/phar || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/posix || true \
+	&& rm -rf /usr/local/lib/php/doc/posix || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) readline \
+	\
+	&& rm -rf /usr/local/lib/php/test/pspell || true \
+	&& rm -rf /usr/local/lib/php/doc/pspell || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/readline || true \
+	&& rm -rf /usr/local/lib/php/doc/readline || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
+	\
+	&& rm -rf /usr/local/lib/php/test/recode || true \
+	&& rm -rf /usr/local/lib/php/doc/recode || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install redis \
 	&& docker-php-ext-enable redis \
+	\
+	&& rm -rf /usr/local/lib/php/test/redis || true \
+	&& rm -rf /usr/local/lib/php/doc/redis || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install rdkafka \
 	&& docker-php-ext-enable rdkafka \
-	&& /usr/local/bin/docker-php-ext-configure session --with-mm \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) session \
+	\
+	&& rm -rf /usr/local/lib/php/test/rdkafka || true \
+	&& rm -rf /usr/local/lib/php/doc/rdkafka || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/session || true \
+	&& rm -rf /usr/local/lib/php/doc/session || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
-	&& /usr/local/bin/docker-php-ext-configure simplexml --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) simplexml \
+	\
+	&& rm -rf /usr/local/lib/php/test/shmop || true \
+	&& rm -rf /usr/local/lib/php/doc/shmop || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/simplexml || true \
+	&& rm -rf /usr/local/lib/php/doc/simplexml || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure snmp --with-openssl-dir \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
+	\
+	&& rm -rf /usr/local/lib/php/test/snmp || true \
+	&& rm -rf /usr/local/lib/php/doc/snmp || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure soap --with-libxml-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
+	\
+	&& rm -rf /usr/local/lib/php/test/soap || true \
+	&& rm -rf /usr/local/lib/php/doc/soap || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
+	\
+	&& rm -rf /usr/local/lib/php/test/sockets || true \
+	&& rm -rf /usr/local/lib/php/doc/sockets || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install swoole-1.9.23 \
 	&& docker-php-ext-enable swoole \
+	\
+	&& rm -rf /usr/local/lib/php/test/swoole || true \
+	&& rm -rf /usr/local/lib/php/doc/swoole || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
+	\
+	&& rm -rf /usr/local/lib/php/test/sysvmsg || true \
+	&& rm -rf /usr/local/lib/php/doc/sysvmsg || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
+	\
+	&& rm -rf /usr/local/lib/php/test/sysvsem || true \
+	&& rm -rf /usr/local/lib/php/doc/sysvsem || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
+	\
+	&& rm -rf /usr/local/lib/php/test/sysvshm || true \
+	&& rm -rf /usr/local/lib/php/doc/sysvshm || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tokenizer \
+	\
+	&& rm -rf /usr/local/lib/php/test/tidy || true \
+	&& rm -rf /usr/local/lib/php/doc/tidy || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/tokenizer || true \
+	&& rm -rf /usr/local/lib/php/doc/tokenizer || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install uploadprogress \
 	&& docker-php-ext-enable uploadprogress \
+	\
+	&& rm -rf /usr/local/lib/php/test/uploadprogress || true \
+	&& rm -rf /usr/local/lib/php/doc/uploadprogress || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
+	\
+	&& rm -rf /usr/local/lib/php/test/wddx || true \
+	&& rm -rf /usr/local/lib/php/doc/wddx || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install xdebug-2.4.1 \
 	&& docker-php-ext-enable xdebug \
-	&& /usr/local/bin/docker-php-ext-configure xml --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xml \
-	&& /usr/local/bin/docker-php-ext-configure xmlreader --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlreader \
+	\
+	&& rm -rf /usr/local/lib/php/test/xdebug || true \
+	&& rm -rf /usr/local/lib/php/doc/xdebug || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/xml || true \
+	&& rm -rf /usr/local/lib/php/doc/xml || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/xmlreader || true \
+	&& rm -rf /usr/local/lib/php/doc/xmlreader || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
-	&& /usr/local/bin/docker-php-ext-configure xmlwriter --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlwriter \
+	\
+	&& rm -rf /usr/local/lib/php/test/xmlrpc || true \
+	&& rm -rf /usr/local/lib/php/doc/xmlrpc || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+	&& rm -rf /usr/local/lib/php/test/xmlwriter || true \
+	&& rm -rf /usr/local/lib/php/doc/xmlwriter || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
+	\
+	&& rm -rf /usr/local/lib/php/test/xsl || true \
+	&& rm -rf /usr/local/lib/php/doc/xsl || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
 	\
+	&& rm -rf /usr/local/lib/php/test/zip || true \
+	&& rm -rf /usr/local/lib/php/doc/zip || true \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	&& rm -rf /tmp/* \
 	\
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
-		${BUILD_DEPS} \
-	\
-	\
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
-		${RUN_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${BUILD_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests ${RUN_DEPS} \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
+	\
 	&& update-ca-certificates \
-	&& sh -c "find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true"
+	\
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find "$(php -r 'echo ini_get("extension_dir");')" -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 ###
 ### Verify
 ###
 RUN set -x \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.5' \
 	&& /usr/local/sbin/php-fpm --test \
+	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
-
-RUN set -x \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini \
+	\
 	&& php -m | grep -oiE '^amqp$' \
 	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \
@@ -289,6 +556,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^fileinfo$' \
 	&& php-fpm -m | grep -oiE '^fileinfo$' \
+	&& php -m | grep -oiE '^filter$' \
+	&& php-fpm -m | grep -oiE '^filter$' \
 	&& php -m | grep -oiE '^ftp$' \
 	&& php-fpm -m | grep -oiE '^ftp$' \
 	&& php -m | grep -oiE '^gd$' \
@@ -315,6 +584,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^json$' \
 	&& php -m | grep -oiE '^ldap$' \
 	&& php-fpm -m | grep -oiE '^ldap$' \
+	&& php -m | grep -oiE '^libxml$' \
+	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^mcrypt$' \
@@ -333,10 +604,16 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^mysql$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
+	&& php -m | grep -oiE '^mysqlnd$' \
+	&& php-fpm -m | grep -oiE '^mysqlnd$' \
 	&& php -m | grep -oiE '^Zend Opcache$' \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
+	&& php -m | grep -oiE '^openssl$' \
+	&& php-fpm -m | grep -oiE '^openssl$' \
 	&& php -m | grep -oiE '^pcntl$' \
 	&& php-fpm -m | grep -oiE '^pcntl$' \
+	&& php -m | grep -oiE '^pcre$' \
+	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^pdo$' \
 	&& php-fpm -m | grep -oiE '^pdo$' \
 	&& php -m | grep -oiE '^pdo_dblib$' \

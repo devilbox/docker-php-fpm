@@ -24,8 +24,9 @@ ENV BASH_PROFILE=".bashrc"
 ### Install Tools
 ###
 RUN set -x \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		dirmngr \
 		gnupg \
 	&& echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
@@ -39,8 +40,8 @@ RUN set -x \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		ack-grep \
 		aspell \
 		autoconf \
@@ -102,14 +103,23 @@ RUN set -x \
 		xz-utils \
 		yarn \
 		zsh \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps \
-	&& rm -rf /var/lib/apt/lists/*
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+# Get newer pip version
+	&& pip install --upgrade pip \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false python-pip \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 RUN set -x \
 # ansible
-	&& pip install --upgrade setuptools  \
-&& pip install ansible \
+	&& /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
+&& /usr/local/bin/pip install --no-cache-dir ansible \
  \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
@@ -192,9 +202,13 @@ RUN set -x \
 # webpack
 	&& npm install -g webpack webpack-cli \
 # yamllint
-	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
-	&& pip install yamllint \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
+ \
+	&& /usr/local/bin/pip install --no-cache-dir yamllint \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
+&& rm -rf /var/lib/apt/lists/* \
+ \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
@@ -216,7 +230,12 @@ RUN set -x \
 \
 && rm -rf /tmp/* \
  \
-	&& true
+	\
+	&& rm -rf /usr/local/src/composer/cache/* || true \
+	\
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 ###
@@ -243,10 +262,20 @@ RUN \
 ### Verify
 ###
 RUN set -x \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.2' \
 	&& /usr/local/sbin/php-fpm --test \
+	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
 
 RUN set -x \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
