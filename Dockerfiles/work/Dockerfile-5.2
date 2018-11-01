@@ -109,8 +109,8 @@ RUN set -x \
 
 RUN set -x \
 # ansible
-	&& pip install --upgrade setuptools  \
-&& pip install ansible \
+	&& pip install --no-cache-dir --upgrade setuptools  \
+&& pip install --no-cache-dir ansible \
  \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
@@ -194,7 +194,7 @@ RUN set -x \
 	&& npm install -g webpack webpack-cli \
 # yamllint
 	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
-	&& pip install yamllint \
+	&& pip install --no-cache-dir yamllint \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \

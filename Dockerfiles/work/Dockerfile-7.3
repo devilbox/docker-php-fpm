@@ -111,8 +111,8 @@ RUN set -x \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 # ansible
-	&& pip install --upgrade setuptools  \
-&& pip install ansible \
+	&& pip install --no-cache-dir --upgrade setuptools  \
+&& pip install --no-cache-dir ansible \
  \
 # asgardcms
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require asgardcms/asgardcms-installer \
@@ -136,7 +136,7 @@ RUN set -x \
 && npm install -g gulp \
  \
 # codeception
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception --dev \
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
 && ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
  \
 # deployer
@@ -148,7 +148,7 @@ RUN set -x \
 && git checkout 7.4.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
 && rm -rf /usr/local/src/drush7/.git \
 && rm -rf /usr/local/src/drush7/docs \
@@ -161,7 +161,7 @@ RUN set -x \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
 && rm -rf /usr/local/src/drush8/.git \
 && rm -rf /usr/local/src/drush8/docs \
@@ -174,7 +174,7 @@ RUN set -x \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && composer install --no-interaction --no-progress' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
 && rm -rf /usr/local/src/drush9/.git \
 && rm -rf /usr/local/src/drush9/docs \
@@ -198,7 +198,7 @@ RUN set -x \
 && git checkout $(git describe --abbrev=0 --tags) \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
@@ -273,7 +273,7 @@ RUN set -x \
 	&& chmod +x /usr/local/bin/wp \
 # yamllint
 	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
-	&& pip install yamllint \
+	&& pip install --no-cache-dir yamllint \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \

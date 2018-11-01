@@ -303,8 +303,8 @@ software_available:
     check: ansible --version | grep -E '^ansible [.0-9]+$'
     all:
       command: |
-        pip install --upgrade setuptools  \
-        && pip install ansible \
+        pip install --no-cache-dir --upgrade setuptools  \
+        && pip install --no-cache-dir ansible \
   awesomeci:
     check: |
       mdl --version | grep -E '[.0-9]+' \
@@ -352,7 +352,7 @@ software_available:
         && git checkout 7.4.0 \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
         && rm -rf /usr/local/src/drush7/.git \
         && rm -rf /usr/local/src/drush7/docs \
@@ -368,7 +368,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
         && rm -rf /usr/local/src/drush8/.git \
         && rm -rf /usr/local/src/drush8/docs \
@@ -384,7 +384,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && composer install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
         && rm -rf /usr/local/src/drush9/.git \
         && rm -rf /usr/local/src/drush9/docs \
@@ -395,7 +395,7 @@ software_available:
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
     all:
       command: |
-        COMPOSER_HOME="{{ compose_home }}" composer global require codeception/codeception --dev \
+        COMPOSER_HOME="{{ compose_home }}" composer global require codeception/codeception \
         && ln -s {{ compose_home }}/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
   drupalconsole:
     disabled: [5.2, 5.3, 5.4]
@@ -445,7 +445,7 @@ software_available:
         && git checkout $(git describe --abbrev=0 --tags) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
         && rm -rf /usr/local/src/laravel-installer/laravel/.git \
   linkcheck:
@@ -611,7 +611,7 @@ software_available:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
       pre: apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev
-      command: pip install yamllint
+      command: pip install --no-cache-dir yamllint
       post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/*
   cleanup:
     all:

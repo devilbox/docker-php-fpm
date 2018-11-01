@@ -142,7 +142,6 @@ RUN set -x \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& docker-php-ext-enable memcache \
-	&& cd / && rm -rf /tmp/memcache \
 	&& pecl install memcached \
 	&& docker-php-ext-enable memcached \
 	&& pecl install mongodb \
@@ -164,7 +163,6 @@ RUN set -x \
 	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
-	&& cd / && rm -rf /tmp/phalcon \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
 	&& pecl install redis \
@@ -190,7 +188,6 @@ RUN set -x \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& docker-php-ext-enable uploadprogress \
-	&& cd / && rm -rf /tmp/uploadprogress \
 	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
 	&& pecl install xdebug \
@@ -200,13 +197,15 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
 	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
+	&& rm -rf /tmp/* \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${BUILD_DEPS} \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests ${RUN_DEPS} \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& update-ca-certificates \
-	&& sh -c "find /usr/local -type f -perm /u+x -exec strip --strip-all '{}' + || true"
+	&& find /usr/local/{bin,lib,sbin} -type f -print0 | xargs -0r strip --strip-all -p 2>/dev/null || true \
+	&& find "$(php -r 'echo ini_get("extension_dir");')" -print0 | xargs -0r strip --strip-all -p 2>/dev/null || true
 
 
 ###
