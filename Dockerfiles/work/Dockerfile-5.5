@@ -104,7 +104,10 @@ RUN set -x \
 		yarn \
 		zsh \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
 
 
 RUN set -x \
@@ -270,9 +273,13 @@ RUN set -x \
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
 # yamllint
-	&& apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
+ \
 	&& pip install --no-cache-dir yamllint \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/* \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
+&& rm -rf /var/lib/apt/lists/* \
+ \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
@@ -294,7 +301,9 @@ RUN set -x \
 \
 && rm -rf /tmp/* \
  \
-	&& true
+	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
 
 
 ###

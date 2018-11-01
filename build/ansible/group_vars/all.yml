@@ -610,9 +610,13 @@ software_available:
   yamllint:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
-      pre: apt update && apt install --no-install-recommends --no-install-suggests -y libpython-dev python-setuptools libyaml-dev
+      pre: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
       command: pip install --no-cache-dir yamllint
-      post: apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps libpython-dev python-setuptools libyaml-dev && rm -rf /var/lib/apt/lists/*
+      post: |
+        DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
+        && rm -rf /var/lib/apt/lists/* \
   cleanup:
     all:
       command: |

@@ -32,7 +32,11 @@ RUN set -x \
 	\
 	&& rm -rf /etc/supervisor* \
 	&& mkdir -p /etc/supervisor/conf.d \
-	&& mkdir -p /var/log/supervisor
+	&& mkdir -p /var/log/supervisor \
+	\
+	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
 
 
 
