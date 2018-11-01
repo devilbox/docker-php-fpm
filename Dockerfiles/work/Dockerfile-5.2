@@ -134,10 +134,10 @@ RUN set -x \
 	&& gem install mixlib-config -v 2.2.4 \
 && gem install mdl \
 && gem install scss_lint \
-&& npm install -g eslint \
-&& npm install -g jsonlint \
-&& npm install -g mdlint \
-&& npm install -g gulp \
+&& npm install --verbose -g eslint \
+&& npm install --verbose -g jsonlint \
+&& npm install --verbose -g mdlint \
+&& npm install --verbose -g gulp \
  \
 # gitflow
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
@@ -146,8 +146,8 @@ RUN set -x \
 && cd / && rm -rf /tmp/gitflow \
  \
 # grunt
-	&& npm install -g grunt \
-&& npm install -g grunt-cli \
+	&& npm install --verbose -g grunt \
+&& npm install --verbose -g grunt-cli \
  \
 # linkcheck
 	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
@@ -203,8 +203,8 @@ RUN set -x \
 # sass
 	&& gem install sass \
 # webpack
-	&& npm install -g webpack \
-&& npm install -g webpack-cli \
+	&& npm install --verbose -g webpack \
+&& npm install --verbose -g webpack-cli \
  \
 # yamllint
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
