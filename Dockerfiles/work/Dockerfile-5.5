@@ -140,10 +140,10 @@ RUN set -x \
 	&& gem install mixlib-config -v 2.2.4 \
 && gem install mdl \
 && gem install scss_lint \
-&& npm install --verbose -g eslint \
-&& npm install --verbose -g jsonlint \
-&& npm install --verbose -g mdlint \
-&& npm install --verbose -g gulp \
+&& npm install -g eslint \
+&& npm install -g jsonlint \
+&& npm install -g mdlint \
+&& npm install -g gulp \
  \
 # codeception
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
@@ -188,8 +188,8 @@ RUN set -x \
 && cd / && rm -rf /tmp/gitflow \
  \
 # grunt
-	&& npm install --verbose -g grunt \
-&& npm install --verbose -g grunt-cli \
+	&& npm install -g grunt \
+&& npm install -g grunt-cli \
  \
 # laravel
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -277,8 +277,8 @@ RUN set -x \
 	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
 # webpack
-	&& npm install --verbose -g webpack \
-&& npm install --verbose -g webpack-cli \
+	&& npm install -g webpack \
+&& npm install -g webpack-cli \
  \
 # wpcli
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
