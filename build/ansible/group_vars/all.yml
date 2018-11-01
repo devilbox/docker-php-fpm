@@ -303,8 +303,8 @@ software_available:
     check: ansible --version | grep -E '^ansible [.0-9]+$'
     all:
       command: |
-        pip install --no-cache-dir --upgrade setuptools  \
-        && pip install --no-cache-dir ansible \
+        /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
+        && /usr/local/bin/pip install --no-cache-dir ansible \
   awesomeci:
     check: |
       mdl --version | grep -E '[.0-9]+' \
@@ -613,7 +613,7 @@ software_available:
       pre: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
-      command: pip install --no-cache-dir yamllint
+      command: /usr/local/bin/pip install --no-cache-dir yamllint
       post: |
         DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
         && rm -rf /var/lib/apt/lists/* \

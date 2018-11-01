@@ -460,10 +460,10 @@ ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype
 	\
 	&& update-ca-certificates \
 	\
-	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find "$(php -r 'echo ini_get("extension_dir");')" -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find "$(php -r 'echo ini_get("extension_dir");')" -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 ###

@@ -105,17 +105,23 @@ RUN set -x \
 		zsh \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
+	\
+# Get newer pip version
+	&& pip install --upgrade pip \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false python-pip \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 RUN set -x \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 # ansible
-	&& pip install --no-cache-dir --upgrade setuptools  \
-&& pip install --no-cache-dir ansible \
+	&& /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
+&& /usr/local/bin/pip install --no-cache-dir ansible \
  \
 # asgardcms
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require asgardcms/asgardcms-installer \
@@ -289,7 +295,7 @@ RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
  \
-	&& pip install --no-cache-dir yamllint \
+	&& /usr/local/bin/pip install --no-cache-dir yamllint \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
 && rm -rf /var/lib/apt/lists/* \
  \
@@ -314,9 +320,12 @@ RUN set -x \
 \
 && rm -rf /tmp/* \
  \
-	&& find /usr/local/bin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/lib -type f -exce strip --strip-all -p '{}' 2>/dev/null || true \
-	&& find /usr/local/sbin -type f -exce strip --strip-all -p '{}' 2>/dev/null || true
+	\
+	&& rm -rf /usr/local/src/composer/cache/* || true \
+	\
+	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
+	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
 
 
 ###
