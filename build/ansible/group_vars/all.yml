@@ -358,7 +358,6 @@ software_available:
         && rm -rf /usr/local/src/drush7/docs \
         && rm -rf /usr/local/src/drush7/examples \
         && rm -rf /usr/local/src/drush7/misc \
-        && rm -rf /usr/local/src/drush7/tests \
   drush8:
     disabled: [5.2, 5.3]
     check: drush8 --version | grep -E '8[.0-9]+\s*$'
@@ -375,7 +374,6 @@ software_available:
         && rm -rf /usr/local/src/drush8/docs \
         && rm -rf /usr/local/src/drush8/examples \
         && rm -rf /usr/local/src/drush8/misc \
-        && rm -rf /usr/local/src/drush8/tests \
   drush9:
     disabled: [5.2, 5.3, 5.4, 5.5]
     check: drush9 --version | grep -E '9[.0-9]+\s*$'
@@ -392,7 +390,6 @@ software_available:
         && rm -rf /usr/local/src/drush9/docs \
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
-        && rm -rf /usr/local/src/drush9/tests \
   codeception:
     disabled: [5.2]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
