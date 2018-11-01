@@ -875,6 +875,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Json command line linter.</td>
   </tr>
   <tr>
+   <td><a href="https://stedolan.github.io/jq/">jq</a></td>
+   <td>Command-line JSON processor.</td>
+  </tr>
+  <tr>
    <td><a href="https://github.com/laravel/installer">laravel installer</a></td>
    <td>A CLI tool to easily install and manage the laravel framework.</td>
   </tr>
