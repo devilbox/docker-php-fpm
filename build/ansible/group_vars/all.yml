@@ -414,7 +414,9 @@ software_available:
   grunt:
     check: grunt --version | grep -E '[.0-9]+'
     all:
-      command: npm install -g grunt grunt-cli
+      command: |
+        npm install -g grunt \
+        && npm install -g grunt-cli \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
     disabled: [5.2, 5.3]
@@ -606,7 +608,9 @@ software_available:
   webpack:
     check: webpack --version | grep -E '[.0-9]+'
     all:
-      command: npm install -g webpack webpack-cli
+      command: |
+        npm install -g webpack \
+        && npm install -g webpack-cli \
   yamllint:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
