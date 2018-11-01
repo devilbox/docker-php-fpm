@@ -157,7 +157,8 @@ RUN set -x \
 	&& git clone -v https://github.com/swoole/swoole-src /tmp/swoole \
 	&& cd /tmp/swoole \
 	&& git checkout master \
-	&& git submodule update --init --recursive \
+	&& git checkout $(git describe --abbrev=0 --tags) \
+&& git submodule update --init --recursive \
 && cd thirdparty/hiredis \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
