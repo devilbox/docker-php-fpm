@@ -36,6 +36,7 @@ help:
 	@printf "%s\n" "make build-base-71:      Build PHP 7.1 base image"
 	@printf "%s\n" "make build-base-72:      Build PHP 7.2 base image"
 	@printf "%s\n" "make build-base-73:      Build PHP 7.3 base image"
+	@printf "%s\n" "make build-base-74:      Build PHP 7.4 base image"
 	@printf "\n"
 	@printf "%s\n" "make build-mods-52:      Build PHP 5.2 mods image"
 	@printf "%s\n" "make build-mods-53:      Build PHP 5.3 mods image"
@@ -46,6 +47,7 @@ help:
 	@printf "%s\n" "make build-mods-71:      Build PHP 7.1 mods image"
 	@printf "%s\n" "make build-mods-72:      Build PHP 7.2 mods image"
 	@printf "%s\n" "make build-mods-73:      Build PHP 7.3 mods image"
+	@printf "%s\n" "make build-mods-74:      Build PHP 7.4 mods image"
 	@printf "\n"
 	@printf "%s\n" "make build-prod-52:      Build PHP 5.2 prod image"
 	@printf "%s\n" "make build-prod-53:      Build PHP 5.3 prod image"
@@ -56,6 +58,7 @@ help:
 	@printf "%s\n" "make build-prod-71:      Build PHP 7.1 prod image"
 	@printf "%s\n" "make build-prod-72:      Build PHP 7.2 prod image"
 	@printf "%s\n" "make build-prod-73:      Build PHP 7.3 prod image"
+	@printf "%s\n" "make build-prod-74:      Build PHP 7.4 prod image"
 	@printf "\n"
 	@printf "%s\n" "make build-work-52:      Build PHP 5.2 work image"
 	@printf "%s\n" "make build-work-53:      Build PHP 5.3 work image"
@@ -66,6 +69,7 @@ help:
 	@printf "%s\n" "make build-work-71:      Build PHP 7.1 work image"
 	@printf "%s\n" "make build-work-72:      Build PHP 7.2 work image"
 	@printf "%s\n" "make build-work-73:      Build PHP 7.3 work image"
+	@printf "%s\n" "make build-work-74:      Build PHP 7.4 work image"
 	@printf "\n"
 	@printf "%s\n" "make rebuild-base-52:    Build PHP 5.2 base image"
 	@printf "%s\n" "make rebuild-base-53:    Build PHP 5.3 base image"
@@ -76,6 +80,7 @@ help:
 	@printf "%s\n" "make rebuild-base-71:    Build PHP 7.1 base image"
 	@printf "%s\n" "make rebuild-base-72:    Build PHP 7.2 base image"
 	@printf "%s\n" "make rebuild-base-73:    Build PHP 7.3 base image"
+	@printf "%s\n" "make rebuild-base-74:    Build PHP 7.4 base image"
 	@printf "\n"
 	@printf "%s\n" "make rebuild-mods-52:    Build PHP 5.2 mods image"
 	@printf "%s\n" "make rebuild-mods-53:    Build PHP 5.3 mods image"
@@ -86,6 +91,7 @@ help:
 	@printf "%s\n" "make rebuild-mods-71:    Build PHP 7.1 mods image"
 	@printf "%s\n" "make rebuild-mods-72:    Build PHP 7.2 mods image"
 	@printf "%s\n" "make rebuild-mods-73:    Build PHP 7.3 mods image"
+	@printf "%s\n" "make rebuild-mods-74:    Build PHP 7.4 mods image"
 	@printf "\n"
 	@printf "%s\n" "make rebuild-prod-52:    Build PHP 5.2 prod image"
 	@printf "%s\n" "make rebuild-prod-53:    Build PHP 5.3 prod image"
@@ -96,6 +102,7 @@ help:
 	@printf "%s\n" "make rebuild-prod-71:    Build PHP 7.1 prod image"
 	@printf "%s\n" "make rebuild-prod-72:    Build PHP 7.2 prod image"
 	@printf "%s\n" "make rebuild-prod-73:    Build PHP 7.3 prod image"
+	@printf "%s\n" "make rebuild-prod-74:    Build PHP 7.4 prod image"
 	@printf "\n"
 	@printf "%s\n" "make rebuild-work-52:    Build PHP 5.2 work image"
 	@printf "%s\n" "make rebuild-work-53:    Build PHP 5.3 work image"
@@ -106,6 +113,7 @@ help:
 	@printf "%s\n" "make rebuild-work-71:    Build PHP 7.1 work image"
 	@printf "%s\n" "make rebuild-work-72:    Build PHP 7.2 work image"
 	@printf "%s\n" "make rebuild-work-73:    Build PHP 7.3 work image"
+	@printf "%s\n" "make rebuild-work-74:    Build PHP 7.4 work image"
 
 
 
@@ -141,15 +149,15 @@ rebuild-all: rebuild-base rebuild-mods rebuild-prod rebuild-work
 ###
 ### Build categories
 ###
-build-base: build-base-52 build-base-53 build-base-54 build-base-55 build-base-56 build-base-70 build-base-71 build-base-72 build-base-73
-build-mods: build-mods-52 build-mods-53 build-mods-54 build-mods-55 build-mods-56 build-mods-70 build-mods-71 build-mods-72 build-mods-73
-build-prod: build-prod-52 build-prod-53 build-prod-54 build-prod-55 build-prod-56 build-prod-70 build-prod-71 build-prod-72 build-prod-73
-build-work: build-work-52 build-work-53 build-work-54 build-work-55 build-work-56 build-work-70 build-work-71 build-work-72 build-work-73
+build-base: build-base-52 build-base-53 build-base-54 build-base-55 build-base-56 build-base-70 build-base-71 build-base-72 build-base-73 build-base-74
+build-mods: build-mods-52 build-mods-53 build-mods-54 build-mods-55 build-mods-56 build-mods-70 build-mods-71 build-mods-72 build-mods-73 build-mods-74
+build-prod: build-prod-52 build-prod-53 build-prod-54 build-prod-55 build-prod-56 build-prod-70 build-prod-71 build-prod-72 build-prod-73 build-prod-74
+build-work: build-work-52 build-work-53 build-work-54 build-work-55 build-work-56 build-work-70 build-work-71 build-work-72 build-work-73 build-work-74
 
-rebuild-base: rebuild-base-52 rebuild-base-53 rebuild-base-54 rebuild-base-55 rebuild-base-56 rebuild-base-70 rebuild-base-71 rebuild-base-72 rebuild-base-73
-rebuild-mods: rebuild-mods-52 rebuild-mods-53 rebuild-mods-54 rebuild-mods-55 rebuild-mods-56 rebuild-mods-70 rebuild-mods-71 rebuild-mods-72 rebuild-mods-73
-rebuild-prod: rebuild-prod-52 rebuild-prod-53 rebuild-prod-54 rebuild-prod-55 rebuild-prod-56 rebuild-prod-70 rebuild-prod-71 rebuild-prod-72 rebuild-prod-73
-rebuild-work: rebuild-work-52 rebuild-work-53 rebuild-work-54 rebuild-work-55 rebuild-work-56 rebuild-work-70 rebuild-work-71 rebuild-work-72 rebuild-work-73
+rebuild-base: rebuild-base-52 rebuild-base-53 rebuild-base-54 rebuild-base-55 rebuild-base-56 rebuild-base-70 rebuild-base-71 rebuild-base-72 rebuild-base-73 rebuild-base-74
+rebuild-mods: rebuild-mods-52 rebuild-mods-53 rebuild-mods-54 rebuild-mods-55 rebuild-mods-56 rebuild-mods-70 rebuild-mods-71 rebuild-mods-72 rebuild-mods-73 rebuild-mods-74
+rebuild-prod: rebuild-prod-52 rebuild-prod-53 rebuild-prod-54 rebuild-prod-55 rebuild-prod-56 rebuild-prod-70 rebuild-prod-71 rebuild-prod-72 rebuild-prod-73 rebuild-prod-74
+rebuild-work: rebuild-work-52 rebuild-work-53 rebuild-work-54 rebuild-work-55 rebuild-work-56 rebuild-work-70 rebuild-work-71 rebuild-work-72 rebuild-work-73 rebuild-work-74
 
 
 
@@ -174,6 +182,8 @@ build-base-72: pull-from-72
 	docker build -t devilbox/php-fpm:7.2-base -f $(location)/base/Dockerfile-7.2 $(location)/base
 build-base-73: pull-from-73
 	docker build -t devilbox/php-fpm:7.3-base -f $(location)/base/Dockerfile-7.3 $(location)/base
+build-base-74: pull-from-74
+	docker build -t devilbox/php-fpm:7.4-base -f $(location)/base/Dockerfile-7.4 $(location)/base
 
 build-mods-52:
 	docker build -t devilbox/php-fpm:5.2-mods -f $(location)/mods/Dockerfile-5.2 $(location)/mods
@@ -193,6 +203,8 @@ build-mods-72:
 	docker build -t devilbox/php-fpm:7.2-mods -f $(location)/mods/Dockerfile-7.2 $(location)/mods
 build-mods-73:
 	docker build -t devilbox/php-fpm:7.3-mods -f $(location)/mods/Dockerfile-7.3 $(location)/mods
+build-mods-74:
+	docker build -t devilbox/php-fpm:7.4-mods -f $(location)/mods/Dockerfile-7.4 $(location)/mods
 
 build-prod-52:
 	docker build -t devilbox/php-fpm:5.2-prod -f $(location)/prod/Dockerfile-5.2 $(location)/prod
@@ -212,6 +224,8 @@ build-prod-72:
 	docker build -t devilbox/php-fpm:7.2-prod -f $(location)/prod/Dockerfile-7.2 $(location)/prod
 build-prod-73:
 	docker build -t devilbox/php-fpm:7.3-prod -f $(location)/prod/Dockerfile-7.3 $(location)/prod
+build-prod-74:
+	docker build -t devilbox/php-fpm:7.4-prod -f $(location)/prod/Dockerfile-7.4 $(location)/prod
 
 build-work-52:
 	docker build -t devilbox/php-fpm:5.2-work -f $(location)/work/Dockerfile-5.2 $(location)/work
@@ -231,6 +245,8 @@ build-work-72:
 	docker build -t devilbox/php-fpm:7.2-work -f $(location)/work/Dockerfile-7.2 $(location)/work
 build-work-73:
 	docker build -t devilbox/php-fpm:7.3-work -f $(location)/work/Dockerfile-7.3 $(location)/work
+build-work-74:
+	docker build -t devilbox/php-fpm:7.4-work -f $(location)/work/Dockerfile-7.4 $(location)/work
 
 
 
@@ -255,6 +271,8 @@ rebuild-base-72: pull-from-72
 	docker build --no-cache -t devilbox/php-fpm:7.2-base -f $(location)/base/Dockerfile-7.2 $(location)/base
 rebuild-base-73: pull-from-73
 	docker build --no-cache -t devilbox/php-fpm:7.3-base -f $(location)/base/Dockerfile-7.3 $(location)/base
+rebuild-base-74: pull-from-74
+	docker build --no-cache -t devilbox/php-fpm:7.4-base -f $(location)/base/Dockerfile-7.4 $(location)/base
 
 rebuild-mods-52:
 	docker build --no-cache -t devilbox/php-fpm:5.2-mods -f $(location)/mods/Dockerfile-5.2 $(location)/mods
@@ -274,6 +292,8 @@ rebuild-mods-72:
 	docker build --no-cache -t devilbox/php-fpm:7.2-mods -f $(location)/mods/Dockerfile-7.2 $(location)/mods
 rebuild-mods-73:
 	docker build --no-cache -t devilbox/php-fpm:7.3-mods -f $(location)/mods/Dockerfile-7.3 $(location)/mods
+rebuild-mods-74:
+	docker build --no-cache -t devilbox/php-fpm:7.4-mods -f $(location)/mods/Dockerfile-7.4 $(location)/mods
 
 rebuild-prod-52:
 	docker build --no-cache -t devilbox/php-fpm:5.2-prod -f $(location)/prod/Dockerfile-5.2 $(location)/prod
@@ -293,6 +313,8 @@ rebuild-prod-72:
 	docker build --no-cache -t devilbox/php-fpm:7.2-prod -f $(location)/prod/Dockerfile-7.2 $(location)/prod
 rebuild-prod-73:
 	docker build --no-cache -t devilbox/php-fpm:7.3-prod -f $(location)/prod/Dockerfile-7.3 $(location)/prod
+rebuild-prod-74:
+	docker build --no-cache -t devilbox/php-fpm:7.4-prod -f $(location)/prod/Dockerfile-7.4 $(location)/prod
 
 rebuild-work-52:
 	docker build --no-cache -t devilbox/php-fpm:5.2-work -f $(location)/work/Dockerfile-5.2 $(location)/work
@@ -312,6 +334,8 @@ rebuild-work-72:
 	docker build --no-cache -t devilbox/php-fpm:7.2-work -f $(location)/work/Dockerfile-7.2 $(location)/work
 rebuild-work-73:
 	docker build --no-cache -t devilbox/php-fpm:7.3-work -f $(location)/work/Dockerfile-7.3 $(location)/work
+rebuild-work-74:
+	docker build --no-cache -t devilbox/php-fpm:7.4-work -f $(location)/work/Dockerfile-7.4 $(location)/work
 
 
 
@@ -336,6 +360,8 @@ pull-from-72:
 	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.2 | sed 's/^FROM\s*//g';)
 pull-from-73:
 	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.3 | sed 's/^FROM\s*//g';)
+pull-from-74:
+	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.4 | sed 's/^FROM\s*//g';)
 
 
 ###
@@ -343,10 +369,10 @@ pull-from-73:
 ###
 test-all: test-base test-mods test-prod test-work
 
-test-base: test-base-52 test-base-53 test-base-54 test-base-55 test-base-56 test-base-70 test-base-71 test-base-72 test-base-73
-test-mods: test-mods-52 test-mods-53 test-mods-54 test-mods-55 test-mods-56 test-mods-70 test-mods-71 test-mods-72 test-mods-73
-test-prod: test-prod-52 test-prod-53 test-prod-54 test-prod-55 test-prod-56 test-prod-70 test-prod-71 test-prod-72 test-prod-73
-test-work: test-work-52 test-work-53 test-work-54 test-work-55 test-work-56 test-work-70 test-work-71 test-work-72 test-work-73
+test-base: test-base-52 test-base-53 test-base-54 test-base-55 test-base-56 test-base-70 test-base-71 test-base-72 test-base-73 test-base-74
+test-mods: test-mods-52 test-mods-53 test-mods-54 test-mods-55 test-mods-56 test-mods-70 test-mods-71 test-mods-72 test-mods-73 test-mods-74
+test-prod: test-prod-52 test-prod-53 test-prod-54 test-prod-55 test-prod-56 test-prod-70 test-prod-71 test-prod-72 test-prod-73 test-prod-74
+test-work: test-work-52 test-work-53 test-work-54 test-work-55 test-work-56 test-work-70 test-work-71 test-work-72 test-work-73 test-work-74
 
 
 ###
@@ -370,6 +396,8 @@ test-base-72:
 	./tests/test.sh 7.2 base
 test-base-73:
 	./tests/test.sh 7.3 base
+test-base-74:
+	./tests/test.sh 7.4 base
 
 test-mods-52:
 	./tests/test.sh 5.2 mods
@@ -389,6 +417,8 @@ test-mods-72:
 	./tests/test.sh 7.2 mods
 test-mods-73:
 	./tests/test.sh 7.3 mods
+test-mods-74:
+	./tests/test.sh 7.4 mods
 
 test-prod-52:
 	./tests/test.sh 5.2 prod
@@ -408,6 +438,8 @@ test-prod-72:
 	./tests/test.sh 7.2 prod
 test-prod-73:
 	./tests/test.sh 7.3 prod
+test-prod-74:
+	./tests/test.sh 7.4 prod
 
 test-work-52:
 	./tests/test.sh 5.2 work
@@ -427,3 +459,5 @@ test-work-72:
 	./tests/test.sh 7.2 work
 test-work-73:
 	./tests/test.sh 7.3 work
+test-work-74:
+	./tests/test.sh 7.4 work
