@@ -219,7 +219,6 @@ RUN set -x \
     'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
 && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
     'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
 # mhsendmail
