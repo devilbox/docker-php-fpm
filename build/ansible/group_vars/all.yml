@@ -334,10 +334,11 @@ software_available:
         gem install mixlib-config -v 2.2.4 \
         && gem install mdl \
         && gem install scss_lint \
-        && npm install -g eslint \
-        && npm install -g jsonlint \
-        && npm install -g mdlint \
-        && npm install -g gulp \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y eslint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y jsonlint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y mdlint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y gulp \
+        && rm -rf /tmp/y \
   composer:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
@@ -422,8 +423,9 @@ software_available:
     check: grunt --version | grep -E '[.0-9]+'
     all:
       command: |
-        npm install -g grunt \
-        && npm install -g grunt-cli \
+        yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
+        && rm -rf /tmp/y \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
     disabled: [5.2, 5.3]
@@ -616,8 +618,9 @@ software_available:
     check: webpack --version | grep -E '[.0-9]+'
     all:
       command: |
-        npm install -g webpack \
-        && npm install -g webpack-cli \
+        yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
+        && rm -rf /tmp/y \
   yamllint:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
@@ -639,6 +642,7 @@ software_available:
         && rm -rf /home/${MY_USER}/.gem \
         && rm -rf /home/${MY_USER}/.npm \
         && rm -rf /home/${MY_USER}/.subversion \
+        && rm -rf /home/${MY_USER}/.v8* \
         \
         && rm -rf /root/.*json \
         && rm -rf /root/.cache \
@@ -648,6 +652,7 @@ software_available:
         && rm -rf /root/.gem \
         && rm -rf /root/.npm \
         && rm -rf /root/.subversion \
+        && rm -rf /root/.v8* \
         \
         && rm -rf /tmp/* \
 

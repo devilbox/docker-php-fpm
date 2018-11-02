@@ -47,6 +47,7 @@ RUN set -x \
 		autoconf \
 		automake \
 		bash-completion \
+		binutils \
 		build-essential \
 		bzip2 \
 		coreutils \
@@ -54,6 +55,7 @@ RUN set -x \
 		dnsutils \
 		dos2unix \
 		file \
+		gawk \
 		gcc \
 		git \
 		git-flow \
@@ -80,6 +82,7 @@ RUN set -x \
 		nodejs \
 		openssh-client \
 		patch \
+		patchelf \
 		postgresql-client \
 		python-cffi \
 		python-dev \
@@ -136,10 +139,11 @@ RUN set -x \
 	&& gem install mixlib-config -v 2.2.4 \
 && gem install mdl \
 && gem install scss_lint \
-&& npm install -g eslint \
-&& npm install -g jsonlint \
-&& npm install -g mdlint \
-&& npm install -g gulp \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y eslint \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y jsonlint \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y mdlint \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y gulp \
+&& rm -rf /tmp/y \
  \
 # codeception
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
@@ -165,8 +169,9 @@ RUN set -x \
 && cd / && rm -rf /tmp/gitflow \
  \
 # grunt
-	&& npm install -g grunt \
-&& npm install -g grunt-cli \
+	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
+&& rm -rf /tmp/y \
  \
 # linkcheck
 	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
@@ -237,8 +242,9 @@ RUN set -x \
 # sass
 	&& gem install sass \
 # webpack
-	&& npm install -g webpack \
-&& npm install -g webpack-cli \
+	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack \
+&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
+&& rm -rf /tmp/y \
  \
 # wpcli
 	&& curl https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp \
@@ -260,6 +266,7 @@ RUN set -x \
 && rm -rf /home/${MY_USER}/.gem \
 && rm -rf /home/${MY_USER}/.npm \
 && rm -rf /home/${MY_USER}/.subversion \
+&& rm -rf /home/${MY_USER}/.v8* \
 \
 && rm -rf /root/.*json \
 && rm -rf /root/.cache \
@@ -269,6 +276,7 @@ RUN set -x \
 && rm -rf /root/.gem \
 && rm -rf /root/.npm \
 && rm -rf /root/.subversion \
+&& rm -rf /root/.v8* \
 \
 && rm -rf /tmp/* \
  \
