@@ -18,6 +18,7 @@ php_all_versions:
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 
 ###
@@ -249,6 +250,8 @@ apt_repositories_available:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     7.3:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    7.4:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
@@ -261,6 +264,8 @@ apt_repositories_available:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
     7.3:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
+    7.4:
+      deb: deb http://deb.nodesource.com/node_8.x stretch main
     all:
       deb: deb http://deb.nodesource.com/node_8.x jessie main
       pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
@@ -268,6 +273,8 @@ apt_repositories_available:
     7.2:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     7.3:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+    7.4:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
@@ -327,10 +334,11 @@ software_available:
         gem install mixlib-config -v 2.2.4 \
         && gem install mdl \
         && gem install scss_lint \
-        && npm install -g eslint \
-        && npm install -g jsonlint \
-        && npm install -g mdlint \
-        && npm install -g gulp \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y eslint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y jsonlint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y mdlint \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y gulp \
+        && rm -rf /tmp/y \
   composer:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
@@ -415,8 +423,9 @@ software_available:
     check: grunt --version | grep -E '[.0-9]+'
     all:
       command: |
-        npm install -g grunt \
-        && npm install -g grunt-cli \
+        yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
+        && rm -rf /tmp/y \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
     disabled: [5.2, 5.3]
@@ -468,7 +477,6 @@ software_available:
             'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
             'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew update' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
   mhsendmail:
     all:
@@ -501,7 +509,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 7.3]
+    disabled: [5.2, 7.3, 7.4]
     check: phalcon commands | grep -E '[.0-9]+'
     5.3:
       pre: |
@@ -609,8 +617,9 @@ software_available:
     check: webpack --version | grep -E '[.0-9]+'
     all:
       command: |
-        npm install -g webpack \
-        && npm install -g webpack-cli \
+        yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack \
+        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
+        && rm -rf /tmp/y \
   yamllint:
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
     all:
@@ -632,6 +641,7 @@ software_available:
         && rm -rf /home/${MY_USER}/.gem \
         && rm -rf /home/${MY_USER}/.npm \
         && rm -rf /home/${MY_USER}/.subversion \
+        && rm -rf /home/${MY_USER}/.v8* \
         \
         && rm -rf /root/.*json \
         && rm -rf /root/.cache \
@@ -641,6 +651,7 @@ software_available:
         && rm -rf /root/.gem \
         && rm -rf /root/.npm \
         && rm -rf /root/.subversion \
+        && rm -rf /root/.v8* \
         \
         && rm -rf /tmp/* \
 
@@ -769,7 +780,7 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: [7.3]
+    disabled: [7.3, 7.4]
     5.2:
       run_dep: [librabbitmq1]
       type: pecl
@@ -786,7 +797,7 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq4]
   apcu:
-    disabled: [5.2]
+    disabled: [5.2, 7.4]
     5.3:
       type: pecl
       version: 4.0.11
@@ -812,11 +823,11 @@ extensions_available:
     all:
       type: builtin
   ctype:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   curl:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       build_dep: [libcurl4-openssl-dev]
@@ -824,7 +835,7 @@ extensions_available:
     all:
       type: builtin
   dom:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -841,7 +852,7 @@ extensions_available:
     all:
       type: builtin
   fileinfo:
-    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     5.2:
       type: pecl
       build_dep: [libmagic-dev]
@@ -850,7 +861,7 @@ extensions_available:
   filter:
     already_avail: "{{ php_all_versions }}" # Available by default
   ftp:
-    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-openssl-dir
@@ -901,6 +912,9 @@ extensions_available:
     7.3:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    7.4:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
@@ -917,11 +931,11 @@ extensions_available:
       pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
       build_dep: [libgmp-dev]
   hash:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   iconv:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   igbinary:
@@ -931,7 +945,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2]
+    disabled: [5.2, 7.4]
     5.3:
       type: pecl
       version: 3.3.0
@@ -976,7 +990,7 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu57]
   ioncube:
-    disabled: [7.3]
+    disabled: [7.3, 7.4]
     all:
       type: custom
       command: |
@@ -990,7 +1004,7 @@ extensions_available:
         && rm -rf ioncube \
         && rm -rf ioncube.tar.gz \
   json:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     7.0:
       type: builtin
       build_dep: [bison]
@@ -1005,10 +1019,11 @@ extensions_available:
   libxml:
     already_avail: "{{ php_all_versions }}" # Available by default
   mbstring:
-    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   mcrypt:
+    disabled: [7.4]
     7.2:
       type: pecl
       version: 1.0.1
@@ -1020,7 +1035,7 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    disabled: [7.3]
+    disabled: [7.3, 7.4]
     7.0:
       type: git
       git_url: https://github.com/websupport-sk/pecl-memcache
@@ -1057,12 +1072,17 @@ extensions_available:
       git_url: https://github.com/php-memcached-dev/php-memcached
       git_ref: master
       command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
+    7.4:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
     all:
       type: pecl
       build_dep: [zlib1g-dev, libmemcached-dev]
       run_dep: [libmemcachedutil2]
   mongo:
-    disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4] # Deprecated
     5.2:
       type: pecl
       command: yes | pecl install mongo-1.5.8
@@ -1082,7 +1102,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: [7.3]
+    disabled: [7.3, 7.4]
     5.2:
       type: pecl
       version: 0.5.7
@@ -1102,7 +1122,7 @@ extensions_available:
       type: pecl
   mysql:
     already_avail: [5.2, 5.3]
-    disabled: [7.0, 7.1, 7.2, 7.3] # Deprecated in newer versions
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4] # Deprecated in newer versions
     5.6:
       type: builtin
       run_dep: [libmariadbclient18]
@@ -1115,7 +1135,7 @@ extensions_available:
       type: builtin
   mysqlnd:
     disabled: [5.2]
-    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
   oci8:
     disabled: "{{ php_all_versions }}" # TODO: Oracle library is missing
   odbc:
@@ -1142,7 +1162,7 @@ extensions_available:
   pdo:
     # https://github.com/docker-library/php/issues/618
     #disabled: [7.0] # TODO: Currently disabled due to bug in built
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   pdo_dblib:
@@ -1175,7 +1195,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   pdo_sqlite:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       build_dep: [libsqlite3-dev]
@@ -1185,7 +1205,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.3]
+    disabled: [5.2, 7.3, 7.4]
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -1210,14 +1230,14 @@ extensions_available:
   phar:
     # https://github.com/docker-library/php/issues/618
     disabled: [5.6, 7.0] # TODO: Currently disabled due to bug in built
-    already_avail: [5.3, 5.4, 5.5, 7.1, 7.2, 7.3]
+    already_avail: [5.3, 5.4, 5.5, 7.1, 7.2, 7.3, 7.4]
     5.2:
       type: pecl
     all:
       type: builtin
       build_dep: [libssl-dev]
   posix:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   pspell:
@@ -1227,7 +1247,7 @@ extensions_available:
       run_dep: [libaspell15]
   readline:
     disabled: [5.3]
-    already_avail: [5.2, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       build_dep: [libedit-dev, libreadline-dev]
@@ -1238,6 +1258,7 @@ extensions_available:
       build_dep: [librecode-dev]
       run_dep: [librecode0]
   redis:
+    disabled: [7.4]
     5.2:
       type: pecl
       version: 2.2.7
@@ -1250,7 +1271,7 @@ extensions_available:
       build_dep: [librdkafka-dev]
       run_dep: [librdkafka1]
   session:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-mm
@@ -1259,7 +1280,7 @@ extensions_available:
     all:
       type: builtin
   simplexml:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1281,7 +1302,7 @@ extensions_available:
       type: builtin
   sodium:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
-    already_avail: [7.2, 7.3]
+    already_avail: [7.2, 7.3, 7.4]
     all:
       type: builtin
       build_dep: [libsodium-dev]
@@ -1308,6 +1329,46 @@ extensions_available:
       type: pecl
       version: 2.2.0
     7.3:
+      type: git
+      git_url: https://github.com/swoole/swoole-src
+      git_ref: master
+      command: |
+        git checkout $(git describe --abbrev=0 --tags) \
+        && git submodule update --init --recursive \
+        && cd thirdparty/hiredis \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+        && cd ../nghttp2 \
+        && cmake . \
+        && make install \
+        && ldconfig \
+        && cd ../.. \
+        && phpize \
+        && ./configure \
+          --enable-async-redis \
+          --enable-openssl \
+          --enable-thread \
+          --enable-swoole \
+          --enable-swoole-static \
+          --with-swoole \
+          --with-openssl-dir=/usr \
+          --enable-mysqlnd \
+          --enable-coroutine \
+          --enable-picohttpparser \
+          #`--enable-timewheel` \
+          #`--enable-hugepage` \
+          #`--enable-asan` \
+          #`--with-phpx-dir=` \
+          #`--with-jemalloc-dir=/usr/include/jemalloc` \
+          #`--enable-coroutine-postgresql` \
+          #`--enable-http2` \
+          #`--enable-sockets` \
+          #`--with-libpq-dir=/usr/include/postgresql/libpq/` \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      run_dep: [libnghttp2-14, libhiredis0.13]
+      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, cmake]
+    7.4:
       type: git
       git_url: https://github.com/swoole/swoole-src
       git_ref: master
@@ -1378,7 +1439,7 @@ extensions_available:
       build_dep: [libtidy-dev]
       run_dep: [libtidy5]
   tokenizer:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
   uploadprogress:
@@ -1398,6 +1459,10 @@ extensions_available:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
+    7.4:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
     all:
       type: pecl
   wddx:
@@ -1406,7 +1471,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
-    disabled: [7.3]
+    disabled: [7.3, 7.4]
     5.2:
       type: pecl
       version: 2.2.7
@@ -1425,13 +1490,13 @@ extensions_available:
     all:
       type: pecl
   xml:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xmlreader:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1442,7 +1507,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
       build_dep: [libxml2-dev]
   xmlwriter:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr

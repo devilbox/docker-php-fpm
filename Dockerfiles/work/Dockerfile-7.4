@@ -1,5 +1,5 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
-FROM devilbox/php-fpm:5.2-prod
+FROM devilbox/php-fpm:7.4-prod
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -7,9 +7,9 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ### Labels
 ###
 LABEL \
-	name="cytopia's PHP-FPM 5.2 Image" \
+	name="cytopia's PHP-FPM 7.4 Image" \
 	image="devilbox/php-fpm" \
-	tag="5.2-work" \
+	tag="7.4-work" \
 	vendor="devilbox" \
 	license="MIT"
 
@@ -31,13 +31,13 @@ RUN set -x \
 		gnupg \
 	&& echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
 	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
-	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
+	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
 	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
 	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
 	&& curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add - \
-	&& echo "deb http://deb.nodesource.com/node_8.x jessie main" > /etc/apt/sources.list.d/node.list \
+	&& echo "deb http://deb.nodesource.com/node_8.x stretch main" > /etc/apt/sources.list.d/node.list \
 	&& curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add - \
-	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
@@ -121,9 +121,15 @@ RUN set -x \
 
 
 RUN set -x \
+# composer
+	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 # ansible
 	&& /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
 && /usr/local/bin/pip install --no-cache-dir ansible \
+ \
+# asgardcms
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require asgardcms/asgardcms-installer \
+&& ln -s /usr/local/src/composer/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/asgardcms \
  \
 # awesomeci
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
@@ -143,6 +149,55 @@ RUN set -x \
 && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y gulp \
 && rm -rf /tmp/y \
  \
+# codeception
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
+&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
+ \
+# deployer
+	&& curl https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
+	&& chmod +x /usr/local/bin/dep \
+# drush7
+	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
+&& cd /usr/local/src/drush7 \
+&& git checkout 7.4.0 \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
+&& ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
+&& rm -rf /usr/local/src/drush7/.git \
+&& rm -rf /usr/local/src/drush7/docs \
+&& rm -rf /usr/local/src/drush7/examples \
+&& rm -rf /usr/local/src/drush7/misc \
+ \
+# drush8
+	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush8 \
+&& cd /usr/local/src/drush8 \
+&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress --no-dev' \
+&& ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
+&& rm -rf /usr/local/src/drush8/.git \
+&& rm -rf /usr/local/src/drush8/docs \
+&& rm -rf /usr/local/src/drush8/examples \
+&& rm -rf /usr/local/src/drush8/misc \
+ \
+# drush9
+	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
+&& cd /usr/local/src/drush9 \
+&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && composer install --no-interaction --no-progress --no-dev' \
+&& ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
+&& rm -rf /usr/local/src/drush9/.git \
+&& rm -rf /usr/local/src/drush9/docs \
+&& rm -rf /usr/local/src/drush9/examples \
+&& rm -rf /usr/local/src/drush9/misc \
+ \
+# drupalconsole
+	&& curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
+	&& chmod +x /usr/local/bin/drupal \
 # gitflow
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
 && cd /tmp/gitflow \
@@ -153,6 +208,16 @@ RUN set -x \
 	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
 && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
 && rm -rf /tmp/y \
+ \
+# laravel
+	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+&& cd /usr/local/src/laravel-installer \
+&& git checkout $(git describe --abbrev=0 --tags) \
+ \
+	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
+&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+&& rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
 # linkcheck
 	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
@@ -197,20 +262,34 @@ RUN set -x \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
 # phpcs
-	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
 # phpcbf
-	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
+ \
+# phpunit
+	&& curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
+&& chmod +x /usr/local/bin/phpunit \
+ \
+# photon
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
+&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
  \
 # sass
 	&& gem install sass \
+# symfony
+	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
+	&& chmod +x /usr/local/bin/symfony \
 # webpack
 	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack \
 && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
 && rm -rf /tmp/y \
  \
+# wpcli
+	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
 # yamllint
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
@@ -275,7 +354,7 @@ RUN \
 ###
 RUN set -x \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.2' \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^7.4' \
 	&& /usr/local/sbin/php-fpm --test \
 	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
@@ -290,7 +369,9 @@ RUN set -x \
 	&& rm -f /usr/local/etc/php/php.ini
 
 RUN set -x \
+	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
+	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+' \
 	&& mdl --version | grep -E '[.0-9]+' \
 && scss-lint --version | grep -E '[.0-9]+' \
 && eslint -v | grep -E '[.0-9]+' \
@@ -298,15 +379,26 @@ RUN set -x \
 && mdlint --version | grep -E '[.0-9]+' \
 && gulp --version | grep -E '[.0-9]+' \
  \
+	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
+	&& dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+' \
+	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
+	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
+	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
+	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
+	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
+	&& photon --version | grep -E 'Installer [.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
+	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
+	&& wp --allow-root --version | grep -E '[.0-9]+' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& true
 
@@ -314,8 +406,8 @@ RUN set -x \
 ###
 ### Copy files
 ###
-COPY ./data/php-ini.d/php-5.2.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
-COPY ./data/php-fpm.conf/php-fpm-5.2.conf /usr/local/etc/php-fpm.conf
+COPY ./data/php-ini.d/php-7.4.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-7.4.conf /usr/local/etc/php-fpm.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/

@@ -176,8 +176,8 @@ RUN set -x \
 	&& if [ ! -f "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini" ]; then echo "extenstion={{ extensions_available[ext]['all']['load_ext'] }}" > "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini"; fi \
 {%		endif %}
 	\
-	&& rm -rf /usr/local/lib/php/test/{{ ext }} || true \
-	&& rm -rf /usr/local/lib/php/doc/{{ ext }} || true \
+	&& (rm -rf /usr/local/lib/php/test/{{ ext }} || true) \
+	&& (rm -rf /usr/local/lib/php/doc/{{ ext }} || true) \
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 {%	endif %}
 {% endfor %}
@@ -190,10 +190,10 @@ RUN set -x \
 	\
 	&& update-ca-certificates \
 	\
-	&& find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
-	&& find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
-	&& find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true \
-	&& find "$(php -r 'echo ini_get("extension_dir");')" -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find "$(php -r 'echo ini_get("extension_dir");')" -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
 {% if debug %}
