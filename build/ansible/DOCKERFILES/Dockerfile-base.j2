@@ -4,7 +4,7 @@ FROM devilbox/php-fpm-5.2
 {% elif php_version == 5.3 %}
 FROM devilbox/php-fpm-5.3
 {% elif php_version == 7.3 %}
-FROM devilbox/php-fpm-7.3
+FROM php:{{ php_version }}-rc-fpm
 {% else %}
 FROM php:{{ php_version }}-fpm
 {% endif %}
