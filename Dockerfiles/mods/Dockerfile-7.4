@@ -313,6 +313,21 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/recode || true) \
 	&& (rm -rf /usr/local/lib/php/doc/recode || true) \
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	&& git clone -v https://github.com/phpredis/phpredis /tmp/redis \
+	&& cd /tmp/redis \
+	&& phpize \
+&& sed -i'' 's/ZEND_ACC_CTOR | //g' redis.c \
+&& sed -i'' 's/ZEND_ACC_DTOR | //g' redis.c \
+&& sed -i'' 's/ZEND_ACC_CTOR | //g' redis_cluster.c \
+&& ./configure \
+&& make -j8 \
+&& make install \
+ \
+	&& docker-php-ext-enable redis \
+	\
+	&& (rm -rf /usr/local/lib/php/test/redis || true) \
+	&& (rm -rf /usr/local/lib/php/doc/redis || true) \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& pecl install rdkafka \
 	&& docker-php-ext-enable rdkafka \
 	\
@@ -589,6 +604,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \
 	&& php-fpm -m | grep -oiE '^recode$' \
+	&& php -m | grep -oiE '^redis$' \
+	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^rdkafka$' \
 	&& php-fpm -m | grep -oiE '^rdkafka$' \
 	&& php -m | grep -oiE '^session$' \

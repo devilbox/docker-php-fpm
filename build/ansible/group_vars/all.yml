@@ -1258,10 +1258,21 @@ extensions_available:
       build_dep: [librecode-dev]
       run_dep: [librecode0]
   redis:
-    disabled: [7.4]
     5.2:
       type: pecl
       version: 2.2.7
+    7.4:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      # This is a nasty work-around to fix current phpredis implementation for PHP 7.4
+      command: |
+        phpize \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_DTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis_cluster.c \
+        && ./configure \
+        && make -j8 \
+        && make install \
     all:
       type: pecl
   rdkafka:
