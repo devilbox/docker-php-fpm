@@ -86,6 +86,7 @@ RUN set -x \
 {% for ext in extensions_enabled %}
 {#	Not disabled AND not already enabled #}
 {%	if (('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled'])) and ('already_avail' not in extensions_available[ext] or php_version not in extensions_available[ext]['already_avail']) %}
+# ---- Installing PHP Extension: {{ ext }} ----
 {#		---------- Pre Command ---------- #}
 {#		Version specific pre-command available? #}
 {%		if php_version in extensions_available[ext] and 'pre' in extensions_available[ext][php_version] %}
@@ -99,20 +100,20 @@ RUN set -x \
 {#			---- 1.) Builtin ---- #}
 {%			if extensions_available[ext][php_version]['type'] == 'builtin' %}
 {%				if 'configure' in extensions_available[ext][php_version] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} \
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} >/dev/null \
 {%				endif %}
-	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} >/dev/null \
 {#			---- 2.) PECL ---- #}
 {%			elif extensions_available[ext][php_version]['type'] == 'pecl' %}
 {%				if 'command' in extensions_available[ext][php_version] %}
 	&& {{ extensions_available[ext][php_version]['command'] }} \
 {%				else %}
-	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} \
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} >/dev/null\
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
 {#			---- 3.) GIT ---- #}
 {%			elif extensions_available[ext][php_version]['type'] == 'git' %}
-	&& git clone -v {{ extensions_available[ext][php_version]['git_url'] }} /tmp/{{ ext }} \
+	&& git clone {{ extensions_available[ext][php_version]['git_url'] }} /tmp/{{ ext }} \
 	&& cd /tmp/{{ ext }} \
 {%				if 'git_ref' in extensions_available[ext][php_version] %}
 	&& git checkout {{ extensions_available[ext][php_version]['git_ref'] }} \
@@ -121,8 +122,8 @@ RUN set -x \
 	&& {{ extensions_available[ext][php_version]['command'] }} \
 {%				else %}
 	&& phpize \
-	&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} >/dev/null \
+	&& make -j$(getconf _NPROCESSORS_ONLN) >/dev/null \
 	&& make install \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
@@ -135,20 +136,20 @@ RUN set -x \
 {#			---- 1.) Builtin ---- #}
 {%			if extensions_available[ext]['all']['type'] == 'builtin' %}
 {%				if 'configure' in extensions_available[ext]['all'] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} >/dev/null \
 {%				endif %}
-	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} >/dev/null \
 {#			---- 2.) PECL ---- #}
 {%			elif extensions_available[ext]['all']['type'] == 'pecl' %}
 {%				if 'command' in extensions_available[ext]['all'] %}
 	&& {{ extensions_available[ext]['all']['command'] }} \
 {%				else %}
-	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} \
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} >/dev/null \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
 {#			---- 3.) GIT ---- #}
 {%			elif extensions_available[ext]['all']['type'] == 'git' %}
-	&& git clone -v {{ extensions_available[ext]['all']['git_url'] }} /tmp/{{ ext }} \
+	&& git clone {{ extensions_available[ext]['all']['git_url'] }} /tmp/{{ ext }} \
 	&& cd /tmp/{{ ext }} \
 {%				if 'git_ref' in extensions_available[ext]['all'] %}
 	&& git checkout {{ extensions_available[ext]['all']['git_ref'] }} \
@@ -157,8 +158,8 @@ RUN set -x \
 	&& {{ extensions_available[ext]['all']['command'] }} \
 {%				else %}
 	&& phpize \
-	&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} >/dev/null \
+	&& make -j$(getconf _NPROCESSORS_ONLN) >/dev/null \
 	&& make install \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
@@ -167,6 +168,10 @@ RUN set -x \
 	&& {{ extensions_available[ext]['all']['command'] }} \
 {%			endif %}
 {%		endif %}
+{#  Only delete files for extensions we've actually installed, not those that were already available by default #}
+	&& (rm -rf /usr/local/lib/php/test/{{ ext }} || true) \
+	&& (rm -rf /usr/local/lib/php/doc/{{ ext }} || true) \
+	\
 {%	endif %}
 {#	Ensure modules that are not disabled have an appropriate ini directive and are loaded #}
 {%	if ('disabled' not in extensions_available[ext]) or (php_version not in extensions_available[ext]['disabled']) %}
@@ -175,12 +180,9 @@ RUN set -x \
 {%		elif 'all' in extensions_available[ext] and 'load_ext' in extensions_available[ext]['all'] %}
 	&& if [ ! -f "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini" ]; then echo "extenstion={{ extensions_available[ext]['all']['load_ext'] }}" > "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini"; fi \
 {%		endif %}
-	\
-	&& (rm -rf /usr/local/lib/php/test/{{ ext }} || true) \
-	&& (rm -rf /usr/local/lib/php/doc/{{ ext }} || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 {%	endif %}
 {% endfor %}
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& rm -rf /tmp/* \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${BUILD_DEPS} \
