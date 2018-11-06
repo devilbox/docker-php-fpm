@@ -86,370 +86,271 @@ RUN set -x \
 		${BUILD_DEPS} \
 	\
 	\
+# ---- Installing PHP Extension: ioncube ----
 	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
 && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
 && curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
-&& tar xvfz ioncube.tar.gz \
+&& tar xvfz ioncube.tar.gz >/dev/null \
 && cd ioncube \
 && cp "ioncube_loader_lin_5.2.so" "${EXTENSION_DIR}/ioncube.so" \
 && cd ../ \
 && rm -rf ioncube \
 && rm -rf ioncube.tar.gz \
  \
-	\
 	&& (rm -rf /usr/local/lib/php/test/ioncube || true) \
 	&& (rm -rf /usr/local/lib/php/doc/ioncube || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install amqp-1.4.0 \
-	&& docker-php-ext-enable amqp \
 	\
+# ---- Installing PHP Extension: amqp ----
+	&& pecl install amqp-1.4.0 >/dev/null\
+	&& docker-php-ext-enable amqp \
 	&& (rm -rf /usr/local/lib/php/test/amqp || true) \
 	&& (rm -rf /usr/local/lib/php/doc/amqp || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
 	\
+# ---- Installing PHP Extension: bcmath ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/bcmath || true) \
 	&& (rm -rf /usr/local/lib/php/doc/bcmath || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
 	\
+# ---- Installing PHP Extension: bz2 ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/bz2 || true) \
 	&& (rm -rf /usr/local/lib/php/doc/bz2 || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
 	\
+# ---- Installing PHP Extension: calendar ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/calendar || true) \
 	&& (rm -rf /usr/local/lib/php/doc/calendar || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/ctype || true) \
-	&& (rm -rf /usr/local/lib/php/doc/ctype || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/curl || true) \
-	&& (rm -rf /usr/local/lib/php/doc/curl || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
-	\
+# ---- Installing PHP Extension: dba ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/dba || true) \
 	&& (rm -rf /usr/local/lib/php/doc/dba || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/dom || true) \
-	&& (rm -rf /usr/local/lib/php/doc/dom || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& echo "/usr" | pecl install enchant \
+# ---- Installing PHP Extension: enchant ----
+	&& echo "/usr" | pecl install enchant >/dev/null \
 	&& docker-php-ext-enable enchant \
-	\
 	&& (rm -rf /usr/local/lib/php/test/enchant || true) \
 	&& (rm -rf /usr/local/lib/php/doc/enchant || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
 	\
+# ---- Installing PHP Extension: exif ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/exif || true) \
 	&& (rm -rf /usr/local/lib/php/doc/exif || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install fileinfo \
-	&& docker-php-ext-enable fileinfo \
 	\
+# ---- Installing PHP Extension: fileinfo ----
+	&& pecl install fileinfo >/dev/null\
+	&& docker-php-ext-enable fileinfo \
 	&& (rm -rf /usr/local/lib/php/test/fileinfo || true) \
 	&& (rm -rf /usr/local/lib/php/doc/fileinfo || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/filter || true) \
-	&& (rm -rf /usr/local/lib/php/doc/filter || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-configure ftp --with-openssl-dir \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ftp \
-	\
+# ---- Installing PHP Extension: ftp ----
+	&& /usr/local/bin/docker-php-ext-configure ftp --with-openssl-dir >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ftp >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/ftp || true) \
 	&& (rm -rf /usr/local/lib/php/doc/ftp || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+	\
+# ---- Installing PHP Extension: gd ----
 	&& ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
 ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
 ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
 mkdir /usr/include/freetype2/freetype && \
 ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
  \
-	&& /usr/local/bin/docker-php-ext-configure gd --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
-	\
+	&& /usr/local/bin/docker-php-ext-configure gd --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/gd || true) \
 	&& (rm -rf /usr/local/lib/php/doc/gd || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
 	\
+# ---- Installing PHP Extension: gettext ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/gettext || true) \
 	&& (rm -rf /usr/local/lib/php/doc/gettext || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/hash || true) \
-	&& (rm -rf /usr/local/lib/php/doc/hash || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/iconv || true) \
-	&& (rm -rf /usr/local/lib/php/doc/iconv || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install igbinary-2.0.7 \
+# ---- Installing PHP Extension: igbinary ----
+	&& pecl install igbinary-2.0.7 >/dev/null\
 	&& docker-php-ext-enable igbinary \
-	\
 	&& (rm -rf /usr/local/lib/php/test/igbinary || true) \
 	&& (rm -rf /usr/local/lib/php/doc/igbinary || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
 	\
+# ---- Installing PHP Extension: imap ----
+	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
+	&& /usr/local/bin/docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/imap || true) \
 	&& (rm -rf /usr/local/lib/php/doc/imap || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
 	\
+# ---- Installing PHP Extension: interbase ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/interbase || true) \
 	&& (rm -rf /usr/local/lib/php/doc/interbase || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install intl \
-	&& docker-php-ext-enable intl \
 	\
+# ---- Installing PHP Extension: intl ----
+	&& pecl install intl >/dev/null\
+	&& docker-php-ext-enable intl \
 	&& (rm -rf /usr/local/lib/php/test/intl || true) \
 	&& (rm -rf /usr/local/lib/php/doc/intl || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/json || true) \
-	&& (rm -rf /usr/local/lib/php/doc/json || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+# ---- Installing PHP Extension: ldap ----
 	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
-	\
+	&& /usr/local/bin/docker-php-ext-configure ldap --with-ldap --with-ldap-sasl >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/ldap || true) \
 	&& (rm -rf /usr/local/lib/php/doc/ldap || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/libxml || true) \
-	&& (rm -rf /usr/local/lib/php/doc/libxml || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/mbstring || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mbstring || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
-	\
+# ---- Installing PHP Extension: mcrypt ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/mcrypt || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mcrypt || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install memcache \
-	&& docker-php-ext-enable memcache \
 	\
+# ---- Installing PHP Extension: memcache ----
+	&& pecl install memcache >/dev/null \
+	&& docker-php-ext-enable memcache \
 	&& (rm -rf /usr/local/lib/php/test/memcache || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcache || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install memcached-2.1.0 \
-	&& docker-php-ext-enable memcached \
 	\
+# ---- Installing PHP Extension: memcached ----
+	&& pecl install memcached-2.1.0 >/dev/null\
+	&& docker-php-ext-enable memcached \
 	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& yes | pecl install mongo-1.5.8 \
-	&& docker-php-ext-enable mongo \
 	\
+# ---- Installing PHP Extension: mongo ----
+	&& yes | pecl install mongo-1.5.8 >/dev/null \
+	&& docker-php-ext-enable mongo \
 	&& (rm -rf /usr/local/lib/php/test/mongo || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mongo || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install msgpack-0.5.7 \
-	&& docker-php-ext-enable msgpack \
 	\
+# ---- Installing PHP Extension: msgpack ----
+	&& pecl install msgpack-0.5.7 >/dev/null\
+	&& docker-php-ext-enable msgpack \
 	&& (rm -rf /usr/local/lib/php/test/msgpack || true) \
 	&& (rm -rf /usr/local/lib/php/doc/msgpack || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/mysql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mysql || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/mysqli || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mysqli || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install zendopcache \
+# ---- Installing PHP Extension: opcache ----
+	&& pecl install zendopcache >/dev/null \
 	&& docker-php-ext-enable opcache \
-	\
 	&& (rm -rf /usr/local/lib/php/test/opcache || true) \
 	&& (rm -rf /usr/local/lib/php/doc/opcache || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/openssl || true) \
-	&& (rm -rf /usr/local/lib/php/doc/openssl || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
-	\
+# ---- Installing PHP Extension: pcntl ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pcntl || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pcntl || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/pcre || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pcre || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/pdo || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
+# ---- Installing PHP Extension: pdo_dblib ----
 	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
-	\
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pdo_dblib || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_dblib || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
 	\
+# ---- Installing PHP Extension: pdo_firebird ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pdo_firebird || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_firebird || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/pdo_mysql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_mysql || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
-	\
+# ---- Installing PHP Extension: pdo_pgsql ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pdo_pgsql || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_pgsql || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/pdo_sqlite || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_sqlite || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
-	\
+# ---- Installing PHP Extension: pgsql ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pgsql || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pgsql || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install phar \
-	&& docker-php-ext-enable phar \
 	\
+# ---- Installing PHP Extension: phar ----
+	&& pecl install phar >/dev/null\
+	&& docker-php-ext-enable phar \
 	&& (rm -rf /usr/local/lib/php/test/phar || true) \
 	&& (rm -rf /usr/local/lib/php/doc/phar || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/posix || true) \
-	&& (rm -rf /usr/local/lib/php/doc/posix || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	\
+# ---- Installing PHP Extension: pspell ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/pspell || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pspell || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/readline || true) \
-	&& (rm -rf /usr/local/lib/php/doc/readline || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
-	\
+# ---- Installing PHP Extension: recode ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/recode || true) \
 	&& (rm -rf /usr/local/lib/php/doc/recode || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install redis-2.2.7 \
-	&& docker-php-ext-enable redis \
 	\
+# ---- Installing PHP Extension: redis ----
+	&& pecl install redis-2.2.7 >/dev/null\
+	&& docker-php-ext-enable redis \
 	&& (rm -rf /usr/local/lib/php/test/redis || true) \
 	&& (rm -rf /usr/local/lib/php/doc/redis || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/session || true) \
-	&& (rm -rf /usr/local/lib/php/doc/session || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
-	\
+# ---- Installing PHP Extension: shmop ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/shmop || true) \
 	&& (rm -rf /usr/local/lib/php/doc/shmop || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/simplexml || true) \
-	&& (rm -rf /usr/local/lib/php/doc/simplexml || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-configure snmp --with-openssl-dir \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
-	\
+# ---- Installing PHP Extension: snmp ----
+	&& /usr/local/bin/docker-php-ext-configure snmp --with-openssl-dir >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/snmp || true) \
 	&& (rm -rf /usr/local/lib/php/doc/snmp || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/soap || true) \
-	&& (rm -rf /usr/local/lib/php/doc/soap || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
-	\
+# ---- Installing PHP Extension: sockets ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/sockets || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sockets || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
 	\
+# ---- Installing PHP Extension: sysvmsg ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/sysvmsg || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sysvmsg || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
 	\
+# ---- Installing PHP Extension: sysvsem ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/sysvsem || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sysvsem || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
 	\
+# ---- Installing PHP Extension: sysvshm ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/sysvshm || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sysvshm || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
 	\
+# ---- Installing PHP Extension: tidy ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/tidy || true) \
 	&& (rm -rf /usr/local/lib/php/doc/tidy || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/tokenizer || true) \
-	&& (rm -rf /usr/local/lib/php/doc/tokenizer || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install uploadprogress \
+# ---- Installing PHP Extension: uploadprogress ----
+	&& pecl install uploadprogress >/dev/null \
 	&& docker-php-ext-enable uploadprogress \
-	\
 	&& (rm -rf /usr/local/lib/php/test/uploadprogress || true) \
 	&& (rm -rf /usr/local/lib/php/doc/uploadprogress || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
 	\
+# ---- Installing PHP Extension: wddx ----
+	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/wddx || true) \
 	&& (rm -rf /usr/local/lib/php/doc/wddx || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& pecl install xdebug-2.2.7 \
-	&& docker-php-ext-enable xdebug \
 	\
+# ---- Installing PHP Extension: xdebug ----
+	&& pecl install xdebug-2.2.7 >/dev/null\
+	&& docker-php-ext-enable xdebug \
 	&& (rm -rf /usr/local/lib/php/test/xdebug || true) \
 	&& (rm -rf /usr/local/lib/php/doc/xdebug || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/xml || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xml || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	\
-	&& (rm -rf /usr/local/lib/php/test/xmlreader || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xmlreader || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
-	\
+# ---- Installing PHP Extension: xmlrpc ----
+	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/xmlrpc || true) \
 	&& (rm -rf /usr/local/lib/php/doc/xmlrpc || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	\
-	&& (rm -rf /usr/local/lib/php/test/xmlwriter || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xmlwriter || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
-	\
+# ---- Installing PHP Extension: xsl ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/xsl || true) \
 	&& (rm -rf /usr/local/lib/php/doc/xsl || true) \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
 	\
+# ---- Installing PHP Extension: zip ----
+	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip >/dev/null \
 	&& (rm -rf /usr/local/lib/php/test/zip || true) \
 	&& (rm -rf /usr/local/lib/php/doc/zip || true) \
+	\
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& rm -rf /tmp/* \
 	\
