@@ -100,15 +100,15 @@ RUN set -x \
 {#			---- 1.) Builtin ---- #}
 {%			if extensions_available[ext][php_version]['type'] == 'builtin' %}
 {%				if 'configure' in extensions_available[ext][php_version] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} >/dev/null \
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} \
 {%				endif %}
-	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
 {#			---- 2.) PECL ---- #}
 {%			elif extensions_available[ext][php_version]['type'] == 'pecl' %}
 {%				if 'command' in extensions_available[ext][php_version] %}
 	&& {{ extensions_available[ext][php_version]['command'] }} \
 {%				else %}
-	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} >/dev/null\
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext][php_version] %}-{{ extensions_available[ext][php_version]['version'] }}{% endif %} \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
 {#			---- 3.) GIT ---- #}
@@ -122,8 +122,8 @@ RUN set -x \
 	&& {{ extensions_available[ext][php_version]['command'] }} \
 {%				else %}
 	&& phpize \
-	&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} >/dev/null \
-	&& make -j$(getconf _NPROCESSORS_ONLN) >/dev/null \
+	&& ./configure {% if 'configure' in extensions_available[ext][php_version] %} {{ extensions_available[ext][php_version]['configure'] }}{% endif %} \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
@@ -136,15 +136,15 @@ RUN set -x \
 {#			---- 1.) Builtin ---- #}
 {%			if extensions_available[ext]['all']['type'] == 'builtin' %}
 {%				if 'configure' in extensions_available[ext]['all'] %}
-	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} >/dev/null \
+	&& /usr/local/bin/docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
 {%				endif %}
-	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} >/dev/null \
+	&& /usr/local/bin/docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
 {#			---- 2.) PECL ---- #}
 {%			elif extensions_available[ext]['all']['type'] == 'pecl' %}
 {%				if 'command' in extensions_available[ext]['all'] %}
 	&& {{ extensions_available[ext]['all']['command'] }} \
 {%				else %}
-	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} >/dev/null \
+	&& pecl install {{ ext }}{% if 'version' in extensions_available[ext]['all'] %}-{{ extensions_available[ext]['all']['version'] }}{% endif %} \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
 {#			---- 3.) GIT ---- #}
@@ -158,8 +158,8 @@ RUN set -x \
 	&& {{ extensions_available[ext]['all']['command'] }} \
 {%				else %}
 	&& phpize \
-	&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} >/dev/null \
-	&& make -j$(getconf _NPROCESSORS_ONLN) >/dev/null \
+	&& ./configure {% if 'configure' in extensions_available[ext]['all'] %} {{ extensions_available[ext]['all']['configure'] }}{% endif %} \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 {%				endif %}
 	&& docker-php-ext-enable {{ ext }} \
