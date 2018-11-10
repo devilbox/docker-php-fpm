@@ -948,11 +948,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 7.4]
-    5.3:
-      type: pecl
-      version: 3.3.0
-      run_dep: [libmagickwand-6.q16-2]
+    disabled: [5.2, 5.3, 7.4]
     5.4:
       type: pecl
       run_dep: [libmagickwand-6.q16-2]
@@ -1094,10 +1090,7 @@ extensions_available:
       command: yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2]
-    5.3:
-      type: pecl
-      version: 0.6.3
+    disabled: [5.2, 5.3]
     5.4:
       type: pecl
       version: 1.2.11
@@ -1208,12 +1201,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.3, 7.4]
-    5.3:
-      type: git
-      git_url: https://github.com/phalcon/cphalcon
-      git_ref: phalcon-v2.0.9
-      command: cd build && ./install
+    disabled: [5.2, 5.3, 7.3, 7.4]
     5.4:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -1323,11 +1311,7 @@ extensions_available:
   spl:
     disabled: "{{ php_all_versions }}" # TODO: Did not work
   swoole:
-    disabled: [5.2]
-    5.3:
-      type: pecl
-      version: 1.9.23
-      run_dep: [libnghttp2-5]
+    disabled: [5.2, 5.3]
     5.4:
       type: pecl
       version: 1.9.23
