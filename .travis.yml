@@ -98,11 +98,13 @@ script:
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
       echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin &&
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
+        echo "Pushing latest";
         docker push "${IMAGE}:${PHP}-base";
         docker push "${IMAGE}:${PHP}-mods";
         docker push "${IMAGE}:${PHP}-prod";
         docker push "${IMAGE}:${PHP}-work";
       elif [[ ${TRAVIS_BRANCH} =~ ^(release-[.0-9]+)$ ]]; then
+        echo "Pushing branch ${TRAVIS_BRANCH}";
         docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}" &&
         docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}" &&
         docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}" &&
@@ -112,6 +114,7 @@ script:
         docker push "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}";
         docker push "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}";
       elif [ -n "${TRAVIS_TAG}" ]; then
+        echo "Pushing tag ${TRAVIS_TAG}";
         docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_TAG}" &&
         docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}" &&
         docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}" &&
@@ -120,6 +123,18 @@ script:
         docker push "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}";
         docker push "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}";
         docker push "${IMAGE}:${PHP}-work-${TRAVIS_TAG}";
+      elif [ "${TRAVIS_EVENT_TYPE}" = "cron" ]; then
+        if MY_TAG="$( git describe --exact-match "$(git rev-parse HEAD)" 2>/dev/null )"; then
+          echo "Pushing cron tag ${MY_TAG}";
+          docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${MY_TAG}" &&
+          docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${MY_TAG}" &&
+          docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${MY_TAG}" &&
+          docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${MY_TAG}" &&
+          docker push "${IMAGE}:${PHP}-base-${MY_TAG}";
+          docker push "${IMAGE}:${PHP}-mods-${MY_TAG}";
+          docker push "${IMAGE}:${PHP}-prod-${MY_TAG}";
+          docker push "${IMAGE}:${PHP}-work-${MY_TAG}";
+        fi
       else
         echo "Skipping push to dockerhub on normal branches";
       fi
