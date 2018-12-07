@@ -766,7 +766,7 @@ Have a look at the following table to see all offered volumes for each Docker im
   </tr>
   <tr>
    <td><code>/etc/php-fpm-custom.d</code></td>
-   <td>Mount this directory into your host computer and add custom PHP-FOM <code>\*.conf</code> files in order to alter PHP-FPM behaviour.</td>
+   <td>Mount this directory into your host computer and add custom PHP-FPM <code>\*.conf</code> files in order to alter PHP-FPM behaviour.</td>
   </tr>
   <tr>
    <td><code>/etc/php-modules.d</code></td>
