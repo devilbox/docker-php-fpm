@@ -298,37 +298,13 @@ RUN set -x \
 	&& cd /tmp/swoole \
 	&& git checkout master \
 	&& git checkout $(git describe --abbrev=0 --tags) \
-&& git submodule update --init --recursive \
-#`&& cd thirdparty/hiredis` \
-#`&& make -j$(getconf _NPROCESSORS_ONLN)` \
-#`&& make install` \
-#`&& cd ../../` \
-&& cd thirdparty/nghttp2 \
-&& cmake . \
-&& make install \
-&& ldconfig \
-&& cd ../.. \
 && phpize \
 && ./configure \
-  --enable-async-redis \
   --enable-openssl \
-  --enable-thread \
-  --enable-swoole \
-  --enable-swoole-static \
-  --with-swoole \
-  --with-openssl-dir=/usr \
+  --enable-sockets \
+  --enable-http2 \
   --enable-mysqlnd \
-  --enable-coroutine \
-  --enable-picohttpparser \
-  #`--enable-timewheel` \
-  #`--enable-hugepage` \
-  #`--enable-asan` \
-  #`--with-phpx-dir=` \
-  #`--with-jemalloc-dir=/usr/include/jemalloc` \
-  #`--enable-coroutine-postgresql` \
-  #`--enable-http2` \
-  #`--enable-sockets` \
-  #`--with-libpq-dir=/usr/include/postgresql/libpq/` \
+  --enable-coroutine-postgresql \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
  \
