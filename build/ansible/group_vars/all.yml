@@ -1433,7 +1433,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
-    disabled: [7.3, 7.4]
+    disabled: [7.4]
     5.2:
       type: pecl
       version: 2.2.7
@@ -1449,6 +1449,9 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.4.1
+    7.3:
+      type: pecl
+      version: 2.7.0beta1
     all:
       type: pecl
   xml:
