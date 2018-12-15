@@ -423,8 +423,8 @@ software_available:
     check: grunt --version | grep -E '[.0-9]+'
     all:
       command: |
-        yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
-        && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
+        until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt; do sleep 1; done \
+        && until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli; do sleep 1; done \
         && rm -rf /tmp/y \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'

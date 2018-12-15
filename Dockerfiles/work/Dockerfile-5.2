@@ -150,8 +150,8 @@ RUN set -x \
 && cd / && rm -rf /tmp/gitflow \
  \
 # grunt
-	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli \
+	&& until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt; do sleep 1; done \
+&& until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli; do sleep 1; done \
 && rm -rf /tmp/y \
  \
 # linkcheck
