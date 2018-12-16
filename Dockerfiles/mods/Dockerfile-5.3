@@ -310,6 +310,11 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/redis || true) \
 	&& (rm -rf /usr/local/lib/php/doc/redis || true) \
 	\
+# ---- Installing PHP Extension: reflection ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) reflection \
+	&& (rm -rf /usr/local/lib/php/test/reflection || true) \
+	&& (rm -rf /usr/local/lib/php/doc/reflection || true) \
+	\
 # ---- Installing PHP Extension: rdkafka ----
 	&& pecl install rdkafka \
 	&& docker-php-ext-enable rdkafka \
@@ -542,6 +547,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^recode$' \
 	&& php -m | grep -oiE '^redis$' \
 	&& php-fpm -m | grep -oiE '^redis$' \
+	&& php -m | grep -oiE '^reflection$' \
+	&& php-fpm -m | grep -oiE '^reflection$' \
 	&& php -m | grep -oiE '^rdkafka$' \
 	&& php-fpm -m | grep -oiE '^rdkafka$' \
 	&& php -m | grep -oiE '^session$' \

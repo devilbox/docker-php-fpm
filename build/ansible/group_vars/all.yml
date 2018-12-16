@@ -725,6 +725,7 @@ extensions_enabled:
   - readline
   - recode
   - redis
+  - reflection
   - rdkafka
   - session
   - shmop
@@ -1275,6 +1276,10 @@ extensions_available:
         && make install \
     all:
       type: pecl
+  reflection:
+    disabled: [5.2, 7.3, 7.4]
+    all:
+      type: builtin
   rdkafka:
     disabled: [5.2]
     all:
