@@ -141,6 +141,7 @@ RUN set -x \
 && rm -rf /usr/local/src/awesome-ci \
  \
 	&& gem install mixlib-config -v 2.2.4 \
+&& gem install rb-inotify -v 0.9.10 \
 && gem install mdl \
 && gem install scss_lint \
 && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y eslint \
