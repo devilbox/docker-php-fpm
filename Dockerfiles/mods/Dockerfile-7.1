@@ -541,6 +541,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^recode$' \
 	&& php -m | grep -oiE '^redis$' \
 	&& php-fpm -m | grep -oiE '^redis$' \
+	&& php -m | grep -oiE '^reflection$' \
+	&& php-fpm -m | grep -oiE '^reflection$' \
 	&& php -m | grep -oiE '^rdkafka$' \
 	&& php-fpm -m | grep -oiE '^rdkafka$' \
 	&& php -m | grep -oiE '^session$' \
