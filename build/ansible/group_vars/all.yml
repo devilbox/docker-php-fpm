@@ -1025,7 +1025,7 @@ extensions_available:
     all:
       type: builtin
   mcrypt:
-    disabled: [7.4]
+    disabled: [7.3, 7.4]
     7.2:
       type: pecl
       version: 1.0.1
