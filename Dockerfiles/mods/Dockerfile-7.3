@@ -35,7 +35,6 @@ ENV BUILD_DEPS \
 	libkrb5-dev \
 	libldap2-dev \
 	libmagickwand-dev \
-	libmcrypt-dev \
 	libmemcached-dev \
 	libnghttp2-dev \
 	libpng-dev \
@@ -68,7 +67,6 @@ ENV RUN_DEPS \
 	libicu57 \
 	libjpeg62-turbo \
 	libmagickwand-6.q16-3 \
-	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
 	libpng16-16 \
@@ -185,12 +183,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
 	&& (rm -rf /usr/local/lib/php/test/ldap || true) \
 	&& (rm -rf /usr/local/lib/php/doc/ldap || true) \
-	\
-# ---- Installing PHP Extension: mcrypt ----
-	&& pecl install mcrypt-1.0.1 \
-	&& docker-php-ext-enable mcrypt \
-	&& (rm -rf /usr/local/lib/php/test/mcrypt || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mcrypt || true) \
 	\
 # ---- Installing PHP Extension: memcached ----
 	&& git clone https://github.com/php-memcached-dev/php-memcached /tmp/memcached \
@@ -461,8 +453,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
-	&& php -m | grep -oiE '^mcrypt$' \
-	&& php-fpm -m | grep -oiE '^mcrypt$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
