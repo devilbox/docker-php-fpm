@@ -24,6 +24,7 @@ ENV BUILD_DEPS \
 	libc-client-dev \
 	libcurl4-openssl-dev \
 	libenchant-dev \
+	libevent-dev \
 	libfbclient2 \
 	libfreetype6-dev \
 	libgmp-dev \
@@ -211,6 +212,12 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/mcrypt || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mcrypt || true) \
 	\
+# ---- Installing PHP Extension: msgpack ----
+	&& pecl install msgpack \
+	&& docker-php-ext-enable msgpack \
+	&& (rm -rf /usr/local/lib/php/test/msgpack || true) \
+	&& (rm -rf /usr/local/lib/php/doc/msgpack || true) \
+	\
 # ---- Installing PHP Extension: memcache ----
 	&& git clone https://github.com/websupport-sk/pecl-memcache /tmp/memcache \
 	&& cd /tmp/memcache \
@@ -223,7 +230,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/memcache || true) \
 	\
 # ---- Installing PHP Extension: memcached ----
-	&& pecl install memcached \
+	&& pecl install memcached-3.0.4 \
 	&& docker-php-ext-enable memcached \
 	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
@@ -233,12 +240,6 @@ RUN set -x \
 	&& docker-php-ext-enable mongodb \
 	&& (rm -rf /usr/local/lib/php/test/mongodb || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mongodb || true) \
-	\
-# ---- Installing PHP Extension: msgpack ----
-	&& pecl install msgpack \
-	&& docker-php-ext-enable msgpack \
-	&& (rm -rf /usr/local/lib/php/test/msgpack || true) \
-	&& (rm -rf /usr/local/lib/php/doc/msgpack || true) \
 	\
 # ---- Installing PHP Extension: mysqli ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
@@ -494,14 +495,14 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^mcrypt$' \
 	&& php-fpm -m | grep -oiE '^mcrypt$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcache$' \
 	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
 	&& php-fpm -m | grep -oiE '^mongodb$' \
-	&& php -m | grep -oiE '^msgpack$' \
-	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
 	&& php -m | grep -oiE '^mysqlnd$' \
