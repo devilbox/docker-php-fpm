@@ -27,42 +27,33 @@ PS1="${_clr_usr}${PS1_USR}${_clr_off}@${_clr_ver}php-${PS1_PHP}${_clr_off} in ${
 
 # Show Intro
 echo
-echo "--------------------------------------------------------------------------------"
-echo "                         _            _ _ _               "
-echo "                        | |          (_) | |              "
-echo "                      __| | _____   ___| | |__   _____  __"
-echo "                     / _\` |/ _ \\ \\ / / | | '_ \\ / _ \\ \\/ /"
-echo "                    | (_| |  __/\\ V /| | | |_) | (_) >  < "
-echo "                     \\__,_|\\___| \\_/ |_|_|_.__/ \\___/_/\\_\\"
-echo "                                                          "
-echo "                             http://devilbox.org"
+echo "------------------------------------------------------------------------------------------"
+echo "                              _            _ _ _               "
+echo "                             | |          (_) | |              "
+echo "                           __| | _____   ___| | |__   _____  __"
+echo "                          / _\` |/ _ \\ \\ / / | | '_ \\ / _ \\ \\/ /"
+echo "                         | (_| |  __/\\ V /| | | |_) | (_) >  < "
+echo "                          \\__,_|\\___| \\_/ |_|_|_.__/ \\___/_/\\_\\"
+echo "                                                               "
+echo "                                  http://devilbox.org"
+echo "                            https://devilbox.readthedocs.io"
 echo
 echo
-echo "              | Available Tools  | Project website              |"
-echo "              |------------------|------------------------------|"
-echo "              | awesome-ci       | gh: cytopia/awesome-ci       |"
-echo "              | composer         | https://getcomposer.org      |"
-echo "              | drupal-console   | https://drupalconsole.com    |"
-echo "              | drush            | http://www.drush.org         |"
-echo "              | eslint           | https://eslint.org           |"
-echo "              | git              | https://git-scm.com          |"
-echo "              | laravel          | gh: laravel/installer        |"
-echo "              | linuxbrew        | http://linuxbrew.sh          |"
-echo "              | mysqldump-secure | https://mysqldump-secure.org |"
-echo "              | node             | https://nodejs.org           |"
-echo "              | npm              | https://www.npmjs.com        |"
-echo "              | phalcon-devtools | gh: phalcon/phalcon-devtools |"
-echo "              | symfony installer| gh: symfony/symfony-installer|"
-echo "              | webpack          | gh: webpack/webpack          |"
-echo "              | wpcli            | https://wp-cli.org           |"
+echo
+echo "                                    Available Tools"
+echo "          https://devilbox.readthedocs.io/en/latest/readings/available-tools.html"
+echo
+echo "                           How to work inside this PHP container"
+echo " https://devilbox.readthedocs.io/en/latest/intermediate/work-inside-the-php-container.html"
 echo
 echo
-echo "              | Available Dirs   | Description                  |"
-echo "              |------------------|------------------------------|"
-echo "              | /shared/httpd    | Project base directory       |"
-echo "              | /shared/backups  | Backup directory             |"
-echo "              | /var/mail        | Email directory              |"
-echo "              | /var/log         | Log file directory           |"
 echo
-echo "--------------------------------------------------------------------------------"
+echo "                    | Available Dirs   | Description                  |"
+echo "                    |------------------|------------------------------|"
+echo "                    | /shared/httpd    | Project base directory       |"
+echo "                    | /shared/backups  | Backup directory             |"
+echo "                    | /var/mail        | Email directory              |"
+echo "                    | /var/log         | Log file directory           |"
+echo
+echo "------------------------------------------------------------------------------------------"
 echo
