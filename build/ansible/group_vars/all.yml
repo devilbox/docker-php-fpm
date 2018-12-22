@@ -719,6 +719,7 @@ extensions_enabled:
   - pdo_odbc
   - pdo_pgsql
   - pdo_sqlite
+  - pdo_sqlsrv
   - pgsql
   - phalcon
   - phar
@@ -737,6 +738,7 @@ extensions_enabled:
   - sockets
   - sodium
   - spl
+  - sqlsrv
   - swoole
   - sysvmsg
   - sysvsem
@@ -1203,6 +1205,17 @@ extensions_available:
     all:
       type: builtin
       build_dep: [libsqlite3-dev]
+  pdo_sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4]
+    7.3:
+      type: pecl
+      version: 5.5.0preview
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
   pgsql:
     all:
       type: builtin
@@ -1325,6 +1338,17 @@ extensions_available:
       build_dep: [libsodium-dev]
   spl:
     disabled: "{{ php_all_versions }}" # TODO: Did not work
+  sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4]
+    7.3:
+      type: pecl
+      version: 5.5.0preview
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
   swoole:
     disabled: [5.2]
     5.3:
