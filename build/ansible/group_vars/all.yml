@@ -696,11 +696,12 @@ extensions_enabled:
   - libxml
   - mbstring
   - mcrypt
+  - msgpack
   - memcache
+  # requires igbinary and msgpack to be installed
   - memcached
   - mongo
   - mongodb
-  - msgpack
   - mysql
   - mysqli
   - mysqlnd
@@ -1081,7 +1082,8 @@ extensions_available:
       command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
     all:
       type: pecl
-      build_dep: [zlib1g-dev, libmemcached-dev]
+      version: 3.0.4
+      build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
       run_dep: [libmemcachedutil2]
   mongo:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4] # Deprecated
