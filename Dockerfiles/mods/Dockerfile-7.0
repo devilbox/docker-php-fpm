@@ -54,6 +54,7 @@ ENV BUILD_DEPS \
 	libxslt-dev \
 	libzip-dev \
 	snmp \
+	unixodbc-dev \
 	zlib1g-dev \
 	ca-certificates \
 	git
@@ -83,6 +84,7 @@ ENV RUN_DEPS \
 	libxslt1.1 \
 	libzip4 \
 	snmp \
+	unixodbc \
 	ca-certificates
 
 
@@ -282,6 +284,12 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/pdo_pgsql || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_pgsql || true) \
 	\
+# ---- Installing PHP Extension: pdo_sqlsrv ----
+	&& pecl install pdo_sqlsrv \
+	&& docker-php-ext-enable pdo_sqlsrv \
+	&& (rm -rf /usr/local/lib/php/test/pdo_sqlsrv || true) \
+	&& (rm -rf /usr/local/lib/php/doc/pdo_sqlsrv || true) \
+	\
 # ---- Installing PHP Extension: pgsql ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
 	&& (rm -rf /usr/local/lib/php/test/pgsql || true) \
@@ -339,6 +347,12 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
 	&& (rm -rf /usr/local/lib/php/test/sockets || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sockets || true) \
+	\
+# ---- Installing PHP Extension: sqlsrv ----
+	&& pecl install sqlsrv \
+	&& docker-php-ext-enable sqlsrv \
+	&& (rm -rf /usr/local/lib/php/test/sqlsrv || true) \
+	&& (rm -rf /usr/local/lib/php/doc/sqlsrv || true) \
 	\
 # ---- Installing PHP Extension: swoole ----
 	&& pecl install swoole \
@@ -531,6 +545,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
 	&& php -m | grep -oiE '^pdo_sqlite$' \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
+	&& php -m | grep -oiE '^pdo_sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^phalcon$' \
@@ -561,6 +577,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^swoole$' \
 	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
