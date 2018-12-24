@@ -24,6 +24,7 @@ RUN set -x \
 		locales-all \
 		postfix \
 		postfix-pcre \
+		cron \
 		rsyslog \
 		socat \
 		supervisor \
@@ -74,9 +75,6 @@ COPY ./data/supervisord.conf /etc/supervisor/supervisord.conf
 ###
 ### Volumes
 ###
-VOLUME /etc/php-custom.d
-VOLUME /etc/php-fpm-custom.d
-VOLUME /etc/php-modules.d
 VOLUME /var/log/php
 VOLUME /var/mail
 
