@@ -179,6 +179,13 @@ disable_modules "DISABLE_MODULES" "${DEBUG_LEVEL}"
 
 
 ###
+### Run custom user supplied scripts
+###
+execute_custom_scripts "/startup.d" "${DEBUG_LEVEL}"
+
+
+###
+###
 ### Startup
 ###
 log "info" "Starting supervisord" "${DEBUG_LEVEL}"
