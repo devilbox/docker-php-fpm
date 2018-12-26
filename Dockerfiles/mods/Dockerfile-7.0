@@ -39,7 +39,6 @@ ENV BUILD_DEPS \
 	libnghttp2-dev \
 	libpng-dev \
 	libpq-dev \
-	libpspell-dev \
 	librabbitmq-dev \
 	librdkafka-dev \
 	librecode-dev \
@@ -60,7 +59,6 @@ ENV BUILD_DEPS \
 	git
 
 ENV RUN_DEPS \
-	libaspell15 \
 	libc-client2007e \
 	libenchant1c2a \
 	libfbclient2 \
@@ -298,16 +296,11 @@ RUN set -x \
 # ---- Installing PHP Extension: phalcon ----
 	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
 	&& cd /tmp/phalcon \
-	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g') \
+	&& git checkout $(git describe --abbrev=0 --tags) \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
 	&& (rm -rf /usr/local/lib/php/test/phalcon || true) \
 	&& (rm -rf /usr/local/lib/php/doc/phalcon || true) \
-	\
-# ---- Installing PHP Extension: pspell ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	&& (rm -rf /usr/local/lib/php/test/pspell || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pspell || true) \
 	\
 # ---- Installing PHP Extension: recode ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
@@ -553,8 +546,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^posix$' \
 	&& php-fpm -m | grep -oiE '^posix$' \
-	&& php -m | grep -oiE '^pspell$' \
-	&& php-fpm -m | grep -oiE '^pspell$' \
 	&& php -m | grep -oiE '^readline$' \
 	&& php-fpm -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \

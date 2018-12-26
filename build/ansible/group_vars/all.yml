@@ -268,7 +268,7 @@ apt_repositories_available:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
     all:
       deb: deb http://deb.nodesource.com/node_8.x jessie main
-      pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
+      pre: curl -sS "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   pgsql:
     7.2:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
@@ -278,11 +278,11 @@ apt_repositories_available:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
-      pre: curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add -
+      pre: curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
       deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 ###
@@ -1242,7 +1242,8 @@ extensions_available:
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+      git_ref: $(git describe --abbrev=0 --tags)
+      #git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
       command: cd build && ./install
   phar:
     # https://github.com/docker-library/php/issues/618
@@ -1258,6 +1259,7 @@ extensions_available:
     all:
       type: builtin
   pspell:
+    disabled: [7.0, 7.1, 7.2] # TODO: currently segfaults (https://bugs.php.net/bug.php?id=77099)
     all:
       type: builtin
       build_dep: [libpspell-dev]
