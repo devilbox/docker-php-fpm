@@ -268,7 +268,7 @@ apt_repositories_available:
       deb: deb http://deb.nodesource.com/node_8.x stretch main
     all:
       deb: deb http://deb.nodesource.com/node_8.x jessie main
-      pre: curl -q "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | apt-key add -
+      pre: curl -sS "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   pgsql:
     7.2:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
@@ -278,11 +278,11 @@ apt_repositories_available:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
-      pre: curl -q https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | apt-key add -
+      pre: curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
       deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 ###

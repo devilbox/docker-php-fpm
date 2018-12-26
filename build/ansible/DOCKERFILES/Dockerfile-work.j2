@@ -27,6 +27,7 @@ RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		curl \
 		dirmngr \
 		gnupg \
 {% for repo in apt_repositories_enabled -%}
@@ -43,11 +44,11 @@ RUN set -x \
 		{%- endif -%}
 		{#- Version specific key available? -#}
 		{%- if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] %}
-	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
 {# #}
 		{#- Generic key available? -#}
 		{%- elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] %}
-	&& apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
 {# #}
 		{%- endif -%}
 		{#- Version specific repository available? -#}
@@ -72,7 +73,6 @@ RUN set -x \
 		build-essential \
 		bzip2 \
 		coreutils \
-		curl \
 		dnsutils \
 		dos2unix \
 		file \
