@@ -16,38 +16,38 @@ set -p pipefail
 #   MY_GID
 
 # Path to scripts to source
-CONFIG_DIR="/docker-entrypoint.d"
+DVL_CONFIG_DIR="/docker-entrypoint.d"
 
 # php.ini.d directory
-PHP_INI_DIR="/usr/local/etc/php/conf.d"
+DVL_PHP_INI_DIR="/usr/local/etc/php/conf.d"
 
 # php-fpm conf.d directory
-PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
+DVL_PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
 
 # This is the log file for any mail related functions
-PHP_MAIL_LOG="/var/log/mail.log"
+DVL_PHP_MAIL_LOG="/var/log/mail.log"
 
 # This file holds error and access log definitions
-PHP_FPM_CONF_LOGFILE="${PHP_FPM_DIR}/zzz-entrypoint-logfiles.conf"
-PHP_INI_CONF_LOGFILE="${PHP_INI_DIR}/zzz-entrypoint-logfiles.ini"
+DVL_PHP_FPM_CONF_LOGFILE="${DVL_PHP_FPM_DIR}/zzz-entrypoint-logfiles.conf"
+DVL_PHP_INI_CONF_LOGFILE="${DVL_PHP_INI_DIR}/zzz-entrypoint-logfiles.ini"
 
 # PHP-FPM log dir
-FPM_LOG_DIR="/var/log/php"
+DVL_FPM_LOG_DIR="/var/log/php"
 
 # Custom ini dir (to be copied to actual ini dir)
-PHP_CUST_INI_DIR="/etc/php-custom.d"
+DVL_PHP_CUST_INI_DIR="/etc/php-custom.d"
 
 # Custom PHP-FPM dir (to be copied to actual FPM conf dir)
-PHP_CUST_FPM_DIR="/etc/php-fpm-custom.d"
+DVL_PHP_CUST_FPM_DIR="/etc/php-fpm-custom.d"
 
 # Supervisord config directory
-SUPERVISOR_CONFD="/etc/supervisor/conf.d"
+DVL_SUPERVISOR_CONFD="/etc/supervisor/conf.d"
 
 
 ###
 ### Source libs
 ###
-init="$( find "${CONFIG_DIR}" -name '*.sh' -type f | sort -u )"
+init="$( find "${DVL_CONFIG_DIR}" -name '*.sh' -type f | sort -u )"
 for f in ${init}; do
 	# shellcheck disable=SC1090
 	. "${f}"
@@ -76,7 +76,7 @@ set_gid "NEW_GID" "${MY_GROUP}" "/home/${MY_USER}" "${DEBUG_LEVEL}"
 ###
 ### Set timezone
 ###
-set_timezone "TIMEZONE" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
+set_timezone "TIMEZONE" "${DVL_PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
@@ -92,9 +92,9 @@ fi
 ###
 set_docker_logs \
 	"DOCKER_LOGS" \
-	"${FPM_LOG_DIR}" \
-	"${PHP_FPM_CONF_LOGFILE}" \
-	"${PHP_INI_CONF_LOGFILE}" \
+	"${DVL_FPM_LOG_DIR}" \
+	"${DVL_PHP_FPM_CONF_LOGFILE}" \
+	"${DVL_PHP_INI_CONF_LOGFILE}" \
 	"${MY_USER}" \
 	"${MY_GROUP}" \
 	"${DEBUG_LEVEL}"
@@ -105,10 +105,10 @@ set_docker_logs \
 ###
 if is_docker_logs_enabled "DOCKER_LOGS" >/dev/null; then
 	# PHP mail function should log to stderr
-	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "/proc/self/fd/2" "1" "${DEBUG_LEVEL}"
+	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${DVL_PHP_INI_DIR}" "/proc/self/fd/2" "1" "${DEBUG_LEVEL}"
 else
 	# PHP mail function should log to file
-	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${PHP_INI_DIR}" "${PHP_MAIL_LOG}" "0" "${DEBUG_LEVEL}"
+	set_postfix "ENABLE_MAIL" "${MY_USER}" "${MY_GROUP}" "${DVL_PHP_INI_DIR}" "${DVL_PHP_MAIL_LOG}" "0" "${DEBUG_LEVEL}"
 fi
 
 
@@ -130,7 +130,7 @@ for line in $( port_forward_get_lines "FORWARD_PORTS_TO_LOCALHOST" ); do
 	supervisor_add_service \
 		"socat-${lport}-${rhost}-${rport}" \
 		"/usr/bin/socat tcp-listen:${lport},reuseaddr,fork tcp:${rhost}:${rport}" \
-		"${SUPERVISOR_CONFD}" \
+		"${DVL_SUPERVISOR_CONFD}" \
 		"${DEBUG_LEVEL}"
 done
 
@@ -139,30 +139,30 @@ done
 ### Supervisor: rsyslogd & postfix
 ###
 if [ "$( env_get "ENABLE_MAIL" )" = "1" ]; then
-	supervisor_add_service "rsyslogd" "/usr/sbin/rsyslogd -n"      "${SUPERVISOR_CONFD}" "${DEBUG_LEVEL}" "1"
-	supervisor_add_service "postfix"  "/usr/local/sbin/postfix.sh" "${SUPERVISOR_CONFD}" "${DEBUG_LEVEL}"
+	supervisor_add_service "rsyslogd" "/usr/sbin/rsyslogd -n"      "${DVL_SUPERVISOR_CONFD}" "${DEBUG_LEVEL}" "1"
+	supervisor_add_service "postfix"  "/usr/local/sbin/postfix.sh" "${DVL_SUPERVISOR_CONFD}" "${DEBUG_LEVEL}"
 fi
 
 
 ###
 ### Supervisor: php-fpm
 ###
-supervisor_add_service "php-fpm"  "/usr/local/sbin/php-fpm" "${SUPERVISOR_CONFD}" "${DEBUG_LEVEL}"
+supervisor_add_service "php-fpm"  "/usr/local/sbin/php-fpm" "${DVL_SUPERVISOR_CONFD}" "${DEBUG_LEVEL}"
 
 
 ###
 ### Copy custom *.ini files
 ###
-copy_ini_files "${PHP_CUST_INI_DIR}" "${PHP_INI_DIR}" "${DEBUG_LEVEL}"
+copy_ini_files "${DVL_PHP_CUST_INI_DIR}" "${DVL_PHP_INI_DIR}" "${DEBUG_LEVEL}"
 
 
 ###
 ### Copy custom PHP-FPM *.conf files
 ###
 if [ "${PHP_VERSION}" = "5.2" ]; then
-	copy_fpm_5_2_conf_file "${PHP_CUST_FPM_DIR}/php-fpm.xml" "${DEBUG_LEVEL}"
+	copy_fpm_5_2_conf_file "${DVL_PHP_CUST_FPM_DIR}/php-fpm.xml" "${DEBUG_LEVEL}"
 else
-	copy_fpm_files "${PHP_CUST_FPM_DIR}" "${PHP_FPM_DIR}" "${DEBUG_LEVEL}"
+	copy_fpm_files "${DVL_PHP_CUST_FPM_DIR}" "${DVL_PHP_FPM_DIR}" "${DEBUG_LEVEL}"
 fi
 
 
