@@ -1242,7 +1242,8 @@ extensions_available:
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+      git_ref: $(git describe --abbrev=0 --tags)
+      #git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
       command: cd build && ./install
   phar:
     # https://github.com/docker-library/php/issues/618
