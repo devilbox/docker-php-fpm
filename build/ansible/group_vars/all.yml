@@ -1222,7 +1222,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.3, 7.4]
+    disabled: [5.2, 7.4]
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -1233,17 +1233,30 @@ extensions_available:
       git_url: https://github.com/phalcon/cphalcon
       git_ref: phalcon-v2.0.13
       command: cd build && ./install
-#    7.3:
-#      type: git
-#      git_url: https://github.com/phalcon/cphalcon
-#      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
-#      # TODO: Workaround to make it compile on PHP 7.3
-#      command: cd build && echo > php7/64bits/phalcon.zep.c && ./install
+    5.5:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    5.6:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    7.0:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    7.1:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: $(git describe --abbrev=0 --tags)
-      #git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | tail -1 | sed 's/^.*tags\///g')
+      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1)
       command: cd build && ./install
   phar:
     # https://github.com/docker-library/php/issues/618
@@ -1259,7 +1272,7 @@ extensions_available:
     all:
       type: builtin
   pspell:
-    disabled: [7.0, 7.1, 7.2] # TODO: currently segfaults (https://bugs.php.net/bug.php?id=77099)
+    disabled: [7.0, 7.1, 7.2, 7.3] # TODO: currently segfaults (https://bugs.php.net/bug.php?id=77099)
     all:
       type: builtin
       build_dep: [libpspell-dev]
