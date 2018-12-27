@@ -1253,11 +1253,6 @@ extensions_available:
       git_url: https://github.com/phalcon/cphalcon
       git_ref: v3.4.2
       command: cd build && ./install
-    7.3:
-      type: git
-      git_url: https://github.com/phalcon/cphalcon
-      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | tail -1)
-      command: cd build && ./install
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon

@@ -251,7 +251,7 @@ RUN set -x \
 # ---- Installing PHP Extension: phalcon ----
 	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
 	&& cd /tmp/phalcon \
-	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | tail -1) \
+	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1) \
 	&& cd build && ./install \
 	&& docker-php-ext-enable phalcon \
 	&& (rm -rf /usr/local/lib/php/test/phalcon || true) \
