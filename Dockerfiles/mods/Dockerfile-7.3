@@ -187,11 +187,14 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/ldap || true) \
 	&& (rm -rf /usr/local/lib/php/doc/ldap || true) \
 	\
+# ---- Installing PHP Extension: msgpack ----
+	&& pecl install msgpack \
+	&& docker-php-ext-enable msgpack \
+	&& (rm -rf /usr/local/lib/php/test/msgpack || true) \
+	&& (rm -rf /usr/local/lib/php/doc/msgpack || true) \
+	\
 # ---- Installing PHP Extension: memcached ----
-	&& git clone https://github.com/php-memcached-dev/php-memcached /tmp/memcached \
-	&& cd /tmp/memcached \
-	&& git checkout master \
-	&& phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install \
+	&& pecl install memcached \
 	&& docker-php-ext-enable memcached \
 	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
@@ -477,6 +480,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
@@ -518,7 +523,6 @@ RUN set -x \
 	&& php -m | grep -oiE '^pspell$' \
 	&& php-fpm -m | grep -oiE '^pspell$' \
 	&& php -m | grep -oiE '^readline$' \
-	&& php-fpm -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \
 	&& php-fpm -m | grep -oiE '^recode$' \
 	&& php -m | grep -oiE '^redis$' \
@@ -541,6 +545,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^sodium$' \
 	&& php-fpm -m | grep -oiE '^sodium$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^swoole$' \

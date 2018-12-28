@@ -480,7 +480,6 @@ RUN set -x \
 	&& php -m | grep -oiE '^pspell$' \
 	&& php-fpm -m | grep -oiE '^pspell$' \
 	&& php -m | grep -oiE '^readline$' \
-	&& php-fpm -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \
 	&& php-fpm -m | grep -oiE '^recode$' \
 	&& php -m | grep -oiE '^redis$' \
@@ -499,6 +498,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \

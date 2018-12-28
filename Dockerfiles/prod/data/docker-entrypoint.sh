@@ -181,7 +181,8 @@ disable_modules "DISABLE_MODULES" "${DEBUG_LEVEL}"
 ###
 ### Run custom user supplied scripts
 ###
-execute_custom_scripts "/startup.d" "${DEBUG_LEVEL}"
+execute_custom_scripts "/startup.1.d" "${DEBUG_LEVEL}"
+execute_custom_scripts "/startup.2.d" "${DEBUG_LEVEL}"
 
 
 ###

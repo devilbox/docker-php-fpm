@@ -35,9 +35,15 @@ get_modules() {
 
 	# Retrieve all modules
 	PHP_MODULES="$( docker run -it --entrypoint=php devilbox/php-fpm:${tag} -m )"
+	ALL_MODULES=
+
+	if docker run -it --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
+		ALL_MODULES="ioncube";
+	fi
 
 	# Process module string into correct format for README.md
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/^\[.*//g' )" # Remove PHP Modules headlines
+	PHP_MODULES="${ALL_MODULES}${PHP_MODULES}"                  # Append all available modules
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sort -fu )"         # Unique
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed '/^\s*$/d' )"   # Remove empty lines
 	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\r\n' ',' )"    # Newlines to commas

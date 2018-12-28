@@ -250,6 +250,8 @@ echo 'fi'; \
 	&& curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
  \
+# pm2
+	&& until npm install pm2 -g; do sleep 1; done \
 # sass
 	&& gem install sass \
 # webpack
@@ -359,6 +361,7 @@ RUN set -x \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
+	&& pm2 --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
