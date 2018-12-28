@@ -598,6 +598,7 @@ software_available:
         && ln -s {{ compose_home }}/vendor/photoncms/installer/photon /usr/local/bin/photon \
   # https://github.com/Unitech/pm2
   pm2:
+    check: pm2 --version | grep -E '[.0-9]+'
     all:
       command: until npm install pm2 -g; do sleep 1; done
   sass:
