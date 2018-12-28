@@ -1248,7 +1248,6 @@ extensions_available:
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
   readline:
-    disabled: [5.3]
     already_avail: "{{ php_all_versions }}"
   recode:
     already_avail: [5.3, 5.4]
