@@ -205,6 +205,8 @@ RUN set -x \
 	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
+# pm2
+	&& until npm install pm2 -g; do sleep 1; done \
 # sass
 	&& gem install sass \
 # webpack

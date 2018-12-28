@@ -265,6 +265,8 @@ RUN set -x \
 	&& curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
  \
+# pm2
+	&& until npm install pm2 -g; do sleep 1; done \
 # sass
 	&& gem install sass \
 # symfony
