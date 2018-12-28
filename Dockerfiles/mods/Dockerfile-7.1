@@ -231,7 +231,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/memcache || true) \
 	\
 # ---- Installing PHP Extension: memcached ----
-	&& pecl install memcached-3.0.4 \
+	&& pecl install memcached \
 	&& docker-php-ext-enable memcached \
 	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
@@ -574,6 +574,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^swoole$' \

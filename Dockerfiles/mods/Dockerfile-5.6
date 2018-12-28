@@ -536,6 +536,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^phalcon$' \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
+	&& php -m | grep -oiE '^phar$' \
+	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
 	&& php-fpm -m | grep -oiE '^posix$' \
 	&& php -m | grep -oiE '^pspell$' \
@@ -562,6 +564,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^swoole$' \
 	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \

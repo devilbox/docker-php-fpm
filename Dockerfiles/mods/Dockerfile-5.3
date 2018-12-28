@@ -300,6 +300,11 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/phalcon || true) \
 	&& (rm -rf /usr/local/lib/php/doc/phalcon || true) \
 	\
+# ---- Installing PHP Extension: phar ----
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) phar \
+	&& (rm -rf /usr/local/lib/php/test/phar || true) \
+	&& (rm -rf /usr/local/lib/php/doc/phar || true) \
+	\
 # ---- Installing PHP Extension: pspell ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
 	&& (rm -rf /usr/local/lib/php/test/pspell || true) \
@@ -539,6 +544,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^posix$' \
 	&& php -m | grep -oiE '^pspell$' \
 	&& php-fpm -m | grep -oiE '^pspell$' \
+	&& php -m | grep -oiE '^readline$' \
+	&& php-fpm -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \
 	&& php-fpm -m | grep -oiE '^recode$' \
 	&& php -m | grep -oiE '^redis$' \
@@ -559,6 +566,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^swoole$' \
 	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \

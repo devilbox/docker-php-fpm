@@ -231,7 +231,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/memcache || true) \
 	\
 # ---- Installing PHP Extension: memcached ----
-	&& pecl install memcached-3.0.4 \
+	&& pecl install memcached \
 	&& docker-php-ext-enable memcached \
 	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
 	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
@@ -256,11 +256,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
 	&& (rm -rf /usr/local/lib/php/test/pcntl || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pcntl || true) \
-	\
-# ---- Installing PHP Extension: pdo ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo \
-	&& (rm -rf /usr/local/lib/php/test/pdo || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo || true) \
 	\
 # ---- Installing PHP Extension: pdo_dblib ----
 	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
@@ -551,6 +546,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^phalcon$' \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
+	&& php -m | grep -oiE '^phar$' \
+	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
 	&& php-fpm -m | grep -oiE '^posix$' \
 	&& php -m | grep -oiE '^pspell$' \
@@ -577,6 +574,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^soap$' \
 	&& php -m | grep -oiE '^sockets$' \
 	&& php-fpm -m | grep -oiE '^sockets$' \
+	&& php -m | grep -oiE '^spl$' \
+	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^swoole$' \
