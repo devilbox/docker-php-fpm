@@ -760,7 +760,7 @@ Have a look at the following table to see all offered volumes for each Docker im
  </thead>
  <tbody>
   <tr>
-   <td rowspan="6"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="7"><strong>prod</strong><br/><br/><strong>work</strong></td>
    <td><code>/etc/php-custom.d</code></td>
    <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
   </tr>
@@ -773,8 +773,12 @@ Have a look at the following table to see all offered volumes for each Docker im
    <td>Mount this directory into your host computer and add custo <code>\*.so</code> files in order to add your php modules.<br/><br/><strong>Note:</strong>Your should then also provide a custom <code>\*.ini</code> file in order to actually load your custom provided module.</td>
   </tr>
   <tr>
-   <td><code>/startup.d</code></td>
-   <td>Any executable scripts ending by <code>\*.sh</code> found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up.</td>
+   <td><code>/startup.1.d</code></td>
+   <td>Any executable scripts ending by <code>\*.sh</code> found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run before <code>/startup.2.d</code>)</td>
+  </tr>
+  <tr>
+   <td><code>/startup.2.d</code></td>
+   <td>Any executable scripts ending by <code>\*.sh</code> found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run after <code>/startup.1.d</code>)</td>
   </tr>
   <tr>
    <td><code>/var/log/php</code></td>

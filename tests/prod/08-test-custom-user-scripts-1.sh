@@ -23,7 +23,7 @@ FLAVOUR="${3}"
 ### Check if PHP still starts up with working scripts
 ###
 RUN_SH_HOST="$( mktemp -d )"
-RUN_SH_CONT="/startup.d"
+RUN_SH_CONT="/startup.1.d"
 
 # Fix mount permissions
 chmod 0777 "${RUN_SH_HOST}"
