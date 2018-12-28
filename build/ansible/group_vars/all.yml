@@ -1272,7 +1272,6 @@ extensions_available:
     all:
       type: builtin
   pspell:
-    disabled: [7.0, 7.1, 7.2, 7.3] # TODO: currently segfaults (https://bugs.php.net/bug.php?id=77099)
     all:
       type: builtin
       build_dep: [libpspell-dev]
