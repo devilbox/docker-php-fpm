@@ -278,6 +278,8 @@ RUN set -x \
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
 && ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
  \
+# pm2
+	&& until npm install pm2 -g; do sleep 1; done \
 # sass
 	&& gem install sass \
 # symfony
@@ -396,6 +398,7 @@ RUN set -x \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& photon --version | grep -E 'Installer [.0-9]+' \
+	&& pm2 --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \

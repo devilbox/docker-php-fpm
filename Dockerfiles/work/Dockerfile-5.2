@@ -205,6 +205,8 @@ RUN set -x \
 	&& curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
+# pm2
+	&& until npm install pm2 -g; do sleep 1; done \
 # sass
 	&& gem install sass \
 # webpack
@@ -306,6 +308,7 @@ RUN set -x \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& pm2 --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \

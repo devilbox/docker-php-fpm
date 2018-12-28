@@ -225,6 +225,9 @@ RUN set -x \
 	&& php -m | grep -oiE '^Zend Opcache$' \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
 {# #}
+		{%- elif ext == 'readline' %}
+	&& php -m | grep -oiE '^readline$' \
+{# #}
 		{%- elif ext not in ['ioncube'] %}
 	&& php -m | grep -oiE '^{{ ext }}$' \
 	&& php-fpm -m | grep -oiE '^{{ ext }}$' \

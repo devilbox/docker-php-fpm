@@ -220,6 +220,7 @@ software_enabled:
   - phpcbf
   - phpunit
   - photon
+  - pm2
   - sass
   - symfony
   - webpack
@@ -595,6 +596,11 @@ software_available:
       command: |
         COMPOSER_HOME="{{ compose_home }}" composer global require "photoncms/installer" \
         && ln -s {{ compose_home }}/vendor/photoncms/installer/photon /usr/local/bin/photon \
+  # https://github.com/Unitech/pm2
+  pm2:
+    check: pm2 --version | grep -E '[.0-9]+'
+    all:
+      command: until npm install pm2 -g; do sleep 1; done
   sass:
     check: sass --version | grep -E '[.0-9]+'
     all:
@@ -828,23 +834,14 @@ extensions_available:
     all:
       type: builtin
   ctype:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   curl:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      build_dep: [libcurl4-openssl-dev]
+    already_avail: "{{ php_all_versions }}"
   dba:
     all:
       type: builtin
   dom:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-libxml-dir=/usr
-      build_dep: [libxml2-dev]
+    already_avail: "{{ php_all_versions }}"
   enchant:
     5.2:
       type: pecl
@@ -936,13 +933,9 @@ extensions_available:
       pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
       build_dep: [libgmp-dev]
   hash:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   iconv:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   igbinary:
     5.2:
       type: pecl
@@ -1009,12 +1002,7 @@ extensions_available:
         && rm -rf ioncube \
         && rm -rf ioncube.tar.gz \
   json:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    7.0:
-      type: builtin
-      build_dep: [bison]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   ldap:
     all:
       type: builtin
@@ -1072,11 +1060,6 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.2.0
-    7.3:
-      type: git
-      git_url: https://github.com/php-memcached-dev/php-memcached
-      git_ref: master
-      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
     7.4:
       type: git
       git_url: https://github.com/php-memcached-dev/php-memcached
@@ -1084,7 +1067,7 @@ extensions_available:
       command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
     all:
       type: pecl
-      version: 3.0.4
+      #version: 3.0.4 # TODO: check if this version works
       build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
       run_dep: [libmemcachedutil2]
   mongo:
@@ -1108,7 +1091,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: [7.3, 7.4]
+    disabled: [7.4]
     5.2:
       type: pecl
       version: 0.5.7
@@ -1159,18 +1142,14 @@ extensions_available:
     all:
       type: builtin
   openssl:
-    already_avail: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}"
   pcntl:
     all:
       type: builtin
   pcre:
-    already_avail: "{{ php_all_versions }}" # Available by default
+    already_avail: "{{ php_all_versions }}"
   pdo:
-    # https://github.com/docker-library/php/issues/618
-    #disabled: [7.0] # TODO: Currently disabled due to bug in built
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   pdo_dblib:
     all:
       type: builtin
@@ -1201,10 +1180,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   pdo_sqlite:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      build_dep: [libsqlite3-dev]
+    already_avail: "{{ php_all_versions }}"
   pdo_sqlsrv:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4]
     7.3:
@@ -1259,29 +1235,19 @@ extensions_available:
       git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1)
       command: cd build && ./install
   phar:
-    # https://github.com/docker-library/php/issues/618
-    disabled: [5.6, 7.0] # TODO: Currently disabled due to bug in built
-    already_avail: [5.3, 5.4, 5.5, 7.1, 7.2, 7.3, 7.4]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
     5.2:
       type: pecl
-    all:
-      type: builtin
       build_dep: [libssl-dev]
   posix:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   pspell:
     all:
       type: builtin
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
   readline:
-    disabled: [5.3]
-    already_avail: [5.2, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      build_dep: [libedit-dev, libreadline-dev]
+    already_avail: "{{ php_all_versions }}"
   recode:
     already_avail: [5.3, 5.4]
     all:
@@ -1315,20 +1281,12 @@ extensions_available:
       build_dep: [librdkafka-dev]
       run_dep: [librdkafka1]
   session:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-mm
-      build_dep: [libmm-dev]
+    already_avail: "{{ php_all_versions }}"
   shmop:
     all:
       type: builtin
   simplexml:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-libxml-dir=/usr
-      build_dep: [libxml2-dev]
+    already_avail: "{{ php_all_versions }}"
   snmp:
     all:
       type: builtin
@@ -1351,7 +1309,7 @@ extensions_available:
       type: builtin
       build_dep: [libsodium-dev]
   spl:
-    disabled: "{{ php_all_versions }}" # TODO: Did not work
+    already_avail: "{{ php_all_versions }}"
   sqlsrv:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4]
     7.3:
@@ -1445,9 +1403,7 @@ extensions_available:
       build_dep: [libtidy-dev]
       run_dep: [libtidy5]
   tokenizer:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}"
   uploadprogress:
     7.0:
       type: git
@@ -1499,28 +1455,16 @@ extensions_available:
     all:
       type: pecl
   xml:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-libxml-dir=/usr
-      build_dep: [libxml2-dev]
+    already_avail: "{{ php_all_versions }}"
   xmlreader:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-libxml-dir=/usr
-      build_dep: [libxml2-dev]
+    already_avail: "{{ php_all_versions }}"
   xmlrpc:
     all:
       type: builtin
       configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
       build_dep: [libxml2-dev]
   xmlwriter:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
-    all:
-      type: builtin
-      configure: --with-libxml-dir=/usr
-      build_dep: [libxml2-dev]
+    already_avail: "{{ php_all_versions }}"
   xsl:
     all:
       type: builtin
