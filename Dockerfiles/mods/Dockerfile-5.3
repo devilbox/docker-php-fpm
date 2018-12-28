@@ -300,11 +300,6 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/phalcon || true) \
 	&& (rm -rf /usr/local/lib/php/doc/phalcon || true) \
 	\
-# ---- Installing PHP Extension: phar ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) phar \
-	&& (rm -rf /usr/local/lib/php/test/phar || true) \
-	&& (rm -rf /usr/local/lib/php/doc/phar || true) \
-	\
 # ---- Installing PHP Extension: pspell ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
 	&& (rm -rf /usr/local/lib/php/test/pspell || true) \
