@@ -122,7 +122,18 @@ RUN set -x \
 
 RUN set -x \
 # composer
-	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer-binary \
+	&& { \
+echo '#!/bin/bash'; \
+echo 'if [ -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ]; then'; \
+echo '	sudo mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk'; \
+echo 'fi'; \
+echo 'composer-binary "$@"'; \
+echo 'if [ -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk ]; then'; \
+echo '  sudo mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'; \
+echo 'fi'; \
+} > /usr/local/bin/composer \
+ \
 # ansible
 	&& /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
 && /usr/local/bin/pip install --no-cache-dir ansible \
