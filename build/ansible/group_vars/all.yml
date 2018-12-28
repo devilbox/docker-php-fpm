@@ -344,7 +344,17 @@ software_available:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
     all:
-      command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer-binary
+      post: { \
+        echo '#!/bin/bash'; \
+        echo "if [ -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ]; then"; \
+        echo "	sudo mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk"; \
+        echo "fi"; \
+        echo 'composer-binary "$@"'; \
+        echo "if [ -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk ]; then"; \
+        echo "  sudo mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.bk /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"; \
+        echo "fi"; \
+        } > /usr/local/bin/composer \
   deployer:
     disabled: [5.2, 5.3]
     check: dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+'
