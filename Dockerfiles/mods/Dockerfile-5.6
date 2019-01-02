@@ -131,6 +131,17 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/bcmath || true) \
 	&& (rm -rf /usr/local/lib/php/doc/bcmath || true) \
 	\
+# ---- Installing PHP Extension: blackfire ----
+	&& version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+&& curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+&& mkdir -p /tmp/blackfire \
+&& tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+&& mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
+ \
+	&& (rm -rf /usr/local/lib/php/test/blackfire || true) \
+	&& (rm -rf /usr/local/lib/php/doc/blackfire || true) \
+	\
 # ---- Installing PHP Extension: bz2 ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
 	&& (rm -rf /usr/local/lib/php/test/bz2 || true) \

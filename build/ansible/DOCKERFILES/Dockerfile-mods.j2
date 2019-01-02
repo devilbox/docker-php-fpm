@@ -228,7 +228,7 @@ RUN set -x \
 		{%- elif ext == 'readline' %}
 	&& php -m | grep -oiE '^readline$' \
 {# #}
-		{%- elif ext not in ['ioncube'] %}
+		{%- elif ext not in ['blackfire', 'ioncube'] %}
 	&& php -m | grep -oiE '^{{ ext }}$' \
 	&& php-fpm -m | grep -oiE '^{{ ext }}$' \
 {# #}
