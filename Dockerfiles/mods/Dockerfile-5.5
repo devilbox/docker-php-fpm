@@ -108,7 +108,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/ioncube || true) \
 	\
 # ---- Installing PHP Extension: amqp ----
-	&& echo "/usr" | pecl install amqp \
+	&& pecl install amqp-1.9.3 \
 	&& docker-php-ext-enable amqp \
 	&& (rm -rf /usr/local/lib/php/test/amqp || true) \
 	&& (rm -rf /usr/local/lib/php/doc/amqp || true) \

@@ -803,10 +803,16 @@ extensions_available:
       type: pecl
       version: 1.4.0
     5.3:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     5.4:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     5.5:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     all:
       type: pecl
