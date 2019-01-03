@@ -18,10 +18,8 @@ LABEL \
 ### Envs
 ###
 ENV BUILD_DEPS \
-	alien \
 	firebird-dev \
 	freetds-dev \
-	libaio-dev \
 	libbz2-dev \
 	libc-client-dev \
 	libcurl4-openssl-dev \
@@ -58,7 +56,6 @@ ENV BUILD_DEPS \
 	git
 
 ENV RUN_DEPS \
-	libaio1 \
 	libaspell15 \
 	libc-client2007e \
 	libenchant1c2a \
@@ -255,23 +252,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& (rm -rf /usr/local/lib/php/test/mysqli || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mysqli || true) \
-	\
-# ---- Installing PHP Extension: oci8 ----
-	&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-&& curl -o /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
-&& curl -o /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-&& ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true \
- \
-	&& /usr/local/bin/docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3 \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
-	&& (rm -rf /usr/local/lib/php/test/oci8 || true) \
-	&& (rm -rf /usr/local/lib/php/doc/oci8 || true) \
 	\
 # ---- Installing PHP Extension: opcache ----
 	&& pecl install zendopcache \
@@ -529,8 +509,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
 	&& php -m | grep -oiE '^mysqlnd$' \
 	&& php-fpm -m | grep -oiE '^mysqlnd$' \
-	&& php -m | grep -oiE '^oci8$' \
-	&& php-fpm -m | grep -oiE '^oci8$' \
 	&& php -m | grep -oiE '^Zend Opcache$' \
 	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
 	&& php -m | grep -oiE '^openssl$' \
