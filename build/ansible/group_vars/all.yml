@@ -185,6 +185,7 @@ compose_home: /usr/local/src/composer
 ###
 apt_repositories_enabled:
   - backports
+  - blackfire
   - git
   - mongo
   - node
@@ -246,6 +247,10 @@ apt_repositories_available:
   backports:
     all:
       deb: deb http://ftp.debian.org/debian jessie-backports main
+  blackfire:
+    all:
+      deb: deb http://packages.blackfire.io/debian any main
+      pre: curl -sS "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   git:
     7.2:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
@@ -676,6 +681,7 @@ extensions_enabled:
   - amqp
   - apcu
   - bcmath
+  - blackfire
   - bz2
   - calendar
   - ctype
@@ -797,10 +803,16 @@ extensions_available:
       type: pecl
       version: 1.4.0
     5.3:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     5.4:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     5.5:
+      type: pecl
+      version: 1.9.3
       run_dep: [librabbitmq1]
     all:
       type: pecl
@@ -826,6 +838,17 @@ extensions_available:
   bcmath:
     all:
       type: builtin
+  blackfire:
+    disabled: [5.2, 5.3, 5.4, 5.5, 7.4]
+    all:
+      type: custom
+      command: |
+        version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+        && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+        && mkdir -p /tmp/blackfire \
+        && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+        && mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+        && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
   bz2:
     all:
       type: builtin
@@ -1126,7 +1149,7 @@ extensions_available:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
   oci8:
-    disabled: [5.2]
+    disabled: [5.2, 5.3, 5.4, 5.5]
     all:
       type: builtin
       configure: --with-oci8=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3

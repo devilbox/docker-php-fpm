@@ -38,7 +38,11 @@ get_modules() {
 	ALL_MODULES=
 
 	if docker run -it --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
-		ALL_MODULES="ioncube";
+		ALL_MODULES="${ALL_MODULES},ioncube";
+	fi
+
+	if docker run -it --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
+		ALL_MODULES="${ALL_MODULES},blackfire";
 	fi
 
 	# Process module string into correct format for README.md
@@ -47,7 +51,14 @@ get_modules() {
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sort -fu )"         # Unique
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed '/^\s*$/d' )"   # Remove empty lines
 	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\r\n' ',' )"    # Newlines to commas
+	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\n' ',' )"      # Newlines to commas
+	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\r' ',' )"      # Newlines to commas
+	PHP_MODULES="$( echo "${PHP_MODULES}" | sed	's/^M/,/g' )"   # Newlines to commas
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,,/,/g' )"   # Remove PHP Modules headlines
+	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,/\n/g' )"   # Back to newlines
+	PHP_MODULES="$( echo "${PHP_MODULES}" | sort -fu )"         # Unique
+	PHP_MODULES="$( echo "${PHP_MODULES}" | sed '/^\s*$/d' )"   # Remove empty lines
+	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\n' ',' )"      # Newlines to commas
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,$//g' )"    # Remove trailing comma
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,/, /g' )"   # Add space to comma
 
