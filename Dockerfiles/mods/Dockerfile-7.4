@@ -204,7 +204,7 @@ RUN set -x \
 && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
 && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
 && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-&& ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true \
+&& (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
  \
 	&& /usr/local/bin/docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3 \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
@@ -248,7 +248,7 @@ RUN set -x \
 && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
 && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
 && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-&& ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true \
+&& (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
  \
 	&& /usr/local/bin/docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3 \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_oci \

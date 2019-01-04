@@ -1149,7 +1149,7 @@ extensions_available:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
   oci8:
-    disabled: [5.2, 5.3, 5.4, 5.5]
+    disabled: [5.2]
     all:
       type: builtin
       configure: --with-oci8=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
@@ -1163,7 +1163,7 @@ extensions_available:
         && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-        && ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true \
+        && (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
       build_dep: [alien, libaio-dev]
       run_dep: [libaio1]
   odbc:
@@ -1230,7 +1230,7 @@ extensions_available:
         && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
-        && ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true \
+        && (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
       build_dep: [alien]
   pdo_odbc:
     disabled: "{{ php_all_versions }}" # TODO: Build errors
