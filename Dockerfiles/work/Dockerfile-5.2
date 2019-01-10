@@ -311,7 +311,7 @@ RUN set -x \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
-	&& pm2 --version | grep -E '[.0-9]+' \
+	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
