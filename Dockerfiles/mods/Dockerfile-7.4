@@ -29,6 +29,7 @@ ENV BUILD_DEPS \
 	libenchant-dev \
 	libevent-dev \
 	libfbclient2 \
+	libffi-dev \
 	libfreetype6-dev \
 	libgmp-dev \
 	libhiredis-dev \
@@ -65,6 +66,7 @@ ENV RUN_DEPS \
 	libc-client2007e \
 	libenchant1c2a \
 	libfbclient2 \
+	libffi6 \
 	libfreetype6 \
 	libhiredis0.13 \
 	libicu57 \
@@ -125,6 +127,20 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
 	&& (rm -rf /usr/local/lib/php/test/exif || true) \
 	&& (rm -rf /usr/local/lib/php/doc/exif || true) \
+	\
+# ---- Installing PHP Extension: ffi ----
+	&& git clone https://github.com/dstogov/php-ffi /tmp/ffi \
+	&& cd /tmp/ffi \
+	&& curl -sS -O https://github.com/fpoirotte/php-ffi/commit/734630fe3d2e3efd343d3f3636b58446abd9c941.diff \
+&& git apply 734630fe3d2e3efd343d3f3636b58446abd9c941.diff \
+&& phpize \
+&& ./configure --with-ffi \
+&& make -j$(getconf _NPROCESSORS_ONLN) \
+&& make install \
+ \
+	&& docker-php-ext-enable ffi \
+	&& (rm -rf /usr/local/lib/php/test/ffi || true) \
+	&& (rm -rf /usr/local/lib/php/doc/ffi || true) \
 	\
 # ---- Installing PHP Extension: gd ----
 	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
@@ -444,6 +460,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^enchant$' \
 	&& php -m | grep -oiE '^exif$' \
 	&& php-fpm -m | grep -oiE '^exif$' \
+	&& php -m | grep -oiE '^ffi$' \
+	&& php-fpm -m | grep -oiE '^ffi$' \
 	&& php -m | grep -oiE '^fileinfo$' \
 	&& php-fpm -m | grep -oiE '^fileinfo$' \
 	&& php -m | grep -oiE '^filter$' \
