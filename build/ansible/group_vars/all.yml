@@ -219,6 +219,7 @@ software_enabled:
   - phalcon
   - phpcs
   - phpcbf
+  - php-cs-fixer
   - phpunit
   - photon
   - pm2
@@ -567,6 +568,25 @@ software_available:
       command: |
         curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
+  php-cs-fixer:
+    disabled: [5.2, 7.4]
+    check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
+    5.3:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    5.4:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    5.5:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    all:
+      command: |
+        curl -sS -L https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
   phpunit:
     disabled: [5.2]
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'

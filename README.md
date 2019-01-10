@@ -968,6 +968,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>PHP Code Beautifier and Fixer.</td>
   </tr>
   <tr>
+   <td><a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer">php-cs-fixer</a></td>
+   <td>A tool to automatically fix PHP Coding Standards issues.</td>
+  </tr>
+  <tr>
    <td><a href="https://photoncms.com/resources/installing">photon</a></td>
    <td>Photon CMS cli.</td>
   </tr>

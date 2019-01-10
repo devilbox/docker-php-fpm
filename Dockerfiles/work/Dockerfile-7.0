@@ -284,6 +284,10 @@ RUN set -x \
 	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
+# php-cs-fixer
+	&& curl -sS -L https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+&& chmod +x /usr/local/bin/php-cs-fixer \
+ \
 # phpunit
 	&& curl -qL https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
@@ -411,6 +415,7 @@ RUN set -x \
 	&& phalcon commands | grep -E '[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& photon --version | grep -E 'Installer [.0-9]+' \
 	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
