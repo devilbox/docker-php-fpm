@@ -38,7 +38,7 @@ chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
 # Pull Image
-run "docker pull ${CONTAINER}"
+run "while ! docker pull ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
 did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"

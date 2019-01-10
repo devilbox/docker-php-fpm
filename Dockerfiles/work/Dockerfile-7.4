@@ -266,11 +266,11 @@ RUN set -x \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
 # phpcs
-	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
 # phpcbf
-	&& curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
 # phpunit
@@ -401,7 +401,7 @@ RUN set -x \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& photon --version | grep -E 'Installer [.0-9]+' \
-	&& pm2 --version | grep -E '[.0-9]+' \
+	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \

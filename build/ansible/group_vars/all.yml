@@ -219,6 +219,7 @@ software_enabled:
   - phalcon
   - phpcs
   - phpcbf
+  - php-cs-fixer
   - phpunit
   - photon
   - pm2
@@ -543,30 +544,49 @@ software_available:
     check: phpcs --version | grep -E 'version [.0-9]+'
     5.2:
       command: |
-        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
     5.3:
       command: |
-        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
     all:
       command: |
-        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [.0-9]+'
     5.2:
       command: |
-        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
     5.3:
       command: |
-        curl -qL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
     all:
       command: |
-        curl -q https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
+  php-cs-fixer:
+    disabled: [5.2, 7.4]
+    check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
+    5.3:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    5.4:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    5.5:
+      command: |
+        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
+    all:
+      command: |
+        curl -sS -L https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        && chmod +x /usr/local/bin/php-cs-fixer \
   phpunit:
     disabled: [5.2]
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
@@ -603,7 +623,7 @@ software_available:
         && ln -s {{ compose_home }}/vendor/photoncms/installer/photon /usr/local/bin/photon \
   # https://github.com/Unitech/pm2
   pm2:
-    check: pm2 --version | grep -E '[.0-9]+'
+    check: pm2 --no-daemon --version | grep -E '[.0-9]+'
     all:
       command: until npm install pm2 -g; do sleep 1; done
   sass:

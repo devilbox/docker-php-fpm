@@ -27,7 +27,7 @@ MOUNTPOINT="$( mktemp --directory )"
 CONTAINER="mysql:5.6"
 
 # Pull Container
-run "docker pull ${CONTAINER}"
+run "while ! docker pull ${CONTAINER}; do sleep 1; done"
 
 # Start mysql container
 mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}" )"
