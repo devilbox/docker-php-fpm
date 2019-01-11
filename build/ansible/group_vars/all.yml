@@ -355,8 +355,17 @@ software_available:
   deployer:
     disabled: [5.2, 5.3]
     check: dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+'
+    5.4:
+      command: curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
+    5.5:
+      command: curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
+    5.6:
+      command: curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
     all:
-      command: curl https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
   drush7:
     disabled: [5.2]
