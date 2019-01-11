@@ -386,7 +386,7 @@ RUN set -x \
 && gulp --version | grep -E '[.0-9]+' \
  \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
-	&& dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+' \
+	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
 	&& drush9 --version | grep -E '9[.0-9]+\s*$' \

@@ -154,7 +154,7 @@ RUN set -x \
 && ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
  \
 # deployer
-	&& curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep \
+	&& curl -sS https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
 # drush7
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
@@ -376,7 +376,7 @@ RUN set -x \
 && gulp --version | grep -E '[.0-9]+' \
  \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
-	&& dep --version 2>/dev/null | grep -E 'Deployer\s*[.0-9]+' \
+	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
 	&& git-flow version | grep -E '[.0-9]+' \
