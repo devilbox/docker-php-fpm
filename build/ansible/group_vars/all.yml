@@ -1026,8 +1026,6 @@ extensions_available:
       build_dep: [libmagickwand-dev]
       run_dep: [libmagickwand-6.q16-3]
   imap:
-    disabled: [7.4]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
-
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
