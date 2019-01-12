@@ -25,7 +25,7 @@ FLAVOUR="${3}"
 CONTAINER="mysql:5.6"
 
 # Pull Container
-run "while ! docker pull ${CONTAINER}; do sleep 1; done"
+run "until docker pull ${CONTAINER}; do sleep 1; done"
 
 # Start mysql container
 mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
