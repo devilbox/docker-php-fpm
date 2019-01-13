@@ -204,7 +204,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/ldap || true) \
 	\
 # ---- Installing PHP Extension: mcrypt ----
-	&& pecl install mcrypt-1.0.1 \
+	&& pecl install mcrypt-1.0.2 \
 	&& docker-php-ext-enable mcrypt \
 	&& (rm -rf /usr/local/lib/php/test/mcrypt || true) \
 	&& (rm -rf /usr/local/lib/php/doc/mcrypt || true) \
