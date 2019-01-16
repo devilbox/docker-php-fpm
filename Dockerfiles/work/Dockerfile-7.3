@@ -109,6 +109,7 @@ RUN set -x \
 		wkhtmltopdf \
 		xz-utils \
 		yarn \
+		zip \
 		zsh \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
