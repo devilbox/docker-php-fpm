@@ -182,6 +182,11 @@ RUN set -x \
 {%		endif %}
 {%	endif %}
 {% endfor %}
+{# Fix php.ini settings for enabled extensions #}
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
+			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
+		fi \
+{# /Fix php.ini settings for enabled extensions #}
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& rm -rf /tmp/* \
 	\

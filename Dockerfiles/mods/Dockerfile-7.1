@@ -463,6 +463,9 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/zip || true) \
 	&& (rm -rf /usr/local/lib/php/doc/zip || true) \
 	\
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
+			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
+		fi \
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& rm -rf /tmp/* \
 	\

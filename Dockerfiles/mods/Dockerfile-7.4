@@ -127,9 +127,7 @@ RUN set -x \
 # ---- Installing PHP Extension: ffi ----
 	&& git clone https://github.com/dstogov/php-ffi /tmp/ffi \
 	&& cd /tmp/ffi \
-	&& curl -sS -O https://github.com/fpoirotte/php-ffi/commit/734630fe3d2e3efd343d3f3636b58446abd9c941.diff \
-&& git apply 734630fe3d2e3efd343d3f3636b58446abd9c941.diff \
-&& phpize \
+	&& phpize \
 && ./configure --with-ffi \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
@@ -396,6 +394,9 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/zip || true) \
 	&& (rm -rf /usr/local/lib/php/doc/zip || true) \
 	\
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
+			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
+		fi \
 	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
 	&& rm -rf /tmp/* \
 	\
