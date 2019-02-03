@@ -1555,7 +1555,7 @@ extensions_available:
       version: 2.4.1
     7.3:
       type: pecl
-      version: 2.7.0beta1
+      version: 2.7.0RC1
     all:
       type: pecl
   xml:
