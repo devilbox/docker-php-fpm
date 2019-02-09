@@ -236,6 +236,23 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/pdo_mysql || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_mysql || true) \
 	\
+# ---- Installing PHP Extension: pdo_oci ----
+	&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+&& curl -o /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+&& curl -o /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+&& alien -i /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+&& alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+&& rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+&& rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+&& (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
+ \
+	&& /usr/local/bin/docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3 \
+	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_oci \
+	&& (rm -rf /usr/local/lib/php/test/pdo_oci || true) \
+	&& (rm -rf /usr/local/lib/php/doc/pdo_oci || true) \
+	\
 # ---- Installing PHP Extension: pdo_pgsql ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
 	&& (rm -rf /usr/local/lib/php/test/pdo_pgsql || true) \
@@ -464,6 +481,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
 	&& php -m | grep -oiE '^pdo_mysql$' \
 	&& php-fpm -m | grep -oiE '^pdo_mysql$' \
+	&& php -m | grep -oiE '^pdo_oci$' \
+	&& php-fpm -m | grep -oiE '^pdo_oci$' \
 	&& php -m | grep -oiE '^pdo_pgsql$' \
 	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
 	&& php -m | grep -oiE '^pdo_sqlite$' \
