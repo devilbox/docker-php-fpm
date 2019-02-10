@@ -1,21 +1,65 @@
 # PHP-FPM Docker images
 
 [![Build Status](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
-[![release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg)](https://github.com/devilbox/docker-php-fpm/releases)
-[![Join the chat at https://gitter.im/devilbox/Lobby](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Github](https://img.shields.io/badge/github-docker--php--fpm-red.svg)](https://github.com/devilbox/docker-php-fpm)
-[![](https://images.microbadger.com/badges/license/devilbox/php-fpm.svg)](https://microbadger.com/images/devilbox/php-fpm "php-fpm")
-
-**[devilbox/docker-php-fpm](https://github.com/devilbox/docker-php-fpm)**
+[![Release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg?colorB=orange)](https://github.com/devilbox/docker-php-fpm/releases)
+[![Gitter](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Discourse](https://img.shields.io/discourse/https/devilbox.discourse.group/status.svg?colorB=%234CB697)](https://devilbox.discourse.group)
+[![License](https://img.shields.io/badge/license-MIT-%233DA639.svg)](https://opensource.org/licenses/MIT)
 
 This repository will provide you fully functional PHP-FPM Docker images in different flavours,
-versions and packed with different types of integrated PHP modules. It also solves the problem of [syncronizing file permissions](#unsynchronized-permissions) of mounted volumes between the host and the container.
+versions and packed with different types of integrated PHP modules. It also solves the problem of **[syncronizing file permissions](#unsynchronized-permissions)** of mounted volumes between the host and the container.
 
 | Docker Hub | Upstream Project |
 |------------|------------------|
 | <a href="https://hub.docker.com/r/devilbox/php-fpm"><img height="82px" src="http://dockeri.co/image/devilbox/php-fpm" /></a> | <a href="https://github.com/cytopia/devilbox" ><img height="82px" src="https://raw.githubusercontent.com/devilbox/artwork/master/submissions_banner/cytopia/01/png/banner_256_trans.png" /></a> |
 
----
+#### Base Images
+
+Have a look at the following Devilbox base images for which no official versions exist yet, but are required to serve as a foundation for this repository:
+
+* [PHP-FPM 5.2](https://github.com/devilbox/docker-php-fpm-5.2)
+* [PHP-FPM 5.3](https://github.com/devilbox/docker-php-fpm-5.3)
+* [PHP-FPM 7.4](https://github.com/devilbox/docker-php-fpm-7.4)
+* [PHP-FPM 8.0](https://github.com/devilbox/docker-php-fpm-8.0)
+
+#### Documentation
+
+In case you seek help, go and visit the community pages.
+
+<table width="100%" style="width:100%; display:table;">
+ <thead>
+  <tr>
+   <th width="33%" style="width:33%;"><h3><a target="_blank" href="https://devilbox.readthedocs.io">Documentation</a></h3></th>
+   <th width="33%" style="width:33%;"><h3><a target="_blank" href="https://gitter.im/devilbox/Lobby">Chat</a></h3></th>
+   <th width="33%" style="width:33%;"><h3><a target="_blank" href="https://devilbox.discourse.group">Forum</a></h3></th>
+  </tr>
+ </thead>
+ <tbody style="vertical-align: middle; text-align: center;">
+  <tr>
+   <td>
+    <a target="_blank" href="https://devilbox.readthedocs.io">
+     <img title="Documentation" name="Documentation" src="https://raw.githubusercontent.com/cytopia/icons/master/400x400/readthedocs.png" />
+    </a>
+   </td>
+   <td>
+    <a target="_blank" href="https://gitter.im/devilbox/Lobby">
+     <img title="Chat on Gitter" name="Chat on Gitter" src="https://raw.githubusercontent.com/cytopia/icons/master/400x400/gitter.png" />
+    </a>
+   </td>
+   <td>
+    <a target="_blank" href="https://devilbox.discourse.group">
+     <img title="Devilbox Forums" name="Forum" src="https://raw.githubusercontent.com/cytopia/icons/master/400x400/discourse.png" />
+    </a>
+   </td>
+  </tr>
+  <tr>
+  <td><a target="_blank" href="https://devilbox.readthedocs.io">devilbox.readthedocs.io</a></td>
+  <td><a target="_blank" href="https://gitter.im/devilbox/Lobby">gitter.im/devilbox</a></td>
+  <td><a target="_blank" href="https://devilbox.discourse.group">devilbox.discourse.group</a></td>
+  </tr>
+ </tbody>
+</table>
+
 
 #### Table of Contents
 
