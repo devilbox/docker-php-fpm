@@ -425,7 +425,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/wddx || true) \
 	\
 # ---- Installing PHP Extension: xdebug ----
-	&& pecl install xdebug-2.7.0RC1 \
+	&& pecl install xdebug-2.7.0RC2 \
 	&& docker-php-ext-enable xdebug \
 	&& (rm -rf /usr/local/lib/php/test/xdebug || true) \
 	&& (rm -rf /usr/local/lib/php/doc/xdebug || true) \
