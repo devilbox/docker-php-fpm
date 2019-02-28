@@ -1016,6 +1016,18 @@ extensions_available:
     5.2:
       type: pecl
       version: 2.0.7
+    5.3:
+      type: pecl
+      version: 2.0.8
+    5.4:
+      type: pecl
+      version: 2.0.8
+    5.5:
+      type: pecl
+      version: 2.0.8
+    5.6:
+      type: pecl
+      version: 2.0.8
     all:
       type: pecl
   imagick:
