@@ -236,6 +236,7 @@ RUN set -x \
 # ---- Installing PHP Extension: memcache ----
 	&& git clone https://github.com/websupport-sk/pecl-memcache /tmp/memcache \
 	&& cd /tmp/memcache \
+	&& git checkout origin/php7 \
 	&& phpize \
 	&& ./configure  --with-zlib-dir=/usr \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
