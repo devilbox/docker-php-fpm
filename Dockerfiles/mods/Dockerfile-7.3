@@ -299,7 +299,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_pgsql || true) \
 	\
 # ---- Installing PHP Extension: pdo_sqlsrv ----
-	&& pecl install pdo_sqlsrv-5.5.0preview \
+	&& pecl install pdo_sqlsrv \
 	&& docker-php-ext-enable pdo_sqlsrv \
 	&& (rm -rf /usr/local/lib/php/test/pdo_sqlsrv || true) \
 	&& (rm -rf /usr/local/lib/php/doc/pdo_sqlsrv || true) \
@@ -363,7 +363,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/sockets || true) \
 	\
 # ---- Installing PHP Extension: sqlsrv ----
-	&& pecl install sqlsrv-5.5.0preview \
+	&& pecl install sqlsrv \
 	&& docker-php-ext-enable sqlsrv \
 	&& (rm -rf /usr/local/lib/php/test/sqlsrv || true) \
 	&& (rm -rf /usr/local/lib/php/doc/sqlsrv || true) \

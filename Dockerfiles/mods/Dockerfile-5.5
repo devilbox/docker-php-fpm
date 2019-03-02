@@ -171,7 +171,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/gmp || true) \
 	\
 # ---- Installing PHP Extension: igbinary ----
-	&& pecl install igbinary \
+	&& pecl install igbinary-2.0.8 \
 	&& docker-php-ext-enable igbinary \
 	&& (rm -rf /usr/local/lib/php/test/igbinary || true) \
 	&& (rm -rf /usr/local/lib/php/doc/igbinary || true) \
