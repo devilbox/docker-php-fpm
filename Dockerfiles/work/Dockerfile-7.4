@@ -106,7 +106,6 @@ RUN set -x \
 		w3m \
 		wget \
 		whois \
-		wkhtmltopdf \
 		xz-utils \
 		yarn \
 		zip \
@@ -294,6 +293,18 @@ RUN set -x \
 && yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
 && rm -rf /tmp/y \
  \
+# wkhtmltopdf
+	&& VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+  libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+&& curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+&& dpkg -i /tmp/wkhtmltopdf.deb \
+&& rm -f /tmp/wkhtmltopdf.deb \
+ \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+&& rm -rf /var/lib/apt/lists/* \
+ \
 # wpcli
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
@@ -406,6 +417,7 @@ RUN set -x \
 	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
+	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& true
