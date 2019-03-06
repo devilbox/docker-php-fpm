@@ -1634,9 +1634,6 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.4.1
-    7.3:
-      type: pecl
-      version: 2.7.0RC2
     all:
       type: pecl
   xml:
