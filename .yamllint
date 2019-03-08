@@ -1,0 +1,13 @@
+---
+# Use 'default' rules
+extends: default
+
+# Overwrite above default rules
+rules:
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 60
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1
+  line-length: disable

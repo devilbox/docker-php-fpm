@@ -1,0 +1,958 @@
+---
+###################################################################################################
+# Docker: mods
+###################################################################################################
+
+#
+# This file holds definition for all devibox/php-fpm:x.y-mods images
+#
+
+
+# -------------------------------------------------------------------------------------------------
+# Extensions to enable (in defined order)
+# -------------------------------------------------------------------------------------------------
+extensions_enabled:
+  # ioncube must be loaded first
+  - ioncube
+  - amqp
+  - apcu
+  - bcmath
+  - blackfire
+  - bz2
+  - calendar
+  - ctype
+  - curl
+  - dba
+  - dom
+  - enchant
+  - exif
+  - ffi
+  - fileinfo
+  - filter
+  - ftp
+  - gd
+  - gettext
+  - gmp
+  - hash
+  - iconv
+  - igbinary
+  - imagick
+  - imap
+  - interbase
+  - intl
+  - json
+  - ldap
+  - libxml
+  - mbstring
+  - mcrypt
+  - msgpack
+  - memcache
+  # requires igbinary and msgpack to be installed
+  - memcached
+  - mongo
+  - mongodb
+  - mysql
+  - mysqli
+  - mysqlnd
+  - oci8
+  - odbc
+  - opcache
+  - openssl
+  - pcntl
+  - pcre
+  - pdo
+  - pdo_dblib
+  - pdo_firebird
+  - pdo_mysql
+  - pdo_oci
+  - pdo_odbc
+  - pdo_pgsql
+  - pdo_sqlite
+  - pdo_sqlsrv
+  - pgsql
+  - phalcon
+  - phar
+  - posix
+  - pspell
+  - readline
+  - recode
+  - redis
+  - reflection
+  - rdkafka
+  - session
+  - shmop
+  - simplexml
+  - snmp
+  - soap
+  - sockets
+  - sodium
+  - spl
+  - sqlsrv
+  - swoole
+  - sysvmsg
+  - sysvsem
+  - sysvshm
+  - tidy
+  - tokenizer
+  - uploadprogress
+  - wddx
+  - xdebug
+  - xml
+  - xmlreader
+  - xmlrpc
+  - xmlwriter
+  - xsl
+  - zip
+
+
+# -------------------------------------------------------------------------------------------------
+# Extension definition
+# -------------------------------------------------------------------------------------------------
+
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled:      [optional] Array of PHP versions for which to disable this module
+# already_avail: [optional] Array of PHP versions for which we don't install the module, but
+#                the dependencies, as it is already loaded by core
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   pre:         [optional] Run command before anything else
+#   build_dep:   [optional] Array of build dependencies
+#   run_dep:     [optional] Array of run-time dependencies
+#   type:        [required] One of 'builtin', 'pecl' or 'git'
+#
+# type: builtin
+#   configure:   [optional] Add './configure' arguments
+# type: pecl
+#   version:     [optional] Pecl packet version
+#   command:     [optional] Overwrite pecl command (pecl install ext)
+# type: git
+#   git_url:     [required] Git repository URL
+#   git_ref:     [optional] Tag, branch, commit to checkout
+#   configure:   [optional] Add './configure' arguments
+#   command:     [optional] Overwrite default command (phpize && ./configure && make && make install)
+# type: custom
+#   command:     [required] Custom command to install and enable a module
+extensions_available:
+  amqp:
+    disabled: [7.3, 7.4, 8.0]
+    5.2:
+      run_dep: [librabbitmq1]
+      type: pecl
+      version: 1.4.0
+    5.3:
+      type: pecl
+      version: 1.9.3
+      run_dep: [librabbitmq1]
+    5.4:
+      type: pecl
+      version: 1.9.3
+      run_dep: [librabbitmq1]
+    5.5:
+      type: pecl
+      version: 1.9.3
+      run_dep: [librabbitmq1]
+    all:
+      type: pecl
+      command: echo "/usr" | pecl install amqp
+      build_dep: [librabbitmq-dev]
+      run_dep: [librabbitmq4]
+  apcu:
+    disabled: [5.2, 7.4, 8.0]
+    5.3:
+      type: pecl
+      version: 4.0.11
+    5.4:
+      type: pecl
+      version: 4.0.11
+    5.5:
+      type: pecl
+      version: 4.0.11
+    5.6:
+      type: pecl
+      version: 4.0.11
+    all:
+      type: pecl
+  bcmath:
+    all:
+      type: builtin
+  blackfire:
+    disabled: [5.2, 5.3, 5.4, 5.5, 7.4, 8.0]
+    all:
+      type: custom
+      command: |
+        version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+        && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+        && mkdir -p /tmp/blackfire \
+        && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+        && mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+        && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
+  bz2:
+    all:
+      type: builtin
+      build_dep: [libbz2-dev]
+  calendar:
+    all:
+      type: builtin
+  ctype:
+    already_avail: "{{ php_all_versions }}"
+  curl:
+    already_avail: "{{ php_all_versions }}"
+  dba:
+    all:
+      type: builtin
+  dom:
+    already_avail: "{{ php_all_versions }}"
+  enchant:
+    5.2:
+      type: pecl
+      command: echo "/usr" | pecl install enchant
+    all:
+      type: builtin
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+  exif:
+    all:
+      type: builtin
+  ffi:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
+    all:
+      type: git
+      git_url: https://github.com/dstogov/php-ffi
+      command: |
+        phpize \
+        && ./configure --with-ffi \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      build_dep: [libffi-dev]
+      run_dep: [libffi6]
+  fileinfo:
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    5.2:
+      type: pecl
+      build_dep: [libmagic-dev]
+    all:
+      type: builtin
+  filter:
+    already_avail: "{{ php_all_versions }}" # Available by default
+  ftp:
+    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    all:
+      type: builtin
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev]
+  gd:
+    5.2:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.3:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.4:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.5:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+    5.6:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.0:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.1:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+    7.2:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    7.3:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    7.4:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    8.0:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+  gettext:
+    all:
+      type: builtin
+  gmp:
+    disabled: [5.2]
+    all:
+      type: builtin
+      pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
+      build_dep: [libgmp-dev]
+  hash:
+    already_avail: "{{ php_all_versions }}"
+  iconv:
+    already_avail: "{{ php_all_versions }}"
+  igbinary:
+    disabled: [8.0]
+    5.2:
+      type: pecl
+      version: 2.0.7
+    5.3:
+      type: pecl
+      version: 2.0.8
+    5.4:
+      type: pecl
+      version: 2.0.8
+    5.5:
+      type: pecl
+      version: 2.0.8
+    5.6:
+      type: pecl
+      version: 2.0.8
+    all:
+      type: pecl
+  imagick:
+    disabled: [5.2, 7.4, 8.0]
+    5.3:
+      type: pecl
+      version: 3.3.0
+      run_dep: [libmagickwand-6.q16-2]
+    5.4:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-2]
+    5.5:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-2]
+    all:
+      type: pecl
+      build_dep: [libmagickwand-dev]
+      run_dep: [libmagickwand-6.q16-3]
+  imap:
+    disabled: [7.4, 8.0]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
+      configure: --with-kerberos --with-imap-ssl --with-imap
+      build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
+      run_dep: [libc-client2007e]
+  interbase:
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  intl:
+    5.2:
+      type: pecl
+      run_dep: [libicu52]
+    5.3:
+      type: builtin
+      run_dep: [libicu52]
+    5.4:
+      type: builtin
+      run_dep: [libicu52]
+    5.5:
+      type: builtin
+      run_dep: [libicu52]
+    all:
+      type: builtin
+      build_dep: [libicu-dev]
+      run_dep: [libicu57]
+  ioncube:
+    disabled: [7.3, 7.4, 8.0]
+    all:
+      type: custom
+      command: |
+        EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+        && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+        && curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+        && tar xvfz ioncube.tar.gz \
+        && cd ioncube \
+        && cp "ioncube_loader_lin_{{ php_version }}.so" "${EXTENSION_DIR}/ioncube.so" \
+        && cd ../ \
+        && rm -rf ioncube \
+        && rm -rf ioncube.tar.gz \
+  json:
+    already_avail: "{{ php_all_versions }}"
+  ldap:
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/
+      configure: --with-ldap --with-ldap-sasl
+      build_dep: [libldap2-dev, libsasl2-dev]
+  libxml:
+    already_avail: "{{ php_all_versions }}" # Available by default
+  mbstring:
+    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    all:
+      type: builtin
+  mcrypt:
+    disabled: [7.4, 8.0]
+    7.2:
+      type: pecl
+      version: 1.0.1
+    7.3:
+      type: pecl
+      version: 1.0.2
+    all:
+      type: builtin
+      run_dep: [libmcrypt4]
+      build_dep: [libmcrypt-dev]
+  memcache:
+    disabled: [7.3, 7.4, 8.0]
+    7.0:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      git_ref: origin/php7
+      configure: --with-zlib-dir=/usr
+    7.1:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      git_ref: origin/php7
+      configure: --with-zlib-dir=/usr
+    7.2:
+      type: git
+      git_url: https://github.com/websupport-sk/pecl-memcache
+      git_ref: origin/php7
+      configure: --with-zlib-dir=/usr
+    all:
+      type: pecl
+      build_dep: [zlib1g-dev]
+  memcached:
+    5.2:
+      type: pecl
+      version: 2.1.0
+    5.3:
+      type: pecl
+      version: 2.2.0
+    5.4:
+      type: pecl
+      version: 2.2.0
+    5.5:
+      type: pecl
+      version: 2.2.0
+    5.6:
+      type: pecl
+      version: 2.2.0
+    7.4:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
+    8.0:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
+    all:
+      type: pecl
+      #version: 3.0.4 # TODO: check if this version works
+      build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
+      run_dep: [libmemcachedutil2]
+  mongo:
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated
+    5.2:
+      type: pecl
+      command: yes | pecl install mongo-1.5.8
+    all:
+      type: pecl
+      command: yes | pecl install mongo
+      build_dep: [libssl-dev, libsasl2-dev]
+  mongodb:
+    disabled: [5.2]
+    5.3:
+      type: pecl
+      version: 0.6.3
+    5.4:
+      type: pecl
+      version: 1.2.11
+    8.0:
+      type: git
+      git_url: https://github.com/mongodb/mongo-php-driver
+      command: |
+        git submodule update --init \
+        && phpize \
+        && ./configure --enable-mongodb \
+        && make all \
+        && make install \
+    all:
+      type: pecl
+      build_dep: [libssl-dev, libsasl2-dev]
+  msgpack:
+    disabled: [7.4, 8.0]
+    5.2:
+      type: pecl
+      version: 0.5.7
+    5.3:
+      type: pecl
+      version: 0.5.7
+    5.4:
+      type: pecl
+      version: 0.5.7
+    5.5:
+      type: pecl
+      version: 0.5.7
+    5.6:
+      type: pecl
+      version: 0.5.7
+    all:
+      type: pecl
+  mysql:
+    already_avail: [5.2, 5.3]
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated in newer versions
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+    all:
+      type: builtin
+      run_dep: [libmysqlclient18]
+  mysqli:
+    already_avail: [5.2]
+    all:
+      type: builtin
+  mysqlnd:
+    disabled: [5.2]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+  oci8:
+    disabled: [5.2]
+    all:
+      type: builtin
+      configure: --with-oci8=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
+      pre: |
+        rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+        && curl -o /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && curl -o /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && alien -i /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
+      build_dep: [alien, libaio-dev]
+      run_dep: [libaio1]
+  odbc:
+    disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
+  opcache:
+    5.2:
+      type: pecl
+      command: pecl install zendopcache
+    5.3:
+      type: pecl
+      command: pecl install zendopcache
+    5.4:
+      type: pecl
+      command: pecl install zendopcache
+    all:
+      type: builtin
+  openssl:
+    already_avail: "{{ php_all_versions }}"
+  pcntl:
+    all:
+      type: builtin
+  pcre:
+    already_avail: "{{ php_all_versions }}"
+  pdo:
+    already_avail: "{{ php_all_versions }}"
+  pdo_dblib:
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
+      build_dep: [freetds-dev]
+      run_dep: [libsybdb5]
+  pdo_firebird:
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  pdo_mysql:
+    already_avail: [5.2]
+    all:
+      type: builtin
+      configure: --with-zlib-dir=/usr
+      build_dep: [zlib1g-dev]
+  pdo_oci:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    8.0:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
+    7.4:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
+    7.3:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
+    7.2:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/18.3/client64/lib/,18.3
+    all:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr,18.3
+      pre: |
+        rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+        && curl -o /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && curl -o /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && alien -i /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && alien -i /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && rm -f /tmp/oracle-instantclient18.3-basiclite-18.3.0.0.0-2.x86_64.rpm \
+        && rm -f /tmp/oracle-instantclient18.3-devel-18.3.0.0.0-2.x86_64.rpm \
+        && (ln -s /usr/lib/oracle/18.3/client64/lib/*.so* /usr/lib/ || true) \
+      build_dep: [alien]
+  pdo_odbc:
+    disabled: "{{ php_all_versions }}" # TODO: Build errors
+  pdo_pgsql:
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  pdo_sqlite:
+    already_avail: "{{ php_all_versions }}"
+  pdo_sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0]
+    7.0:
+      type: pecl
+      version: 5.3.0
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+  pgsql:
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  phalcon:
+    disabled: [5.2, 7.4, 8.0]
+    5.3:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.9
+      command: cd build && ./install >/dev/null
+    5.4:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.13
+      command: cd build && ./install
+    5.5:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    5.6:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    7.0:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    7.1:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.2
+      command: cd build && ./install
+    all:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1)
+      command: cd build && ./install
+  phar:
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    5.2:
+      type: pecl
+      build_dep: [libssl-dev]
+  posix:
+    already_avail: "{{ php_all_versions }}"
+  pspell:
+    all:
+      type: builtin
+      build_dep: [libpspell-dev]
+      run_dep: [libaspell15]
+  readline:
+    already_avail: "{{ php_all_versions }}"
+  recode:
+    already_avail: [5.3, 5.4]
+    all:
+      type: builtin
+      build_dep: [librecode-dev]
+      run_dep: [librecode0]
+  redis:
+    5.2:
+      type: pecl
+      version: 2.2.7
+    7.4:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      # This is a nasty work-around to fix current phpredis implementation for PHP 7.4
+      command: |
+        phpize \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_DTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis_cluster.c \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+    8.0:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      # This is a nasty work-around to fix current phpredis implementation for PHP 7.4
+      command: |
+        phpize \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_DTOR | //g' redis.c \
+        && sed -i'' 's/ZEND_ACC_CTOR | //g' redis_cluster.c \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+    all:
+      type: pecl
+  reflection:
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+  rdkafka:
+    disabled: [5.2, 8.0]
+    all:
+      type: pecl
+      build_dep: [librdkafka-dev]
+      run_dep: [librdkafka1]
+  session:
+    already_avail: "{{ php_all_versions }}"
+  shmop:
+    all:
+      type: builtin
+  simplexml:
+    already_avail: "{{ php_all_versions }}"
+  snmp:
+    all:
+      type: builtin
+      configure: --with-openssl-dir
+      build_dep: [libssl-dev, libsnmp-dev, snmp]
+      run_dep: [snmp]
+  soap:
+    already_avail: [5.2]
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  sockets:
+    all:
+      type: builtin
+  sodium:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1]
+    already_avail: [7.2, 7.3, 7.4]
+    all:
+      type: builtin
+      build_dep: [libsodium-dev]
+  spl:
+    already_avail: "{{ php_all_versions }}"
+  sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0]
+    7.0:
+      type: pecl
+      version: 5.3.0
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+  swoole:
+    disabled: [5.2, 8.0]
+    5.3:
+      type: pecl
+      version: 1.9.23
+      run_dep: [libnghttp2-5]
+    5.4:
+      type: pecl
+      version: 1.9.23
+      run_dep: [libnghttp2-5]
+    5.5:
+      type: pecl
+      version: 1.9.23
+      run_dep: [libnghttp2-5]
+    5.6:
+      type: pecl
+      version: 1.9.23
+    7.3:
+      type: git
+      git_url: https://github.com/swoole/swoole-src
+      git_ref: master
+      command: |
+        git checkout $(git describe --abbrev=0 --tags) \
+        && phpize \
+        && ./configure \
+          --enable-openssl \
+          --enable-sockets \
+          --enable-http2 \
+          --enable-mysqlnd \
+          --enable-coroutine-postgresql \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      run_dep: [libnghttp2-14, libhiredis0.13]
+      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
+    7.4:
+      type: git
+      git_url: https://github.com/swoole/swoole-src
+      git_ref: master
+      command: |
+        git checkout $(git describe --abbrev=0 --tags) \
+        && phpize \
+        && ./configure \
+          --enable-openssl \
+          --enable-sockets \
+          --enable-http2 \
+          --enable-mysqlnd \
+          --enable-coroutine-postgresql \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      run_dep: [libnghttp2-14, libhiredis0.13]
+      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
+    all:
+      type: pecl
+      build_dep: [libnghttp2-dev, libssl-dev]
+      run_dep: [libnghttp2-14]
+  sysvmsg:
+    all:
+      type: builtin
+  sysvsem:
+    all:
+      type: builtin
+  sysvshm:
+    all:
+      type: builtin
+  tidy:
+    5.2:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
+    5.3:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
+    5.4:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
+    5.5:
+      type: builtin
+      run_dep: [libtidy-0.99-0]
+    all:
+      type: builtin
+      build_dep: [libtidy-dev]
+      run_dep: [libtidy5]
+  tokenizer:
+    already_avail: "{{ php_all_versions }}"
+  uploadprogress:
+    7.0:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.1:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.2:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.3:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    7.4:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    8.0:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
+    all:
+      type: pecl
+  wddx:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr
+      build_dep: [libxml2-dev]
+  xdebug:
+    disabled: [7.4, 8.0]
+    5.2:
+      type: pecl
+      version: 2.2.7
+    5.3:
+      type: pecl
+      version: 2.2.7
+    5.4:
+      type: pecl
+      version: 2.4.1
+    5.5:
+      type: pecl
+      version: 2.4.1
+    5.6:
+      type: pecl
+      version: 2.4.1
+    all:
+      type: pecl
+  xml:
+    already_avail: "{{ php_all_versions }}"
+  xmlreader:
+    already_avail: "{{ php_all_versions }}"
+  xmlrpc:
+    all:
+      type: builtin
+      configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
+      build_dep: [libxml2-dev]
+  xmlwriter:
+    already_avail: "{{ php_all_versions }}"
+  xsl:
+    all:
+      type: builtin
+      build_dep: [libxslt-dev]
+      run_dep: [libxslt1.1]
+  zip:
+    5.2:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    5.3:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    5.4:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    5.5:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
+      build_dep: [zlib1g-dev]
+      run_dep: []
+    all:
+      type: builtin
+      configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip
+      build_dep: [zlib1g-dev, libzip-dev]
+      run_dep: [libzip4]
