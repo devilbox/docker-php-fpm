@@ -37,8 +37,6 @@ RUN set -x \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
 	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
-	&& curl -sS "https://deb.nodesource.com/gpgkey/nodesource.gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-	&& echo "deb http://deb.nodesource.com/node_8.x stretch main" > /etc/apt/sources.list.d/node.list \
 	&& curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
@@ -82,15 +80,10 @@ RUN set -x \
 		nano \
 		net-tools \
 		netcat \
-		nodejs \
 		openssh-client \
 		patch \
 		patchelf \
 		postgresql-client \
-		python-cffi \
-		python-dev \
-		python-pip \
-		python-wheel \
 		redis-tools \
 		rsync \
 		rubygems \
@@ -113,22 +106,42 @@ RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
-# Get newer pip version
-	&& pip install --upgrade pip \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false python-pip \
-	&& rm -rf /var/lib/apt/lists/* \
-	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
+###
+### Install custom software
+###
 RUN set -x \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-# ansible
-	&& /usr/local/bin/pip install --no-cache-dir --upgrade setuptools  \
-&& /usr/local/bin/pip install --no-cache-dir ansible \
+# pip
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+  libpython-dev \
+&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+&& rm -rf /var/lib/apt/lists/* \
+\
+&& curl -sS https://bootstrap.pypa.io/get-pip.py | python \
+ \
+# nvm
+	&& git clone https://github.com/creationix/nvm /opt/nvm \
+&& cd /opt/nvm \
+&& git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
+\
+&& { \
+  echo 'export NVM_DIR="/opt/nvm"'; \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+} >> /home/devilbox/.bashrc \
+\
+&& chown -R devilbox:devilbox /opt/nvm \
+ \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
  \
 # asgardcms
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require asgardcms/asgardcms-installer \
@@ -142,16 +155,6 @@ RUN set -x \
 && make install \
 && cd / \
 && rm -rf /usr/local/src/awesome-ci \
- \
-	&& gem install mixlib-config -v 2.2.4 \
-&& gem install rb-inotify -v 0.9.10 \
-&& gem install mdl \
-&& gem install scss_lint \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y eslint \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y jsonlint \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y mdlint \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y gulp \
-&& rm -rf /tmp/y \
  \
 # codeception
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
@@ -207,11 +210,6 @@ RUN set -x \
 && cd /tmp/gitflow \
 && make install \
 && cd / && rm -rf /tmp/gitflow \
- \
-# grunt
-	&& until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt; do sleep 1; done \
-&& until yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y grunt-cli; do sleep 1; done \
-&& rm -rf /tmp/y \
  \
 # laravel
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -281,18 +279,9 @@ RUN set -x \
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require "photoncms/installer" \
 && ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/photon \
  \
-# pm2
-	&& until npm install pm2 -g; do sleep 1; done \
-# sass
-	&& gem install sass \
 # symfony
 	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
-# webpack
-	&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack \
-&& yarn global add --prod  --non-interactive --link-duplicates --silent --cache-folder /tmp/y webpack-cli \
-&& rm -rf /tmp/y \
- \
 # wkhtmltopdf
 	&& VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
@@ -308,22 +297,12 @@ RUN set -x \
 # wpcli
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
-# yamllint
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests libpython-dev python-setuptools libyaml-dev \
- \
-	&& /usr/local/bin/pip install --no-cache-dir yamllint \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false libpython-dev python-setuptools libyaml-dev \
-&& rm -rf /var/lib/apt/lists/* \
- \
 # cleanup
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
 && rm -rf /home/${MY_USER}/.composer \
 && rm -rf /home/${MY_USER}/.config \
 && rm -rf /home/${MY_USER}/.drush \
-&& rm -rf /home/${MY_USER}/.gem \
-&& rm -rf /home/${MY_USER}/.npm \
 && rm -rf /home/${MY_USER}/.subversion \
 && rm -rf /home/${MY_USER}/.v8* \
 \
@@ -332,15 +311,101 @@ RUN set -x \
 && rm -rf /root/.composer \
 && rm -rf /root/.config \
 && rm -rf /root/.drush \
-&& rm -rf /root/.gem \
-&& rm -rf /root/.npm \
 && rm -rf /root/.subversion \
 && rm -rf /root/.v8* \
 \
 && rm -rf /tmp/* \
+&& (rm -rf /tmp/.* || true) \
  \
 	\
+	&& (rm -rf /root/.gem || true ) \
+	&& (rm -rf /root/.cache || true) \
+	&& (rm -rf /root/.composer || true) \
+	&& (rm -rf /root/.config || true) \
+	&& (rm -rf /root/.npm || true) \
+	\
+	&& (rm -rf /home/devilbox/.cache || true) \
+	&& (rm -rf /home/devilbox/.composer || true) \
+	&& (rm -rf /home/devilbox/.config || true) \
+	&& (rm -rf /home/devilbox/.npm || true) \
+	\
 	&& (rm -rf /usr/local/src/composer/cache/* || true) \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
+
+
+###
+### Install Node npm packages (globally)
+###
+RUN set -x \
+# eslint
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g eslint' devilbox \
+# grunt
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt' devilbox \
+# grunt_cli
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt-cli' devilbox \
+# gulp
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g gulp' devilbox \
+# jsonlint
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g jsonlint' devilbox \
+# pm2
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g pm2' devilbox \
+# mdlint
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g mdlint' devilbox \
+# webpack
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack' devilbox \
+# webpack_cli
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack-cli' devilbox \
+	\
+	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+	\
+	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.config \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+
+###
+### Install Python pip packages
+###
+RUN set -x \
+# ansible
+	&& pip install --no-cache-dir --force-reinstall ansible \
+# yamllint
+	&& pip install --no-cache-dir --force-reinstall yamllint \
+	\
+	&& rm -rf /root/.cache/pip \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install Ruby gems
+###
+RUN set -x \
+# mixlib_config
+	&& gem install mixlib-config -v 2.2.4 \
+# rb_inotify
+	&& gem install rb-inotify -v 0.9.10 \
+# mdl
+	&& gem install mdl \
+# scss_lint
+	&& gem install scss_lint \
+# sass
+	&& gem install sass \
+	\
+	&& rm -rf /root/.gem \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -352,7 +417,7 @@ RUN set -x \
 ###
 RUN \
 	{ \
-		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin"; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
@@ -388,7 +453,7 @@ RUN set -x \
 
 RUN set -x \
 	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
-	&& ansible --version | grep -E '^ansible [.0-9]+$' \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[.0-9]+' \
 	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+' \
 	&& mdl --version | grep -E '[.0-9]+' \
 && scss-lint --version | grep -E '[.0-9]+' \
@@ -404,7 +469,6 @@ RUN set -x \
 	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
 	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
 	&& git-flow version | grep -E '[.0-9]+' \
-	&& grunt --version | grep -E '[.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
@@ -413,14 +477,32 @@ RUN set -x \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& photon --version | grep -E 'Installer [.0-9]+' \
-	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
-	&& sass --version | grep -E '[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
-	&& webpack --version | grep -E '[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
+ \
+	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
-	&& true
+ \
+	&& eslint -v | grep -E '[.0-9]+' \
+	&& grunt --version | grep -E '[.0-9]+' \
+	&& gulp --version | grep -E '[.0-9]+' \
+	&& jsonlint --version | grep -E '[.0-9]+' \
+	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
+	&& mdlint --version | grep -E '[.0-9]+' \
+	&& webpack --version | grep -E '[.0-9]+' \
+ \
+	&& mdl --version | grep -E '[.0-9]+' \
+	&& sass --version | grep -E '[.0-9]+' \
+ \
+	&& rm -rf /home/devilbox/.config/ \
+	&& rm -rf /root/.ansible \
+	&& rm -rf /root/.console \
+	&& rm -rf /root/.composer \
+	&& rm -rf /root/.drush \
+	&& rm -rf /root/.pm2 \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
 
 
 ###

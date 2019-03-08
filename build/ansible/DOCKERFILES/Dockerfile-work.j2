@@ -101,15 +101,10 @@ RUN set -x \
 		nano \
 		net-tools \
 		netcat \
-		nodejs \
 		openssh-client \
 		patch \
 		patchelf \
 		postgresql-client \
-		python-cffi \
-		python-dev \
-		python-pip \
-		python-wheel \
 		redis-tools \
 		rsync \
 		rubygems \
@@ -132,16 +127,14 @@ RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
-# Get newer pip version
-	&& pip install --upgrade pip \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false python-pip \
-	&& rm -rf /var/lib/apt/lists/* \
-	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
+###
+### Install custom software
+###
 RUN set -x \
 {% for tool in software_enabled %}
 {# Not disabled #}
@@ -171,7 +164,110 @@ RUN set -x \
 {% endif %}
 {% endfor %}
 	\
+	&& (rm -rf /root/.gem || true ) \
+	&& (rm -rf /root/.cache || true) \
+	&& (rm -rf /root/.composer || true) \
+	&& (rm -rf /root/.config || true) \
+	&& (rm -rf /root/.npm || true) \
+	\
+	&& (rm -rf /home/devilbox/.cache || true) \
+	&& (rm -rf /home/devilbox/.composer || true) \
+	&& (rm -rf /home/devilbox/.config || true) \
+	&& (rm -rf /home/devilbox/.npm || true) \
+	\
 	&& (rm -rf /usr/local/src/composer/cache/* || true) \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
+
+
+###
+### Install Node npm packages (globally)
+###
+RUN set -x \
+{% for tool in npm_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific gem version available? #}
+{% if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] %}
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
+{# Generic gem version  available? #}
+{% elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] %}
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
+{# No version info available #}
+{% else %}
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }}' devilbox \
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+	\
+	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.config \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+
+###
+### Install Python pip packages
+###
+RUN set -x \
+{% for tool in pip_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific gem version available? #}
+{% if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} \
+{# Generic gem version  available? #}
+{% elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} \
+{# No version info available #}
+{% else %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} \
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	&& rm -rf /root/.cache/pip \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install Ruby gems
+###
+RUN set -x \
+{% for tool in gem_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific gem version available? #}
+{% if php_version in gem_available[tool] and 'version' in gem_available[tool][php_version] %}
+	&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool][php_version]['version'] }} \
+{# Generic gem version  available? #}
+{% elif 'all' in gem_available[tool] and 'version' in gem_available[tool]['all'] %}
+	&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool]['all']['version'] }} \
+{# No version info available #}
+{% else %}
+	&& gem install {{ gem_available[tool]['name'] }} \
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	&& rm -rf /root/.gem \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -183,7 +279,7 @@ RUN set -x \
 ###
 RUN \
 	{ \
-		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:/usr/local/node/bin"; \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin"; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
@@ -219,6 +315,7 @@ RUN set -x \
 	&& rm -f /usr/local/etc/php/php.ini
 
 RUN set -x \
+{# ---- SOFTWARE ---- #}
 {% for tool in software_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
@@ -226,8 +323,42 @@ RUN set -x \
 	&& {{ software_available[tool]['check'] }} \
 {% endif %}
 {% endif %}
-{% endfor %}
-	&& true
+{% endfor %} \
+{# ---- PIP ---- #}
+{% for tool in pip_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
+{% if 'check' in pip_available[tool] %}
+	&& {{ pip_available[tool]['check'] }} \
+{% endif %}
+{% endif %}
+{% endfor %} \
+{# ---- NPM ---- #}
+{% for tool in npm_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) %}
+{% if 'check' in npm_available[tool] %}
+	&& {{ npm_available[tool]['check'] }} \
+{% endif %}
+{% endif %}
+{% endfor %} \
+{# ---- GEM ---- #}
+{% for tool in gem_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) %}
+{% if 'check' in gem_available[tool] %}
+	&& {{ gem_available[tool]['check'] }} \
+{% endif %}
+{% endif %}
+{% endfor %} \
+	&& rm -rf /home/devilbox/.config/ \
+	&& rm -rf /root/.ansible \
+	&& rm -rf /root/.console \
+	&& rm -rf /root/.composer \
+	&& rm -rf /root/.drush \
+	&& rm -rf /root/.pm2 \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
 
 
 {% endif %}

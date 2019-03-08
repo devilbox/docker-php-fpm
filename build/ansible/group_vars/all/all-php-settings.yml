@@ -1,0 +1,106 @@
+---
+###################################################################################################
+# PHP php.ini php-fpm.conf settings
+###################################################################################################
+
+
+# -------------------------------------------------------------------------------------------------
+# Global
+# -------------------------------------------------------------------------------------------------
+php_timeout: 120
+
+
+# -------------------------------------------------------------------------------------------------
+# php.ini
+# -------------------------------------------------------------------------------------------------
+php_settings_ini:
+  # ---- Sane default ----
+  base:
+    # Memory
+    memory_limit:              512M
+    # Timeouts
+    max_execution_time:        "{{ php_timeout }}"
+    max_input_time:            "{{ php_timeout }}"
+    # Uploads
+    # Note: "post_max_size" should be greater than "upload_max_filesize"
+    post_max_size:             72M
+    upload_max_filesize:       64M
+    max_file_uploads:          20
+    # Variables
+    variables_order:           EGPCS
+    max_input_vars:            8000
+    max_input_nesting_level:   64
+    # Error reporting
+    error_reporting:           E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'Off'
+    display_startup_errors:    'Off'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'Off'
+    # Xdebug settings
+    xdebug_default_enable:     'Off'
+    xdebug_profiler_enable:    'Off'
+    xdebug_remote_enable:      'Off'
+    xdebug_remote_autostart:   'Off'
+
+  # ---- Inherits from base ----
+  mods:
+  # ---- Inherits from base ----
+  prod:
+  # ---- Inherits from base and overwrites certain values ----
+  work:
+    # Error reporting
+    error_reporting:           E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
+    xmlrpc_errors:             'Off'
+    report_memleaks:           'On'
+    display_errors:            'On'
+    display_startup_errors:    'On'
+    track_errors:              'On'
+    log_errors:                'On'
+    html_errors:               'On'
+    # Xdebug settings
+    xdebug_default_enable:     'Off'
+    xdebug_profiler_enable:    'Off'
+    xdebug_remote_enable:      'Off'
+    xdebug_remote_autostart:   'Off'
+
+
+# -------------------------------------------------------------------------------------------------
+# php-fpm.conf
+# -------------------------------------------------------------------------------------------------
+php_settings_fpm:
+  # ---- Sane default ----
+  base:
+    # Docker
+    clear_env:                 'no'
+    catch_workers_output:      'yes'
+    # Timeouts
+    request_terminate_timeout: "{{ php_timeout }}s"
+    # Network
+    listen:                    9000
+    # Backlog
+    listen_backlog:            1024
+    # Logging
+    log_level:                 notice
+    error_log:                 /proc/self/fd/2
+    access_log:                /proc/self/fd/2
+    # Worker
+    pm:                        ondemand
+    pm_max_children:           50  # pm: dynamic, ondemand or static
+    pm_start_servers:          4   # only for pm: dynamic (min_spare + (max_spare-min_spare)/2
+    pm_min_spare_servers:      2   # only for pm: dynamic
+    pm_max_spare_servers:      6   # only for pm: dynamic
+    pm_max_requests:           500 # pm: dynamic or ondemand
+    pm_process_idle_timeout:   10s # only for pm: ondemand
+
+    # User/Group
+    user:                      devilbox
+    group:                     devilbox
+  # ---- Inherits from base ----
+  mods:
+  # ---- Inherits from base ----
+  prod:
+  # ---- Inherits from base and overwrites certain values ----
+  work:
