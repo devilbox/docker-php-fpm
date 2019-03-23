@@ -899,6 +899,8 @@ extensions_available:
     all:
       type: pecl
   wddx:
+    # https://wiki.php.net/rfc/deprecate-and-remove-ext-wddx
+    disabled: [7.4, 8.0]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr

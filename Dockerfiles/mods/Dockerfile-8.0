@@ -354,12 +354,6 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/uploadprogress || true) \
 	&& (rm -rf /usr/local/lib/php/doc/uploadprogress || true) \
 	\
-# ---- Installing PHP Extension: wddx ----
-	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
-	&& (rm -rf /usr/local/lib/php/test/wddx || true) \
-	&& (rm -rf /usr/local/lib/php/doc/wddx || true) \
-	\
 # ---- Installing PHP Extension: xmlrpc ----
 	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
@@ -538,8 +532,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
 	&& php -m | grep -oiE '^uploadprogress$' \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
-	&& php -m | grep -oiE '^wddx$' \
-	&& php-fpm -m | grep -oiE '^wddx$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
