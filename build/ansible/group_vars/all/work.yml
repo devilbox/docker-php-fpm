@@ -50,6 +50,8 @@ npm_enabled:
   # https://github.com/Unitech/pm2
   - pm2
   - mdlint
+  - vue_cli
+  - vue_cli_service_global
   - webpack
   - webpack_cli
 
@@ -209,6 +211,11 @@ npm_available:
   mdlint:
     name: mdlint
     check: mdlint --version | grep -E '[.0-9]+'
+  vue_cli:
+    name: "@vue/cli"
+    check: vue --version | grep -E '[.0-9]+'
+  vue_cli_service_global:
+    name: "@vue/cli-service-global"
   webpack:
     name: webpack
   webpack_cli:
