@@ -69,8 +69,8 @@ RUN set -x \
 		jq \
 		less \
 		libc-dev \
-		libffi-dev\
-		libssl-dev\
+		libffi-dev \
+		libssl-dev \
 		libyaml-dev \
 		make \
 		mongodb-org-shell \
@@ -343,6 +343,10 @@ RUN set -x \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g pm2' devilbox \
 # mdlint
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g mdlint' devilbox \
+# vue_cli
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli' devilbox \
+# vue_cli_service_global
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli-service-global' devilbox \
 # webpack
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack' devilbox \
 # webpack_cli
@@ -479,6 +483,7 @@ RUN set -x \
 	&& jsonlint --version | grep -E '[.0-9]+' \
 	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
 	&& mdlint --version | grep -E '[.0-9]+' \
+	&& vue --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
  \
 	&& mdl --version | grep -E '[.0-9]+' \

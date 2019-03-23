@@ -50,6 +50,8 @@ npm_enabled:
   # https://github.com/Unitech/pm2
   - pm2
   - mdlint
+  - vue_cli
+  - vue_cli_service_global
   - webpack
   - webpack_cli
 
@@ -132,20 +134,32 @@ apt_repositories_available:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
   mongo:
-    all:
+    5.2:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
       key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-  pgsql:
-    7.2:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-    7.3:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-    7.4:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-    8.0:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+    5.3:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    5.4:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    5.5:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     all:
+      deb: deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main
+      key: 9DA31620334BD75D9DCB49F368818C72E52529D4
+  pgsql:
+    5.2:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+    5.3:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+    5.4:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+    5.5:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+    all:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
       pre: curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
@@ -209,6 +223,11 @@ npm_available:
   mdlint:
     name: mdlint
     check: mdlint --version | grep -E '[.0-9]+'
+  vue_cli:
+    name: "@vue/cli"
+    check: vue --version | grep -E '[.0-9]+'
+  vue_cli_service_global:
+    name: "@vue/cli-service-global"
   webpack:
     name: webpack
   webpack_cli:

@@ -55,7 +55,7 @@ set_mds_settings() {
 	else
 		mds_pass_val="$( env_get "${mds_pass_var}" )"
 		log "info" "\$${mds_pass_var} set for mysqldump-secure. Changing to '******'" "${debug}"
-		run "sed -i'' 's/^password.*/password = ${mds_pass_val}/g' ${mds_cnf}" "${debug}"
+		run "perl -pi -e 's/^password.*/password = ${mds_pass_val}/g' ${mds_cnf}" "${debug}"
 	fi
 
 	# MySQL host
