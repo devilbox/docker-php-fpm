@@ -115,8 +115,20 @@ software_enabled:
 #
 apt_repositories_available:
   backports:
+    5.2:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
+    5.3:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
+    5.4:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
+    5.5:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
     all:
-      deb: deb http://ftp.debian.org/debian jessie-backports main
+      deb: deb http://ftp.debian.org/debian stretch-backports main
   blackfire:
     all:
       deb: deb http://packages.blackfire.io/debian any main

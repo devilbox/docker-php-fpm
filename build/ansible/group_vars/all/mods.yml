@@ -462,10 +462,16 @@ extensions_available:
       type: git
       git_url: https://github.com/php-memcached-dev/php-memcached
       git_ref: master
-      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
+      command: |
+        true \
+        # FIXME: This is a work-around to mitigate compile error with PHP 8.0
+        && sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
+        && phpize \
+        && ./configure --enable-memcached \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
     all:
       type: pecl
-      #version: 3.0.4 # TODO: check if this version works
       build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
       run_dep: [libmemcachedutil2]
   mongo:
@@ -478,7 +484,7 @@ extensions_available:
       command: yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2]
+    disabled: [5.2, 8.0]  # TODO: fix for PHP 8.0
     5.3:
       type: pecl
       version: 0.6.3
@@ -490,6 +496,13 @@ extensions_available:
       git_url: https://github.com/mongodb/mongo-php-driver
       command: |
         git submodule update --init \
+        # FIXME: This is a work-around to mitigate compile error with PHP 8.0
+        && rgrep 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C)/)/g' \
+        && rgrep 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C,/,/g' \
+        && rgrep 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' \
+        && rgrep 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' \
+        && rgrep 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' \
+        && rgrep 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' \
         && phpize \
         && ./configure --enable-mongodb \
         && make all \
@@ -526,6 +539,7 @@ extensions_available:
       type: builtin
       run_dep: [libmysqlclient18]
   mysqli:
+    disabled: [8.0] # TODO: Fixme
     already_avail: [5.2]
     all:
       type: builtin
@@ -710,6 +724,7 @@ extensions_available:
       build_dep: [librecode-dev]
       run_dep: [librecode0]
   redis:
+    disabled: [8.0] #TODO: fixme
     5.2:
       type: pecl
       version: 2.2.7
@@ -872,6 +887,7 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
+    disabled: [8.0] #TODO: fixme
     7.0:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress

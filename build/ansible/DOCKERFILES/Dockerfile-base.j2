@@ -45,6 +45,15 @@ RUN set -x \
 ###
 ### Upgrade (install ps)
 ###
+{% if php_version in [5.2, 5.3, 5.4, 5.5] %}
+RUN set -x \
+	&& rm -f /etc/apt/sources.list \
+	&& { \
+		echo "deb http://ftp.debian.org/debian jessie main"; \
+		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
+		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
+	} | tee /etc/apt/sources.list
+{% endif %}
 RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests procps \
