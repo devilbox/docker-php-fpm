@@ -829,7 +829,7 @@ extensions_available:
     7.3:
       type: git
       git_url: https://github.com/swoole/swoole-src
-      git_ref: git checkout $(git describe --abbrev=0 --tags)
+      git_ref: $(git describe --abbrev=0 --tags)
       command: |
         phpize \
         && ./configure \
