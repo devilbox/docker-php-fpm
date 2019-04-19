@@ -379,9 +379,8 @@ RUN set -x \
 # ---- Installing PHP Extension: swoole ----
 	&& git clone https://github.com/swoole/swoole-src /tmp/swoole \
 	&& cd /tmp/swoole \
-	&& git checkout master \
 	&& git checkout $(git describe --abbrev=0 --tags) \
-&& phpize \
+	&& phpize \
 && ./configure \
   --enable-openssl \
   --enable-sockets \
