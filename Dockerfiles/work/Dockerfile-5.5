@@ -224,6 +224,10 @@ RUN set -x \
     'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
+# lumen
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require laravel/lumen-installer \
+&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/lumen \
+ \
 # mhsendmail
 	&& wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
@@ -478,6 +482,7 @@ RUN set -x \
 	&& laravel --version | grep -E '(Installer|version)\s*[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
+	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phalcon commands | grep -E '[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
