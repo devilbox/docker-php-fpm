@@ -42,6 +42,7 @@ gem_enabled:
 # Node npm packages to install
 # -------------------------------------------------------------------------------------------------
 npm_enabled:
+  - angular_cli
   - eslint
   - grunt
   - grunt_cli
@@ -216,6 +217,9 @@ pip_available:
 # version:  [optional] Specific version of Node npm package
 #
 npm_available:
+  angular_cli:
+    name: "@angular/cli"
+    check: ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+'
   eslint:
     name: eslint
     check: eslint -v | grep -E '[.0-9]+'
