@@ -42,6 +42,7 @@ gem_enabled:
 # Node npm packages to install
 # -------------------------------------------------------------------------------------------------
 npm_enabled:
+  - angular_cli
   - eslint
   - grunt
   - grunt_cli
@@ -85,6 +86,7 @@ software_enabled:
   - laravel
   - linkcheck
   - linuxbrew
+  - lumen
   - mhsendmail
   - mysqldumpsecure
   - phalcon
@@ -215,6 +217,9 @@ pip_available:
 # version:  [optional] Specific version of Node npm package
 #
 npm_available:
+  angular_cli:
+    name: "@angular/cli"
+    check: ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+'
   eslint:
     name: eslint
     check: eslint -v | grep -E '[.0-9]+'
@@ -492,6 +497,13 @@ software_available:
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
             'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+  lumen:
+    disabled: [5.2, 5.3, 5.4, 8.0]
+    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$'
+    all:
+      command: |
+        COMPOSER_HOME="{{ compose_home }}" composer global require laravel/lumen-installer \
+        && ln -s {{ compose_home }}/vendor/laravel/lumen-installer/lumen /usr/local/bin/lumen \
   mhsendmail:
     all:
       command: |

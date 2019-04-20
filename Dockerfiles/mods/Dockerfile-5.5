@@ -335,7 +335,7 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/doc/redis || true) \
 	\
 # ---- Installing PHP Extension: rdkafka ----
-	&& pecl install rdkafka \
+	&& pecl install rdkafka-3.0.5 \
 	&& docker-php-ext-enable rdkafka \
 	&& (rm -rf /usr/local/lib/php/test/rdkafka || true) \
 	&& (rm -rf /usr/local/lib/php/doc/rdkafka || true) \

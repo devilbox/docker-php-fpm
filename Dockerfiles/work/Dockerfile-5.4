@@ -330,6 +330,8 @@ RUN set -x \
 ### Install Node npm packages (globally)
 ###
 RUN set -x \
+# angular_cli
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g @angular/cli' devilbox \
 # eslint
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g eslint' devilbox \
 # grunt
@@ -478,6 +480,7 @@ RUN set -x \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
  \
+	&& ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+' \
 	&& eslint -v | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
 	&& gulp --version | grep -E '[.0-9]+' \
