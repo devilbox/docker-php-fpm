@@ -368,6 +368,24 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/tidy || true) \
 	&& (rm -rf /usr/local/lib/php/doc/tidy || true) \
 	\
+# ---- Installing PHP Extension: uploadprogress ----
+	&& git clone https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
+	&& cd /tmp/uploadprogress \
+	&& true \
+# FIXME: This is a work-around to mitigate compile error with PHP 8.0
+&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' || true \
+&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' || true \
+&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' || true \
+&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' || true \
+&& phpize \
+&& ./configure --enable-uploadprogress \
+&& make \
+&& make install \
+ \
+	&& docker-php-ext-enable uploadprogress \
+	&& (rm -rf /usr/local/lib/php/test/uploadprogress || true) \
+	&& (rm -rf /usr/local/lib/php/doc/uploadprogress || true) \
+	\
 # ---- Installing PHP Extension: xmlrpc ----
 	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
@@ -544,6 +562,8 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^tidy$' \
 	&& php -m | grep -oiE '^tokenizer$' \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
+	&& php -m | grep -oiE '^uploadprogress$' \
+	&& php-fpm -m | grep -oiE '^uploadprogress$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
