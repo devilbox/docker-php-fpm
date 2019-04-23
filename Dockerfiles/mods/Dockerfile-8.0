@@ -193,6 +193,9 @@ RUN set -x \
 && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' \
 && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' \
 && sed -i'' 's/TSRMLS_SET_CTX(ctx);/\/\/TSRMLS_SET_CTX(ctx);/g' php_phongo.c \
+&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' php_phongo.c \
+&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' phongo_compat.h \
+&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' src/bson.c \
 && phpize \
 && ./configure --enable-mongodb \
 && make all \
