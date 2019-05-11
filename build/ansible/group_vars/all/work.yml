@@ -279,6 +279,8 @@ gem_available:
     check: mdl --version | grep -E '[.0-9]+'
   scss_lint:
     name: scss_lint
+    all:
+      version: 0.57.1
   sass:
     name: sass
     check: sass --version | grep -E '[.0-9]+'
