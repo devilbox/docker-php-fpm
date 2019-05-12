@@ -356,6 +356,7 @@ extensions_available:
       build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
       run_dep: [libc-client2007e]
   interbase:
+    disabled: [7.4, 8.0]   # TODO: re-enable. currently not available anymore on 7.4 and 8.0
     all:
       type: builtin
       build_dep: [libfbclient2, libib-util, firebird-dev]
