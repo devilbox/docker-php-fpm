@@ -160,11 +160,6 @@ RUN set -x \
 	&& (rm -rf /usr/local/lib/php/test/igbinary || true) \
 	&& (rm -rf /usr/local/lib/php/doc/igbinary || true) \
 	\
-# ---- Installing PHP Extension: interbase ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
-	&& (rm -rf /usr/local/lib/php/test/interbase || true) \
-	&& (rm -rf /usr/local/lib/php/doc/interbase || true) \
-	\
 # ---- Installing PHP Extension: intl ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
 	&& (rm -rf /usr/local/lib/php/test/intl || true) \
@@ -471,8 +466,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
-	&& php -m | grep -oiE '^interbase$' \
-	&& php-fpm -m | grep -oiE '^interbase$' \
 	&& php -m | grep -oiE '^intl$' \
 	&& php-fpm -m | grep -oiE '^intl$' \
 	&& php -m | grep -oiE '^json$' \
