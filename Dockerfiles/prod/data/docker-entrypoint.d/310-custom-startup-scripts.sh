@@ -19,7 +19,7 @@ execute_custom_scripts() {
 	if [ ! -d "${script_dir}" ]; then
 		run "mkdir -p ${script_dir}" "${debug}"
 	fi
-	script_files="$( find "${script_dir}" -type f -iname '*.sh' )"
+	script_files="$( find -L "${script_dir}" -type f -iname '*.sh' )"
 
 	# loop over them line by line
 	IFS='
