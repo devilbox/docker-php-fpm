@@ -11,7 +11,7 @@
 # -------------------------------------------------------------------------------------------------
 # Global variables
 # -------------------------------------------------------------------------------------------------
-compose_home: /usr/local/src/composer
+composer_home: /usr/local/src/composer
 nvm_home: /usr/local/src/nvm
 
 
@@ -25,6 +25,17 @@ apt_repositories_enabled:
   - mongo
   - pgsql
   - yarn
+
+
+# -------------------------------------------------------------------------------------------------
+# PHP Composer packages to install
+# -------------------------------------------------------------------------------------------------
+composer_enabled:
+  - asgardcms
+  - codeception
+  - lumen
+  - photon
+  - prestissimo
 
 
 # -------------------------------------------------------------------------------------------------
@@ -74,9 +85,7 @@ software_enabled:
   - pip
   - nvm
   # Normal packages start here
-  - asgardcms
   - awesomeci
-  - codeception
   - deployer
   - drush7
   - drush8
@@ -86,7 +95,6 @@ software_enabled:
   - laravel
   - linkcheck
   - linuxbrew
-  - lumen
   - mhsendmail
   - mysqldumpsecure
   - phalcon
@@ -94,7 +102,6 @@ software_enabled:
   - phpcbf
   - php-cs-fixer
   - phpunit
-  - photon
   - symfony
   - wkhtmltopdf
   - wpcli
@@ -182,29 +189,81 @@ apt_repositories_available:
 
 
 # -------------------------------------------------------------------------------------------------
-# Python pip definition
+# Composer (PHP) definition
 # -------------------------------------------------------------------------------------------------
 
-# name:     Name of the Python pip package
+# name:     Name of the PHP Composer package
+# link:     [optional] Name of the binary to symlink to /usr/local/bin
 # all:      is generic version of defines
 # 7.2:      is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
 # check:    [optional] Include a check command to test if it was installed successfully
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
-# version:  [optional] Specific version of Python pip package
+# version:  [optional] Specific version of Ruby gem
 #
-pip_available:
-  ansible:
-    name: ansible
-    check: ansible --version | grep -E '^ansible [.0-9]+$'
-  yamllint:
-    name: yamllint
-    check: yamllint --version 2>&1 | grep -E '[.0-9]+'
+composer_available:
+  asgardcms:
+    disabled: [5.2, 5.3, 5.4, 8.0]
+    check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+'
+    name: asgardcms/asgardcms-installer
+    link: asgardcms
+  codeception:
+    disabled: [5.2, 8.0]
+    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
+    name: codeception/codeception
+    link: codecept
+  lumen:
+    disabled: [5.2, 5.3, 5.4, 8.0]
+    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$'
+    name: laravel/lumen-installer
+    link: lumen
+  photon:
+    disabled: [5.2, 5.3, 5.4, 8.0]
+    check: photon --version | grep -E 'Installer [.0-9]+'
+    name: photoncms/installer
+    link: photon
+  prestissimo:
+    disabled: [5.2, 8.0]
+    name: hirak/prestissimo
 
 
 # -------------------------------------------------------------------------------------------------
-# Node npm definition
+# Gems (Ruby) definition
+# -------------------------------------------------------------------------------------------------
+
+# name:     Name of the Ruby gem package
+# all:      is generic version of defines
+# 7.2:      is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+# check:    [optional] Include a check command to test if it was installed successfully
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+# version:  [optional] Specific version of Ruby gem
+#
+gem_available:
+  mixlib_config:
+    name: mixlib-config
+    all:
+      version: 2.2.4
+  rb_inotify:
+    name: rb-inotify
+    all:
+      version: 0.9.10
+  mdl:
+    name: mdl
+    check: mdl --version | grep -E '[.0-9]+'
+  scss_lint:
+    name: scss_lint
+    all:
+      version: 0.57.1
+  sass:
+    name: sass
+    check: sass --version | grep -E '[.0-9]+'
+
+
+# -------------------------------------------------------------------------------------------------
+# npm (Node) definition
 # -------------------------------------------------------------------------------------------------
 
 # name:     Name of the Node npm package
@@ -253,37 +312,25 @@ npm_available:
 
 
 # -------------------------------------------------------------------------------------------------
-# Ruby Gems definition
+# pip (Python) definition
 # -------------------------------------------------------------------------------------------------
 
-# name:     Name of the Ruby gem package
+# name:     Name of the Python pip package
 # all:      is generic version of defines
 # 7.2:      is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
 # check:    [optional] Include a check command to test if it was installed successfully
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
-# version:  [optional] Specific version of Ruby gem
+# version:  [optional] Specific version of Python pip package
 #
-gem_available:
-  mixlib_config:
-    name: mixlib-config
-    all:
-      version: 2.2.4
-  rb_inotify:
-    name: rb-inotify
-    all:
-      version: 0.9.10
-  mdl:
-    name: mdl
-    check: mdl --version | grep -E '[.0-9]+'
-  scss_lint:
-    name: scss_lint
-    all:
-      version: 0.57.1
-  sass:
-    name: sass
-    check: sass --version | grep -E '[.0-9]+'
+pip_available:
+  ansible:
+    name: ansible
+    check: ansible --version | grep -E '^ansible [.0-9]+$'
+  yamllint:
+    name: yamllint
+    check: yamllint --version 2>&1 | grep -E '[.0-9]+'
 
 
 # -------------------------------------------------------------------------------------------------
@@ -339,13 +386,6 @@ software_available:
         su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
         && su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
         && su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
-  asgardcms:
-    disabled: [5.2, 5.3, 5.4, 8.0]
-    check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+'
-    all:
-      command: |
-        COMPOSER_HOME="{{ compose_home }}" composer global require asgardcms/asgardcms-installer \
-        && ln -s {{ compose_home }}/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/asgardcms \
   awesomeci:
     check: |
       mdl --version | grep -E '[.0-9]+' \
@@ -426,13 +466,6 @@ software_available:
         && rm -rf /usr/local/src/drush9/docs \
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
-  codeception:
-    disabled: [5.2, 8.0]
-    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
-    all:
-      command: |
-        COMPOSER_HOME="{{ compose_home }}" composer global require codeception/codeception \
-        && ln -s {{ compose_home }}/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
   drupalconsole:
     disabled: [5.2, 5.3, 5.4]
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
@@ -499,13 +532,6 @@ software_available:
         && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
             'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
         && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
-  lumen:
-    disabled: [5.2, 5.3, 5.4, 8.0]
-    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$'
-    all:
-      command: |
-        COMPOSER_HOME="{{ compose_home }}" composer global require laravel/lumen-installer \
-        && ln -s {{ compose_home }}/vendor/laravel/lumen-installer/lumen /usr/local/bin/lumen \
   mhsendmail:
     all:
       command: |
@@ -634,13 +660,6 @@ software_available:
       command: |
         curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
-  photon:
-    disabled: [5.2, 5.3, 5.4, 8.0]
-    check: photon --version | grep -E 'Installer [.0-9]+'
-    all:
-      command: |
-        COMPOSER_HOME="{{ compose_home }}" composer global require "photoncms/installer" \
-        && ln -s {{ compose_home }}/vendor/photoncms/installer/photon /usr/local/bin/photon \
   symfony:
     disabled: [5.2, 5.3]
     check: symfony --version | grep -E 'version\s*[.0-9]+'

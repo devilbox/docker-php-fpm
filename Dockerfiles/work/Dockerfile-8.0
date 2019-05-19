@@ -271,7 +271,20 @@ RUN set -x \
 
 
 ###
-### Install Node npm packages (globally)
+### Install Composer (PHP)
+###
+RUN set -x \
+	\
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install npm (Node)
 ###
 RUN set -x \
 # angular_cli
@@ -311,27 +324,8 @@ RUN set -x \
 	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
-
 ###
-### Install Python pip packages
-###
-RUN set -x \
-# ansible
-	&& pip install --no-cache-dir --force-reinstall ansible \
-# yamllint
-	&& pip install --no-cache-dir --force-reinstall yamllint \
-	\
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install Ruby gems
+### Install gem (Ruby)
 ###
 RUN set -x \
 # mixlib_config
@@ -346,6 +340,24 @@ RUN set -x \
 	&& gem install sass \
 	\
 	&& rm -rf /root/.gem \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install pip (Python) packages
+###
+RUN set -x \
+# ansible
+	&& pip install --no-cache-dir --force-reinstall ansible \
+# yamllint
+	&& pip install --no-cache-dir --force-reinstall yamllint \
+	\
+	&& rm -rf /root/.cache/pip \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
 	\
@@ -414,6 +426,7 @@ RUN set -x \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
+ \
  \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \

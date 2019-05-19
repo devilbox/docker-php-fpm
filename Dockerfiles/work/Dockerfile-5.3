@@ -154,10 +154,6 @@ RUN set -x \
 && cd / \
 && rm -rf /usr/local/src/awesome-ci \
  \
-# codeception
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
-&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
- \
 # drush7
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
 && cd /usr/local/src/drush7 \
@@ -299,7 +295,25 @@ RUN set -x \
 
 
 ###
-### Install Node npm packages (globally)
+### Install Composer (PHP)
+###
+RUN set -x \
+# codeception
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
+	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
+# prestissimo
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  hirak/prestissimo \
+	\
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install npm (Node)
 ###
 RUN set -x \
 # angular_cli
@@ -339,27 +353,8 @@ RUN set -x \
 	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
-
 ###
-### Install Python pip packages
-###
-RUN set -x \
-# ansible
-	&& pip install --no-cache-dir --force-reinstall ansible \
-# yamllint
-	&& pip install --no-cache-dir --force-reinstall yamllint \
-	\
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install Ruby gems
+### Install gem (Ruby)
 ###
 RUN set -x \
 # mixlib_config
@@ -374,6 +369,24 @@ RUN set -x \
 	&& gem install sass \
 	\
 	&& rm -rf /root/.gem \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install pip (Python) packages
+###
+RUN set -x \
+# ansible
+	&& pip install --no-cache-dir --force-reinstall ansible \
+# yamllint
+	&& pip install --no-cache-dir --force-reinstall yamllint \
+	\
+	&& rm -rf /root/.cache/pip \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
 	\
@@ -431,7 +444,6 @@ RUN set -x \
 && mdlint --version | grep -E '[.0-9]+' \
 && gulp --version | grep -E '[.0-9]+' \
  \
-	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
@@ -444,6 +456,8 @@ RUN set -x \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
+ \
+	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
  \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
