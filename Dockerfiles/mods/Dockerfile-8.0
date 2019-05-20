@@ -23,7 +23,6 @@ ENV BUILD_DEPS \
 	freetds-dev \
 	libaio-dev \
 	libbz2-dev \
-	libenchant-dev \
 	libevent-dev \
 	libfbclient2 \
 	libffi-dev \
@@ -57,7 +56,6 @@ ENV BUILD_DEPS \
 ENV RUN_DEPS \
 	libaio1 \
 	libaspell15 \
-	libenchant1c2a \
 	libfbclient2 \
 	libffi6 \
 	libfreetype6 \
@@ -107,11 +105,6 @@ RUN set -x \
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
 	&& (rm -rf /usr/local/lib/php/test/dba || true) \
 	&& (rm -rf /usr/local/lib/php/doc/dba || true) \
-	\
-# ---- Installing PHP Extension: enchant ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
-	&& (rm -rf /usr/local/lib/php/test/enchant || true) \
-	&& (rm -rf /usr/local/lib/php/doc/enchant || true) \
 	\
 # ---- Installing PHP Extension: exif ----
 	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
@@ -450,8 +443,6 @@ RUN set -x \
 	&& php-fpm -m | grep -oiE '^dba$' \
 	&& php -m | grep -oiE '^dom$' \
 	&& php-fpm -m | grep -oiE '^dom$' \
-	&& php -m | grep -oiE '^enchant$' \
-	&& php-fpm -m | grep -oiE '^enchant$' \
 	&& php -m | grep -oiE '^exif$' \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^ffi$' \
