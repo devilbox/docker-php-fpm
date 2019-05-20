@@ -103,6 +103,7 @@ RUN set -x \
 		xz-utils \
 		yarn \
 		zip \
+		zlib1g-dev \
 		zsh \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -152,10 +153,6 @@ RUN set -x \
 && make install \
 && cd / \
 && rm -rf /usr/local/src/awesome-ci \
- \
-# codeception
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require codeception/codeception \
-&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/codecept \
  \
 # deployer
 	&& curl -sS https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep \
@@ -327,7 +324,25 @@ RUN set -x \
 
 
 ###
-### Install Node npm packages (globally)
+### Install Composer (PHP)
+###
+RUN set -x \
+# codeception
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
+	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
+# prestissimo
+	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  hirak/prestissimo \
+	\
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install npm (Node)
 ###
 RUN set -x \
 # angular_cli
@@ -367,27 +382,8 @@ RUN set -x \
 	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
-
 ###
-### Install Python pip packages
-###
-RUN set -x \
-# ansible
-	&& pip install --no-cache-dir --force-reinstall ansible \
-# yamllint
-	&& pip install --no-cache-dir --force-reinstall yamllint \
-	\
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install Ruby gems
+### Install gem (Ruby)
 ###
 RUN set -x \
 # mixlib_config
@@ -411,11 +407,31 @@ RUN set -x \
 
 
 ###
+### Install pip (Python) packages
+###
+RUN set -x \
+# ansible
+	&& pip install --no-cache-dir --force-reinstall ansible \
+# yamllint
+	&& pip install --no-cache-dir --force-reinstall yamllint \
+# yq
+	&& pip install --no-cache-dir --force-reinstall yq \
+	\
+	&& rm -rf /root/.cache/pip \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
 ### Configure Bash
 ###
 RUN \
 	{ \
-		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin"; \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin:/opt/nvm/versions/node/\$(nvm version default)/bin"; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
@@ -459,7 +475,6 @@ RUN set -x \
 && mdlint --version | grep -E '[.0-9]+' \
 && gulp --version | grep -E '[.0-9]+' \
  \
-	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
@@ -477,8 +492,11 @@ RUN set -x \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
  \
+	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
+ \
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
+	&& yq --version 2>&1 | grep -E '^yq\s+[.0-9]+$' \
  \
 	&& ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+' \
 	&& eslint -v | grep -E '[.0-9]+' \

@@ -123,6 +123,7 @@ RUN set -x \
 		xz-utils \
 		yarn \
 		zip \
+		zlib1g-dev \
 		zsh \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -181,7 +182,39 @@ RUN set -x \
 
 
 ###
-### Install Node npm packages (globally)
+### Install Composer (PHP)
+###
+RUN set -x \
+{% for tool in composer_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific gem version available? #}
+{% if php_version in composer_available[tool] and 'version' in composer_available[tool][php_version] %}
+	&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
+{# Generic gem version  available? #}
+{% elif 'all' in composer_available[tool] and 'version' in composer_available[tool]['all'] %}
+	&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
+{# No version info available #}
+{% else %}
+	&& COMPOSER_HOME="{{ composer_home }}" composer global require  {{ composer_available[tool]['name'] }} \
+{% endif %}
+{% if 'link' in composer_available[tool] %}
+	&& ln -s {{ composer_home }}/vendor/{{ composer_available[tool]['name'] }}/{{ composer_available[tool]['link'] }} /usr/local/bin/ \
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install npm (Node)
 ###
 RUN set -x \
 {% for tool in npm_enabled %}
@@ -213,39 +246,8 @@ RUN set -x \
 	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
-
 ###
-### Install Python pip packages
-###
-RUN set -x \
-{% for tool in pip_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific gem version available? #}
-{% if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} \
-{# Generic gem version  available? #}
-{% elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} \
-{# No version info available #}
-{% else %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install Ruby gems
+### Install gem (Ruby)
 ###
 RUN set -x \
 {% for tool in gem_enabled %}
@@ -275,11 +277,41 @@ RUN set -x \
 
 
 ###
+### Install pip (Python) packages
+###
+RUN set -x \
+{% for tool in pip_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
+# {{ tool }}
+{# Version specific gem version available? #}
+{% if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} \
+{# Generic gem version  available? #}
+{% elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} \
+{# No version info available #}
+{% else %}
+	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} \
+{% endif %}
+{% endif %}
+{% endfor %}
+	\
+	&& rm -rf /root/.cache/pip \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
 ### Configure Bash
 ###
 RUN \
 	{ \
-		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin"; \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin:/opt/nvm/versions/node/\$(nvm version default)/bin"; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
@@ -321,6 +353,15 @@ RUN set -x \
 {% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
 {% if 'check' in software_available[tool] %}
 	&& {{ software_available[tool]['check'] }} \
+{% endif %}
+{% endif %}
+{% endfor %} \
+{# ---- Composer ---- #}
+{% for tool in composer_enabled %}
+{# Not disabled #}
+{% if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) %}
+{% if 'check' in composer_available[tool] %}
+	&& {{ composer_available[tool]['check'] }} \
 {% endif %}
 {% endif %}
 {% endfor %} \
