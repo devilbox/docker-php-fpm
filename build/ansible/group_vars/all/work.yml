@@ -74,6 +74,7 @@ npm_enabled:
 pip_enabled:
   - ansible
   - yamllint
+  - yq
 
 
 # -------------------------------------------------------------------------------------------------
@@ -331,6 +332,9 @@ pip_available:
   yamllint:
     name: yamllint
     check: yamllint --version 2>&1 | grep -E '[.0-9]+'
+  yq:
+    name: yq
+    check: yq --version 2>&1 | grep -E '^yq\s+[.0-9]+$'
 
 
 # -------------------------------------------------------------------------------------------------
