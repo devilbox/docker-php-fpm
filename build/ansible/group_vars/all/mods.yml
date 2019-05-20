@@ -54,6 +54,7 @@ extensions_enabled:
   - mysql
   - mysqli
   - mysqlnd
+  - oauth
   - oci8
   - odbc
   - opcache
@@ -550,6 +551,26 @@ extensions_available:
   mysqlnd:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+  oauth:
+    disabled: [7.4, 8.0]
+    5.2:
+      type: pecl
+      version: 1.2.3
+    5.3:
+      type: pecl
+      version: 1.2.3
+    5.4:
+      type: pecl
+      version: 1.2.3
+    5.5:
+      type: pecl
+      version: 1.2.3
+    5.6:
+      type: pecl
+      version: 1.2.3
+    all:
+      type: pecl
+      build_dep: [libpcre3-dev]
   oci8:
     disabled: [5.2]
     all:
