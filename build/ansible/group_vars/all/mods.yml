@@ -693,7 +693,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.4, 8.0]
+    disabled: [5.2, 7.3, 7.4, 8.0] # TODO: currently disabled for 7.3 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
