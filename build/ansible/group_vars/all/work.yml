@@ -471,7 +471,7 @@ software_available:
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
   drupalconsole:
-    disabled: [5.2, 5.3, 5.4]
+    disabled: [5.2, 5.3, 5.4, 8.0] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
     all:
       command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
