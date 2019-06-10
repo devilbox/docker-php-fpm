@@ -156,9 +156,6 @@ RUN set -x \
 # deployer
 	&& curl -sS https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
-# drupalconsole
-	&& curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
-	&& chmod +x /usr/local/bin/drupal \
 # gitflow
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
 && cd /tmp/gitflow \
@@ -418,7 +415,6 @@ RUN set -x \
 && gulp --version | grep -E '[.0-9]+' \
  \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+' \
-	&& drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]' \
 	&& git-flow version | grep -E '[.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+' \
