@@ -1,0 +1,307 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: PHP
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  # Runs on Pull Requests
+  pull_request:
+
+  # Runs on master Branch and Tags
+  push:
+    branches:
+      - master
+    tags:
+      - '[0-9]+.[0-9]+*'
+
+  # Runs daily
+  schedule:
+    - cron: '0 0 * * *'
+
+
+# -------------------------------------------------------------------------------------------------
+# What to run
+# -------------------------------------------------------------------------------------------------
+jobs:
+  diagnostics:
+    name: Diagnostics
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Show environment
+        run: |
+          env
+
+      - name: Show GitHub variables
+        run: |
+          echo "github.actor:                           ${{ github.actor }}"
+          echo "github.ref:                             ${{ github.ref }}"
+          echo "github.event:                           ${{ github.event }}"
+          echo "github.event_name:                      ${{ github.event_name }}"
+          echo "github.event.pull_request.base.repo.id: ${{ github.event.pull_request.base.repo.id }}"
+          echo "github.event.pull_request.head.repo.id: ${{ github.event.pull_request.head.repo.id }}"
+
+  build:
+    name: "[ ${{ matrix.version }} ]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        # Adding all targets and only run them if they exist.
+        # Prevents us from forgetting to update this in case
+        # we add new envs in terragrunt.
+        version:
+          - '5.2'
+          - '5.3'
+          - '5.4'
+          - '5.5'
+          - '5.6'
+          - '7.0'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      # ------------------------------------------------------------
+      # Build Base
+      # ------------------------------------------------------------
+      - name: Build Base
+        run: make rebuild-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Build Base (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make build-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+      # ------------------------------------------------------------
+      # Test Base
+      # ------------------------------------------------------------
+      - name: Test Base
+        run: make test-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Test Base (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make test-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+
+      # ------------------------------------------------------------
+      # Build Mods
+      # ------------------------------------------------------------
+      - name: Build Mods
+        run: make rebuild-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Build Mods (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make build-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+      # ------------------------------------------------------------
+      # Test Mods
+      # ------------------------------------------------------------
+      - name: Test Mods
+        run: make test-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Test Mods (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make test-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+
+      # ------------------------------------------------------------
+      # Build Prod
+      # ------------------------------------------------------------
+      - name: Build Prod
+        run: make rebuild-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Build Prod (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make build-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+      # ------------------------------------------------------------
+      # Test Prod
+      # ------------------------------------------------------------
+      - name: Test Prod
+        run: make test-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Test Prod (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make test-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+
+      # ------------------------------------------------------------
+      # Build Work
+      # ------------------------------------------------------------
+      - name: Build Work
+        run: make rebuild-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Build Work (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make build-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+      # ------------------------------------------------------------
+      # Test Work
+      # ------------------------------------------------------------
+      - name: Test Work
+        run: make test-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: Test Work (Retry)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+            done;
+            return 1;
+          }
+          sleep 10
+          retry make test-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        if: failure()
+
+      # ------------------------------------------------------------
+      # Diff README.md
+      # ------------------------------------------------------------
+      - name: Diff README.md
+        run: |
+          make gen-readme VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      # ------------------------------------------------------------
+      # Push build artifacts
+      # ------------------------------------------------------------
+
+      # Only run this, if the PR was created by the repo owner
+      - name: Publish images (only repo owner)
+        run: |
+          echo "Todo: Push to Dockerhub"
+        if: (github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id || github.ref == 'refs/heads/master')

@@ -1,0 +1,27 @@
+---
+
+###
+### Lints all generic and json files in the whole git repository
+###
+
+name: linting
+on:
+  pull_request:
+
+jobs:
+  lint:
+    name: "[ ${{ matrix.job }} ]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        job: [gen-dockerfiles]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Diff generated Docker files
+        run: |
+          make "${JOB}"
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+        env:
+          JOB: ${{ matrix.job }}
