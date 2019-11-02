@@ -129,7 +129,14 @@ help:
 ### Generate
 ###
 generate:
-	cd build/ansible; ansible-playbook generate.yml --diff
+	docker run --rm \
+		$$(tty -s && echo "-it" || echo) \
+		-e USER=ansible \
+		-e MY_UID=$$(id -u) \
+		-e MY_GID=$$(id -g) \
+		-v ${PWD}:/data \
+		-w /data/build/ansible \
+		cytopia/ansible:2.8 ansible-playbook generate.yml --diff
 
 
 ###
