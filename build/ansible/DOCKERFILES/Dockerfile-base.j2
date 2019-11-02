@@ -1,4 +1,4 @@
-# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
+{{ edit_comment_base }}
 {% if php_version == 5.2 %}
 FROM devilbox/php-fpm-5.2
 {% elif php_version == 5.3 %}
@@ -16,12 +16,20 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ###
 ### Labels
 ###
-LABEL \
-	name="cytopia's PHP-FPM {{ php_version }} Image" \
-	image="devilbox/php-fpm" \
-	tag="{{ php_version }}-base" \
-	vendor="devilbox" \
-	license="MIT"
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="{{ php_version }}-base"
+LABEL "org.opencontainers.image.title"="PHP-FPM {{ php_version }}-base"
+LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-base"
 
 
 ###

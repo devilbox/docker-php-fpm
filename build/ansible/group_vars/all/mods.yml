@@ -118,6 +118,7 @@ extensions_enabled:
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
 #   pre:         [optional] Run command before anything else
+#   post:        [optional] Run command after anything else (builder and final image)
 #   build_dep:   [optional] Array of build dependencies
 #   run_dep:     [optional] Array of run-time dependencies
 #   type:        [required] One of 'builtin', 'pecl' or 'git'
@@ -278,9 +279,11 @@ extensions_available:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     7.0:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     7.1:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
@@ -293,15 +296,17 @@ extensions_available:
     7.4:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     8.0:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
   gettext:
     all:
       type: builtin
@@ -346,10 +351,16 @@ extensions_available:
     5.5:
       type: pecl
       run_dep: [libmagickwand-6.q16-2]
+    5.6:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3]
+    7.0:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3]
     all:
       type: pecl
       build_dep: [libmagickwand-dev]
-      run_dep: [libmagickwand-6.q16-3]
+      run_dep: [libmagickwand-6.q16-6]
   imap:
     disabled: [7.4, 8.0]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
     all:
@@ -377,10 +388,22 @@ extensions_available:
     5.5:
       type: builtin
       run_dep: [libicu52]
+    5.6:
+      type: builtin
+      run_dep: [libicu57]
+    7.0:
+      type: builtin
+      run_dep: [libicu57]
+    7.4:
+      type: builtin
+      run_dep: [libicu57]
+    8.0:
+      type: builtin
+      run_dep: [libicu57]
     all:
       type: builtin
       build_dep: [libicu-dev]
-      run_dep: [libicu57]
+      run_dep: [libicu63]
   ioncube:
     disabled: [7.3, 7.4, 8.0]
     all:
@@ -495,11 +518,15 @@ extensions_available:
     5.4:
       type: pecl
       version: 1.2.11
+    5.5:
+      type: pecl
+      version: 1.5.5
     8.0:
       type: git
       git_url: https://github.com/mongodb/mongo-php-driver
       command: |
-        git submodule update --init \
+        git checkout v1.6 \
+        && git submodule update --init \
         # FIXME: This is a work-around to mitigate compile error with PHP 8.0
         && rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C)/)/g' \
         && rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C,/,/g' \
@@ -511,6 +538,18 @@ extensions_available:
         && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' php_phongo.c \
         && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' phongo_compat.h \
         && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' src/bson.c \
+        \
+        && sed -i'' 's/php_phongo_handler_binary.compare_objects.*//g' src/BSON/Binary.c \
+        && sed -i'' 's/php_phongo_handler_dbpointer.compare_objects.*//g' src/BSON/DBPointer.c \
+        && sed -i'' 's/php_phongo_handler_int64.compare_objects.*//g' src/BSON/Int64.c \
+        && sed -i'' 's/php_phongo_handler_javascript.compare_objects.*//g' src/BSON/Javascript.c \
+        && sed -i'' 's/php_phongo_handler_objectid.compare_objects.*//g' src/BSON/ObjectId.c \
+        && sed -i'' 's/php_phongo_handler_symbol.compare_objects.*//g' src/BSON/Symbol.c \
+        && sed -i'' 's/php_phongo_handler_timestamp.compare_objects.*//g' src/BSON/Timestamp.c \
+        && sed -i'' 's/php_phongo_handler_regex.compare_objects.*//g' src/BSON/Regex.c \
+        && sed -i'' 's/php_phongo_handler_server.compare_objects.*//g' src/MongoDB/Server.c \
+        && sed -i'' 's/php_phongo_handler_utcdatetime.compare_objects.*//g' src/BSON/UTCDateTime.c \
+        \
         && phpize \
         && ./configure --enable-mongodb \
         && make all \
@@ -592,9 +631,13 @@ extensions_available:
         && alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
         && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
       build_dep: [alien, libaio-dev]
       run_dep: [libaio1]
+      post: |
+        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+        && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+        && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+        && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
@@ -745,6 +788,7 @@ extensions_available:
   readline:
     already_avail: "{{ php_all_versions }}"
   recode:
+    disabled: [7.4, 8.0]
     already_avail: [5.3, 5.4]
     all:
       type: builtin
@@ -754,6 +798,18 @@ extensions_available:
     5.2:
       type: pecl
       version: 2.2.7
+    5.3:
+      type: pecl
+      version: 4.3.0
+    5.4:
+      type: pecl
+      version: 4.3.0
+    5.5:
+      type: pecl
+      version: 4.3.0
+    5.6:
+      type: pecl
+      version: 4.3.0
     7.4:
       type: git
       git_url: https://github.com/phpredis/phpredis
@@ -800,6 +856,15 @@ extensions_available:
     5.5:
       type: pecl
       version: 3.0.5
+    5.6:
+      type: pecl
+      version: 3.1.2
+    7.0:
+      type: pecl
+      version: 3.1.2
+    7.4:
+      type: pecl
+      version: 3.1.2
     all:
       type: pecl
       build_dep: [librdkafka-dev]
@@ -862,6 +927,9 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.9.23
+    7.0:
+      type: pecl
+      version: 4.2.13
     7.3:
       type: git
       git_url: https://github.com/swoole/swoole-src
@@ -876,7 +944,7 @@ extensions_available:
           --enable-coroutine-postgresql \
         && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
-      run_dep: [libnghttp2-14, libhiredis0.13]
+      run_dep: [libnghttp2-14, libhiredis0.14]
       build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
     7.4:
       type: git
@@ -920,10 +988,22 @@ extensions_available:
     5.5:
       type: builtin
       run_dep: [libtidy-0.99-0]
+    5.6:
+      type: builtin
+      run_dep: [libtidy5]
+    7.0:
+      type: builtin
+      run_dep: [libtidy5]
+    7.4:
+      type: builtin
+      run_dep: [libtidy5]
+    8.0:
+      type: builtin
+      run_dep: [libtidy5]
     all:
       type: builtin
       build_dep: [libtidy-dev]
-      run_dep: [libtidy5]
+      run_dep: [libtidy5deb1]
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
