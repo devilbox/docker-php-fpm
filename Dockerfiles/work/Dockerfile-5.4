@@ -271,7 +271,7 @@ RUN set -eux \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
 && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-&& ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+&& ln -sf /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
 && cd / \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \

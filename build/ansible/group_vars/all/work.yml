@@ -584,11 +584,23 @@ software_available:
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout v2.0.7 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
     5.4:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout v2.0.9 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
     all:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -597,7 +609,8 @@ software_available:
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
         && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x phalcon \
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
   phpcs:
