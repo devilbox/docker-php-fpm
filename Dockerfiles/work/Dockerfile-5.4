@@ -31,7 +31,7 @@ ENV BASH_PROFILE=".bashrc"
 ###
 ### Install Tools
 ###
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
@@ -124,7 +124,7 @@ RUN set -x \
 ###
 ### Install custom software
 ###
-RUN set -x \
+RUN set -eux \
 # composer
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 # pip
@@ -334,7 +334,7 @@ RUN set -x \
 ###
 ### Install Composer (PHP)
 ###
-RUN set -x \
+RUN set -eux \
 # codeception
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
 	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
@@ -352,7 +352,7 @@ RUN set -x \
 ###
 ### Install npm (Node)
 ###
-RUN set -x \
+RUN set -eux \
 # angular_cli
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g @angular/cli' devilbox \
 # eslint
@@ -393,7 +393,7 @@ RUN set -x \
 ###
 ### Install gem (Ruby)
 ###
-RUN set -x \
+RUN set -eux \
 # mixlib_config
 	&& gem install mixlib-config -v 2.2.4 \
 # rb_inotify
@@ -417,7 +417,7 @@ RUN set -x \
 ###
 ### Install pip (Python) packages
 ###
-RUN set -x \
+RUN set -eux \
 # ansible
 	&& pip install --no-cache-dir --force-reinstall ansible \
 # yamllint
@@ -457,7 +457,7 @@ RUN \
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.4' \
 	&& /usr/local/sbin/php-fpm --test \
@@ -473,7 +473,7 @@ RUN set -x \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini
 
-RUN set -x \
+RUN set -eux \
 	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
 	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[.0-9]+' \
 	&& mdl --version | grep -E '[.0-9]+' \

@@ -31,7 +31,7 @@ ENV BASH_PROFILE=".bashrc"
 ###
 ### Install Tools
 ###
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
@@ -144,7 +144,7 @@ RUN set -x \
 ###
 ### Install custom software
 ###
-RUN set -x \
+RUN set -eux \
 {% for tool in software_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
@@ -192,7 +192,7 @@ RUN set -x \
 ###
 ### Install Composer (PHP)
 ###
-RUN set -x \
+RUN set -eux \
 {% for tool in composer_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) %}
@@ -224,7 +224,7 @@ RUN set -x \
 ###
 ### Install npm (Node)
 ###
-RUN set -x \
+RUN set -eux \
 {% for tool in npm_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) %}
@@ -257,7 +257,7 @@ RUN set -x \
 ###
 ### Install gem (Ruby)
 ###
-RUN set -x \
+RUN set -eux \
 {% for tool in gem_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) %}
@@ -287,7 +287,7 @@ RUN set -x \
 ###
 ### Install pip (Python) packages
 ###
-RUN set -x \
+RUN set -eux \
 {% for tool in pip_enabled %}
 {# Not disabled #}
 {% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
@@ -338,7 +338,7 @@ RUN \
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
 	&& /usr/local/sbin/php-fpm --test \
@@ -354,7 +354,7 @@ RUN set -x \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini
 
-RUN set -x \
+RUN set -eux \
 {# ---- SOFTWARE ---- #}
 {% for tool in software_enabled %}
 {# Not disabled #}

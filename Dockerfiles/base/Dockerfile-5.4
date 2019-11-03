@@ -35,7 +35,7 @@ ENV MY_USER="devilbox" \
 ###
 ### User/Group
 ###
-RUN set -x \
+RUN set -eux \
 	&& groupadd -g ${MY_GID} -r ${MY_GROUP} \
 	&& useradd -u ${MY_UID} -m -s /bin/bash -g ${MY_GROUP} ${MY_USER}
 
@@ -43,14 +43,14 @@ RUN set -x \
 ###
 ### Upgrade (install ps)
 ###
-RUN set -x \
+RUN set -eux \
 	&& rm -f /etc/apt/sources.list \
 	&& { \
 		echo "deb http://ftp.debian.org/debian jessie main"; \
 		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
 		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
 	} | tee /etc/apt/sources.list
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests procps \
 	&& rm -rf /var/lib/apt/lists/*
@@ -59,7 +59,7 @@ RUN set -x \
 ###
 ### Configure
 ###
-RUN set -x \
+RUN set -eux \
 	&& rm -rf /usr/local/etc/php-fpm.d \
 	&& mkdir -p /usr/local/etc/php-fpm.d \
 	&& mkdir -p /var/lib/php/session \
@@ -81,7 +81,7 @@ COPY ./data/docker-entrypoint.d /docker-entrypoint.d
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.4' \
 	&& /usr/local/sbin/php-fpm --test \
