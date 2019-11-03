@@ -15,7 +15,7 @@ edit_comment_work: "# Auto-generated via Ansible: edit build/ansible/DOCKERFILES
 debug: True
 
 # Also implement checks in builder images (slow, but fails faster)
-build_fail_fast: True
+build_fail_fast: False
 
 
 # -------------------------------------------------------------------------------------------------
