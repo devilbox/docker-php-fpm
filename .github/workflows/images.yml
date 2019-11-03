@@ -77,14 +77,9 @@ jobs:
         uses: actions/checkout@v1
 
       # ------------------------------------------------------------
-      # Build Base
+      # Base
       # ------------------------------------------------------------
       - name: Build Base
-        run: make rebuild-base VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Build Base (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -100,17 +95,8 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
-      # ------------------------------------------------------------
-      # Test Base
-      # ------------------------------------------------------------
       - name: Test Base
-        run: make test-base VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Test Base (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -126,18 +112,12 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
 
       # ------------------------------------------------------------
-      # Build Mods
+      # Mods
       # ------------------------------------------------------------
       - name: Build Mods
-        run: make rebuild-mods VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Build Mods (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -153,17 +133,8 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
-      # ------------------------------------------------------------
-      # Test Mods
-      # ------------------------------------------------------------
       - name: Test Mods
-        run: make test-mods VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Test Mods (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -179,18 +150,12 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
 
       # ------------------------------------------------------------
-      # Build Prod
+      # Prod
       # ------------------------------------------------------------
       - name: Build Prod
-        run: make rebuild-prod VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Build Prod (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -206,17 +171,8 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
-      # ------------------------------------------------------------
-      # Test Prod
-      # ------------------------------------------------------------
       - name: Test Prod
-        run: make test-prod VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Test Prod (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -232,18 +188,12 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
 
       # ------------------------------------------------------------
-      # Build Work
+      # Work
       # ------------------------------------------------------------
       - name: Build Work
-        run: make rebuild-work VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Build Work (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -259,17 +209,8 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
 
-      # ------------------------------------------------------------
-      # Test Work
-      # ------------------------------------------------------------
       - name: Test Work
-        run: make test-work VERSION=${VERSION}
-        env:
-          VERSION: ${{ matrix.version }}
-
-      - name: Test Work (Retry)
         run: |
           retry() {
             for ((n=0; n<${RETRIES}; n++)); do
@@ -285,7 +226,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 5
-        if: failure()
+
 
       # ------------------------------------------------------------
       # Diff README.md
@@ -293,8 +234,10 @@ jobs:
       - name: Diff README.md
         run: |
           make gen-readme VERSION=${VERSION}
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
         env:
           VERSION: ${{ matrix.version }}
+
 
       # ------------------------------------------------------------
       # Push build artifacts
