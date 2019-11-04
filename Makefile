@@ -90,9 +90,11 @@ gen-dockerfiles:
 		-e MY_GID=$$(id -g) \
 		-v ${PWD}:/data \
 		-w /data/build/ansible \
-		cytopia/ansible:2.8 ansible-playbook generate.yml \
+		cytopia/ansible:2.6-tools ansible-playbook generate.yml \
+			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy \
+			-e ANSIBLE_STRATEGY=mitogen_linear \
 			-e ansible_python_interpreter=/usr/bin/python3 \
-			-e '{build_fail_fast: $(FAIL_FAST)}' \
+			-e \"{build_fail_fast: $(FAIL_FAST)}\" \
 			--diff $(ARGS)
 
 
