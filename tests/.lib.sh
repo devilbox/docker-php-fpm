@@ -28,7 +28,7 @@ function run() {
 		printf "${yellow}[%s] ${red}%s \$ ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)" >&2
 	fi
 
-	if sh -c "LANG=C LC_ALL=C ${cmd}"; then
+	if sh -c "${cmd}"; then
 		if [ "${to_stderr}" -eq "0" ]; then
 			printf "${green}[%s]${reset}\n" "OK"
 		else
@@ -67,7 +67,7 @@ function run_fail() {
 		printf "${yellow}[%s] ${red}%s \$ ${yellow}[NOT] ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)" >&2
 	fi
 
-	if ! sh -c "LANG=C LC_ALL=C ${cmd}"; then
+	if ! sh -c "${cmd}"; then
 		if [ "${to_stderr}" -eq "0" ]; then
 			printf "${green}[%s]${reset}\n" "OK"
 		else
@@ -112,12 +112,12 @@ function docker_run() {
 	local args="${*}"
 
 	# Returns docker-id
-	did="$( run "docker run -d --name $( get_random_name ) ${args} ${image_name}" "1" )"
-	sleep 4
+	did="$( run "docker run --rm -d --name $( get_random_name ) ${args} ${image_name}" "1" )"
+	sleep 10
 
 	# If it fails, start again in foreground to fail again, but show errors
-	if ! docker exec -it ${did} ls >/dev/null 2>&1; then
-		run "docker run --name $( get_random_name ) ${args} ${image_name}" "1"
+	if ! docker exec $(tty -s && echo "-it" || echo ) ${did} ls >/dev/null 2>&1; then
+		run "docker run --rm --name $( get_random_name ) ${args} ${image_name}" "1"
 		return 1
 	fi
 
@@ -146,7 +146,7 @@ function docker_exec() {
 	shift
 	local args="${*}"
 
-	run "docker exec ${args} -it ${did} ${cmd}"
+	run "docker exec ${args} $(tty -s && echo '-it' || echo) ${did} ${cmd}"
 }
 
 

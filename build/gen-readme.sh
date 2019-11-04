@@ -35,14 +35,14 @@ get_modules() {
 	tag="${1}"
 
 	# Retrieve all modules
-	PHP_MODULES="$( docker run -it --entrypoint=php devilbox/php-fpm:${tag} -m )"
+	PHP_MODULES="$( docker run --rm $(tty -s && echo '-it' || echo) --entrypoint=php devilbox/php-fpm:${tag} -m )"
 	ALL_MODULES=
 
-	if docker run -it --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
+	if docker run --rm $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
 		ALL_MODULES="${ALL_MODULES},ioncube";
 	fi
 
-	if docker run -it --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
+	if docker run --rm $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
 		ALL_MODULES="${ALL_MODULES},blackfire";
 	fi
 

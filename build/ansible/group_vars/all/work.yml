@@ -254,6 +254,22 @@ gem_available:
   mdl:
     name: mdl
     check: mdl --version | grep -E '[.0-9]+'
+    8.0:
+      version: 0.5.0
+    7.4:
+      version: 0.5.0
+    7.0:
+      version: 0.5.0
+    5.6:
+      version: 0.5.0
+    5.5:
+      version: 0.5.0
+    5.4:
+      version: 0.5.0
+    5.3:
+      version: 0.5.0
+    5.2:
+      version: 0.5.0
   scss_lint:
     name: scss_lint
     all:
@@ -391,13 +407,7 @@ software_available:
         && su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
         && su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
   awesomeci:
-    check: |
-      mdl --version | grep -E '[.0-9]+' \
-      && scss-lint --version | grep -E '[.0-9]+' \
-      && eslint -v | grep -E '[.0-9]+' \
-      && jsonlint --version | grep -E '[.0-9]+' \
-      && mdlint --version | grep -E '[.0-9]+' \
-      && gulp --version | grep -E '[.0-9]+' \
+    check: regex-grep --version | grep -E '[.0-9]+'
     all:
       command: |
         git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
@@ -574,11 +584,23 @@ software_available:
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout v2.0.7 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
     5.4:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout v2.0.9 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
     all:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -587,7 +609,8 @@ software_available:
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
         && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-        && ln -s /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x phalcon \
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
   phpcs:
@@ -680,6 +703,30 @@ software_available:
       pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.5:
       pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+    7.1:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    7.2:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    7.3:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
     all:
       pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )"
       command: |

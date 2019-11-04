@@ -6,12 +6,20 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ###
 ### Labels
 ###
-LABEL \
-	name="cytopia's PHP-FPM 7.4 Image" \
-	image="devilbox/php-fpm" \
-	tag="7.4-work" \
-	vendor="devilbox" \
-	license="MIT"
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="7.4-work"
+LABEL "org.opencontainers.image.title"="PHP-FPM 7.4-work"
+LABEL "org.opencontainers.image.description"="PHP-FPM 7.4-work"
 
 
 ###
@@ -23,13 +31,14 @@ ENV BASH_PROFILE=".bashrc"
 ###
 ### Install Tools
 ###
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		curl \
 		dirmngr \
 		gnupg \
+		\
 	&& echo "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/sources.list.d/backports.list \
 	&& curl -sS "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
@@ -41,6 +50,7 @@ RUN set -x \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
+	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		ack-grep \
@@ -115,10 +125,11 @@ RUN set -x \
 ###
 ### Install custom software
 ###
-RUN set -x \
-# composer
+RUN set -eux \
+# -------------------- composer --------------------
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-# pip
+	\
+# -------------------- pip --------------------
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
   libpython-dev \
@@ -127,7 +138,8 @@ RUN set -x \
 \
 && curl -sS https://bootstrap.pypa.io/get-pip.py | python \
  \
-# nvm
+	\
+# -------------------- nvm --------------------
 	&& git clone https://github.com/creationix/nvm /opt/nvm \
 && cd /opt/nvm \
 && git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
@@ -144,7 +156,8 @@ RUN set -x \
 && su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
 && su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
  \
-# awesomeci
+	\
+# -------------------- awesomeci --------------------
 	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
 && cd /usr/local/src/awesome-ci \
 && git checkout $(git describe --abbrev=0 --tags) \
@@ -153,10 +166,12 @@ RUN set -x \
 && cd / \
 && rm -rf /usr/local/src/awesome-ci \
  \
-# deployer
+	\
+# -------------------- deployer --------------------
 	&& curl -sS https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
-# drush7
+	\
+# -------------------- drush7 --------------------
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
 && cd /usr/local/src/drush7 \
 && git checkout 7.4.0 \
@@ -169,7 +184,8 @@ RUN set -x \
 && rm -rf /usr/local/src/drush7/examples \
 && rm -rf /usr/local/src/drush7/misc \
  \
-# drush8
+	\
+# -------------------- drush8 --------------------
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush8 \
 && cd /usr/local/src/drush8 \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
@@ -182,7 +198,8 @@ RUN set -x \
 && rm -rf /usr/local/src/drush8/examples \
 && rm -rf /usr/local/src/drush8/misc \
  \
-# drush9
+	\
+# -------------------- drush9 --------------------
 	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
 && cd /usr/local/src/drush9 \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
@@ -195,16 +212,19 @@ RUN set -x \
 && rm -rf /usr/local/src/drush9/examples \
 && rm -rf /usr/local/src/drush9/misc \
  \
-# drupalconsole
+	\
+# -------------------- drupalconsole --------------------
 	&& curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
 	&& chmod +x /usr/local/bin/drupal \
-# gitflow
+	\
+# -------------------- gitflow --------------------
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
 && cd /tmp/gitflow \
 && make install \
 && cd / && rm -rf /tmp/gitflow \
  \
-# laravel
+	\
+# -------------------- laravel --------------------
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
 && cd /usr/local/src/laravel-installer \
 && git checkout $(git describe --abbrev=0 --tags) \
@@ -214,11 +234,13 @@ RUN set -x \
 && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
-# linkcheck
+	\
+# -------------------- linkcheck --------------------
 	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
 && chmod +x /usr/local/bin/linkcheck \
  \
-# linuxbrew
+	\
+# -------------------- linuxbrew --------------------
 	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
 && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
 && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
@@ -229,12 +251,14 @@ RUN set -x \
     'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
 && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
-# mhsendmail
+	\
+# -------------------- mhsendmail --------------------
 	&& wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
 && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
  \
-# mysqldumpsecure
+	\
+# -------------------- mysqldumpsecure --------------------
 	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
 && cd /usr/local/src/mysqldump-secure \
 && git checkout $(git describe --abbrev=0 --tags) \
@@ -256,22 +280,27 @@ RUN set -x \
 && cd / \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
-# phpcs
+	\
+# -------------------- phpcs --------------------
 	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
-# phpcbf
+	\
+# -------------------- phpcbf --------------------
 	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
-# phpunit
+	\
+# -------------------- phpunit --------------------
 	&& curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
  \
-# symfony
+	\
+# -------------------- symfony --------------------
 	&& curl https://symfony.com/installer -L -o /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
-# wkhtmltopdf
+	\
+# -------------------- wkhtmltopdf --------------------
 	&& VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
@@ -283,10 +312,12 @@ RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 && rm -rf /var/lib/apt/lists/* \
  \
-# wpcli
+	\
+# -------------------- wpcli --------------------
 	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
-# cleanup
+	\
+# -------------------- cleanup --------------------
 	&& rm -rf /home/${MY_USER}/.*json \
 && rm -rf /home/${MY_USER}/.cache \
 && rm -rf /home/${MY_USER}/.composer \
@@ -307,6 +338,7 @@ RUN set -x \
 && (rm -rf /tmp/.* || true) \
  \
 	\
+	\
 	&& (rm -rf /root/.gem || true ) \
 	&& (rm -rf /root/.cache || true) \
 	&& (rm -rf /root/.composer || true) \
@@ -326,21 +358,26 @@ RUN set -x \
 ###
 ### Install Composer (PHP)
 ###
-RUN set -x \
-# asgardcms
+RUN set -eux \
+# -------------------- asgardcms --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  asgardcms/asgardcms-installer \
 	&& ln -s /usr/local/src/composer/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/ \
-# codeception
+	\
+# -------------------- codeception --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
 	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
-# lumen
+	\
+# -------------------- lumen --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  laravel/lumen-installer \
 	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
-# photon
+	\
+# -------------------- photon --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  photoncms/installer \
 	&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/ \
-# prestissimo
+	\
+# -------------------- prestissimo --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  hirak/prestissimo \
+	\
 	\
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -353,31 +390,43 @@ RUN set -x \
 ###
 ### Install npm (Node)
 ###
-RUN set -x \
-# angular_cli
+RUN set -eux \
+# -------------------- angular_cli --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g @angular/cli' devilbox \
-# eslint
+	\
+# -------------------- eslint --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g eslint' devilbox \
-# grunt
+	\
+# -------------------- grunt --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt' devilbox \
-# grunt_cli
+	\
+# -------------------- grunt_cli --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt-cli' devilbox \
-# gulp
+	\
+# -------------------- gulp --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g gulp' devilbox \
-# jsonlint
+	\
+# -------------------- jsonlint --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g jsonlint' devilbox \
-# pm2
+	\
+# -------------------- pm2 --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g pm2' devilbox \
-# mdlint
+	\
+# -------------------- mdlint --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g mdlint' devilbox \
-# vue_cli
+	\
+# -------------------- vue_cli --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli' devilbox \
-# vue_cli_service_global
+	\
+# -------------------- vue_cli_service_global --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli-service-global' devilbox \
-# webpack
+	\
+# -------------------- webpack --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack' devilbox \
-# webpack_cli
+	\
+# -------------------- webpack_cli --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack-cli' devilbox \
+	\
 	\
 	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
@@ -394,17 +443,22 @@ RUN set -x \
 ###
 ### Install gem (Ruby)
 ###
-RUN set -x \
-# mixlib_config
+RUN set -eux \
+# -------------------- mixlib_config --------------------
 	&& gem install mixlib-config -v 2.2.4 \
-# rb_inotify
+	\
+# -------------------- rb_inotify --------------------
 	&& gem install rb-inotify -v 0.9.10 \
-# mdl
-	&& gem install mdl \
-# scss_lint
+	\
+# -------------------- mdl --------------------
+	&& gem install mdl -v 0.5.0 \
+	\
+# -------------------- scss_lint --------------------
 	&& gem install scss_lint -v 0.57.1 \
-# sass
+	\
+# -------------------- sass --------------------
 	&& gem install sass \
+	\
 	\
 	&& rm -rf /root/.gem \
 	&& rm -rf /tmp/* \
@@ -418,13 +472,16 @@ RUN set -x \
 ###
 ### Install pip (Python) packages
 ###
-RUN set -x \
-# ansible
+RUN set -eux \
+# -------------------- ansible --------------------
 	&& pip install --no-cache-dir --force-reinstall ansible \
-# yamllint
+	\
+# -------------------- yamllint --------------------
 	&& pip install --no-cache-dir --force-reinstall yamllint \
-# yq
+	\
+# -------------------- yq --------------------
 	&& pip install --no-cache-dir --force-reinstall yq \
+	\
 	\
 	&& rm -rf /root/.cache/pip \
 	&& rm -rf /tmp/* \
@@ -458,7 +515,7 @@ RUN \
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^7.4' \
 	&& /usr/local/sbin/php-fpm --test \
@@ -474,16 +531,11 @@ RUN set -x \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini
 
-RUN set -x \
+RUN set -eux \
+# -------------------- Software --------------------
 	&& composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+' \
 	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[.0-9]+' \
-	&& mdl --version | grep -E '[.0-9]+' \
-&& scss-lint --version | grep -E '[.0-9]+' \
-&& eslint -v | grep -E '[.0-9]+' \
-&& jsonlint --version | grep -E '[.0-9]+' \
-&& mdlint --version | grep -E '[.0-9]+' \
-&& gulp --version | grep -E '[.0-9]+' \
- \
+	&& regex-grep --version | grep -E '[.0-9]+' \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
@@ -500,16 +552,19 @@ RUN set -x \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
- \
+	\
+# -------------------- Composer --------------------
 	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+' \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$' \
 	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$' \
 	&& photon --version | grep -E 'Installer [.0-9]+' \
- \
+	\
+# -------------------- PIP --------------------
 	&& ansible --version | grep -E '^ansible [.0-9]+$' \
 	&& yamllint --version 2>&1 | grep -E '[.0-9]+' \
 	&& yq --version 2>&1 | grep -E '^yq\s+[.0-9]+$' \
- \
+	\
+# -------------------- NPM --------------------
 	&& ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+' \
 	&& eslint -v | grep -E '[.0-9]+' \
 	&& grunt --version | grep -E '[.0-9]+' \
@@ -519,10 +574,12 @@ RUN set -x \
 	&& mdlint --version | grep -E '[.0-9]+' \
 	&& vue --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
- \
+	\
+# -------------------- GEM --------------------
 	&& mdl --version | grep -E '[.0-9]+' \
 	&& sass --version | grep -E '[.0-9]+' \
- \
+	\
+# -------------------- Cleanup --------------------
 	&& rm -rf /home/devilbox/.config/ \
 	&& rm -rf /root/.ansible \
 	&& rm -rf /root/.console \
@@ -543,7 +600,6 @@ COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/bash-devilbox /etc/bash-devilbox
 COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
-
 
 
 ###

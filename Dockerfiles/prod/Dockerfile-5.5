@@ -6,18 +6,26 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ###
 ### Labels
 ###
-LABEL \
-	name="cytopia's PHP-FPM 5.5 Image" \
-	image="devilbox/php-fpm" \
-	tag="5.5-prod" \
-	vendor="devilbox" \
-	license="MIT"
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="5.5-prod"
+LABEL "org.opencontainers.image.title"="PHP-FPM 5.5-prod"
+LABEL "org.opencontainers.image.description"="PHP-FPM 5.5-prod"
 
 
 ###
 ### Install
 ###
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
@@ -40,11 +48,10 @@ RUN set -x \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
-
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.5' \
 	&& /usr/local/sbin/php-fpm --test \
@@ -75,7 +82,6 @@ COPY ./data/supervisord.conf /etc/supervisor/supervisord.conf
 ###
 VOLUME /var/log/php
 VOLUME /var/mail
-
 
 
 ###

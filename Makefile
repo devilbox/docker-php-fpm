@@ -1,497 +1,290 @@
-location = Dockerfiles/
+ifneq (,)
+.error This Makefile requires GNU Make.
+endif
 
-###
-### Default
-###
+
+# -------------------------------------------------------------------------------------------------
+# Docker configuration
+# -------------------------------------------------------------------------------------------------
+
+DIR = Dockerfiles
+IMAGE = devilbox/php-fpm
+NO_CACHE =
+PHP_EXT_DIR =
+
+# Run checks after each module has been installed (slow, but yields errors faster)
+FAIL_FAST = False
+
+# -------------------------------------------------------------------------------------------------
+#  DEFAULT TARGET
+# -------------------------------------------------------------------------------------------------
+
 help:
-	@printf "################################################################################\n"
-	@printf "# devilbox/php:XX-XX Makefile\n"
-	@printf "################################################################################\n\n"
-	@printf "%s\n\n" "Generate and build devilbox PHP-FPM docker images"
-	@printf "%s\n" "make generate:           Generate Dockerfiles (requires Ansible)"
-	@printf "%s\n" "make readme:             Update Readme with php modules (requires images to be built)"
-	@printf "\n"
-	@printf "%s\n" "make gen-build:          Generate and build all images"
-	@printf "%s\n" "make gen-rebuild:        Generate and rebuild all images"
-	@printf "\n"
-	@printf "%s\n" "make build-all:          Build all images"
-	@printf "%s\n" "make rebuild-all:        Rebuild all images"
-	@printf "\n"
-	@printf "%s\n" "make build-base:         Build all base images"
-	@printf "%s\n" "make build-mods:         Build all mods images"
-	@printf "%s\n" "make build-prod:         Build all prod images"
-	@printf "%s\n" "make build-work:         Build all work images"
-	@printf "\n"
-	@printf "%s\n" "make rebuild-base:       Rebuild all base images"
-	@printf "%s\n" "make rebuild-mods:       Rebuild all mods images"
-	@printf "%s\n" "make rebuild-prod:       Rebuild all prod images"
-	@printf "%s\n" "make rebuild-work:       Rebuild all work images"
-	@printf "\n"
-	@printf "%s\n" "make build-base-52:      Build PHP 5.2 base image"
-	@printf "%s\n" "make build-base-53:      Build PHP 5.3 base image"
-	@printf "%s\n" "make build-base-54:      Build PHP 5.4 base image"
-	@printf "%s\n" "make build-base-55:      Build PHP 5.5 base image"
-	@printf "%s\n" "make build-base-56:      Build PHP 5.6 base image"
-	@printf "%s\n" "make build-base-70:      Build PHP 7.0 base image"
-	@printf "%s\n" "make build-base-71:      Build PHP 7.1 base image"
-	@printf "%s\n" "make build-base-72:      Build PHP 7.2 base image"
-	@printf "%s\n" "make build-base-73:      Build PHP 7.3 base image"
-	@printf "%s\n" "make build-base-74:      Build PHP 7.4 base image"
-	@printf "%s\n" "make build-base-80:      Build PHP 8.0 base image"
-	@printf "\n"
-	@printf "%s\n" "make build-mods-52:      Build PHP 5.2 mods image"
-	@printf "%s\n" "make build-mods-53:      Build PHP 5.3 mods image"
-	@printf "%s\n" "make build-mods-54:      Build PHP 5.4 mods image"
-	@printf "%s\n" "make build-mods-55:      Build PHP 5.5 mods image"
-	@printf "%s\n" "make build-mods-56:      Build PHP 5.6 mods image"
-	@printf "%s\n" "make build-mods-70:      Build PHP 7.0 mods image"
-	@printf "%s\n" "make build-mods-71:      Build PHP 7.1 mods image"
-	@printf "%s\n" "make build-mods-72:      Build PHP 7.2 mods image"
-	@printf "%s\n" "make build-mods-73:      Build PHP 7.3 mods image"
-	@printf "%s\n" "make build-mods-74:      Build PHP 7.4 mods image"
-	@printf "%s\n" "make build-mods-80:      Build PHP 8.0 mods image"
-	@printf "\n"
-	@printf "%s\n" "make build-prod-52:      Build PHP 5.2 prod image"
-	@printf "%s\n" "make build-prod-53:      Build PHP 5.3 prod image"
-	@printf "%s\n" "make build-prod-54:      Build PHP 5.4 prod image"
-	@printf "%s\n" "make build-prod-55:      Build PHP 5.5 prod image"
-	@printf "%s\n" "make build-prod-56:      Build PHP 5.6 prod image"
-	@printf "%s\n" "make build-prod-70:      Build PHP 7.0 prod image"
-	@printf "%s\n" "make build-prod-71:      Build PHP 7.1 prod image"
-	@printf "%s\n" "make build-prod-72:      Build PHP 7.2 prod image"
-	@printf "%s\n" "make build-prod-73:      Build PHP 7.3 prod image"
-	@printf "%s\n" "make build-prod-74:      Build PHP 7.4 prod image"
-	@printf "%s\n" "make build-prod-80:      Build PHP 8.0 prod image"
-	@printf "\n"
-	@printf "%s\n" "make build-work-52:      Build PHP 5.2 work image"
-	@printf "%s\n" "make build-work-53:      Build PHP 5.3 work image"
-	@printf "%s\n" "make build-work-54:      Build PHP 5.4 work image"
-	@printf "%s\n" "make build-work-55:      Build PHP 5.5 work image"
-	@printf "%s\n" "make build-work-56:      Build PHP 5.6 work image"
-	@printf "%s\n" "make build-work-70:      Build PHP 7.0 work image"
-	@printf "%s\n" "make build-work-71:      Build PHP 7.1 work image"
-	@printf "%s\n" "make build-work-72:      Build PHP 7.2 work image"
-	@printf "%s\n" "make build-work-73:      Build PHP 7.3 work image"
-	@printf "%s\n" "make build-work-74:      Build PHP 7.4 work image"
-	@printf "%s\n" "make build-work-80:      Build PHP 8.0 work image"
-	@printf "\n"
-	@printf "%s\n" "make rebuild-base-52:    Build PHP 5.2 base image"
-	@printf "%s\n" "make rebuild-base-53:    Build PHP 5.3 base image"
-	@printf "%s\n" "make rebuild-base-54:    Build PHP 5.4 base image"
-	@printf "%s\n" "make rebuild-base-55:    Build PHP 5.5 base image"
-	@printf "%s\n" "make rebuild-base-56:    Build PHP 5.6 base image"
-	@printf "%s\n" "make rebuild-base-70:    Build PHP 7.0 base image"
-	@printf "%s\n" "make rebuild-base-71:    Build PHP 7.1 base image"
-	@printf "%s\n" "make rebuild-base-72:    Build PHP 7.2 base image"
-	@printf "%s\n" "make rebuild-base-73:    Build PHP 7.3 base image"
-	@printf "%s\n" "make rebuild-base-74:    Build PHP 7.4 base image"
-	@printf "%s\n" "make rebuild-base-80:    Build PHP 8.0 base image"
-	@printf "\n"
-	@printf "%s\n" "make rebuild-mods-52:    Build PHP 5.2 mods image"
-	@printf "%s\n" "make rebuild-mods-53:    Build PHP 5.3 mods image"
-	@printf "%s\n" "make rebuild-mods-54:    Build PHP 5.4 mods image"
-	@printf "%s\n" "make rebuild-mods-55:    Build PHP 5.5 mods image"
-	@printf "%s\n" "make rebuild-mods-56:    Build PHP 5.6 mods image"
-	@printf "%s\n" "make rebuild-mods-70:    Build PHP 7.0 mods image"
-	@printf "%s\n" "make rebuild-mods-71:    Build PHP 7.1 mods image"
-	@printf "%s\n" "make rebuild-mods-72:    Build PHP 7.2 mods image"
-	@printf "%s\n" "make rebuild-mods-73:    Build PHP 7.3 mods image"
-	@printf "%s\n" "make rebuild-mods-74:    Build PHP 7.4 mods image"
-	@printf "%s\n" "make rebuild-mods-80:    Build PHP 8.0 mods image"
-	@printf "\n"
-	@printf "%s\n" "make rebuild-prod-52:    Build PHP 5.2 prod image"
-	@printf "%s\n" "make rebuild-prod-53:    Build PHP 5.3 prod image"
-	@printf "%s\n" "make rebuild-prod-54:    Build PHP 5.4 prod image"
-	@printf "%s\n" "make rebuild-prod-55:    Build PHP 5.5 prod image"
-	@printf "%s\n" "make rebuild-prod-56:    Build PHP 5.6 prod image"
-	@printf "%s\n" "make rebuild-prod-70:    Build PHP 7.0 prod image"
-	@printf "%s\n" "make rebuild-prod-71:    Build PHP 7.1 prod image"
-	@printf "%s\n" "make rebuild-prod-72:    Build PHP 7.2 prod image"
-	@printf "%s\n" "make rebuild-prod-73:    Build PHP 7.3 prod image"
-	@printf "%s\n" "make rebuild-prod-74:    Build PHP 7.4 prod image"
-	@printf "%s\n" "make rebuild-prod-80:    Build PHP 8.0 prod image"
-	@printf "\n"
-	@printf "%s\n" "make rebuild-work-52:    Build PHP 5.2 work image"
-	@printf "%s\n" "make rebuild-work-53:    Build PHP 5.3 work image"
-	@printf "%s\n" "make rebuild-work-54:    Build PHP 5.4 work image"
-	@printf "%s\n" "make rebuild-work-55:    Build PHP 5.5 work image"
-	@printf "%s\n" "make rebuild-work-56:    Build PHP 5.6 work image"
-	@printf "%s\n" "make rebuild-work-70:    Build PHP 7.0 work image"
-	@printf "%s\n" "make rebuild-work-71:    Build PHP 7.1 work image"
-	@printf "%s\n" "make rebuild-work-72:    Build PHP 7.2 work image"
-	@printf "%s\n" "make rebuild-work-73:    Build PHP 7.3 work image"
-	@printf "%s\n" "make rebuild-work-74:    Build PHP 7.4 work image"
-	@printf "%s\n" "make rebuild-work-80:    Build PHP 8.0 work image"
+	@echo
+	@echo "             _         _ _ _            __   _           ___          "
+	@echo "           _| |___ _ _<_| | |_ _____   / ___| |_ ___ ___| | ___._ _ _ "
+	@echo "          / . / ._| | | | | . / . \ \// | . | . | . |___| || . | ' ' |"
+	@echo "          \___\___|__/|_|_|___\___/\_/_/|  _|_|_|  _/   |_||  _|_|_|_|"
+	@echo "                                        |_|     |_|        |_|        "
+	@echo
+	@echo
+	@echo "Targets"
+	@echo "--------------------------------------------------------------------------------"
+	@echo
+	@echo "gen-readme [VERSION=]         Update README with PHP modules from built images."
+	@echo "gen-dockerfiles [FAIL_FAST=]  Generate Dockerfiles from templates."
+	@echo
+	@echo "build-base VERSION= [ARGS=]   Build base image by specified version"
+	@echo "build-mods VERSION= [ARGS=]   Build mods image by specified version"
+	@echo "build-prod VERSION= [ARGS=]   Build prod image by specified version"
+	@echo "build-work VERSION= [ARGS=]   Build work image by specified version"
+	@echo
+	@echo "rebuild-base VERSION= [ARGS=] Rebuild base image by specified version"
+	@echo "rebuild-mods VERSION= [ARGS=] Rebuild mods image by specified version"
+	@echo "rebuild-prod VERSION= [ARGS=] Rebuild prod image by specified version"
+	@echo "rebuild-work VERSION= [ARGS=] Rebuild work image by specified version"
+	@echo
+	@echo "test-base VERSION=            Test base image by specified version"
+	@echo "test-mods VERSION=            Test mods image by specified version"
+	@echo "test-prod VERSION=            Test prod image by specified version"
+	@echo "test-work VERSION=            Test work image by specified version"
+	@echo
+	@echo
+	@echo "Variables"
+	@echo "--------------------------------------------------------------------------------"
+	@echo
+	@echo "VERSION                       One of '5.2', '5.3', '5.4', '5.5', '5.6', '7.0',"
+	@echo "                                      '7.1', '7.2', '7.3', '7.4', '8.0'."
+	@echo "                              For gen-readme target it is optional and if not"
+	@echo "                              specified, it will generate for all versions."
+	@echo
+	@echo "FAIL_FAST                     Either 'True' or 'False' (defaults to 'False')."
+	@echo "                              If set to 'True', each module install has an"
+	@echo "                              immediate check, which is very slow for CI, but"
+	@echo "                              yields errors immediately."
+	@echo "                              If set to 'False', checks are done at the end."
+	@echo
+	@echo "ARGS                          Can be added to all build-* and rebuild-* targets"
+	@echo "                              to supply additional docker build options."
 
+# -------------------------------------------------------------------------------------------------
+#  GENERATE TARGETS
+# -------------------------------------------------------------------------------------------------
 
-
-###
-### Generate
-###
-generate:
-	cd build/ansible; ansible-playbook generate.yml --diff
-
-
-###
-### Update readme
-###
-readme:
+gen-readme:
+ifeq ($(strip $(VERSION)),)
 	cd build; ./gen-readme.sh
-
-###
-### Generate and build
-###
-gen-build: generate build-all
-gen-rebuild: generate rebuild-all
-
-
-
-###
-### Build all
-###
-build-all: build-base build-mods build-prod build-work
-rebuild-all: rebuild-base rebuild-mods rebuild-prod rebuild-work
+else
+	@$(MAKE) --no-print-directory _check-version
+	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=base
+	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
+	cd build; ./gen-readme.sh ${VERSION}
+endif
 
 
-
-###
-### Build categories
-###
-build-base: build-base-52 build-base-53 build-base-54 build-base-55 build-base-56 build-base-70 build-base-71 build-base-72 build-base-73 build-base-74 build-base-80
-build-mods: build-mods-52 build-mods-53 build-mods-54 build-mods-55 build-mods-56 build-mods-70 build-mods-71 build-mods-72 build-mods-73 build-mods-74 build-mods-80
-build-prod: build-prod-52 build-prod-53 build-prod-54 build-prod-55 build-prod-56 build-prod-70 build-prod-71 build-prod-72 build-prod-73 build-prod-74 build-prod-80
-build-work: build-work-52 build-work-53 build-work-54 build-work-55 build-work-56 build-work-70 build-work-71 build-work-72 build-work-73 build-work-74 build-work-80
-
-rebuild-base: rebuild-base-52 rebuild-base-53 rebuild-base-54 rebuild-base-55 rebuild-base-56 rebuild-base-70 rebuild-base-71 rebuild-base-72 rebuild-base-73 rebuild-base-74 rebuild-base-80
-rebuild-mods: rebuild-mods-52 rebuild-mods-53 rebuild-mods-54 rebuild-mods-55 rebuild-mods-56 rebuild-mods-70 rebuild-mods-71 rebuild-mods-72 rebuild-mods-73 rebuild-mods-74 rebuild-mods-80
-rebuild-prod: rebuild-prod-52 rebuild-prod-53 rebuild-prod-54 rebuild-prod-55 rebuild-prod-56 rebuild-prod-70 rebuild-prod-71 rebuild-prod-72 rebuild-prod-73 rebuild-prod-74 rebuild-prod-80
-rebuild-work: rebuild-work-52 rebuild-work-53 rebuild-work-54 rebuild-work-55 rebuild-work-56 rebuild-work-70 rebuild-work-71 rebuild-work-72 rebuild-work-73 rebuild-work-74 rebuild-work-80
-
-
-
-###
-### Build separately
-###
-build-base-52: pull-from-52
-	docker build -t devilbox/php-fpm:5.2-base -f $(location)/base/Dockerfile-5.2 $(location)/base
-build-base-53: pull-from-53
-	docker build -t devilbox/php-fpm:5.3-base -f $(location)/base/Dockerfile-5.3 $(location)/base
-build-base-54: pull-from-54
-	docker build -t devilbox/php-fpm:5.4-base -f $(location)/base/Dockerfile-5.4 $(location)/base
-build-base-55: pull-from-55
-	docker build -t devilbox/php-fpm:5.5-base -f $(location)/base/Dockerfile-5.5 $(location)/base
-build-base-56: pull-from-56
-	docker build -t devilbox/php-fpm:5.6-base -f $(location)/base/Dockerfile-5.6 $(location)/base
-build-base-70: pull-from-70
-	docker build -t devilbox/php-fpm:7.0-base -f $(location)/base/Dockerfile-7.0 $(location)/base
-build-base-71: pull-from-71
-	docker build -t devilbox/php-fpm:7.1-base -f $(location)/base/Dockerfile-7.1 $(location)/base
-build-base-72: pull-from-72
-	docker build -t devilbox/php-fpm:7.2-base -f $(location)/base/Dockerfile-7.2 $(location)/base
-build-base-73: pull-from-73
-	docker build -t devilbox/php-fpm:7.3-base -f $(location)/base/Dockerfile-7.3 $(location)/base
-build-base-74: pull-from-74
-	docker build -t devilbox/php-fpm:7.4-base -f $(location)/base/Dockerfile-7.4 $(location)/base
-build-base-80: pull-from-80
-	docker build -t devilbox/php-fpm:8.0-base -f $(location)/base/Dockerfile-8.0 $(location)/base
-
-build-mods-52:
-	docker build -t devilbox/php-fpm:5.2-mods -f $(location)/mods/Dockerfile-5.2 $(location)/mods
-build-mods-53:
-	docker build -t devilbox/php-fpm:5.3-mods -f $(location)/mods/Dockerfile-5.3 $(location)/mods
-build-mods-54:
-	docker build -t devilbox/php-fpm:5.4-mods -f $(location)/mods/Dockerfile-5.4 $(location)/mods
-build-mods-55:
-	docker build -t devilbox/php-fpm:5.5-mods -f $(location)/mods/Dockerfile-5.5 $(location)/mods
-build-mods-56:
-	docker build -t devilbox/php-fpm:5.6-mods -f $(location)/mods/Dockerfile-5.6 $(location)/mods
-build-mods-70:
-	docker build -t devilbox/php-fpm:7.0-mods -f $(location)/mods/Dockerfile-7.0 $(location)/mods
-build-mods-71:
-	docker build -t devilbox/php-fpm:7.1-mods -f $(location)/mods/Dockerfile-7.1 $(location)/mods
-build-mods-72:
-	docker build -t devilbox/php-fpm:7.2-mods -f $(location)/mods/Dockerfile-7.2 $(location)/mods
-build-mods-73:
-	docker build -t devilbox/php-fpm:7.3-mods -f $(location)/mods/Dockerfile-7.3 $(location)/mods
-build-mods-74:
-	docker build -t devilbox/php-fpm:7.4-mods -f $(location)/mods/Dockerfile-7.4 $(location)/mods
-build-mods-80:
-	docker build -t devilbox/php-fpm:8.0-mods -f $(location)/mods/Dockerfile-8.0 $(location)/mods
-
-build-prod-52:
-	docker build -t devilbox/php-fpm:5.2-prod -f $(location)/prod/Dockerfile-5.2 $(location)/prod
-build-prod-53:
-	docker build -t devilbox/php-fpm:5.3-prod -f $(location)/prod/Dockerfile-5.3 $(location)/prod
-build-prod-54:
-	docker build -t devilbox/php-fpm:5.4-prod -f $(location)/prod/Dockerfile-5.4 $(location)/prod
-build-prod-55:
-	docker build -t devilbox/php-fpm:5.5-prod -f $(location)/prod/Dockerfile-5.5 $(location)/prod
-build-prod-56:
-	docker build -t devilbox/php-fpm:5.6-prod -f $(location)/prod/Dockerfile-5.6 $(location)/prod
-build-prod-70:
-	docker build -t devilbox/php-fpm:7.0-prod -f $(location)/prod/Dockerfile-7.0 $(location)/prod
-build-prod-71:
-	docker build -t devilbox/php-fpm:7.1-prod -f $(location)/prod/Dockerfile-7.1 $(location)/prod
-build-prod-72:
-	docker build -t devilbox/php-fpm:7.2-prod -f $(location)/prod/Dockerfile-7.2 $(location)/prod
-build-prod-73:
-	docker build -t devilbox/php-fpm:7.3-prod -f $(location)/prod/Dockerfile-7.3 $(location)/prod
-build-prod-74:
-	docker build -t devilbox/php-fpm:7.4-prod -f $(location)/prod/Dockerfile-7.4 $(location)/prod
-build-prod-80:
-	docker build -t devilbox/php-fpm:8.0-prod -f $(location)/prod/Dockerfile-8.0 $(location)/prod
-
-build-work-52:
-	docker build -t devilbox/php-fpm:5.2-work -f $(location)/work/Dockerfile-5.2 $(location)/work
-build-work-53:
-	docker build -t devilbox/php-fpm:5.3-work -f $(location)/work/Dockerfile-5.3 $(location)/work
-build-work-54:
-	docker build -t devilbox/php-fpm:5.4-work -f $(location)/work/Dockerfile-5.4 $(location)/work
-build-work-55:
-	docker build -t devilbox/php-fpm:5.5-work -f $(location)/work/Dockerfile-5.5 $(location)/work
-build-work-56:
-	docker build -t devilbox/php-fpm:5.6-work -f $(location)/work/Dockerfile-5.6 $(location)/work
-build-work-70:
-	docker build -t devilbox/php-fpm:7.0-work -f $(location)/work/Dockerfile-7.0 $(location)/work
-build-work-71:
-	docker build -t devilbox/php-fpm:7.1-work -f $(location)/work/Dockerfile-7.1 $(location)/work
-build-work-72:
-	docker build -t devilbox/php-fpm:7.2-work -f $(location)/work/Dockerfile-7.2 $(location)/work
-build-work-73:
-	docker build -t devilbox/php-fpm:7.3-work -f $(location)/work/Dockerfile-7.3 $(location)/work
-build-work-74:
-	docker build -t devilbox/php-fpm:7.4-work -f $(location)/work/Dockerfile-7.4 $(location)/work
-build-work-80:
-	docker build -t devilbox/php-fpm:8.0-work -f $(location)/work/Dockerfile-8.0 $(location)/work
+gen-dockerfiles:
+	docker run --rm \
+		$$(tty -s && echo "-it" || echo) \
+		-e USER=ansible \
+		-e MY_UID=$$(id -u) \
+		-e MY_GID=$$(id -g) \
+		-v ${PWD}:/data \
+		-w /data/build/ansible \
+		cytopia/ansible:2.6-tools ansible-playbook generate.yml \
+			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.6/site-packages/ansible_mitogen/plugins/strategy \
+			-e ANSIBLE_STRATEGY=mitogen_linear \
+			-e ansible_python_interpreter=/usr/bin/python3 \
+			-e \"{build_fail_fast: $(FAIL_FAST)}\" \
+			--diff $(ARGS)
 
 
+# -------------------------------------------------------------------------------------------------
+#  BUILD TARGETS
+# -------------------------------------------------------------------------------------------------
 
-###
-### Rebuild separately
-###
-rebuild-base-52: pull-from-52
-	docker build --no-cache -t devilbox/php-fpm:5.2-base -f $(location)/base/Dockerfile-5.2 $(location)/base
-rebuild-base-53: pull-from-53
-	docker build --no-cache -t devilbox/php-fpm:5.3-base -f $(location)/base/Dockerfile-5.3 $(location)/base
-rebuild-base-54: pull-from-54
-	docker build --no-cache -t devilbox/php-fpm:5.4-base -f $(location)/base/Dockerfile-5.4 $(location)/base
-rebuild-base-55: pull-from-55
-	docker build --no-cache -t devilbox/php-fpm:5.5-base -f $(location)/base/Dockerfile-5.5 $(location)/base
-rebuild-base-56: pull-from-56
-	docker build --no-cache -t devilbox/php-fpm:5.6-base -f $(location)/base/Dockerfile-5.6 $(location)/base
-rebuild-base-70: pull-from-70
-	docker build --no-cache -t devilbox/php-fpm:7.0-base -f $(location)/base/Dockerfile-7.0 $(location)/base
-rebuild-base-71: pull-from-71
-	docker build --no-cache -t devilbox/php-fpm:7.1-base -f $(location)/base/Dockerfile-7.1 $(location)/base
-rebuild-base-72: pull-from-72
-	docker build --no-cache -t devilbox/php-fpm:7.2-base -f $(location)/base/Dockerfile-7.2 $(location)/base
-rebuild-base-73: pull-from-73
-	docker build --no-cache -t devilbox/php-fpm:7.3-base -f $(location)/base/Dockerfile-7.3 $(location)/base
-rebuild-base-74: pull-from-74
-	docker build --no-cache -t devilbox/php-fpm:7.4-base -f $(location)/base/Dockerfile-7.4 $(location)/base
-rebuild-base-80: pull-from-80
-	docker build --no-cache -t devilbox/php-fpm:8.0-base -f $(location)/base/Dockerfile-8.0 $(location)/base
-
-rebuild-mods-52:
-	docker build --no-cache -t devilbox/php-fpm:5.2-mods -f $(location)/mods/Dockerfile-5.2 $(location)/mods
-rebuild-mods-53:
-	docker build --no-cache -t devilbox/php-fpm:5.3-mods -f $(location)/mods/Dockerfile-5.3 $(location)/mods
-rebuild-mods-54:
-	docker build --no-cache -t devilbox/php-fpm:5.4-mods -f $(location)/mods/Dockerfile-5.4 $(location)/mods
-rebuild-mods-55:
-	docker build --no-cache -t devilbox/php-fpm:5.5-mods -f $(location)/mods/Dockerfile-5.5 $(location)/mods
-rebuild-mods-56:
-	docker build --no-cache -t devilbox/php-fpm:5.6-mods -f $(location)/mods/Dockerfile-5.6 $(location)/mods
-rebuild-mods-70:
-	docker build --no-cache -t devilbox/php-fpm:7.0-mods -f $(location)/mods/Dockerfile-7.0 $(location)/mods
-rebuild-mods-71:
-	docker build --no-cache -t devilbox/php-fpm:7.1-mods -f $(location)/mods/Dockerfile-7.1 $(location)/mods
-rebuild-mods-72:
-	docker build --no-cache -t devilbox/php-fpm:7.2-mods -f $(location)/mods/Dockerfile-7.2 $(location)/mods
-rebuild-mods-73:
-	docker build --no-cache -t devilbox/php-fpm:7.3-mods -f $(location)/mods/Dockerfile-7.3 $(location)/mods
-rebuild-mods-74:
-	docker build --no-cache -t devilbox/php-fpm:7.4-mods -f $(location)/mods/Dockerfile-7.4 $(location)/mods
-rebuild-mods-80:
-	docker build --no-cache -t devilbox/php-fpm:8.0-mods -f $(location)/mods/Dockerfile-8.0 $(location)/mods
-
-rebuild-prod-52:
-	docker build --no-cache -t devilbox/php-fpm:5.2-prod -f $(location)/prod/Dockerfile-5.2 $(location)/prod
-rebuild-prod-53:
-	docker build --no-cache -t devilbox/php-fpm:5.3-prod -f $(location)/prod/Dockerfile-5.3 $(location)/prod
-rebuild-prod-54:
-	docker build --no-cache -t devilbox/php-fpm:5.4-prod -f $(location)/prod/Dockerfile-5.4 $(location)/prod
-rebuild-prod-55:
-	docker build --no-cache -t devilbox/php-fpm:5.5-prod -f $(location)/prod/Dockerfile-5.5 $(location)/prod
-rebuild-prod-56:
-	docker build --no-cache -t devilbox/php-fpm:5.6-prod -f $(location)/prod/Dockerfile-5.6 $(location)/prod
-rebuild-prod-70:
-	docker build --no-cache -t devilbox/php-fpm:7.0-prod -f $(location)/prod/Dockerfile-7.0 $(location)/prod
-rebuild-prod-71:
-	docker build --no-cache -t devilbox/php-fpm:7.1-prod -f $(location)/prod/Dockerfile-7.1 $(location)/prod
-rebuild-prod-72:
-	docker build --no-cache -t devilbox/php-fpm:7.2-prod -f $(location)/prod/Dockerfile-7.2 $(location)/prod
-rebuild-prod-73:
-	docker build --no-cache -t devilbox/php-fpm:7.3-prod -f $(location)/prod/Dockerfile-7.3 $(location)/prod
-rebuild-prod-74:
-	docker build --no-cache -t devilbox/php-fpm:7.4-prod -f $(location)/prod/Dockerfile-7.4 $(location)/prod
-rebuild-prod-80:
-	docker build --no-cache -t devilbox/php-fpm:8.0-prod -f $(location)/prod/Dockerfile-8.0 $(location)/prod
-
-rebuild-work-52:
-	docker build --no-cache -t devilbox/php-fpm:5.2-work -f $(location)/work/Dockerfile-5.2 $(location)/work
-rebuild-work-53:
-	docker build --no-cache -t devilbox/php-fpm:5.3-work -f $(location)/work/Dockerfile-5.3 $(location)/work
-rebuild-work-54:
-	docker build --no-cache -t devilbox/php-fpm:5.4-work -f $(location)/work/Dockerfile-5.4 $(location)/work
-rebuild-work-55:
-	docker build --no-cache -t devilbox/php-fpm:5.5-work -f $(location)/work/Dockerfile-5.5 $(location)/work
-rebuild-work-56:
-	docker build --no-cache -t devilbox/php-fpm:5.6-work -f $(location)/work/Dockerfile-5.6 $(location)/work
-rebuild-work-70:
-	docker build --no-cache -t devilbox/php-fpm:7.0-work -f $(location)/work/Dockerfile-7.0 $(location)/work
-rebuild-work-71:
-	docker build --no-cache -t devilbox/php-fpm:7.1-work -f $(location)/work/Dockerfile-7.1 $(location)/work
-rebuild-work-72:
-	docker build --no-cache -t devilbox/php-fpm:7.2-work -f $(location)/work/Dockerfile-7.2 $(location)/work
-rebuild-work-73:
-	docker build --no-cache -t devilbox/php-fpm:7.3-work -f $(location)/work/Dockerfile-7.3 $(location)/work
-rebuild-work-74:
-	docker build --no-cache -t devilbox/php-fpm:7.4-work -f $(location)/work/Dockerfile-7.4 $(location)/work
-rebuild-work-80:
-	docker build --no-cache -t devilbox/php-fpm:8.0-work -f $(location)/work/Dockerfile-8.0 $(location)/work
+build-base: _check-version
+build-base:
+	docker build $(NO_CACHE) \
+		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
+		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
+		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD))" \
+		$(ARGS) \
+		-t $(IMAGE):${VERSION}-base \
+		-f $(DIR)/base/Dockerfile-${VERSION} $(DIR)/base
 
 
-
-###
-### Pull base FROM images
-###
-pull-from-52:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.2 | sed 's/^FROM\s*//g';)
-pull-from-53:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.3 | sed 's/^FROM\s*//g';)
-pull-from-54:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.4 | sed 's/^FROM\s*//g';)
-pull-from-55:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.5 | sed 's/^FROM\s*//g';)
-pull-from-56:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-5.6 | sed 's/^FROM\s*//g';)
-pull-from-70:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.0 | sed 's/^FROM\s*//g';)
-pull-from-71:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.1 | sed 's/^FROM\s*//g';)
-pull-from-72:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.2 | sed 's/^FROM\s*//g';)
-pull-from-73:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.3 | sed 's/^FROM\s*//g';)
-pull-from-74:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-7.4 | sed 's/^FROM\s*//g';)
-pull-from-80:
-	docker pull $(shell grep FROM $(location)/base/Dockerfile-8.0 | sed 's/^FROM\s*//g';)
-
-
-###
-### Test all
-###
-test-all: test-base test-mods test-prod test-work
-
-test-base: test-base-52 test-base-53 test-base-54 test-base-55 test-base-56 test-base-70 test-base-71 test-base-72 test-base-73 test-base-74 test-base-80
-test-mods: test-mods-52 test-mods-53 test-mods-54 test-mods-55 test-mods-56 test-mods-70 test-mods-71 test-mods-72 test-mods-73 test-mods-74 test-mods-80
-test-prod: test-prod-52 test-prod-53 test-prod-54 test-prod-55 test-prod-56 test-prod-70 test-prod-71 test-prod-72 test-prod-73 test-prod-74 test-prod-80
-test-work: test-work-52 test-work-53 test-work-54 test-work-55 test-work-56 test-work-70 test-work-71 test-work-72 test-work-73 test-work-74 test-work-80
+build-mods: _check-version
+build-mods: _EXIST_IMAGE=base
+build-mods: _check-image-exists
+build-mods:
+ifeq ($(strip $(TARGET)),)
+	docker build $(NO_CACHE) \
+		--target builder \
+		-t $(IMAGE):$(VERSION)-mods \
+		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
+	@# $(NO_CACHE) is removed, as it would otherwise rebuild the 'builder' image again.
+	docker build \
+		--target final \
+		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
+		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
+		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
+		--build-arg EXT_DIR="$$( docker run --rm --entrypoint=php $(IMAGE):$(VERSION)-mods -i \
+			| grep ^extension_dir \
+			| awk -F '=>' '{print $$2}' \
+			| xargs \
+		)" \
+		$(ARGS) \
+		-t $(IMAGE):$(VERSION)-mods \
+		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
+else
+	docker build $(NO_CACHE) \
+		--target $(TARGET) \
+		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
+		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
+		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
+		$(ARGS) \
+		-t $(IMAGE):$(VERSION)-mods \
+		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods
+endif
 
 
-###
-### Tests
-###
-test-base-52:
-	./tests/test.sh 5.2 base
-test-base-53:
-	./tests/test.sh 5.3 base
-test-base-54:
-	./tests/test.sh 5.4 base
-test-base-55:
-	./tests/test.sh 5.5 base
-test-base-56:
-	./tests/test.sh 5.6 base
-test-base-70:
-	./tests/test.sh 7.0 base
-test-base-71:
-	./tests/test.sh 7.1 base
-test-base-72:
-	./tests/test.sh 7.2 base
-test-base-73:
-	./tests/test.sh 7.3 base
-test-base-74:
-	./tests/test.sh 7.4 base
-test-base-80:
-	./tests/test.sh 8.0 base
+build-prod: _check-version
+build-prod: _EXIST_IMAGE=mods
+build-prod: _check-image-exists
+build-prod:
+	docker build $(NO_CACHE) \
+		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
+		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
+		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
+		$(ARGS) \
+		-t $(IMAGE):${VERSION}-prod \
+		-f $(DIR)/prod/Dockerfile-${VERSION} $(DIR)/prod
 
-test-mods-52:
-	./tests/test.sh 5.2 mods
-test-mods-53:
-	./tests/test.sh 5.3 mods
-test-mods-54:
-	./tests/test.sh 5.4 mods
-test-mods-55:
-	./tests/test.sh 5.5 mods
-test-mods-56:
-	./tests/test.sh 5.6 mods
-test-mods-70:
-	./tests/test.sh 7.0 mods
-test-mods-71:
-	./tests/test.sh 7.1 mods
-test-mods-72:
-	./tests/test.sh 7.2 mods
-test-mods-73:
-	./tests/test.sh 7.3 mods
-test-mods-74:
-	./tests/test.sh 7.4 mods
-test-mods-80:
-	./tests/test.sh 8.0 mods
 
-test-prod-52:
-	./tests/test.sh 5.2 prod
-test-prod-53:
-	./tests/test.sh 5.3 prod
-test-prod-54:
-	./tests/test.sh 5.4 prod
-test-prod-55:
-	./tests/test.sh 5.5 prod
-test-prod-56:
-	./tests/test.sh 5.6 prod
-test-prod-70:
-	./tests/test.sh 7.0 prod
-test-prod-71:
-	./tests/test.sh 7.1 prod
-test-prod-72:
-	./tests/test.sh 7.2 prod
-test-prod-73:
-	./tests/test.sh 7.3 prod
-test-prod-74:
-	./tests/test.sh 7.4 prod
-test-prod-80:
-	./tests/test.sh 8.0 prod
+build-work: _check-version
+build-work: _EXIST_IMAGE=prod
+build-work: _check-image-exists
+build-work:
+	docker build $(NO_CACHE) \
+		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
+		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
+		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
+		$(ARGS) \
+		-t $(IMAGE):${VERSION}-work \
+		-f $(DIR)/work/Dockerfile-${VERSION} $(DIR)/work
 
-test-work-52:
-	./tests/test.sh 5.2 work
-test-work-53:
-	./tests/test.sh 5.3 work
-test-work-54:
-	./tests/test.sh 5.4 work
-test-work-55:
-	./tests/test.sh 5.5 work
-test-work-56:
-	./tests/test.sh 5.6 work
-test-work-70:
-	./tests/test.sh 7.0 work
-test-work-71:
-	./tests/test.sh 7.1 work
-test-work-72:
-	./tests/test.sh 7.2 work
-test-work-73:
-	./tests/test.sh 7.3 work
-test-work-74:
-	./tests/test.sh 7.4 work
-test-work-80:
-	./tests/test.sh 8.0 work
+
+# -------------------------------------------------------------------------------------------------
+#  REBUILD TARGETS
+# -------------------------------------------------------------------------------------------------
+
+rebuild-base: NO_CACHE=--no-cache
+rebuild-base: build-base
+
+
+rebuild-mods: NO_CACHE=--no-cache
+rebuild-mods: build-mods
+
+
+rebuild-prod: NO_CACHE=--no-cache
+rebuild-prod: build-prod
+
+
+rebuild-work: NO_CACHE=--no-cache
+rebuild-work: build-work
+
+
+# -------------------------------------------------------------------------------------------------
+#  TEST TARGETS
+# -------------------------------------------------------------------------------------------------
+
+test-base: _check-version
+test-base: _EXIST_IMAGE=base
+test-base: _check-image-exists
+test-base:
+	./tests/test.sh ${VERSION} base
+
+
+test-mods: _check-version
+test-mods: _EXIST_IMAGE=mods
+test-mods: _check-image-exists
+test-mods: _check-version
+	./tests/test.sh ${VERSION} mods
+
+
+test-prod: _check-version
+test-prod: _EXIST_IMAGE=prod
+test-prod: _check-image-exists
+test-prod: _check-version
+	./tests/test.sh ${VERSION} prod
+
+
+test-work: _check-version
+test-work: _EXIST_IMAGE=work
+test-work: _check-image-exists
+test-work: _check-version
+	./tests/test.sh ${VERSION} work
+
+
+# -------------------------------------------------------------------------------------------------
+#  HELPER TARGETS
+# -------------------------------------------------------------------------------------------------
+
+_check-version:
+ifeq ($(strip $(VERSION)),)
+	@$(info This make target requires the VERSION variable to be set.)
+	@$(info make build-<flavour> VERSION=7.3)
+	@$(info )
+	@$(error Exiting)
+endif
+ifeq ($(VERSION),5.2)
+else
+ifeq ($(VERSION),5.3)
+else
+ifeq ($(VERSION),5.4)
+else
+ifeq ($(VERSION),5.5)
+else
+ifeq ($(VERSION),5.6)
+else
+ifeq ($(VERSION),7.0)
+else
+ifeq ($(VERSION),7.1)
+else
+ifeq ($(VERSION),7.2)
+else
+ifeq ($(VERSION),7.3)
+else
+ifeq ($(VERSION),7.4)
+else
+ifeq ($(VERSION),8.0)
+else
+	@$(info VERSION can only be: '5.2', '5.3', '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4' or '8.0')
+	@$(info )
+	@$(error Exiting)
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+
+
+_check-image-exists:
+	@if [ "$$(docker images -q $(IMAGE):$(VERSION)-$(_EXIST_IMAGE))" = "" ]; then \
+		>&2 echo "Docker image '$(IMAGE):$(VERSION)-$(_EXIST_IMAGE)' was not found locally."; \
+		>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
+		>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
+		>&2 echo; \
+		false; \
+	fi;
+
+
+_pull-root-image:
+	@echo "Pulling root image for PHP ${VERSION}"
+	@docker pull $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)

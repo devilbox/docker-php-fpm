@@ -1,67 +1,698 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
-FROM devilbox/php-fpm:5.6-base
-MAINTAINER "cytopia" <cytopia@everythingcli.org>
+FROM devilbox/php-fpm:5.6-base as builder
 
+
+###
+### Install
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		alien \
+		firebird-dev \
+		freetds-dev \
+		libaio-dev \
+		libbz2-dev \
+		libc-client-dev \
+		libcurl4-openssl-dev \
+		libenchant-dev \
+		libevent-dev \
+		libfbclient2 \
+		libfreetype6-dev \
+		libgmp-dev \
+		libib-util \
+		libicu-dev \
+		libjpeg-dev \
+		libkrb5-dev \
+		libldap2-dev \
+		libmagickwand-dev \
+		libmcrypt-dev \
+		libmemcached-dev \
+		libnghttp2-dev \
+		libpcre3-dev \
+		libpng-dev \
+		libpq-dev \
+		libpspell-dev \
+		librabbitmq-dev \
+		librdkafka-dev \
+		librecode-dev \
+		libsasl2-dev \
+		libsnmp-dev \
+		libssl-dev \
+		libtidy-dev \
+		libvpx-dev \
+		libwebp-dev \
+		libxml2-dev \
+		libxpm-dev \
+		libxslt-dev \
+		libzip-dev \
+		snmp \
+		zlib1g-dev \
+		ca-certificates \
+		git
+
+
+# Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini
+
+
+###
+### Install and enable PHP modules
+###
+# Enable ffi if it exists
+RUN set -eux \
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
+			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
+		fi
+
+# -------------------- Installing PHP Extension: ioncube --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Custom extension
+	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+&& tar xvfz ioncube.tar.gz \
+&& cd ioncube \
+&& cp "ioncube_loader_lin_5.6.so" "${EXTENSION_DIR}/ioncube.so" \
+&& cd ../ \
+&& rm -rf ioncube \
+&& rm -rf ioncube.tar.gz \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: amqp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install amqp \
+	# Enabling
+	&& docker-php-ext-enable amqp \
+	&& true
+
+
+# -------------------- Installing PHP Extension: apcu --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install apcu-4.0.11 \
+	# Enabling
+	&& docker-php-ext-enable apcu \
+	&& true
+
+
+# -------------------- Installing PHP Extension: bcmath --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
+	&& true
+
+
+# -------------------- Installing PHP Extension: blackfire --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Custom extension
+	&& version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+&& curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
+&& mkdir -p /tmp/blackfire \
+&& tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+&& mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: bz2 --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
+	&& true
+
+
+# -------------------- Installing PHP Extension: calendar --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
+	&& true
+
+
+# -------------------- Installing PHP Extension: dba --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
+	&& true
+
+
+# -------------------- Installing PHP Extension: enchant --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
+	&& true
+
+
+# -------------------- Installing PHP Extension: exif --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gd --------------------
+RUN set -eux \
+	# Version specific pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure gd --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gettext --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gmp --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
+	&& true
+
+
+# -------------------- Installing PHP Extension: igbinary --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install igbinary-2.0.8 \
+	# Enabling
+	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imap --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
+	&& true
+
+
+# -------------------- Installing PHP Extension: interbase --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
+	&& true
+
+
+# -------------------- Installing PHP Extension: intl --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: ldap --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mcrypt --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack-0.5.7 \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache \
+	# Enabling
+	&& docker-php-ext-enable memcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcached --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcached-2.2.0 \
+	# Enabling
+	&& docker-php-ext-enable memcached \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongo --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes | pecl install mongo \
+	# Enabling
+	&& docker-php-ext-enable mongo \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongodb --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install mongodb \
+	# Enabling
+	&& docker-php-ext-enable mongodb \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysql --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysqli --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
+	&& true
+
+
+# -------------------- Installing PHP Extension: oauth --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install oauth-1.2.3 \
+	# Enabling
+	&& docker-php-ext-enable oauth \
+	&& true
+
+
+# -------------------- Installing PHP Extension: oci8 --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+\
+&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
+  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
+	# Generic post-command
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: opcache --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pcntl --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_dblib --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_firebird --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_mysql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: phalcon --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         GIT extension
+	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
+	&& cd /tmp/phalcon \
+	# Custom:       Branch
+	&& git checkout v3.4.2 \
+	# Custom:       Install command
+	&& cd build && ./install \
+	# Enabling
+	&& docker-php-ext-enable phalcon \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pspell --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
+	&& true
+
+
+# -------------------- Installing PHP Extension: recode --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
+	&& true
+
+
+# -------------------- Installing PHP Extension: redis --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install redis-4.3.0 \
+	# Enabling
+	&& docker-php-ext-enable redis \
+	&& true
+
+
+# -------------------- Installing PHP Extension: rdkafka --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install rdkafka-3.1.2 \
+	# Enabling
+	&& docker-php-ext-enable rdkafka \
+	&& true
+
+
+# -------------------- Installing PHP Extension: shmop --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
+	&& true
+
+
+# -------------------- Installing PHP Extension: snmp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure snmp --with-openssl-dir \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
+	&& true
+
+
+# -------------------- Installing PHP Extension: soap --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure soap --with-libxml-dir=/usr \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sockets --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
+	&& true
+
+
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install swoole-1.9.23 \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sysvmsg --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sysvsem --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sysvshm --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
+	&& true
+
+
+# -------------------- Installing PHP Extension: tidy --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
+	&& true
+
+
+# -------------------- Installing PHP Extension: uploadprogress --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uploadprogress \
+	# Enabling
+	&& docker-php-ext-enable uploadprogress \
+	&& true
+
+
+# -------------------- Installing PHP Extension: wddx --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure wddx --with-libxml-dir=/usr \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xdebug --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xdebug-2.4.1 \
+	# Enabling
+	&& docker-php-ext-enable xdebug \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xmlrpc --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xsl --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: zip --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
+	&& true
+
+
+
+
+# Fix php.ini settings for enabled extensions
+RUN set -eux \
+	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/*
+
+# Fix oracle dir for images that don't have oci installed
+RUN set -eux \
+	&& mkdir -p /usr/lib/oracle/
+
+# Shrink everything down
+RUN set -eux \
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
+FROM devilbox/php-fpm:5.6-base as final
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 ###
 ### Labels
 ###
-LABEL \
-	name="cytopia's PHP-FPM 5.6 Image" \
-	image="devilbox/php-fpm" \
-	tag="5.6-mods" \
-	vendor="devilbox" \
-	license="MIT"
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="5.6-mods"
+LABEL "org.opencontainers.image.title"="PHP-FPM 5.6-mods"
+LABEL "org.opencontainers.image.description"="PHP-FPM 5.6-mods"
 
 
 ###
-### Envs
+### Copy artifacts from builder
 ###
-ENV BUILD_DEPS \
-	alien \
-	firebird-dev \
-	freetds-dev \
-	libaio-dev \
-	libbz2-dev \
-	libc-client-dev \
-	libcurl4-openssl-dev \
-	libenchant-dev \
-	libevent-dev \
-	libfbclient2 \
-	libfreetype6-dev \
-	libgmp-dev \
-	libib-util \
-	libicu-dev \
-	libjpeg-dev \
-	libkrb5-dev \
-	libldap2-dev \
-	libmagickwand-dev \
-	libmcrypt-dev \
-	libmemcached-dev \
-	libnghttp2-dev \
-	libpcre3-dev \
-	libpng-dev \
-	libpq-dev \
-	libpspell-dev \
-	librabbitmq-dev \
-	librdkafka-dev \
-	librecode-dev \
-	libsasl2-dev \
-	libsnmp-dev \
-	libssl-dev \
-	libtidy-dev \
-	libvpx-dev \
-	libwebp-dev \
-	libxml2-dev \
-	libxpm-dev \
-	libxslt-dev \
-	libzip-dev \
-	snmp \
-	zlib1g-dev \
-	ca-certificates \
-	git
+ARG EXT_DIR
+COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
+COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 
-ENV RUN_DEPS \
+
+###
+### Install
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
@@ -88,386 +719,29 @@ ENV RUN_DEPS \
 	libxslt1.1 \
 	libzip4 \
 	snmp \
-	ca-certificates
+	ca-certificates \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& update-ca-certificates
 
 
 ###
-### Install
+### Post Install
 ###
-RUN set -x \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-		${BUILD_DEPS} \
-	\
-	\
-# ---- Installing PHP Extension: ioncube ----
-	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
-&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
-&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
-&& tar xvfz ioncube.tar.gz \
-&& cd ioncube \
-&& cp "ioncube_loader_lin_5.6.so" "${EXTENSION_DIR}/ioncube.so" \
-&& cd ../ \
-&& rm -rf ioncube \
-&& rm -rf ioncube.tar.gz \
- \
-	&& (rm -rf /usr/local/lib/php/test/ioncube || true) \
-	&& (rm -rf /usr/local/lib/php/doc/ioncube || true) \
-	\
-# ---- Installing PHP Extension: amqp ----
-	&& echo "/usr" | pecl install amqp \
-	&& docker-php-ext-enable amqp \
-	&& (rm -rf /usr/local/lib/php/test/amqp || true) \
-	&& (rm -rf /usr/local/lib/php/doc/amqp || true) \
-	\
-# ---- Installing PHP Extension: apcu ----
-	&& pecl install apcu-4.0.11 \
-	&& docker-php-ext-enable apcu \
-	&& (rm -rf /usr/local/lib/php/test/apcu || true) \
-	&& (rm -rf /usr/local/lib/php/doc/apcu || true) \
-	\
-# ---- Installing PHP Extension: bcmath ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
-	&& (rm -rf /usr/local/lib/php/test/bcmath || true) \
-	&& (rm -rf /usr/local/lib/php/doc/bcmath || true) \
-	\
-# ---- Installing PHP Extension: blackfire ----
-	&& version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-&& curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version \
-&& mkdir -p /tmp/blackfire \
-&& tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
-&& mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-&& rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz \
- \
-	&& (rm -rf /usr/local/lib/php/test/blackfire || true) \
-	&& (rm -rf /usr/local/lib/php/doc/blackfire || true) \
-	\
-# ---- Installing PHP Extension: bz2 ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
-	&& (rm -rf /usr/local/lib/php/test/bz2 || true) \
-	&& (rm -rf /usr/local/lib/php/doc/bz2 || true) \
-	\
-# ---- Installing PHP Extension: calendar ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
-	&& (rm -rf /usr/local/lib/php/test/calendar || true) \
-	&& (rm -rf /usr/local/lib/php/doc/calendar || true) \
-	\
-# ---- Installing PHP Extension: dba ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
-	&& (rm -rf /usr/local/lib/php/test/dba || true) \
-	&& (rm -rf /usr/local/lib/php/doc/dba || true) \
-	\
-# ---- Installing PHP Extension: enchant ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
-	&& (rm -rf /usr/local/lib/php/test/enchant || true) \
-	&& (rm -rf /usr/local/lib/php/doc/enchant || true) \
-	\
-# ---- Installing PHP Extension: exif ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
-	&& (rm -rf /usr/local/lib/php/test/exif || true) \
-	&& (rm -rf /usr/local/lib/php/doc/exif || true) \
-	\
-# ---- Installing PHP Extension: gd ----
-	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-configure gd --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
-	&& (rm -rf /usr/local/lib/php/test/gd || true) \
-	&& (rm -rf /usr/local/lib/php/doc/gd || true) \
-	\
-# ---- Installing PHP Extension: gettext ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
-	&& (rm -rf /usr/local/lib/php/test/gettext || true) \
-	&& (rm -rf /usr/local/lib/php/doc/gettext || true) \
-	\
-# ---- Installing PHP Extension: gmp ----
-	&& ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
-	&& (rm -rf /usr/local/lib/php/test/gmp || true) \
-	&& (rm -rf /usr/local/lib/php/doc/gmp || true) \
-	\
-# ---- Installing PHP Extension: igbinary ----
-	&& pecl install igbinary-2.0.8 \
-	&& docker-php-ext-enable igbinary \
-	&& (rm -rf /usr/local/lib/php/test/igbinary || true) \
-	&& (rm -rf /usr/local/lib/php/doc/igbinary || true) \
-	\
-# ---- Installing PHP Extension: imagick ----
-	&& pecl install imagick \
-	&& docker-php-ext-enable imagick \
-	&& (rm -rf /usr/local/lib/php/test/imagick || true) \
-	&& (rm -rf /usr/local/lib/php/doc/imagick || true) \
-	\
-# ---- Installing PHP Extension: imap ----
-	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
-	&& (rm -rf /usr/local/lib/php/test/imap || true) \
-	&& (rm -rf /usr/local/lib/php/doc/imap || true) \
-	\
-# ---- Installing PHP Extension: interbase ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
-	&& (rm -rf /usr/local/lib/php/test/interbase || true) \
-	&& (rm -rf /usr/local/lib/php/doc/interbase || true) \
-	\
-# ---- Installing PHP Extension: intl ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
-	&& (rm -rf /usr/local/lib/php/test/intl || true) \
-	&& (rm -rf /usr/local/lib/php/doc/intl || true) \
-	\
-# ---- Installing PHP Extension: ldap ----
-	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
-	&& (rm -rf /usr/local/lib/php/test/ldap || true) \
-	&& (rm -rf /usr/local/lib/php/doc/ldap || true) \
-	\
-# ---- Installing PHP Extension: mcrypt ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
-	&& (rm -rf /usr/local/lib/php/test/mcrypt || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mcrypt || true) \
-	\
-# ---- Installing PHP Extension: msgpack ----
-	&& pecl install msgpack-0.5.7 \
-	&& docker-php-ext-enable msgpack \
-	&& (rm -rf /usr/local/lib/php/test/msgpack || true) \
-	&& (rm -rf /usr/local/lib/php/doc/msgpack || true) \
-	\
-# ---- Installing PHP Extension: memcache ----
-	&& pecl install memcache \
-	&& docker-php-ext-enable memcache \
-	&& (rm -rf /usr/local/lib/php/test/memcache || true) \
-	&& (rm -rf /usr/local/lib/php/doc/memcache || true) \
-	\
-# ---- Installing PHP Extension: memcached ----
-	&& pecl install memcached-2.2.0 \
-	&& docker-php-ext-enable memcached \
-	&& (rm -rf /usr/local/lib/php/test/memcached || true) \
-	&& (rm -rf /usr/local/lib/php/doc/memcached || true) \
-	\
-# ---- Installing PHP Extension: mongo ----
-	&& yes | pecl install mongo \
-	&& docker-php-ext-enable mongo \
-	&& (rm -rf /usr/local/lib/php/test/mongo || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mongo || true) \
-	\
-# ---- Installing PHP Extension: mongodb ----
-	&& pecl install mongodb \
-	&& docker-php-ext-enable mongodb \
-	&& (rm -rf /usr/local/lib/php/test/mongodb || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mongodb || true) \
-	\
-# ---- Installing PHP Extension: mysql ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
-	&& (rm -rf /usr/local/lib/php/test/mysql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mysql || true) \
-	\
-# ---- Installing PHP Extension: mysqli ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
-	&& (rm -rf /usr/local/lib/php/test/mysqli || true) \
-	&& (rm -rf /usr/local/lib/php/doc/mysqli || true) \
-	\
-# ---- Installing PHP Extension: oauth ----
-	&& pecl install oauth-1.2.3 \
-	&& docker-php-ext-enable oauth \
-	&& (rm -rf /usr/local/lib/php/test/oauth || true) \
-	&& (rm -rf /usr/local/lib/php/doc/oauth || true) \
-	\
-# ---- Installing PHP Extension: oci8 ----
+RUN set -eux \
+	# ---------- oci8 ----------
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
-\
-&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
- \
-	&& /usr/local/bin/docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
-	&& (rm -rf /usr/local/lib/php/test/oci8 || true) \
-	&& (rm -rf /usr/local/lib/php/doc/oci8 || true) \
-	\
-# ---- Installing PHP Extension: opcache ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
-	&& (rm -rf /usr/local/lib/php/test/opcache || true) \
-	&& (rm -rf /usr/local/lib/php/doc/opcache || true) \
-	\
-# ---- Installing PHP Extension: pcntl ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
-	&& (rm -rf /usr/local/lib/php/test/pcntl || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pcntl || true) \
-	\
-# ---- Installing PHP Extension: pdo_dblib ----
-	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
-	&& (rm -rf /usr/local/lib/php/test/pdo_dblib || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_dblib || true) \
-	\
-# ---- Installing PHP Extension: pdo_firebird ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
-	&& (rm -rf /usr/local/lib/php/test/pdo_firebird || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_firebird || true) \
-	\
-# ---- Installing PHP Extension: pdo_mysql ----
-	&& /usr/local/bin/docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
-	&& (rm -rf /usr/local/lib/php/test/pdo_mysql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_mysql || true) \
-	\
-# ---- Installing PHP Extension: pdo_pgsql ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
-	&& (rm -rf /usr/local/lib/php/test/pdo_pgsql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pdo_pgsql || true) \
-	\
-# ---- Installing PHP Extension: pgsql ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
-	&& (rm -rf /usr/local/lib/php/test/pgsql || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pgsql || true) \
-	\
-# ---- Installing PHP Extension: phalcon ----
-	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
-	&& cd /tmp/phalcon \
-	&& git checkout v3.4.2 \
-	&& cd build && ./install \
-	&& docker-php-ext-enable phalcon \
-	&& (rm -rf /usr/local/lib/php/test/phalcon || true) \
-	&& (rm -rf /usr/local/lib/php/doc/phalcon || true) \
-	\
-# ---- Installing PHP Extension: pspell ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	&& (rm -rf /usr/local/lib/php/test/pspell || true) \
-	&& (rm -rf /usr/local/lib/php/doc/pspell || true) \
-	\
-# ---- Installing PHP Extension: recode ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
-	&& (rm -rf /usr/local/lib/php/test/recode || true) \
-	&& (rm -rf /usr/local/lib/php/doc/recode || true) \
-	\
-# ---- Installing PHP Extension: redis ----
-	&& pecl install redis \
-	&& docker-php-ext-enable redis \
-	&& (rm -rf /usr/local/lib/php/test/redis || true) \
-	&& (rm -rf /usr/local/lib/php/doc/redis || true) \
-	\
-# ---- Installing PHP Extension: rdkafka ----
-	&& pecl install rdkafka \
-	&& docker-php-ext-enable rdkafka \
-	&& (rm -rf /usr/local/lib/php/test/rdkafka || true) \
-	&& (rm -rf /usr/local/lib/php/doc/rdkafka || true) \
-	\
-# ---- Installing PHP Extension: shmop ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
-	&& (rm -rf /usr/local/lib/php/test/shmop || true) \
-	&& (rm -rf /usr/local/lib/php/doc/shmop || true) \
-	\
-# ---- Installing PHP Extension: snmp ----
-	&& /usr/local/bin/docker-php-ext-configure snmp --with-openssl-dir \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
-	&& (rm -rf /usr/local/lib/php/test/snmp || true) \
-	&& (rm -rf /usr/local/lib/php/doc/snmp || true) \
-	\
-# ---- Installing PHP Extension: soap ----
-	&& /usr/local/bin/docker-php-ext-configure soap --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
-	&& (rm -rf /usr/local/lib/php/test/soap || true) \
-	&& (rm -rf /usr/local/lib/php/doc/soap || true) \
-	\
-# ---- Installing PHP Extension: sockets ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
-	&& (rm -rf /usr/local/lib/php/test/sockets || true) \
-	&& (rm -rf /usr/local/lib/php/doc/sockets || true) \
-	\
-# ---- Installing PHP Extension: swoole ----
-	&& pecl install swoole-1.9.23 \
-	&& docker-php-ext-enable swoole \
-	&& (rm -rf /usr/local/lib/php/test/swoole || true) \
-	&& (rm -rf /usr/local/lib/php/doc/swoole || true) \
-	\
-# ---- Installing PHP Extension: sysvmsg ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
-	&& (rm -rf /usr/local/lib/php/test/sysvmsg || true) \
-	&& (rm -rf /usr/local/lib/php/doc/sysvmsg || true) \
-	\
-# ---- Installing PHP Extension: sysvsem ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
-	&& (rm -rf /usr/local/lib/php/test/sysvsem || true) \
-	&& (rm -rf /usr/local/lib/php/doc/sysvsem || true) \
-	\
-# ---- Installing PHP Extension: sysvshm ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
-	&& (rm -rf /usr/local/lib/php/test/sysvshm || true) \
-	&& (rm -rf /usr/local/lib/php/doc/sysvshm || true) \
-	\
-# ---- Installing PHP Extension: tidy ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
-	&& (rm -rf /usr/local/lib/php/test/tidy || true) \
-	&& (rm -rf /usr/local/lib/php/doc/tidy || true) \
-	\
-# ---- Installing PHP Extension: uploadprogress ----
-	&& pecl install uploadprogress \
-	&& docker-php-ext-enable uploadprogress \
-	&& (rm -rf /usr/local/lib/php/test/uploadprogress || true) \
-	&& (rm -rf /usr/local/lib/php/doc/uploadprogress || true) \
-	\
-# ---- Installing PHP Extension: wddx ----
-	&& /usr/local/bin/docker-php-ext-configure wddx --with-libxml-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
-	&& (rm -rf /usr/local/lib/php/test/wddx || true) \
-	&& (rm -rf /usr/local/lib/php/doc/wddx || true) \
-	\
-# ---- Installing PHP Extension: xdebug ----
-	&& pecl install xdebug-2.4.1 \
-	&& docker-php-ext-enable xdebug \
-	&& (rm -rf /usr/local/lib/php/test/xdebug || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xdebug || true) \
-	\
-# ---- Installing PHP Extension: xmlrpc ----
-	&& /usr/local/bin/docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
-	&& (rm -rf /usr/local/lib/php/test/xmlrpc || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xmlrpc || true) \
-	\
-# ---- Installing PHP Extension: xsl ----
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
-	&& (rm -rf /usr/local/lib/php/test/xsl || true) \
-	&& (rm -rf /usr/local/lib/php/doc/xsl || true) \
-	\
-# ---- Installing PHP Extension: zip ----
-	&& /usr/local/bin/docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip \
-	&& /usr/local/bin/docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
-	&& (rm -rf /usr/local/lib/php/test/zip || true) \
-	&& (rm -rf /usr/local/lib/php/doc/zip || true) \
-	\
-	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
-			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
-		fi \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/* \
-	&& rm -rf /tmp/* \
-	\
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false ${BUILD_DEPS} \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests ${RUN_DEPS} \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/* \
-	\
-	&& update-ca-certificates \
-	\
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find "$(php -r 'echo ini_get("extension_dir");')" -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+  \
+	&& true
 
 
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.6' \
 	&& /usr/local/sbin/php-fpm --test \

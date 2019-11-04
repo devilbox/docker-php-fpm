@@ -1,4 +1,4 @@
-# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
+{{ edit_comment_work }}
 FROM devilbox/php-fpm:{{ php_version }}-prod
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
@@ -6,12 +6,20 @@ MAINTAINER "cytopia" <cytopia@everythingcli.org>
 ###
 ### Labels
 ###
-LABEL \
-	name="cytopia's PHP-FPM {{ php_version }} Image" \
-	image="devilbox/php-fpm" \
-	tag="{{ php_version }}-work" \
-	vendor="devilbox" \
-	license="MIT"
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="{{ php_version }}-work"
+LABEL "org.opencontainers.image.title"="PHP-FPM {{ php_version }}-work"
+LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-work"
 
 
 ###
@@ -23,45 +31,40 @@ ENV BASH_PROFILE=".bashrc"
 ###
 ### Install Tools
 ###
-RUN set -x \
+RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		curl \
 		dirmngr \
 		gnupg \
-{% for repo in apt_repositories_enabled -%}
+		\
+{%- for repo in apt_repositories_enabled -%}
 	{#- Not disabled -#}
 	{%- if ('disabled' not in apt_repositories_available[repo]) or (php_version not in apt_repositories_available[repo]['disabled']) -%}
 		{#- Version specific pre-command available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] %}
-	&& {{ apt_repositories_available[repo][php_version]['pre'] }} \
-{# #}
+		{%- if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] -%}
+			{{ "\n\t" }}&& {{ apt_repositories_available[repo][php_version]['pre'] }} \
 		{#- Generic pre-command available? -#}
-		{%- elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] %}
-	&& {{ apt_repositories_available[repo]['all']['pre'] }} \
-{# #}
+		{%- elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] -%}
+			{{ "\n\t" }}&& {{ apt_repositories_available[repo]['all']['pre'] }} \
 		{%- endif -%}
 		{#- Version specific key available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] %}
-	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
-{# #}
+		{%- if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] -%}
+			{{ "\n\t" }}&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
 		{#- Generic key available? -#}
-		{%- elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] %}
-	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
-{# #}
+		{%- elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] -%}
+			{{ "\n\t" }}&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
 		{%- endif -%}
 		{#- Version specific repository available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] %}
-	&& echo "{{ apt_repositories_available[repo][php_version]['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-{# #}
+		{%- if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] -%}
+			{{ "\n\t" }}&& echo "{{ apt_repositories_available[repo][php_version]['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
 		{#- Generic repository available? -#}
-		{%- else %}
-	&& echo "{{ apt_repositories_available[repo]['all']['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-{# #}
+		{%- elif 'all' in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo]['all'] -%}
+			{{ "\n\t" }}&& echo "{{ apt_repositories_available[repo]['all']['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
 		{%- endif -%}
 	{%- endif -%}
-{%- endfor %}
+{%- endfor -%}{{ "\n\t" }}\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		ack-grep \
@@ -97,7 +100,11 @@ RUN set -x \
 		mongodb-org-shell \
 		mongodb-org-tools \
 		moreutils \
+{% if php_version in [7.1, 7.2, 7.3] %}
+		mariadb-client \
+{% else %}
 		mysql-client \
+{% endif %}
 		nano \
 		net-tools \
 		netcat \
@@ -136,35 +143,55 @@ RUN set -x \
 ###
 ### Install custom software
 ###
-RUN set -x \
-{% for tool in software_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific pre-command available? #}
-{% if php_version in software_available[tool] and 'pre' in software_available[tool][php_version] %}
-	&& {{ software_available[tool][php_version]['pre'] }} \
-{# Generic pre-command available? #}
-{% elif 'all' in software_available[tool] and 'pre' in software_available[tool]['all'] %}
-	&& {{ software_available[tool]['all']['pre'] }} \
-{% endif %}
-{# Version specific command available? #}
-{% if php_version in software_available[tool] and 'command' in software_available[tool][php_version] %}
-	&& {{ software_available[tool][php_version]['command'] }} \
-{# Generic command available? #}
-{% else %}
-	&& {{ software_available[tool]['all']['command'] }} \
-{% endif %}
-{# Version specific post-command available? #}
-{% if php_version in software_available[tool] and 'post' in software_available[tool][php_version] %}
-	&& {{ software_available[tool][php_version]['post'] }} \
-{# Generic post-command available? #}
-{% elif 'all' in software_available[tool] and 'post' in software_available[tool]['all'] %}
-	&& {{ software_available[tool]['all']['post'] }} \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
+{% if not build_fail_fast %}
+RUN set -eux \
+{%- endif -%}
+{%- for tool in software_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) -%}
+		{{ "\n" }}# -------------------- {{ tool }} --------------------
+		{%- if build_fail_fast -%}
+		{{ "\n" }}RUN set -eux \
+		{%- endif -%}
+		{#- Version specific pre-command available? -#}
+		{%- if php_version in software_available[tool] and 'pre' in software_available[tool][php_version] -%}
+			{{ "\n\t" }}&& {{ software_available[tool][php_version]['pre'] }} \
+		{#- Generic pre-command available? -#}
+		{%- elif 'all' in software_available[tool] and 'pre' in software_available[tool]['all'] -%}
+			{{ "\n\t" }}&& {{ software_available[tool]['all']['pre'] }} \
+		{%- endif -%}
+		{#- Version specific command available? -#}
+		{%- if php_version in software_available[tool] and 'command' in software_available[tool][php_version] -%}
+			{{ "\n\t" }}&& {{ software_available[tool][php_version]['command'] }} \
+		{#- Generic command available? -#}
+		{%- else -%}
+			{{ "\n\t" }}&& {{ software_available[tool]['all']['command'] }} \
+		{%- endif -%}
+		{#- Version specific post-command available? -#}
+		{%- if php_version in software_available[tool] and 'post' in software_available[tool][php_version] -%}
+			{{ "\n\t" }}&& {{ software_available[tool][php_version]['post'] }} \
+		{#- Generic post-command available? -#}
+		{%- elif 'all' in software_available[tool] and 'post' in software_available[tool]['all'] -%}
+			{{ "\n\t" }}&& {{ software_available[tool]['all']['post'] }} \
+		{%- endif -%}
+		{#- Fail fast version -#}
+		{%- if build_fail_fast -%}
+			{%- if 'check' in software_available[tool] -%}
+				{{ "\n\t" }}&& {{ software_available[tool]['check'] }}{{ "\n\n" }}
+			{%- else -%}
+			{{ "\n\t" }}&& true{{ "\n\n" }}
+			{%- endif -%}
+		{%- else -%}
+			{{ "\n\t" }}\
+		{%- endif -%}
+		{#- end of Fail fast version -#}
+	{%- endif -%}
+{%- endfor -%}
+{% if build_fail_fast -%}
+	RUN set -eux \{{ "\n" }}
+{%- else -%}
+	{{ "\n\t" }}\{{ "\n" }}
+{%- endif %}
 	&& (rm -rf /root/.gem || true ) \
 	&& (rm -rf /root/.cache || true) \
 	&& (rm -rf /root/.composer || true) \
@@ -184,27 +211,48 @@ RUN set -x \
 ###
 ### Install Composer (PHP)
 ###
-RUN set -x \
-{% for tool in composer_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific gem version available? #}
-{% if php_version in composer_available[tool] and 'version' in composer_available[tool][php_version] %}
-	&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
-{# Generic gem version  available? #}
-{% elif 'all' in composer_available[tool] and 'version' in composer_available[tool]['all'] %}
-	&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
-{# No version info available #}
-{% else %}
-	&& COMPOSER_HOME="{{ composer_home }}" composer global require  {{ composer_available[tool]['name'] }} \
-{% endif %}
-{% if 'link' in composer_available[tool] %}
-	&& ln -s {{ composer_home }}/vendor/{{ composer_available[tool]['name'] }}/{{ composer_available[tool]['link'] }} /usr/local/bin/ \
-{% endif %}
-{% endif %}
+{% if not build_fail_fast %}
+RUN set -eux \
+{%- endif -%}
+{%- for tool in composer_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) -%}
+		{{ "\n" }}# -------------------- {{ tool }} --------------------
+		{%- if build_fail_fast -%}
+		{{ "\n" }}RUN set -eux \
+		{%- endif -%}
+		{#- Version specific gem version available? -#}
+		{%- if php_version in composer_available[tool] and 'version' in composer_available[tool][php_version] -%}
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
+		{#- Generic gem version  available? -#}
+		{%- elif 'all' in composer_available[tool] and 'version' in composer_available[tool]['all'] -%}
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
+		{#- No version info available -#}
+		{%- else -%}
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require  {{ composer_available[tool]['name'] }} \
+		{%- endif -%}
+		{#- Symlinks available? -#}
+		{%- if 'link' in composer_available[tool] -%}
+			{{ "\n\t" }}&& ln -s {{ composer_home }}/vendor/{{ composer_available[tool]['name'] }}/{{ composer_available[tool]['link'] }} /usr/local/bin/ \
+		{%- endif -%}
+		{#- Fail fast version -#}
+		{%- if build_fail_fast -%}
+			{%- if 'check' in composer_available[tool] -%}
+				{{ "\n\t" }}&& {{ composer_available[tool]['check'] }}{{ "\n\n" }}
+			{%- else -%}
+			{{ "\n\t" }}&& true{{ "\n\n" }}
+			{%- endif -%}
+		{%- else -%}
+			{{ "\n\t" }}\
+		{%- endif -%}
+		{#- end of Fail fast version -#}
+	{%- endif -%}
 {% endfor %}
-	\
+{% if build_fail_fast -%}
+	RUN set -eux \{{ "\n" }}
+{%- else -%}
+	{{ "\n\t" }}\{{ "\n" }}
+{%- endif %}
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
 	\
@@ -216,24 +264,44 @@ RUN set -x \
 ###
 ### Install npm (Node)
 ###
-RUN set -x \
-{% for tool in npm_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific gem version available? #}
-{% if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] %}
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
-{# Generic gem version  available? #}
-{% elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] %}
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
-{# No version info available #}
-{% else %}
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }}' devilbox \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
+{% if not build_fail_fast %}
+RUN set -eux \
+{%- endif -%}
+{%- for tool in npm_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) -%}
+		{{ "\n" }}# -------------------- {{ tool }} --------------------
+		{%- if build_fail_fast -%}
+		{{ "\n" }}RUN set -eux \
+		{%- endif -%}
+		{#- Version specific gem version available? -#}
+		{%- if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] -%}
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
+		{#- Generic gem version  available? -#}
+		{%- elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] -%}
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
+		{#- No version info available -#}
+		{%- else -%}
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }}' devilbox \
+		{%- endif -%}
+		{#- Fail fast version -#}
+		{%- if build_fail_fast -%}
+			{%- if 'check' in npm_available[tool] -%}
+				{{ "\n\t" }}&& PATH=$PATH:/opt/nvm/versions/node/$(/bin/ls -1 /opt/nvm/versions/node/ | sort -V | tail -1)/bin /opt/nvm/versions/node/$(/bin/ls -1 /opt/nvm/versions/node/ | sort -V | tail -1)/bin/{{ npm_available[tool]['check'] }}{{ "\n\n" }}
+			{%- else -%}
+			{{ "\n\t" }}&& true{{ "\n\n" }}
+			{%- endif -%}
+		{%- else -%}
+			{{ "\n\t" }}\
+		{%- endif -%}
+		{#- end of Fail fast version -#}
+	{%- endif -%}
+{%- endfor -%}
+{% if build_fail_fast -%}
+	RUN set -eux \{{ "\n" }}
+{%- else -%}
+	{{ "\n\t" }}\{{ "\n" }}
+{%- endif %}
 	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
 	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
@@ -249,24 +317,44 @@ RUN set -x \
 ###
 ### Install gem (Ruby)
 ###
-RUN set -x \
-{% for tool in gem_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific gem version available? #}
-{% if php_version in gem_available[tool] and 'version' in gem_available[tool][php_version] %}
-	&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool][php_version]['version'] }} \
-{# Generic gem version  available? #}
-{% elif 'all' in gem_available[tool] and 'version' in gem_available[tool]['all'] %}
-	&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool]['all']['version'] }} \
-{# No version info available #}
-{% else %}
-	&& gem install {{ gem_available[tool]['name'] }} \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
+{% if not build_fail_fast %}
+RUN set -eux \
+{%- endif -%}
+{%- for tool in gem_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) -%}
+		{{ "\n" }}# -------------------- {{ tool }} --------------------
+		{%- if build_fail_fast -%}
+		{{ "\n" }}RUN set -eux \
+		{%- endif -%}
+		{#- Version specific gem version available? -#}
+		{%- if php_version in gem_available[tool] and 'version' in gem_available[tool][php_version] -%}
+			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool][php_version]['version'] }} \
+		{#- Generic gem version  available? -#}
+		{%- elif 'all' in gem_available[tool] and 'version' in gem_available[tool]['all'] -%}
+			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool]['all']['version'] }} \
+		{#- No version info available -#}
+		{%- else -%}
+			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} \
+		{%- endif -%}
+		{#- Fail fast version -#}
+		{%- if build_fail_fast -%}
+			{%- if 'check' in gem_available[tool] -%}
+				{{ "\n\t" }}&& {{ gem_available[tool]['check'] }}{{ "\n\n" }}
+			{%- else -%}
+			{{ "\n\t" }}&& true{{ "\n\n" }}
+			{%- endif -%}
+		{%- else -%}
+			{{ "\n\t" }}\
+		{%- endif -%}
+		{#- end of Fail fast version -#}
+	{%- endif -%}
+{%- endfor -%}
+{% if build_fail_fast -%}
+	RUN set -eux \{{ "\n" }}
+{%- else -%}
+	{{ "\n\t" }}\{{ "\n" }}
+{%- endif %}
 	&& rm -rf /root/.gem \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -279,24 +367,44 @@ RUN set -x \
 ###
 ### Install pip (Python) packages
 ###
-RUN set -x \
-{% for tool in pip_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
-# {{ tool }}
-{# Version specific gem version available? #}
-{% if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} \
-{# Generic gem version  available? #}
-{% elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} \
-{# No version info available #}
-{% else %}
-	&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} \
-{% endif %}
-{% endif %}
-{% endfor %}
-	\
+{% if not build_fail_fast %}
+RUN set -eux \
+{%- endif -%}
+{%- for tool in pip_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) -%}
+		{{ "\n" }}# -------------------- {{ tool }} --------------------
+		{%- if build_fail_fast -%}
+		{{ "\n" }}RUN set -eux \
+		{%- endif -%}
+		{#- Version specific gem version available? -#}
+		{%- if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] -%}
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} \
+		{#- Generic gem version  available? -#}
+		{%- elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] -%}
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} \
+		{#- No version info available -#}
+		{%- else -%}
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} \
+		{%- endif -%}
+		{#- Fail fast version -#}
+		{%- if build_fail_fast -%}
+			{%- if 'check' in pip_available[tool] -%}
+				{{ "\n\t" }}&& {{ pip_available[tool]['check'] }}{{ "\n\n" }}
+			{%- else -%}
+			{{ "\n\t" }}&& true{{ "\n\n" }}
+			{%- endif -%}
+		{%- else -%}
+			{{ "\n\t" }}\
+		{%- endif -%}
+		{#- end of Fail fast version -#}
+	{%- endif -%}
+{%- endfor -%}
+{% if build_fail_fast -%}
+	RUN set -eux \{{ "\n" }}
+{%- else -%}
+	{{ "\n\t" }}\{{ "\n" }}
+{%- endif %}
 	&& rm -rf /root/.cache/pip \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -330,7 +438,7 @@ RUN \
 ###
 ### Verify
 ###
-RUN set -x \
+RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
 	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
 	&& /usr/local/sbin/php-fpm --test \
@@ -346,52 +454,53 @@ RUN set -x \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini
 
-RUN set -x \
-{# ---- SOFTWARE ---- #}
-{% for tool in software_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) %}
-{% if 'check' in software_available[tool] %}
-	&& {{ software_available[tool]['check'] }} \
-{% endif %}
-{% endif %}
-{% endfor %} \
-{# ---- Composer ---- #}
-{% for tool in composer_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) %}
-{% if 'check' in composer_available[tool] %}
-	&& {{ composer_available[tool]['check'] }} \
-{% endif %}
-{% endif %}
-{% endfor %} \
-{# ---- PIP ---- #}
-{% for tool in pip_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) %}
-{% if 'check' in pip_available[tool] %}
-	&& {{ pip_available[tool]['check'] }} \
-{% endif %}
-{% endif %}
-{% endfor %} \
-{# ---- NPM ---- #}
-{% for tool in npm_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) %}
-{% if 'check' in npm_available[tool] %}
-	&& {{ npm_available[tool]['check'] }} \
-{% endif %}
-{% endif %}
-{% endfor %} \
-{# ---- GEM ---- #}
-{% for tool in gem_enabled %}
-{# Not disabled #}
-{% if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) %}
-{% if 'check' in gem_available[tool] %}
-	&& {{ gem_available[tool]['check'] }} \
-{% endif %}
-{% endif %}
-{% endfor %} \
+RUN set -eux \
+# -------------------- Software --------------------
+{%- for tool in software_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) -%}
+		{%- if 'check' in software_available[tool] -%}
+			{{ "\n\t" }}&& {{ software_available[tool]['check'] }} \
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}{{ "\n\t" }}\
+# -------------------- Composer --------------------
+{%- for tool in composer_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) -%}
+		{%- if 'check' in composer_available[tool] -%}
+			{{ "\n\t" }}&& {{ composer_available[tool]['check'] }} \
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}{{ "\n\t" }}\
+# -------------------- PIP --------------------
+{%- for tool in pip_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) -%}
+		{%- if 'check' in pip_available[tool] -%}
+			{{ "\n\t" }}&& {{ pip_available[tool]['check'] }} \
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}{{ "\n\t" }}\
+# -------------------- NPM --------------------
+{%- for tool in npm_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) -%}
+		{%- if 'check' in npm_available[tool] -%}
+			{{ "\n\t" }}&& {{ npm_available[tool]['check'] }} \
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}{{ "\n\t" }}\
+# -------------------- GEM --------------------
+{%- for tool in gem_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) -%}
+		{%- if 'check' in gem_available[tool] -%}
+			{{ "\n\t" }}&& {{ gem_available[tool]['check'] }} \
+		{%- endif -%}
+	{%- endif -%}
+{% endfor %}{{ "\n\t" }}\
+# -------------------- Cleanup --------------------
 	&& rm -rf /home/devilbox/.config/ \
 	&& rm -rf /root/.ansible \
 	&& rm -rf /root/.console \
@@ -413,7 +522,6 @@ COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/bash-devilbox /etc/bash-devilbox
 COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
-
 
 
 ###
