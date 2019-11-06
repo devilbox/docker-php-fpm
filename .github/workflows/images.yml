@@ -269,7 +269,7 @@ jobs:
             if [ -n "${GITHUB_HEAD_REF}" ]; then
               GIT_SLUG="${GITHUB_HEAD_REF}"
             else
-              GIT_SLUG="${GITHUB_REF/refs\/head\//}"
+              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
             fi
           fi
 
