@@ -2,7 +2,7 @@
 
 set -e
 set -u
-set -p pipefail
+set -o pipefail
 
 
 ###
@@ -52,4 +52,4 @@ set_gid "NEW_GID" "${MY_GROUP}" "/home/${MY_USER}" "${DEBUG_LEVEL}"
 ### Startup
 ###
 log "info" "Starting $( php-fpm -v 2>&1 | head -1 )" "${DEBUG_LEVEL}"
-exec /usr/local/sbin/php-fpm
+exec "${@}"

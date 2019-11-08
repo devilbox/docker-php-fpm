@@ -93,4 +93,5 @@ EXPOSE 9000
 ###
 ### Entrypoint
 ###
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 ENTRYPOINT ["/docker-entrypoint.sh"]

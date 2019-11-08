@@ -534,4 +534,5 @@ WORKDIR /shared/httpd
 ###
 ### Entrypoint
 ###
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
