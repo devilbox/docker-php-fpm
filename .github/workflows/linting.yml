@@ -4,7 +4,7 @@
 ### Lints all generic and json files in the whole git repository
 ###
 
-name: linting
+name: Linting
 on:
   pull_request:
 
