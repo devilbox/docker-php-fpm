@@ -87,8 +87,34 @@ jobs:
           - '7.4'
           - '8.0'
     steps:
+
+      # ------------------------------------------------------------
+      # Checkout repository
+      # ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v1
+
+      - name: Set variables
+        id: vars
+        run: |
+          # Set git branch or git tag as slug
+          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
+            GIT_TYPE=TAG
+            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
+          else
+            GIT_TYPE=BRANCH
+            if [ -n "${GITHUB_HEAD_REF}" ]; then
+              GIT_SLUG="${GITHUB_HEAD_REF}"
+            else
+              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
+            fi
+          fi
+
+          # Export variable
+          # # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions#set-an-environment-variable-set-env
+          echo ::set-env name=GIT_TYPE::${GIT_TYPE}
+          echo ::set-env name=GIT_SLUG::${GIT_SLUG}
+
 
       # ------------------------------------------------------------
       # Base
@@ -101,10 +127,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make build-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -118,10 +144,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make test-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -139,10 +165,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make build-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -156,10 +182,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make test-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -177,10 +203,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make build-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -194,10 +220,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make test-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -215,10 +241,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make build-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -232,10 +258,10 @@ jobs:
               if eval "${*}"; then
                 return 0;
               fi;
+              sleep 10;
             done;
             return 1;
           }
-          sleep 10
           retry make test-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
@@ -260,23 +286,46 @@ jobs:
       # Only run this, if the PR was created by the repo owner
       - name: Publish images (only repo owner)
         run: |
-          # Set branch or tag as slug
-          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
-            GIT_TYPE=TAG
-            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
-          else
-            GIT_TYPE=BRANCH
-            if [ -n "${GITHUB_HEAD_REF}" ]; then
-              GIT_SLUG="${GITHUB_HEAD_REF}"
-            else
-              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
-            fi
-          fi
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
 
+          # Info output
           echo "Git Type: ${GIT_TYPE}"
           echo "Git Slug: ${GIT_SLUG}"
 
-          echo "Todo: Push to Dockerhub"
+          # Login
+          echo "retry make login USER= PASS="
+
+          # Push
+          if [ "${GIT_TYPE}" = "TAG" ]; then
+            echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+          else
+            if [ "${GIT_SLUG}" = "master" ]; then
+              echo "retry make push-base VERSION=${VERSION}"
+              echo "retry make push-mods VERSION=${VERSION}"
+              echo "retry make push-prod VERSION=${VERSION}"
+              echo "retry make push-work VERSION=${VERSION}"
+            else
+              echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+            fi
+          fi
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
         # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
         if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
             && (
