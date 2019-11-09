@@ -2,7 +2,7 @@
 
 set -e
 set -u
-set -p pipefail
+set -o pipefail
 
 
 ###
@@ -190,4 +190,4 @@ execute_custom_scripts "/startup.2.d" "${DEBUG_LEVEL}"
 ### Startup
 ###
 log "info" "Starting supervisord" "${DEBUG_LEVEL}"
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+exec "${@}"

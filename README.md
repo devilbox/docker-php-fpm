@@ -1,8 +1,9 @@
 # PHP-FPM Docker images
 
-[![PHP](https://github.com/devilbox/docker-php-fpm/workflows/linting/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=linting)
-[![Linting](https://github.com/devilbox/docker-php-fpm/workflows/PHP/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP)
-[![Build Status](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![Linting](https://github.com/devilbox/docker-php-fpm/workflows/Linting/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=Linting)
+[![CI](https://github.com/devilbox/docker-php-fpm/workflows/PHP-CI/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-CI)
+[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
+[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
 [![Release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg?colorB=orange)](https://github.com/devilbox/docker-php-fpm/releases)
 [![Gitter](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Discourse](https://img.shields.io/discourse/https/devilbox.discourse.group/status.svg?colorB=%234CB697)](https://devilbox.discourse.group)
@@ -641,12 +642,12 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>7.3</th>
    <td id="73-base">Core, ctype, curl, date, dom, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="73-mods">apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pdo_sqlsrv, pgsql, Phar, posix, pspell, rdkafka, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, sqlsrv, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+   <td id="73-mods">amqp, apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pdo_sqlsrv, pgsql, phalcon, Phar, posix, pspell, rdkafka, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, sqlsrv, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
    <th>7.4</th>
    <td id="74-base">Core, ctype, curl, date, dom, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="74-mods">bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, intl, json, ldap, libxml, mbstring, memcached, mongodb, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, rdkafka, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+   <td id="74-mods">amqp, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, intl, json, ldap, libxml, mbstring, mcrypt, memcached, mongodb, msgpack, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, rdkafka, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
    <th>8.0</th>
@@ -1237,9 +1238,8 @@ $ docker exec -it php mysqldump-secure
 
 <h2><img id="automated-builds" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Automated builds</h2>
 
-[![PHP](https://github.com/devilbox/docker-php-fpm/workflows/linting/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=linting)
-[![Linting](https://github.com/devilbox/docker-php-fpm/workflows/PHP/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP)
-[![Build Status](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
+[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
 
 Docker images are built and tested every night by **[travis-ci](https://travis-ci.org/devilbox/docker-php-fpm)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
 

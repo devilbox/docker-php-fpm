@@ -25,11 +25,14 @@ RUN set -eux \
 		libicu-dev \
 		libjpeg-dev \
 		libldap2-dev \
+		libmagickwand-dev \
+		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
 		libpng-dev \
 		libpq-dev \
 		libpspell-dev \
+		librabbitmq-dev \
 		librdkafka-dev \
 		libsasl2-dev \
 		libsnmp-dev \
@@ -60,6 +63,17 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: amqp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install amqp \
+	# Enabling
+	&& docker-php-ext-enable amqp \
+	&& true
+
 
 # -------------------- Installing PHP Extension: bcmath --------------------
 RUN set -eux \
@@ -160,6 +174,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	&& true
+
+
 # -------------------- Installing PHP Extension: intl --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -178,6 +203,28 @@ RUN set -eux \
 	# Custom:       configure command
 	&& docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mcrypt --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install mcrypt \
+	# Enabling
+	&& docker-php-ext-enable mcrypt \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
 	&& true
 
 
@@ -481,6 +528,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: xdebug --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xdebug \
+	# Enabling
+	&& docker-php-ext-enable xdebug \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xmlrpc --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -573,10 +631,13 @@ RUN set -eux \
 	libhiredis0.13 \
 	libicu57 \
 	libjpeg62-turbo \
+	libmagickwand-6.q16-3 \
+	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
+	librabbitmq4 \
 	librdkafka1 \
 	libsybdb5 \
 	libtidy5 \
@@ -624,6 +685,8 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
+	&& php -m | grep -oiE '^amqp$' \
+	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^bcmath$' \
 	&& php-fpm -m | grep -oiE '^bcmath$' \
 	&& php -m | grep -oiE '^bz2$' \
@@ -660,6 +723,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^imagick$' \
+	&& php-fpm -m | grep -oiE '^imagick$' \
 	&& php -m | grep -oiE '^intl$' \
 	&& php-fpm -m | grep -oiE '^intl$' \
 	&& php -m | grep -oiE '^json$' \
@@ -670,6 +735,10 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
+	&& php -m | grep -oiE '^mcrypt$' \
+	&& php-fpm -m | grep -oiE '^mcrypt$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
@@ -747,6 +816,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
 	&& php -m | grep -oiE '^uploadprogress$' \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
+	&& php -m | grep -oiE '^xdebug$' \
+	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
@@ -771,4 +842,5 @@ EXPOSE 9000
 ###
 ### Entrypoint
 ###
+CMD ["/usr/local/sbin/php-fpm"]
 ENTRYPOINT ["/docker-entrypoint.sh"]

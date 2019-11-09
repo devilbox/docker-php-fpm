@@ -1,0 +1,328 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: PHP-Nightly
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  # Runs daily
+  schedule:
+    - cron: '0 0 * * *'
+
+
+
+# -------------------------------------------------------------------------------------------------
+# What to run
+# -------------------------------------------------------------------------------------------------
+jobs:
+  diagnostics:
+    name: Diagnostics
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Show environment
+        run: |
+          env
+
+      # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#github-context
+      - name: Show GitHub variables
+        run: |
+          echo "github.actor:                           ${{ github.actor }}"
+          echo "github.ref:                             ${{ github.ref }}"
+          echo "github.base_ref:                        ${{ github.base_ref }}"
+          echo "github.head_ref:                        ${{ github.head_ref }}"
+          echo "github.event:                           ${{ github.event }}"
+          echo "github.event_name:                      ${{ github.event_name }}"
+          echo "github.event.pull_request.base.repo.id: ${{ github.event.pull_request.base.repo.id }}"
+          echo "github.event.pull_request.head.repo.id: ${{ github.event.pull_request.head.repo.id }}"
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "${GITHUB_CONTEXT}"
+
+      - name: Dump Runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "${RUNNER_CONTEXT}"
+
+
+  build:
+    name: "[ ${{ matrix.version }} ]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        # Adding all targets and only run them if they exist.
+        # Prevents us from forgetting to update this in case
+        # we add new envs in terragrunt.
+        version:
+          - '5.2'
+          - '5.3'
+          - '5.4'
+          - '5.5'
+          - '5.6'
+          - '7.0'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+    steps:
+
+      # ------------------------------------------------------------
+      # Checkout repository
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Set variables
+        id: vars
+        run: |
+          # Set git branch or git tag as slug
+          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
+            GIT_TYPE=TAG
+            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
+          else
+            GIT_TYPE=BRANCH
+            if [ -n "${GITHUB_HEAD_REF}" ]; then
+              GIT_SLUG="${GITHUB_HEAD_REF}"
+            else
+              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
+            fi
+          fi
+
+          # Export variable
+          # # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions#set-an-environment-variable-set-env
+          echo ::set-env name=GIT_TYPE::${GIT_TYPE}
+          echo ::set-env name=GIT_SLUG::${GIT_SLUG}
+
+
+      # ------------------------------------------------------------
+      # Base
+      # ------------------------------------------------------------
+      - name: Build Base
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make build-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+      - name: Test Base
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make test-base VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+
+      # ------------------------------------------------------------
+      # Mods
+      # ------------------------------------------------------------
+      - name: Build Mods
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make build-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+      - name: Test Mods
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make test-mods VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+
+      # ------------------------------------------------------------
+      # Prod
+      # ------------------------------------------------------------
+      - name: Build Prod
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make build-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+      - name: Test Prod
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make test-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+
+      # ------------------------------------------------------------
+      # Work
+      # ------------------------------------------------------------
+      - name: Build Work
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make build-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+      - name: Test Work
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+          retry make test-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+
+
+      # ------------------------------------------------------------
+      # Diff README.md
+      # ------------------------------------------------------------
+      - name: Diff README.md
+        run: |
+          make gen-readme VERSION=${VERSION}
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+        env:
+          VERSION: ${{ matrix.version }}
+
+
+      # ------------------------------------------------------------
+      # Push build artifacts
+      # ------------------------------------------------------------
+
+      # Only run this, if the PR was created by the repo owner
+      - name: Publish images (only repo owner)
+        run: |
+          retry() {
+            for ((n=0; n<${RETRIES}; n++)); do
+              echo "[${n}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+
+          # Info output
+          echo "Git Type: ${GIT_TYPE}"
+          echo "Git Slug: ${GIT_SLUG}"
+
+          # Login
+          echo "retry make login USER= PASS="
+
+          # Push
+          if [ "${GIT_TYPE}" = "TAG" ]; then
+            echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+          else
+            if [ "${GIT_SLUG}" = "master" ]; then
+              echo "retry make push-base VERSION=${VERSION}"
+              echo "retry make push-mods VERSION=${VERSION}"
+              echo "retry make push-prod VERSION=${VERSION}"
+              echo "retry make push-work VERSION=${VERSION}"
+            else
+              echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+            fi
+          fi
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
+        # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
+        if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
+            && (
+              (github.event_name == 'schedule'     && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+              ||
+              (github.event_name == 'push'         && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+              ||
+              (github.event_name == 'pull_request' && (startsWith(github.head_ref, 'release-')))
+            )

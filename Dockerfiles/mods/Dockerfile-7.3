@@ -36,6 +36,7 @@ RUN set -eux \
 		libpng-dev \
 		libpq-dev \
 		libpspell-dev \
+		librabbitmq-dev \
 		librdkafka-dev \
 		librecode-dev \
 		libsasl2-dev \
@@ -68,6 +69,17 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: amqp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install amqp \
+	# Enabling
+	&& docker-php-ext-enable amqp \
+	&& true
+
 
 # -------------------- Installing PHP Extension: apcu --------------------
 RUN set -eux \
@@ -427,6 +439,21 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: phalcon --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
+	&& cd /tmp/phalcon \
+	# Custom:       Branch
+	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1) \
+	# Custom:       Install command
+	&& cd build && ./install \
+	# Enabling
+	&& docker-php-ext-enable phalcon \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pspell --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -704,6 +731,7 @@ RUN set -eux \
 	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
+	librabbitmq4 \
 	librdkafka1 \
 	librecode0 \
 	libsybdb5 \
@@ -753,6 +781,8 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
+	&& php -m | grep -oiE '^amqp$' \
+	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \
 	&& php-fpm -m | grep -oiE '^apcu$' \
 	&& php -m | grep -oiE '^bcmath$' \
@@ -849,6 +879,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^phalcon$' \
+	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
@@ -924,4 +956,5 @@ EXPOSE 9000
 ###
 ### Entrypoint
 ###
+CMD ["/usr/local/sbin/php-fpm"]
 ENTRYPOINT ["/docker-entrypoint.sh"]

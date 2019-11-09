@@ -448,7 +448,7 @@ RUN set -eux \
 	# Custom:       Branch
 	&& git checkout phalcon-v2.0.9 \
 	# Custom:       Install command
-	&& cd build && ./install >/dev/null \
+	&& cd build && ./install \
 	# Enabling
 	&& docker-php-ext-enable phalcon \
 	&& true
@@ -916,4 +916,5 @@ EXPOSE 9000
 ###
 ### Entrypoint
 ###
+CMD ["/usr/local/sbin/php-fpm"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
