@@ -1051,7 +1051,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
-    disabled: [7.4, 8.0]
+    disabled: [8.0]
     5.2:
       type: pecl
       version: 2.2.7
