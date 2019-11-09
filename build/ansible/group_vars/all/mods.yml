@@ -137,7 +137,7 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: [7.3, 7.4, 8.0]
+    disabled: [8.0]
     5.2:
       run_dep: [librabbitmq1]
       type: pecl
@@ -340,7 +340,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 7.4, 8.0]
+    disabled: [5.2, 8.0]
     5.3:
       type: pecl
       version: 3.3.0
@@ -355,6 +355,9 @@ extensions_available:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
     7.0:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3]
+    7.4:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
     all:
@@ -433,13 +436,15 @@ extensions_available:
     all:
       type: builtin
   mcrypt:
-    disabled: [7.4, 8.0]
+    disabled: [8.0]
     7.2:
       type: pecl
       version: 1.0.1
     7.3:
       type: pecl
       version: 1.0.2
+    7.4:
+      type: pecl
     all:
       type: builtin
       run_dep: [libmcrypt4]
@@ -558,7 +563,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: [7.4, 8.0]
+    disabled: [8.0]
     5.2:
       type: pecl
       version: 0.5.7
@@ -737,12 +742,12 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.3, 7.4, 8.0] # TODO: currently disabled for 7.3 as it breaks
+    disabled: [5.2, 7.4, 8.0] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
       git_ref: phalcon-v2.0.9
-      command: cd build && ./install >/dev/null
+      command: cd build && ./install
     5.4:
       type: git
       git_url: https://github.com/phalcon/cphalcon
