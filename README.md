@@ -1228,7 +1228,7 @@ $ docker run -d \
     -e MYSQL_BACKUP_USER=root \
     -e MYSQL_BACKUP_PASS=somepass \
     -e MYSQL_BACKUP_HOST=mysql \
-    -v ~/backups:/shared/backsup \
+    -v ~/backups:/shared/backups \
     --name php \
     -t devilbox/php-fpm:7.2-work
 
