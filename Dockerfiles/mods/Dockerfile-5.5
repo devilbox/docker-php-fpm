@@ -26,7 +26,6 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
-		libmagickwand-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -191,17 +190,6 @@ RUN set -eux \
 	&& pecl install igbinary-2.0.8 \
 	# Enabling
 	&& docker-php-ext-enable igbinary \
-	&& true
-
-
-# -------------------- Installing PHP Extension: imagick --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install imagick \
-	# Enabling
-	&& docker-php-ext-enable imagick \
 	&& true
 
 
@@ -685,7 +673,6 @@ RUN set -eux \
 	libfreetype6 \
 	libicu52 \
 	libjpeg62-turbo \
-	libmagickwand-6.q16-2 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libmysqlclient18 \
@@ -779,8 +766,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
-	&& php -m | grep -oiE '^imagick$' \
-	&& php-fpm -m | grep -oiE '^imagick$' \
 	&& php -m | grep -oiE '^imap$' \
 	&& php-fpm -m | grep -oiE '^imap$' \
 	&& php -m | grep -oiE '^interbase$' \

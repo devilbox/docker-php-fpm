@@ -8,8 +8,8 @@ ini_set('display_errors', 1);
 error_reporting(-1);
 
 
-// Only available since 5.3.0
-if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+// Only available since 5.3.0 (PHP 5.3, 5.4 and 5.5  segfaults)
+if (version_compare(PHP_VERSION, '5.6.0', '<')) {
 	echo 'OK';
 	exit(0);
 }

@@ -340,17 +340,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 8.0]
-    5.3:
-      type: pecl
-      version: 3.3.0
-      run_dep: [libmagickwand-6.q16-2]
-    5.4:
-      type: pecl
-      run_dep: [libmagickwand-6.q16-2]
-    5.5:
-      type: pecl
-      run_dep: [libmagickwand-6.q16-2]
+    disabled: [5.2, 5.3, 5.4, 5.5, 8.0] # 5.3, 5.4 and 5.5 segfaults
     5.6:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
