@@ -7,6 +7,18 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
+
+// Only available since 5.3.0
+if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+	echo 'OK';
+	exit(0);
+}
+// FIXME: Currently not supported on PHP 8
+if (version_compare(PHP_VERSION, '5.8.0', '>=')) {
+	echo 'OK';
+	exit(0);
+}
+
 /* Set width and height in proportion of genuine PHP logo */
 $width = 400;
 $height = 210;
