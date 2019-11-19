@@ -295,11 +295,11 @@ extensions_available:
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
     7.4:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     8.0:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     all:
       type: builtin
@@ -340,17 +340,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 8.0]
-    5.3:
-      type: pecl
-      version: 3.3.0
-      run_dep: [libmagickwand-6.q16-2]
-    5.4:
-      type: pecl
-      run_dep: [libmagickwand-6.q16-2]
-    5.5:
-      type: pecl
-      run_dep: [libmagickwand-6.q16-2]
+    disabled: [5.2, 5.3, 5.4, 5.5, 8.0] # 5.3, 5.4 and 5.5 segfaults
     5.6:
       type: pecl
       run_dep: [libmagickwand-6.q16-3]
