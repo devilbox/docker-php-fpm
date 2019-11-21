@@ -7,15 +7,16 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
+$PHP_VERSION = str_replace('-dev', '', PHP_VERSION);
 
 // Only available since 5.3.0 (PHP 5.3, 5.4 and 5.5  segfaults)
-if (version_compare(PHP_VERSION, '5.6.0', '<')) {
-	echo 'OK';
+if (version_compare($PHP_VERSION, '5.6.0', '<')) {
+	echo 'SKIP';
 	exit(0);
 }
 // FIXME: Currently not supported on PHP 8
-if (version_compare(PHP_VERSION, '5.8.0', '>=')) {
-	echo 'OK';
+if (version_compare($PHP_VERSION, '8.0.0', '>=')) {
+	echo 'SKIP';
 	exit(0);
 }
 
@@ -27,7 +28,7 @@ $height = 210;
 $img = new Imagick();
 
 if ($img->newImage($width, $height, new ImagickPixel('transparent')) !== TRUE) {
-	echo 'FAIL: imagecreatetruecolor()';
+	echo 'FAIL: newImage()';
 	exit(1);
 }
 
@@ -44,9 +45,8 @@ $img->drawImage($draw);
 $draw->setFillColor('black');
 
 if ($img->setImageFormat('png') !== TRUE) {
-	echo 'FAIL: imagecreatetruecolor()';
+	echo 'FAIL: setImageFormat()';
 	exit(1);
 }
-
 
 echo 'OK';

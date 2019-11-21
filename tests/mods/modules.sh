@@ -64,7 +64,7 @@ docker run \
 			if script -e -c \"php \${1}\" /dev/null 2>&1 | grep -Ei \"core|segmentation|fatal|except|err|warn|notice\" 2>&1 >/dev/null; then
 				fail=1
 			fi
-			if ! php \"\${1}\" 2>&1 | grep -E \"^OK$\" 2>&1 >/dev/null; then
+			if ! php \"\${1}\" 2>&1 | grep -E \"^(OK|SKIP)$\" 2>&1 >/dev/null; then
 				fail=1
 			fi
 

@@ -45,6 +45,7 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -69,6 +70,23 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: ioncube --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Custom extension
+	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+&& tar xvfz ioncube.tar.gz \
+&& cd ioncube \
+&& cp "ioncube_loader_lin_7.3.so" "${EXTENSION_DIR}/ioncube.so" \
+&& cd ../ \
+&& rm -rf ioncube \
+&& rm -rf ioncube.tar.gz \
+ \
+	&& true
+
 
 # -------------------- Installing PHP Extension: amqp --------------------
 RUN set -eux \
@@ -737,6 +755,7 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx5 \
+	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \

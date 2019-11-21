@@ -101,7 +101,7 @@ RUN set -eux \
 		mongodb-org-shell \
 		mongodb-org-tools \
 		moreutils \
-{% if php_version in [7.1, 7.2, 7.3] %}
+{% if php_version in [7.1, 7.2, 7.3, 7.4, 8.0] %}
 		mariadb-client \
 {% else %}
 		mysql-client \

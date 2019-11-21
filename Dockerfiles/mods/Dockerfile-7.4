@@ -15,6 +15,7 @@ RUN set -eux \
 		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
+		libenchant-dev \
 		libevent-dev \
 		libfbclient2 \
 		libffi-dev \
@@ -40,6 +41,7 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -104,6 +106,14 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
+	&& true
+
+
+# -------------------- Installing PHP Extension: enchant --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
 	&& true
 
 
@@ -176,7 +186,7 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: imagick --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
 	&& pecl install imagick \
@@ -187,9 +197,8 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: intl --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         Built-in extension
-	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
 	&& true
 
@@ -410,10 +419,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: rdkafka --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install rdkafka-3.1.2 \
+	&& pecl install rdkafka \
 	# Enabling
 	&& docker-php-ext-enable rdkafka \
 	&& true
@@ -505,9 +514,8 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: tidy --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         Built-in extension
-	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
 	&& true
 
@@ -625,13 +633,14 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
+	libenchant1c2a \
 	libfbclient2 \
 	libffi6 \
 	libfreetype6 \
-	libhiredis0.13 \
-	libicu57 \
+	libhiredis0.14 \
+	libicu63 \
 	libjpeg62-turbo \
-	libmagickwand-6.q16-3 \
+	libmagickwand-6.q16-6 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
@@ -640,8 +649,9 @@ RUN set -eux \
 	librabbitmq4 \
 	librdkafka1 \
 	libsybdb5 \
-	libtidy5 \
-	libvpx4 \
+	libtidy5deb1 \
+	libvpx5 \
+	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
@@ -701,6 +711,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^dba$' \
 	&& php -m | grep -oiE '^dom$' \
 	&& php-fpm -m | grep -oiE '^dom$' \
+	&& php -m | grep -oiE '^enchant$' \
+	&& php-fpm -m | grep -oiE '^enchant$' \
 	&& php -m | grep -oiE '^exif$' \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^ffi$' \
