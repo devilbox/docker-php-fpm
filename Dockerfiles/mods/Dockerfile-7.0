@@ -43,6 +43,7 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \

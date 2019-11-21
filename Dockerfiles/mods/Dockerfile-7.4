@@ -41,6 +41,7 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -185,7 +186,7 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: imagick --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
 	&& pecl install imagick \
@@ -196,9 +197,8 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: intl --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         Built-in extension
-	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
 	&& true
 
@@ -389,21 +389,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: phalcon --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         GIT extension
-	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
-	&& cd /tmp/phalcon \
-	# Custom:       Branch
-	&& git checkout $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1) \
-	# Custom:       Install command
-	&& cd build && ./install \
-	# Enabling
-	&& docker-php-ext-enable phalcon \
-	&& true
-
-
 # -------------------- Installing PHP Extension: pspell --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -434,10 +419,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: rdkafka --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install rdkafka-3.1.2 \
+	&& pecl install rdkafka \
 	# Enabling
 	&& docker-php-ext-enable rdkafka \
 	&& true
@@ -529,9 +514,8 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: tidy --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         Built-in extension
-	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
 	&& true
 
@@ -653,10 +637,10 @@ RUN set -eux \
 	libfbclient2 \
 	libffi6 \
 	libfreetype6 \
-	libhiredis0.13 \
-	libicu57 \
+	libhiredis0.14 \
+	libicu63 \
 	libjpeg62-turbo \
-	libmagickwand-6.q16-3 \
+	libmagickwand-6.q16-6 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
@@ -665,8 +649,9 @@ RUN set -eux \
 	librabbitmq4 \
 	librdkafka1 \
 	libsybdb5 \
-	libtidy5 \
-	libvpx4 \
+	libtidy5deb1 \
+	libvpx5 \
+	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
@@ -800,8 +785,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
-	&& php -m | grep -oiE '^phalcon$' \
-	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \

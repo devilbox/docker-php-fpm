@@ -7,15 +7,16 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
+$PHP_VERSION = str_replace('-dev', '', PHP_VERSION);
 
-// Only available since 5.3.0 (PHP 5.3, 5.4 and 5.5  segfaults)
-if (version_compare(PHP_VERSION, '5.6.0', '<')) {
-	echo 'OK';
+// Web support only since 7.2+
+if (version_compare($PHP_VERSION, '7.1.0', '<=')) {
+	echo 'SKIP';
 	exit(0);
 }
 // FIXME: Currently not supported on PHP 8
-if (version_compare(PHP_VERSION, '5.8.0', '>=')) {
-	echo 'OK';
+if (version_compare($PHP_VERSION, '8.0.0', '>=')) {
+	echo 'SKIP';
 	exit(0);
 }
 

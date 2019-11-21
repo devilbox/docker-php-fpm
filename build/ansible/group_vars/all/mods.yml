@@ -295,11 +295,9 @@ extensions_available:
     7.4:
       type: builtin
       configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     8.0:
       type: builtin
       configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
@@ -342,17 +340,14 @@ extensions_available:
     disabled: [5.2, 5.3, 5.4, 5.5, 8.0] # 5.3, 5.4 and 5.5 segfaults
     5.6:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3]
+      run_dep: [libmagickwand-6.q16-3, libwebp6]
     7.0:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3]
-    7.4:
-      type: pecl
-      run_dep: [libmagickwand-6.q16-3]
+      run_dep: [libmagickwand-6.q16-3, libwebp6]
     all:
       type: pecl
-      build_dep: [libmagickwand-dev]
-      run_dep: [libmagickwand-6.q16-6]
+      build_dep: [libmagickwand-dev, libwebp6]
+      run_dep: [libmagickwand-6.q16-6, libwebp-dev]
   imap:
     disabled: [7.4, 8.0]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
     all:
@@ -384,12 +379,6 @@ extensions_available:
       type: builtin
       run_dep: [libicu57]
     7.0:
-      type: builtin
-      run_dep: [libicu57]
-    7.4:
-      type: builtin
-      run_dep: [libicu57]
-    8.0:
       type: builtin
       run_dep: [libicu57]
     all:
@@ -674,16 +663,16 @@ extensions_available:
       build_dep: [zlib1g-dev]
   pdo_oci:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
-    8.0:
-      type: builtin
-      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
-    7.4:
+    7.2:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
     7.3:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
-    7.2:
+    7.4:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    8.0:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
     all:
@@ -731,7 +720,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 8.0] # TODO: currently disabled for 7.4 as it breaks
+    disabled: [5.2, 7.4, 8.0] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -856,9 +845,6 @@ extensions_available:
     7.0:
       type: pecl
       version: 3.1.2
-    7.4:
-      type: pecl
-      version: 3.1.2
     all:
       type: pecl
       build_dep: [librdkafka-dev]
@@ -954,7 +940,7 @@ extensions_available:
           --enable-coroutine-postgresql \
         && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
-      run_dep: [libnghttp2-14, libhiredis0.13]
+      run_dep: [libnghttp2-14, libhiredis0.14]
       build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
     all:
       type: pecl
@@ -986,12 +972,6 @@ extensions_available:
       type: builtin
       run_dep: [libtidy5]
     7.0:
-      type: builtin
-      run_dep: [libtidy5]
-    7.4:
-      type: builtin
-      run_dep: [libtidy5]
-    8.0:
       type: builtin
       run_dep: [libtidy5]
     all:

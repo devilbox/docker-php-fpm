@@ -44,7 +44,7 @@ $img->drawImage($draw);
 /* Reset fill color from purple to black for text (note: we are reusing ImagickDraw object) */
 $draw->setFillColor('black');
 
-if ($img->setImageFormat('png') !== TRUE) {
+if ($img->setImageFormat('jpeg') !== TRUE) {
 	echo 'FAIL: setImageFormat()';
 	exit(1);
 }

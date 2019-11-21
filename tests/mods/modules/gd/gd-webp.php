@@ -10,7 +10,7 @@ error_reporting(-1);
 
 // Only available since 5.4.0
 if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-	echo 'OK';
+	echo 'SKIP';
 	exit(0);
 }
 
