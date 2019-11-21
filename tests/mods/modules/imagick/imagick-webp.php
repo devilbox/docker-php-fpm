@@ -27,7 +27,7 @@ $height = 210;
 $img = new Imagick();
 
 if ($img->newImage($width, $height, new ImagickPixel('transparent')) !== TRUE) {
-	echo 'FAIL: imagecreatetruecolor()';
+	echo 'FAIL: newImage()';
 	exit(1);
 }
 
@@ -43,10 +43,17 @@ $img->drawImage($draw);
 /* Reset fill color from purple to black for text (note: we are reusing ImagickDraw object) */
 $draw->setFillColor('black');
 
-if ($img->setImageFormat('png') !== TRUE) {
-	echo 'FAIL: imagecreatetruecolor()';
+if ($img->setImageFormat('webp') !== TRUE) {
+	echo 'FAIL: setImageFormat()';
 	exit(1);
 }
-
+if ($img->setImageAlphaChannel(imagick::ALPHACHANNEL_ACTIVATE) !== TRUE) {
+	echo 'FAIL: setImageAlphaChannel()';
+	exit(1);
+}
+if ($img->setBackgroundColor(new ImagickPixel('transparent')) !== TRUE) {
+	echo 'FAIL: setBackgroundColor()';
+	exit(1);
+}
 
 echo 'OK';
