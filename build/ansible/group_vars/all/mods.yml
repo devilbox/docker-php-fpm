@@ -731,7 +731,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   phalcon:
-    disabled: [5.2, 7.4, 8.0] # TODO: currently disabled for 7.4 as it breaks
+    disabled: [5.2, 8.0] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -745,22 +745,22 @@ extensions_available:
     5.5:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: v3.4.2
+      git_ref: v3.4.4
       command: cd build && ./install
     5.6:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: v3.4.2
+      git_ref: v3.4.4
       command: cd build && ./install
     7.0:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: v3.4.2
+      git_ref: v3.4.4
       command: cd build && ./install
     7.1:
       type: git
       git_url: https://github.com/phalcon/cphalcon
-      git_ref: v3.4.2
+      git_ref: v3.4.4
       command: cd build && ./install
     all:
       type: git
