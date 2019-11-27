@@ -215,9 +215,9 @@ RUN set -eux \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
 && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
-&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
+	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 	\
 # -------------------- linkcheck --------------------
 	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
