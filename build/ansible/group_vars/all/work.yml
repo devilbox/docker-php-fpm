@@ -365,7 +365,7 @@ pip_available:
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
 #   pre:       [optional] Run command before 'command:' statement
 #   command:   Command to execute
-#   pre:       [optional] Run command after 'command:' statement
+#   post:      [optional] Run command after 'command:' statement
 #
 software_available:
   # Composer is a dependency for others
@@ -502,21 +502,36 @@ software_available:
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v1.3.7 \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
     5.5:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v2.0.0 \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
     5.6:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v2.0.0 \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
     7.0:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
         && cd /usr/local/src/laravel-installer \
         && git checkout v2.0.0 \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
+    7.1:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout $(git tag | grep '^v2\.3\.' | sort -u | tail -1) \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
     all:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -525,8 +540,9 @@ software_available:
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
         && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
-        && ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
         && rm -rf /usr/local/src/laravel-installer/laravel/.git \
+      post:
+        ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel
   linkcheck:
     check: linkcheck --version | grep -E '^linkcheck\sv[.0-9]+'
     all:
