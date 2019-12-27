@@ -429,21 +429,21 @@ extensions_available:
       build_dep: [libmcrypt-dev]
   memcache:
     disabled: [7.3, 7.4, 8.0]
-    7.0:
-      type: git
-      git_url: https://github.com/websupport-sk/pecl-memcache
-      git_ref: origin/php7
-      configure: --with-zlib-dir=/usr
-    7.1:
-      type: git
-      git_url: https://github.com/websupport-sk/pecl-memcache
-      git_ref: origin/php7
-      configure: --with-zlib-dir=/usr
-    7.2:
-      type: git
-      git_url: https://github.com/websupport-sk/pecl-memcache
-      git_ref: origin/php7
-      configure: --with-zlib-dir=/usr
+    5.2:
+      type: pecl
+      version: 2.2.7
+    5.3:
+      type: pecl
+      version: 2.2.7
+    5.4:
+      type: pecl
+      version: 2.2.7
+    5.5:
+      type: pecl
+      version: 2.2.7
+    5.6:
+      type: pecl
+      version: 2.2.7
     all:
       type: pecl
       build_dep: [zlib1g-dev]

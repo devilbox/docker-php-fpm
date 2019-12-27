@@ -284,17 +284,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcache --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/websupport-sk/pecl-memcache /tmp/memcache \
-	&& cd /tmp/memcache \
-	# Custom:       Branch
-	&& git checkout origin/php7 \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --with-zlib-dir=/usr \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache \
 	# Enabling
 	&& docker-php-ext-enable memcache \
 	&& true
