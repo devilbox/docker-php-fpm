@@ -71,6 +71,8 @@ extensions_enabled:
   - pdo_sqlite
   - pdo_sqlsrv
   - pgsql
+  - psr
+  # requires psr to be installed
   - phalcon
   - phar
   - posix
@@ -719,6 +721,19 @@ extensions_available:
       type: builtin
       build_dep: [libpq-dev]
       run_dep: [libpq5]
+  psr:
+    disabled: [5.2, 5.3, 7.4, 8.0] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
+    5.4:
+      type: pecl
+      version: 0.5.1
+    5.5:
+      type: pecl
+      version: 0.5.1
+    5.6:
+      type: pecl
+      version: 0.6.0  # NOTE: 0.6.1 fails with: Package "psr" Version "0.6.1" does not have REST xml available
+    all:
+      type: pecl
   phalcon:
     disabled: [5.2, 7.4, 8.0] # TODO: currently disabled for 7.4 as it breaks
     5.3:

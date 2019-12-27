@@ -462,6 +462,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: psr --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install psr \
+	# Enabling
+	&& docker-php-ext-enable psr \
+	&& true
+
+
 # -------------------- Installing PHP Extension: phalcon --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -891,6 +902,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^psr$' \
+	&& php-fpm -m | grep -oiE '^psr$' \
 	&& php -m | grep -oiE '^phalcon$' \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^phar$' \
