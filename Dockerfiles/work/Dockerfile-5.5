@@ -272,12 +272,12 @@ RUN set -eux \
 # -------------------- phalcon --------------------
 	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
 && cd /usr/local/src/phalcon-devtools \
-&& git checkout $(git describe --abbrev=0 --tags) \
+&& git checkout v3.4.11 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
 && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
 && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
-&& chmod +x phalcon \
+&& chmod +x /usr/local/bin/phalcon \
 && cd / \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \

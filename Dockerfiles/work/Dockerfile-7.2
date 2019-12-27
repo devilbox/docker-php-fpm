@@ -286,6 +286,7 @@ RUN set -eux \
 	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
 && cd /usr/local/src/phalcon-devtools \
 && git checkout $(git describe --abbrev=0 --tags) \
+&& composer install \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
 && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \

@@ -623,11 +623,60 @@ software_available:
         && ln -sf /usr/local/src/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
+    5.5:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v3.4.11 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
+    5.6:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v3.4.11 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
+    7.0:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v3.4.11 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
+    7.1:
+      pre: |
+        git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
+        && cd /usr/local/src/phalcon-devtools \
+        && git checkout v3.4.11 \
+      command: |
+        chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
+        && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
+        && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
+        && chmod +x /usr/local/bin/phalcon \
+        && cd / \
+        && rm -rf /usr/local/src/phalcon-devtools/.git \
     all:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout $(git describe --abbrev=0 --tags) \
+        && composer install \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
         && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
