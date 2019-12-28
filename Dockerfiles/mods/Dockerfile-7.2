@@ -39,6 +39,7 @@ RUN set -eux \
 		librecode-dev \
 		libsasl2-dev \
 		libsnmp-dev \
+		libssh2-1-dev \
 		libssl-dev \
 		libtidy-dev \
 		libvpx-dev \
@@ -566,6 +567,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: solr --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install solr \
+	# Enabling
+	&& docker-php-ext-enable solr \
+	&& true
+
+
 # -------------------- Installing PHP Extension: sqlsrv --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -577,12 +589,23 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: swoole --------------------
+# -------------------- Installing PHP Extension: ssh2 --------------------
 RUN set -eux \
 	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install swoole \
+	&& pecl install ssh2-1.2 \
+	# Enabling
+	&& docker-php-ext-enable ssh2 \
+	&& true
+
+
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install swoole \
 	# Enabling
 	&& docker-php-ext-enable swoole \
 	&& true
@@ -758,6 +781,7 @@ RUN set -eux \
 	librabbitmq4 \
 	librdkafka1 \
 	librecode0 \
+	libssh2-1 \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx5 \
@@ -939,10 +963,14 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^sodium$' \
 	&& php-fpm -m | grep -oiE '^sodium$' \
+	&& php -m | grep -oiE '^solr$' \
+	&& php-fpm -m | grep -oiE '^solr$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
+	&& php -m | grep -oiE '^ssh2$' \
+	&& php-fpm -m | grep -oiE '^ssh2$' \
 	&& php -m | grep -oiE '^swoole$' \
 	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \

@@ -286,7 +286,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         PECL extension
 	# Custom:       Pecl command
-	&& yes | pecl install mongo-1.5.8 \
+	&& yes yes | pecl install mongo-1.5.8 \
 	# Enabling
 	&& docker-php-ext-enable mongo \
 	&& true

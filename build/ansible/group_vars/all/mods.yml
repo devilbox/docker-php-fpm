@@ -89,8 +89,11 @@ extensions_enabled:
   - soap
   - sockets
   - sodium
+  - solr
   - spl
   - sqlsrv
+  - ssh2
+  # requires sockets to be installed
   - swoole
   - sysvmsg
   - sysvsem
@@ -490,10 +493,10 @@ extensions_available:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated
     5.2:
       type: pecl
-      command: yes | pecl install mongo-1.5.8
+      command: yes yes | pecl install mongo-1.5.8
     all:
       type: pecl
-      command: yes | pecl install mongo
+      command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
     disabled: [5.2]
@@ -894,6 +897,11 @@ extensions_available:
     all:
       type: builtin
       build_dep: [libsodium-dev]
+  solr:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.0]
+    all:
+      type: pecl
+      build_dep: [libxml2-dev, libcurl4-openssl-dev]
   spl:
     already_avail: "{{ php_all_versions }}"
   sqlsrv:
@@ -907,6 +915,13 @@ extensions_available:
       type: pecl
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
+  ssh2:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    all:
+      type: pecl
+      version: 1.2
+      build_dep: [libssh2-1-dev]
+      run_dep: [libssh2-1]
   swoole:
     disabled: [5.2, 8.0]
     5.3:
@@ -927,40 +942,9 @@ extensions_available:
     7.0:
       type: pecl
       version: 4.2.13
-    7.3:
-      type: git
-      git_url: https://github.com/swoole/swoole-src
-      git_ref: $(git describe --abbrev=0 --tags)
-      command: |
-        phpize \
-        && ./configure \
-          --enable-openssl \
-          --enable-sockets \
-          --enable-http2 \
-          --enable-mysqlnd \
-          --enable-coroutine-postgresql \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-      run_dep: [libnghttp2-14, libhiredis0.14]
-      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
-    7.4:
-      type: git
-      git_url: https://github.com/swoole/swoole-src
-      git_ref: master
-      command: |
-        phpize \
-        && ./configure \
-          --enable-openssl \
-          --enable-sockets \
-          --enable-http2 \
-          --enable-mysqlnd \
-          --enable-coroutine-postgresql \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-      run_dep: [libnghttp2-14, libhiredis0.14]
-      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
     all:
       type: pecl
+      command: yes yes | pecl install swoole
       build_dep: [libnghttp2-dev, libssl-dev]
       run_dep: [libnghttp2-14]
   sysvmsg:
