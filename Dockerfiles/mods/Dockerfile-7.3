@@ -287,6 +287,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache \
+	# Enabling
+	&& docker-php-ext-enable memcache \
+	&& true
+
+
 # -------------------- Installing PHP Extension: memcached --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -871,6 +882,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^mcrypt$' \
 	&& php -m | grep -oiE '^msgpack$' \
 	&& php-fpm -m | grep -oiE '^msgpack$' \
+	&& php -m | grep -oiE '^memcache$' \
+	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
