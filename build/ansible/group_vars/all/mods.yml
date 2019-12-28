@@ -89,8 +89,11 @@ extensions_enabled:
   - soap
   - sockets
   - sodium
+  - solr
   - spl
   - sqlsrv
+  - ssh2
+  # requires sockets to be installed
   - swoole
   - sysvmsg
   - sysvsem
@@ -162,7 +165,7 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq4]
   apcu:
-    disabled: [5.2, 7.4, 8.0]
+    disabled: [5.2, 8.0]
     5.3:
       type: pecl
       version: 4.0.11
@@ -181,7 +184,7 @@ extensions_available:
     all:
       type: builtin
   blackfire:
-    disabled: [5.2, 5.3, 5.4, 5.5, 7.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 8.0]
     all:
       type: custom
       command: |
@@ -430,7 +433,7 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    disabled: [7.3, 7.4, 8.0]
+    disabled: [8.0]
     5.2:
       type: pecl
       version: 2.2.7
@@ -490,10 +493,10 @@ extensions_available:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated
     5.2:
       type: pecl
-      command: yes | pecl install mongo-1.5.8
+      command: yes yes | pecl install mongo-1.5.8
     all:
       type: pecl
-      command: yes | pecl install mongo
+      command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
     disabled: [5.2]
@@ -578,7 +581,7 @@ extensions_available:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
   oauth:
-    disabled: [7.4, 8.0]
+    disabled: [8.0]
     5.2:
       type: pecl
       version: 1.2.3
@@ -722,7 +725,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   psr:
-    disabled: [5.2, 5.3, 7.4, 8.0] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
+    disabled: [5.2, 5.3, 8.0] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
     5.4:
       type: pecl
       version: 0.5.1
@@ -735,7 +738,7 @@ extensions_available:
     all:
       type: pecl
   phalcon:
-    disabled: [5.2, 7.4, 8.0] # TODO: currently disabled for 7.4 as it breaks
+    disabled: [5.2, 8.0] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -879,6 +882,8 @@ extensions_available:
       run_dep: [snmp]
   soap:
     already_avail: [5.2]
+    7.4:
+      type: builtin
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -892,6 +897,11 @@ extensions_available:
     all:
       type: builtin
       build_dep: [libsodium-dev]
+  solr:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.0]
+    all:
+      type: pecl
+      build_dep: [libxml2-dev, libcurl4-openssl-dev]
   spl:
     already_avail: "{{ php_all_versions }}"
   sqlsrv:
@@ -905,6 +915,13 @@ extensions_available:
       type: pecl
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
+  ssh2:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    all:
+      type: pecl
+      version: 1.2
+      build_dep: [libssh2-1-dev]
+      run_dep: [libssh2-1]
   swoole:
     disabled: [5.2, 8.0]
     5.3:
@@ -925,40 +942,9 @@ extensions_available:
     7.0:
       type: pecl
       version: 4.2.13
-    7.3:
-      type: git
-      git_url: https://github.com/swoole/swoole-src
-      git_ref: $(git describe --abbrev=0 --tags)
-      command: |
-        phpize \
-        && ./configure \
-          --enable-openssl \
-          --enable-sockets \
-          --enable-http2 \
-          --enable-mysqlnd \
-          --enable-coroutine-postgresql \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-      run_dep: [libnghttp2-14, libhiredis0.14]
-      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
-    7.4:
-      type: git
-      git_url: https://github.com/swoole/swoole-src
-      git_ref: master
-      command: |
-        phpize \
-        && ./configure \
-          --enable-openssl \
-          --enable-sockets \
-          --enable-http2 \
-          --enable-mysqlnd \
-          --enable-coroutine-postgresql \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-      run_dep: [libnghttp2-14, libhiredis0.14]
-      build_dep: [libnghttp2-dev, libssl-dev, libhiredis-dev, libpq-dev, cmake]
     all:
       type: pecl
+      command: yes yes | pecl install swoole
       build_dep: [libnghttp2-dev, libssl-dev]
       run_dep: [libnghttp2-14]
   sysvmsg:
@@ -1063,6 +1049,9 @@ extensions_available:
   xmlreader:
     already_avail: "{{ php_all_versions }}"
   xmlrpc:
+    7.4:
+      type: builtin
+      configure: --with-iconv-dir=/usr
     all:
       type: builtin
       configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
@@ -1095,6 +1084,9 @@ extensions_available:
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
       run_dep: []
+    7.4:
+      type: builtin
+      configure: --with-zip
     all:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr --with-libzip

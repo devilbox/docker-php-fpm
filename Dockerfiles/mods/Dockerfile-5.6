@@ -309,7 +309,7 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         PECL extension
 	# Custom:       Pecl command
-	&& yes | pecl install mongo \
+	&& yes yes | pecl install mongo \
 	# Enabling
 	&& docker-php-ext-enable mongo \
 	&& true
