@@ -284,10 +284,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcache --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install memcache \
+	&& pecl install memcache-2.2.7 \
 	# Enabling
 	&& docker-php-ext-enable memcache \
 	&& true
@@ -442,6 +442,17 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: psr --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install psr-0.6.0 \
+	# Enabling
+	&& docker-php-ext-enable psr \
 	&& true
 
 
@@ -858,6 +869,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^psr$' \
+	&& php-fpm -m | grep -oiE '^psr$' \
 	&& php -m | grep -oiE '^phalcon$' \
 	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^phar$' \

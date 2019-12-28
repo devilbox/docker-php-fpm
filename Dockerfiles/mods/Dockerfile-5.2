@@ -261,10 +261,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcache --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install memcache \
+	&& pecl install memcache-2.2.7 \
 	# Enabling
 	&& docker-php-ext-enable memcache \
 	&& true

@@ -272,12 +272,12 @@ RUN set -eux \
 # -------------------- phalcon --------------------
 	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
 && cd /usr/local/src/phalcon-devtools \
-&& git checkout $(git describe --abbrev=0 --tags) \
+&& git checkout v3.4.11 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
 && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
 && ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
-&& chmod +x phalcon \
+&& chmod +x /usr/local/bin/phalcon \
 && cd / \
 && rm -rf /usr/local/src/phalcon-devtools/.git \
  \
@@ -398,40 +398,40 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- angular_cli --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g @angular/cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @angular/cli' devilbox \
 	\
 # -------------------- eslint --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g eslint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force eslint' devilbox \
 	\
 # -------------------- grunt --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt' devilbox \
 	\
 # -------------------- grunt_cli --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g grunt-cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt-cli' devilbox \
 	\
 # -------------------- gulp --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g gulp' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force gulp' devilbox \
 	\
 # -------------------- jsonlint --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g jsonlint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
 	\
 # -------------------- pm2 --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g pm2' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force pm2' devilbox \
 	\
 # -------------------- mdlint --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g mdlint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
 	\
 # -------------------- vue_cli --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli' devilbox \
 	\
 # -------------------- vue_cli_service_global --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g @vue/cli-service-global' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli-service-global' devilbox \
 	\
 # -------------------- webpack --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack' devilbox \
 	\
 # -------------------- webpack_cli --------------------
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g webpack-cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
 	\
 	\
 	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \

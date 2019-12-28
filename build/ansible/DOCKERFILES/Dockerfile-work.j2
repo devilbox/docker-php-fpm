@@ -277,13 +277,13 @@ RUN set -eux \
 		{%- endif -%}
 		{#- Version specific gem version available? -#}
 		{%- if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
 		{#- Generic gem version  available? -#}
 		{%- elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
 		{#- No version info available -#}
 		{%- else -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g {{ npm_available[tool]['name'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }}' devilbox \
 		{%- endif -%}
 		{#- Fail fast version -#}
 		{%- if build_fail_fast -%}
