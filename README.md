@@ -798,7 +798,7 @@ Have a look at the following table to see all supported environment variables fo
    <td><code>ENABLE_MAIL</code></td>
    <td>bool</td>
    <td><code>0</code></td>
-   <td>Enable local email catch-all.<br/>Postfix will be configured for local delivery and all mails sent (even to real domains) will be catched locally. No email will ever go out. They will all be stored in a local devilbox account.<br/>Value: <code>0</code> or <code>1</code></td>
+   <td>Start local postfix with or without email catch-all.<br/><code>0</code>: Postfix service disabled.<br/><code>1</code>: Postfix service started normally.<br/><code>2</code>: Postfix service started configured for local delivery and all mails sent (even to real domains) will be catched locally. No email will ever go out. They will all be stored in a local devilbox account.<br/>Value: <code>0</code>, <code>1</code> or <code>2</code></td>
   </tr>
   <tr>
    <td><code>FORWARD_PORTS_TO_LOCALHOST</code></td>
@@ -871,7 +871,7 @@ Have a look at the following table to see all offered volumes for each Docker im
   </tr>
   <tr>
    <td><code>/var/mail</code></td>
-   <td>Emails caught be the postfix catch-all (<code>ENABLE_MAIL=1</code>) will be available in this directory.</td>
+   <td>Emails caught be the postfix catch-all (<code>ENABLE_MAIL=2</code>) will be available in this directory.</td>
   </tr>
   <tr>
    <td colspan="3"></td>
@@ -1186,12 +1186,12 @@ $ docker run -d \
 
 #### Launch Postfix for mail-catching
 
-Once you set `$ENABLE_MAIL=1`, all mails sent via any of your PHP applications no matter to which domain, are catched locally into the `devilbox` account. You can also mount the mail directory locally to hook in with mutt and read those mails.
+Once you set `$ENABLE_MAIL=2`, all mails sent via any of your PHP applications no matter to which domain, are catched locally into the `devilbox` account. You can also mount the mail directory locally to hook in with mutt and read those mails.
 ```shell
 $ docker run -d \
     -p 127.0.0.1:9000:9000 \
     -v /tmp/mail:/var/mail \
-    -e ENABLE_MAIL=1 \
+    -e ENABLE_MAIL=2 \
     -t devilbox/php-fpm:7.2-prod
 ```
 
