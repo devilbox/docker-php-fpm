@@ -24,15 +24,15 @@ DVL_PHP_INI_DIR="/usr/local/etc/php/conf.d"
 # php-fpm conf.d directory
 DVL_PHP_FPM_DIR="/usr/local/etc/php-fpm.d"
 
-# This is the log file for any mail related functions
-DVL_PHP_MAIL_LOG="/var/log/mail.log"
-
 # This file holds error and access log definitions
 DVL_PHP_FPM_CONF_LOGFILE="${DVL_PHP_FPM_DIR}/zzz-entrypoint-logfiles.conf"
 DVL_PHP_INI_CONF_LOGFILE="${DVL_PHP_INI_DIR}/zzz-entrypoint-logfiles.ini"
 
 # PHP-FPM log dir
 DVL_FPM_LOG_DIR="/var/log/php"
+
+# This is the log file for any mail related functions
+DVL_PHP_MAIL_LOG="${DVL_FPM_LOG_DIR}/mail.log"
 
 # Custom ini dir (to be copied to actual ini dir)
 DVL_PHP_CUST_INI_DIR="/etc/php-custom.d"
@@ -138,7 +138,7 @@ done
 ###
 ### Supervisor: rsyslogd & postfix
 ###
-if [ "$( env_get "ENABLE_MAIL" )" = "1" ]; then
+if [ "$( env_get "ENABLE_MAIL" )" = "1" ] || [ "$( env_get "ENABLE_MAIL" )" = "2" ]; then
 	supervisor_add_service "rsyslogd" "/usr/sbin/rsyslogd -n"      "${DVL_SUPERVISOR_CONFD}" "${DEBUG_LEVEL}" "1"
 	supervisor_add_service "postfix"  "/usr/local/sbin/postfix.sh" "${DVL_SUPERVISOR_CONFD}" "${DEBUG_LEVEL}"
 fi

@@ -23,7 +23,7 @@ FLAVOUR="${3}"
 ### Postfix
 ###
 MOUNTPOINT="$( mktemp --directory )"
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABLE_MAIL=1 -v ${MOUNTPOINT}:/var/mail" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABLE_MAIL=2 -v ${MOUNTPOINT}:/var/mail" )"
 run "sleep 10"
 
 if ! run "docker logs ${did} 2>&1 | grep -q 'ENABLE_MAIL'"; then
@@ -36,7 +36,7 @@ fi
 
 if [ ! -f "${MOUNTPOINT}/devilbox" ]; then
 	echo "Mail file does not exist: ${MOUNTPOINT}/devilbox"
-	ls -lap ${MOUNTPOINT}/
+	ls -lap "${MOUNTPOINT}/"
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
 	rm -rf "${MOUNTPOINT}"
@@ -45,7 +45,7 @@ if [ ! -f "${MOUNTPOINT}/devilbox" ]; then
 fi
 if [ ! -r "${MOUNTPOINT}/devilbox" ]; then
 	echo "Mail file is not readable"
-	ls -lap ${MOUNTPOINT}/
+	ls -lap "${MOUNTPOINT}/"
 	docker_logs "${did}" || true
 	docker_stop "${did}" || true
 	rm -rf "${MOUNTPOINT}"
