@@ -61,7 +61,7 @@ set_uid() {
 			# Change uid and fix homedir permissions
 			log "info" "Changing user '${username}' uid to: ${uid}" "${debug}"
 			run "usermod -u ${uid} ${username}" "${debug}"
-			run "chown -R ${username} ${homedir}" "${debug}"
+			run "chown -R ${username} ${homedir} || true" "${debug}"
 			run "chown -R ${username} /var/lib/php/session" "${debug}"
 			run "chown -R ${username} /var/lib/php/wsdlcache" "${debug}"
 		fi
@@ -103,7 +103,7 @@ set_gid() {
 			# Change ugd and fix homedir permissions
 			log "info" "Changing group '${groupname}' gid to: ${gid}" "${debug}"
 			run "groupmod -g ${gid} ${groupname}" "${debug}"
-			run "chown -R :${groupname} ${homedir}" "${debug}"
+			run "chown -R :${groupname} ${homedir} || true" "${debug}"
 			run "chown -R :${groupname} /var/lib/php/session" "${debug}"
 			run "chown -R :${groupname} /var/lib/php/wsdlcache" "${debug}"
 		fi
