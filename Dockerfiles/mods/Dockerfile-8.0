@@ -361,18 +361,10 @@ RUN set -eux \
 	# Type:         GIT extension
 	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
 	&& cd /tmp/redis \
+	# Custom:       Branch
+	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
 	# Custom:       Install command
 	&& phpize \
-&& sed -i'' 's/ZEND_ACC_CTOR | //g' redis.c \
-&& sed -i'' 's/ZEND_ACC_DTOR | //g' redis.c \
-&& sed -i'' 's/ZEND_ACC_CTOR | //g' redis_cluster.c \
-# FIXME: This is a work-around to mitigate compile error with PHP 8.0
-&& rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C)/)/g' \
-&& rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C,/,/g' \
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' \
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' \
 && ./configure --enable-redis \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
