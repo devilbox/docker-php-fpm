@@ -208,7 +208,7 @@ RUN set -eux \
  \
 	\
 # -------------------- mhsendmail --------------------
-	&& wget https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 \
+	&& wget --no-hsts https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
 && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
  \
@@ -261,6 +261,12 @@ RUN set -eux \
 # -------------------- php-cs-fixer --------------------
 	&& curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
 && chmod +x /usr/local/bin/php-cs-fixer \
+ \
+	\
+# -------------------- phpmd --------------------
+	&& wget --no-hsts https://phpmd.org/static/latest/phpmd.phar \
+&& mv phpmd.phar /usr/local/bin/phpmd \
+&& chmod +x /usr/local/bin/phpmd \
  \
 	\
 # -------------------- phpunit --------------------
@@ -389,6 +395,7 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
 	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
 	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.cache \
 	&& rm -rf /home/devilbox/.config \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -501,6 +508,7 @@ RUN set -eux \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \
+	&& phpmd --version | grep -E '^PHPMD [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[.0-9]+' \
@@ -529,6 +537,7 @@ RUN set -eux \
 	&& sass --version | grep -E '[.0-9]+' \
 	\
 # -------------------- Cleanup --------------------
+	&& rm -rf /home/devilbox/.cache/ \
 	&& rm -rf /home/devilbox/.config/ \
 	&& rm -rf /root/.ansible \
 	&& rm -rf /root/.console \

@@ -178,6 +178,7 @@ build-work:
 #  REBUILD TARGETS
 # -------------------------------------------------------------------------------------------------
 
+rebuild-base: _pull-root-image
 rebuild-base: NO_CACHE=--no-cache
 rebuild-base: build-base
 
