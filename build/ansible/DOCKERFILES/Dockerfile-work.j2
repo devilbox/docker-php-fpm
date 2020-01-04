@@ -308,6 +308,7 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
 	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
 	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.cache \
 	&& rm -rf /home/devilbox/.config \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -502,6 +503,7 @@ RUN set -eux \
 	{%- endif -%}
 {% endfor %}{{ "\n\t" }}\
 # -------------------- Cleanup --------------------
+	&& rm -rf /home/devilbox/.cache/ \
 	&& rm -rf /home/devilbox/.config/ \
 	&& rm -rf /root/.ansible \
 	&& rm -rf /root/.console \

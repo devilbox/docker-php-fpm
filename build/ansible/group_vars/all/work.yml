@@ -572,7 +572,7 @@ software_available:
   mhsendmail:
     all:
       command: |
-        wget https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 \
+        wget --no-hsts https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 \
         && chmod +x mhsendmail_linux_amd64 \
         && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
   mysqldumpsecure:
@@ -737,7 +737,7 @@ software_available:
     check: phpmd --version | grep -E '^PHPMD [.0-9]+'
     all:
       command: |
-        wget -c https://phpmd.org/static/latest/phpmd.phar \
+        wget --no-hsts https://phpmd.org/static/latest/phpmd.phar \
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
