@@ -292,6 +292,12 @@ RUN set -eux \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
+# -------------------- phpmd --------------------
+	&& wget -c https://phpmd.org/static/latest/phpmd.phar \
+&& mv phpmd.phar /usr/local/bin/phpmd \
+&& chmod +x /usr/local/bin/phpmd
+ \
+	\
 # -------------------- phpunit --------------------
 	&& curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
@@ -549,6 +555,7 @@ RUN set -eux \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+' \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
+	&& phpmd --version | grep -E '^PHPMD [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \

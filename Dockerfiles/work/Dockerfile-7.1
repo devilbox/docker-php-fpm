@@ -310,6 +310,12 @@ RUN set -eux \
 && chmod +x /usr/local/bin/php-cs-fixer \
  \
 	\
+# -------------------- phpmd --------------------
+	&& wget -c https://phpmd.org/static/latest/phpmd.phar \
+&& mv phpmd.phar /usr/local/bin/phpmd \
+&& chmod +x /usr/local/bin/phpmd
+ \
+	\
 # -------------------- phpunit --------------------
 	&& curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
 && chmod +x /usr/local/bin/phpunit \
@@ -569,6 +575,7 @@ RUN set -eux \
 	&& phpcs --version | grep -E 'version [.0-9]+' \
 	&& phpcbf --version | grep -E 'version [.0-9]+' \
 	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \
+	&& phpmd --version | grep -E '^PHPMD [.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[.0-9]+' \
 	&& symfony --version | grep -E 'version\s*[.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)" \
