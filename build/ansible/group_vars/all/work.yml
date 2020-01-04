@@ -739,7 +739,7 @@ software_available:
       command: |
         wget -c https://phpmd.org/static/latest/phpmd.phar \
         && mv phpmd.phar /usr/local/bin/phpmd \
-        && chmod +x /usr/local/bin/phpmd
+        && chmod +x /usr/local/bin/phpmd \
   phpunit:
     disabled: [5.2, 8.0]
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
