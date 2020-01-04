@@ -364,7 +364,8 @@ RUN set -eux \
 	# Custom:       Branch
 	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
 	# Custom:       Install command
-	&& phpize \
+	&& sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
+&& phpize \
 && ./configure --enable-redis \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \

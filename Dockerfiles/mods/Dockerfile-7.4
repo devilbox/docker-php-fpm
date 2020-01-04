@@ -473,18 +473,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: redis --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
-	&& cd /tmp/redis \
-	# Custom:       Branch
-	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
-	# Custom:       Install command
-	&& phpize \
-&& ./configure --enable-redis \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
- \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install redis \
 	# Enabling
 	&& docker-php-ext-enable redis \
 	&& true
