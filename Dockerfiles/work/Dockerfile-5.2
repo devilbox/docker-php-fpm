@@ -41,15 +41,15 @@ RUN set -eux \
 		\
 	&& echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until \
 	&& echo "deb http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
-	&& curl -sS "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
 	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
-	&& curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
-	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
@@ -135,7 +135,7 @@ RUN set -eux \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
 \
-&& curl -sS https://bootstrap.pypa.io/get-pip.py | python \
+&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
  \
 	\
 # -------------------- nvm --------------------
@@ -174,7 +174,7 @@ RUN set -eux \
  \
 	\
 # -------------------- linkcheck --------------------
-	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
 && chmod +x /usr/local/bin/linkcheck \
  \
 	\
@@ -191,7 +191,7 @@ RUN set -eux \
  \
 	\
 # -------------------- mhsendmail --------------------
-	&& curl -sS -L https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+	&& curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
 && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
  \
@@ -220,21 +220,21 @@ RUN set -eux \
  \
 	\
 # -------------------- phpcs --------------------
-	&& curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
 	\
 # -------------------- phpcbf --------------------
-	&& curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
 # -------------------- wkhtmltopdf --------------------
-	&& VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )" \
+	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
   libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-&& curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
 && dpkg -i /tmp/wkhtmltopdf.deb \
 && rm -f /tmp/wkhtmltopdf.deb \
  \
