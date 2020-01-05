@@ -305,7 +305,7 @@ RUN set -eux \
 	\
 # -------------------- symfony --------------------
 	&& SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )" \
-	&& curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_386" > /usr/local/bin/symfony \
+	&& curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_amd64" > /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
 	\
 # -------------------- wkhtmltopdf --------------------
