@@ -143,7 +143,7 @@ apt_repositories_available:
   blackfire:
     all:
       deb: deb http://packages.blackfire.io/debian any main
-      pre: curl -sS "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   git:
     7.2:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
@@ -183,11 +183,11 @@ apt_repositories_available:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
       deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 # -------------------------------------------------------------------------------------------------
@@ -374,7 +374,7 @@ software_available:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
     all:
-      command: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      command: curl -sS -L --fail https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   # pip is a dependency for others
   pip:
     all:
@@ -385,7 +385,7 @@ software_available:
         && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         && rm -rf /var/lib/apt/lists/* \
         \
-        && curl -sS https://bootstrap.pypa.io/get-pip.py | python \
+        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
   # nvm is a dependency for others
   nvm:
     check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[.0-9]+'
@@ -422,22 +422,22 @@ software_available:
     disabled: [5.2, 5.3]
     check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+'
     5.4:
-      command: curl -sS https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     5.5:
-      command: curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     5.6:
-      command: curl -sS https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     7.0:
-      command: curl -sS https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     7.1:
-      command: curl -sS https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     all:
-      command: curl -sS https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
   drush7:
     disabled: [5.2, 8.0]
@@ -491,7 +491,7 @@ software_available:
     disabled: [5.2, 5.3, 5.4, 8.0] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
     all:
-      command: curl https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
+      command: curl -sS -L --fail https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
   gitflow:
     check: git-flow version | grep -E '[.0-9]+'
@@ -554,7 +554,7 @@ software_available:
     check: linkcheck --version | grep -E '^linkcheck\sv[.0-9]+'
     all:
       command: |
-        curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+        curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
         && chmod +x /usr/local/bin/linkcheck \
   linuxbrew:
     check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+'
@@ -572,7 +572,7 @@ software_available:
   mhsendmail:
     all:
       command: |
-        curl -sS -L https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+        curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
         && chmod +x mhsendmail_linux_amd64 \
         && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
   mysqldumpsecure:
@@ -689,55 +689,55 @@ software_available:
     check: phpcs --version | grep -E 'version [.0-9]+'
     5.2:
       command: |
-        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
     5.3:
       command: |
-        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
     all:
       command: |
-        curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [.0-9]+'
     5.2:
       command: |
-        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
     5.3:
       command: |
-        curl -sS -L https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
     all:
       command: |
-        curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
   php-cs-fixer:
     disabled: [5.2, 7.4, 8.0]
     check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
     5.3:
       command: |
-        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.4:
       command: |
-        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.5:
       command: |
-        curl -sS -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
         && chmod +x /usr/local/bin/php-cs-fixer \
     all:
       command: |
-        curl -sS -L https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
         && chmod +x /usr/local/bin/php-cs-fixer \
   phpmd:
     disabled: [5.2]
     check: phpmd --version | grep -E '^PHPMD [.0-9]+'
     all:
       command: |
-        curl -sS -L https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
+        curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
@@ -745,31 +745,31 @@ software_available:
     check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
     5.3:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
     5.4:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
     5.5:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
     5.6:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
     7.0:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
     all:
       command: |
-        curl -qL https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -L --fail https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
         && chmod +x /usr/local/bin/phpunit \
   symfony:
     disabled: [5.2, 5.3]
-    check: symfony --version | grep -E 'version\s*[.0-9]+'
+    check: symfony -V | grep -Ei 'version\s*.*v[.0-9]+'
     all:
       pre: SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )"
       command: curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_386" > /usr/local/bin/symfony
@@ -777,19 +777,19 @@ software_available:
   wkhtmltopdf:
     check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)"
     5.2:
-      pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.3:
-      pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.4:
-      pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.5:
-      pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     7.1:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     7.2:
@@ -797,7 +797,7 @@ software_available:
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     7.3:
@@ -805,7 +805,7 @@ software_available:
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     7.4:
@@ -813,7 +813,7 @@ software_available:
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     8.0:
@@ -821,16 +821,16 @@ software_available:
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     all:
-      pre: VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )"
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )"
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
           libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
       post: |
@@ -840,10 +840,10 @@ software_available:
     disabled: [5.2]
     check: wp --allow-root --version | grep -E '[.0-9]+'
     5.3:
-      command: curl https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
+      command: curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
     all:
-      command: curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
+      command: curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
   cleanup:
     all:

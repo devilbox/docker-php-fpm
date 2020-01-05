@@ -40,15 +40,15 @@ RUN set -eux \
 		gnupg \
 		\
 	&& echo "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/sources.list.d/backports.list \
-	&& curl -sS "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 \
 	&& echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" > /etc/apt/sources.list.d/mongo.list \
-	&& curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
-	&& curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
@@ -128,7 +128,7 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- composer --------------------
-	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+	&& curl -sS -L --fail https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 	\
 # -------------------- pip --------------------
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
@@ -137,7 +137,7 @@ RUN set -eux \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
 \
-&& curl -sS https://bootstrap.pypa.io/get-pip.py | python \
+&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
  \
 	\
 # -------------------- nvm --------------------
@@ -169,7 +169,7 @@ RUN set -eux \
  \
 	\
 # -------------------- deployer --------------------
-	&& curl -sS https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
+	&& curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
 	\
 # -------------------- gitflow --------------------
@@ -180,7 +180,7 @@ RUN set -eux \
  \
 	\
 # -------------------- linkcheck --------------------
-	&& curl https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
 && chmod +x /usr/local/bin/linkcheck \
  \
 	\
@@ -197,7 +197,7 @@ RUN set -eux \
  \
 	\
 # -------------------- mhsendmail --------------------
-	&& curl -sS -L https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+	&& curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
 && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
  \
@@ -226,32 +226,32 @@ RUN set -eux \
  \
 	\
 # -------------------- phpcs --------------------
-	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
  \
 	\
 # -------------------- phpcbf --------------------
-	&& curl -sS -L https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
 # -------------------- phpmd --------------------
-	&& curl -sS -L https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
+	&& curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
 && mv phpmd.phar /usr/local/bin/phpmd \
 && chmod +x /usr/local/bin/phpmd \
  \
 	\
 # -------------------- symfony --------------------
-	&& SYMFONY_VERSION="$( curl --fail -sS -L https://get.symfony.com/cli/LATEST )" \
-	&& curl -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_386" > /usr/local/bin/symfony \
+	&& SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )" \
+	&& curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_386" > /usr/local/bin/symfony \
 	&& chmod +x /usr/local/bin/symfony \
 	\
 # -------------------- wkhtmltopdf --------------------
-	&& VERSION="$( curl -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
+	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
   libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-&& curl -sS -L -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
 && dpkg -i /tmp/wkhtmltopdf.deb \
 && rm -f /tmp/wkhtmltopdf.deb \
  \
@@ -260,7 +260,7 @@ RUN set -eux \
  \
 	\
 # -------------------- wpcli --------------------
-	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
 	\
 # -------------------- cleanup --------------------
