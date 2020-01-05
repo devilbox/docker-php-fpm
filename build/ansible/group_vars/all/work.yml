@@ -771,7 +771,8 @@ software_available:
     disabled: [5.2, 5.3]
     check: symfony --version | grep -E 'version\s*[.0-9]+'
     all:
-      command: curl https://symfony.com/installer -L -o /usr/local/bin/symfony
+      pre: SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )"
+      command: curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_386" > /usr/local/bin/symfony
       post: chmod +x /usr/local/bin/symfony
   wkhtmltopdf:
     check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)"
