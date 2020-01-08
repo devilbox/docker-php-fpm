@@ -46,7 +46,6 @@ gem_enabled:
   - rb_inotify
   - mdl
   - scss_lint
-  - sass
 
 
 # -------------------------------------------------------------------------------------------------
@@ -62,6 +61,7 @@ npm_enabled:
   # https://github.com/Unitech/pm2
   - pm2
   - mdlint
+  - sass
   - vue_cli
   - vue_cli_service_global
   - webpack
@@ -275,9 +275,6 @@ gem_available:
     name: scss_lint
     all:
       version: 0.57.1
-  sass:
-    name: sass
-    check: sass --version | grep -E '[.0-9]+'
 
 
 # -------------------------------------------------------------------------------------------------
@@ -317,6 +314,9 @@ npm_available:
   mdlint:
     name: mdlint
     check: mdlint --version | grep -E '[.0-9]+'
+  sass:
+    name: sass
+    check: sass --version | grep -E '[.0-9]+'
   vue_cli:
     name: "@vue/cli"
     check: vue --version | grep -E '[.0-9]+'
