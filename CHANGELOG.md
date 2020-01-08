@@ -11,3 +11,4 @@
 
 #### Changed
 - [#123](https://github.com/devilbox/docker-php-fpm/issues/123) Added Dart Sass and removed Ruby Sass
+- Replace [scss-lint](https://github.com/sds/scss-lint) with [stylelint](https://github.com/stylelint/stylelint)
