@@ -1,0 +1,13 @@
+# Changelog
+
+
+## Unreleased
+
+
+## Release 0.102
+
+#### Added
+- [#144](https://github.com/devilbox/docker-php-fpm/issues/144) Added CHANGELOG
+
+#### Changed
+- [#123](https://github.com/devilbox/docker-php-fpm/issues/123) Added Dart Sass and removed Ruby Sass
