@@ -1069,7 +1069,7 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Sass CSS compiler.</td>
   </tr>
   <tr>
-   <td><a href="https://github.com/brigade/scss-lint">scss-lint</a></td>
+   <td><a href="https://github.com/stylelint/stylelint">stylelint</a></td>
    <td>Sass/CSS command line linter.</td>
   </tr>
   <tr>
