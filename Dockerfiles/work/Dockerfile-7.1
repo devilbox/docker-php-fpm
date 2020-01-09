@@ -441,6 +441,12 @@ RUN set -eux \
 # -------------------- mdlint --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
 	\
+# -------------------- sass --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
+	\
+# -------------------- stylelint --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force stylelint' devilbox \
+	\
 # -------------------- vue_cli --------------------
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli' devilbox \
 	\
@@ -479,12 +485,6 @@ RUN set -eux \
 	\
 # -------------------- mdl --------------------
 	&& gem install mdl \
-	\
-# -------------------- scss_lint --------------------
-	&& gem install scss_lint -v 0.57.1 \
-	\
-# -------------------- sass --------------------
-	&& gem install sass \
 	\
 	\
 	&& rm -rf /root/.gem \
@@ -602,12 +602,13 @@ RUN set -eux \
 	&& jsonlint --version | grep -E '[.0-9]+' \
 	&& pm2 --no-daemon --version | grep -E '[.0-9]+' \
 	&& mdlint --version | grep -E '[.0-9]+' \
+	&& sass --version | grep -E '[.0-9]+' \
+	&& stylelint --version | grep -E '[.0-9]+' \
 	&& vue --version | grep -E '[.0-9]+' \
 	&& webpack --version | grep -E '[.0-9]+' \
 	\
 # -------------------- GEM --------------------
 	&& mdl --version | grep -E '[.0-9]+' \
-	&& sass --version | grep -E '[.0-9]+' \
 	\
 # -------------------- Cleanup --------------------
 	&& rm -rf /home/devilbox/.cache/ \
