@@ -48,6 +48,7 @@ RUN set -eux \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
+		libyaml-dev \
 		libzip-dev \
 		snmp \
 		unixodbc-dev \
@@ -694,6 +695,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: yaml --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install yaml \
+	# Enabling
+	&& docker-php-ext-enable yaml \
+	&& true
+
+
 # -------------------- Installing PHP Extension: zip --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -785,6 +797,7 @@ RUN set -eux \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
+	libyaml-0-2 \
 	libzip4 \
 	snmp \
 	unixodbc \
@@ -993,6 +1006,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
+	&& php -m | grep -oiE '^yaml$' \
+	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& true
