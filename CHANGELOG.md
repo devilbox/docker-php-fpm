@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.103
+
+#### Added
+- Add PHP [yaml](https://pecl.php.net/package/yaml) module
+
+
 ## Release 0.102
 
 #### Added
