@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.104
+
+#### Fixed
+- Fix xdebug install for PHP 7.0
+
+
 ## Release 0.103
 
 #### Added

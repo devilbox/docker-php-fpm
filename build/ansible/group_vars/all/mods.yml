@@ -1023,6 +1023,9 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.4.1
+    7.0:
+      type: pecl
+      version: 2.9.0
     all:
       type: pecl
   xml:
