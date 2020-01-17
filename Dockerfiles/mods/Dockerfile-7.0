@@ -659,10 +659,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install xdebug \
+	&& pecl install xdebug-2.9.0 \
 	# Enabling
 	&& docker-php-ext-enable xdebug \
 	&& true
