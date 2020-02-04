@@ -4,6 +4,16 @@
 ## Unreleased
 
 
+## Release 0.105
+
+#### Fixed
+- Fix pdo_sqlsrv install for PHP 7.1
+- Fix composer memory issues during install
+
+#### Added
+- `phalcon` binary for PHP 7.3 and 7.4
+
+
 ## Release 0.104
 
 #### Fixed
