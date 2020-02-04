@@ -224,13 +224,13 @@ RUN set -eux \
 		{%- endif -%}
 		{#- Version specific gem version available? -#}
 		{%- if php_version in composer_available[tool] and 'version' in composer_available[tool][php_version] -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" php -d memory_limit=-1 /usr/local/bin/composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
 		{#- Generic gem version  available? -#}
 		{%- elif 'all' in composer_available[tool] and 'version' in composer_available[tool]['all'] -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" php -d memory_limit=-1 /usr/local/bin/composer global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
 		{#- No version info available -#}
 		{%- else -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" composer global require  {{ composer_available[tool]['name'] }} \
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" php -d memory_limit=-1 /usr/local/bin/composer global require  {{ composer_available[tool]['name'] }} \
 		{%- endif -%}
 		{#- Symlinks available? -#}
 		{%- if 'link' in composer_available[tool] -%}

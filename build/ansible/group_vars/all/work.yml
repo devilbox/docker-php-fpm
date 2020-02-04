@@ -448,7 +448,7 @@ software_available:
         && git checkout 7.4.0 \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
         && rm -rf /usr/local/src/drush7/.git \
         && rm -rf /usr/local/src/drush7/docs \
@@ -464,7 +464,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
         && rm -rf /usr/local/src/drush8/.git \
         && rm -rf /usr/local/src/drush8/docs \
@@ -480,7 +480,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && php -d memory_limit=-1 `which composer` install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-progress' \
         && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
         && rm -rf /usr/local/src/drush9/.git \
         && rm -rf /usr/local/src/drush9/docs \
@@ -545,7 +545,7 @@ software_available:
         && git checkout $(git describe --abbrev=0 --tags) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
         && rm -rf /usr/local/src/laravel-installer/laravel/.git \
       post:
         ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel
@@ -676,7 +676,7 @@ software_available:
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
         && cd /usr/local/src/phalcon-devtools \
         && git checkout $(git describe --abbrev=0 --tags) \
-        && composer install \
+        && php -d memory_limit=-1 /usr/local/bin/composer install \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
         && su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \

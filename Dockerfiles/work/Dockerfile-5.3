@@ -175,7 +175,7 @@ RUN set -eux \
 && git checkout 7.4.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
 && rm -rf /usr/local/src/drush7/.git \
 && rm -rf /usr/local/src/drush7/docs \
@@ -334,11 +334,11 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- codeception --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
+	&& COMPOSER_HOME="/usr/local/src/composer" php -d memory_limit=-1 /usr/local/bin/composer global require  codeception/codeception \
 	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
 	\
 # -------------------- prestissimo --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  hirak/prestissimo \
+	&& COMPOSER_HOME="/usr/local/src/composer" php -d memory_limit=-1 /usr/local/bin/composer global require  hirak/prestissimo \
 	\
 	\
 	&& rm -rf /tmp/* \
