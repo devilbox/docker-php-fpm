@@ -599,7 +599,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 7.3, 7.4, 8.0]
+    disabled: [5.2, 8.0]
     check: phalcon commands | grep -E '[.0-9]+'
     5.3:
       pre: |
