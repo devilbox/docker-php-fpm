@@ -8,6 +8,7 @@
 
 #### Fixed
 - Fix pdo_sqlsrv install for PHP 7.1
+- Fix sqlsrv install for PHP 7.1
 - Fix composer memory issues during install
 
 #### Added
