@@ -178,7 +178,7 @@ RUN set -eux \
 && git checkout 7.4.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && composer install --no-interaction --no-progress --no-dev' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
 && rm -rf /usr/local/src/drush7/.git \
 && rm -rf /usr/local/src/drush7/docs \
@@ -192,7 +192,7 @@ RUN set -eux \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && composer install --no-interaction --no-progress --no-dev' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
 && rm -rf /usr/local/src/drush8/.git \
 && rm -rf /usr/local/src/drush8/docs \
@@ -206,7 +206,7 @@ RUN set -eux \
 && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && php -d memory_limit=-1 `which composer` install --no-interaction --no-progress' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress' \
 && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
 && rm -rf /usr/local/src/drush9/.git \
 && rm -rf /usr/local/src/drush9/docs \
@@ -231,7 +231,7 @@ RUN set -eux \
 && git checkout v2.0.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && composer install --no-interaction --no-progress --no-dev' \
+&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
 	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
@@ -386,23 +386,23 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- asgardcms --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  asgardcms/asgardcms-installer \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer global require  asgardcms/asgardcms-installer \
 	&& ln -s /usr/local/src/composer/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/ \
 	\
 # -------------------- codeception --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  codeception/codeception \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer global require  codeception/codeception \
 	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
 	\
 # -------------------- lumen --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  laravel/lumen-installer \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer global require  laravel/lumen-installer \
 	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
 	\
 # -------------------- photon --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  photoncms/installer \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer global require  photoncms/installer \
 	&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/ \
 	\
 # -------------------- prestissimo --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" composer global require  hirak/prestissimo \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer global require  hirak/prestissimo \
 	\
 	\
 	&& rm -rf /tmp/* \
