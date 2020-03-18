@@ -453,22 +453,15 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: uploadprogress --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         GIT extension
 	&& git clone https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
 	&& cd /tmp/uploadprogress \
-	# Custom:       Install command
-	&& true \
-# FIXME: This is a work-around to mitigate compile error with PHP 8.0
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' || true \
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' || true \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' || true \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' || true \
-&& phpize \
-&& ./configure --enable-uploadprogress \
-&& make \
-&& make install \
- \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-uploadprogress \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
 	# Enabling
 	&& docker-php-ext-enable uploadprogress \
 	&& true
