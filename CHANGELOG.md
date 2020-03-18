@@ -9,7 +9,7 @@
 #### Fixed
 - [#153](https://github.com/devilbox/docker-php-fpm/pull/153) Use numeric order for startup files
 - Fix build of PHP-FPM 7.4 snmp module
-- Fix build of PHP-FPM 8.0 uploadprogress module
+- Disable PHP-FPM 8.0 uploadprogress module due to startup warnings
 
 
 ## Release 0.105

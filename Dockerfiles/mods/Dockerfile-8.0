@@ -451,22 +451,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: uploadprogress --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         GIT extension
-	&& git clone https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
-	&& cd /tmp/uploadprogress \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --enable-uploadprogress \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
-	# Enabling
-	&& docker-php-ext-enable uploadprogress \
-	&& true
-
-
 # -------------------- Installing PHP Extension: xmlrpc --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -725,8 +709,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tidy$' \
 	&& php -m | grep -oiE '^tokenizer$' \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
-	&& php -m | grep -oiE '^uploadprogress$' \
-	&& php-fpm -m | grep -oiE '^uploadprogress$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
