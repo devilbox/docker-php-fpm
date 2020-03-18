@@ -861,6 +861,10 @@ extensions_available:
   simplexml:
     already_avail: "{{ php_all_versions }}"
   snmp:
+    7.4:
+      type: builtin
+      build_dep: [libssl-dev, libsnmp-dev, snmp]
+      run_dep: [snmp]
     all:
       type: builtin
       configure: --with-openssl-dir

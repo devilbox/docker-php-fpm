@@ -4,6 +4,13 @@
 ## Unreleased
 
 
+## Release 0.106
+
+#### Fixed
+- [#153](https://github.com/devilbox/docker-php-fpm/pull/153) Use numeric order for startup files
+- Fix build of PHP-FPM 7.4 snmp module
+
+
 ## Release 0.105
 
 #### Fixed
