@@ -642,7 +642,7 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: uploadprogress --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         GIT extension
 	&& git clone https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
 	&& cd /tmp/uploadprogress \

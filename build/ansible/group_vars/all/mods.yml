@@ -861,6 +861,10 @@ extensions_available:
   simplexml:
     already_avail: "{{ php_all_versions }}"
   snmp:
+    7.4:
+      type: builtin
+      build_dep: [libssl-dev, libsnmp-dev, snmp]
+      run_dep: [snmp]
     all:
       type: builtin
       configure: --with-openssl-dir
@@ -973,42 +977,21 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    7.0:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
-    7.1:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
-    7.2:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
-    7.3:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
-    7.4:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
-    8.0:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      command: |
-        true \
-        # FIXME: This is a work-around to mitigate compile error with PHP 8.0
-        && rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' || true \
-        && rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' || true \
-        && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' || true \
-        && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' || true \
-        && phpize \
-        && ./configure --enable-uploadprogress \
-        && make \
-        && make install \
-    all:
+    disabled: [8.0]
+    5.2:
       type: pecl
+    5.3:
+      type: pecl
+    5.4:
+      type: pecl
+    5.5:
+      type: pecl
+    5.6:
+      type: pecl
+    all:
+      type: git
+      git_url: https://github.com/php/pecl-php-uploadprogress
+      configure: --enable-uploadprogress
   wddx:
     # https://wiki.php.net/rfc/deprecate-and-remove-ext-wddx
     disabled: [7.4, 8.0]
