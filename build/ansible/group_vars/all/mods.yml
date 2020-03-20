@@ -977,7 +977,6 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    disabled: [8.0]
     5.2:
       type: pecl
     5.3:
