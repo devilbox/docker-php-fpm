@@ -118,8 +118,8 @@ jobs:
       - name: Build Base
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -135,8 +135,8 @@ jobs:
       - name: Test Base
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -156,8 +156,8 @@ jobs:
       - name: Build Mods
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -173,8 +173,8 @@ jobs:
       - name: Test Mods
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -194,8 +194,8 @@ jobs:
       - name: Build Prod
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -211,8 +211,8 @@ jobs:
       - name: Test Prod
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -232,8 +232,8 @@ jobs:
       - name: Build Work
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -249,8 +249,8 @@ jobs:
       - name: Test Work
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;
@@ -283,8 +283,8 @@ jobs:
       - name: Publish images (only repo owner)
         run: |
           retry() {
-            for ((n=0; n<${RETRIES}; n++)); do
-              echo "[${n}] ${*}";
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
                 return 0;
               fi;

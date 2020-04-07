@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.107
+
+#### Fixed
+- Fixes login to Dockerhub for CI jobs
+
+
 ## Release 0.106
 
 #### Fixed
