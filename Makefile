@@ -245,7 +245,7 @@ ifeq ($(strip $(PASSWORD)),)
 	@$(info )
 	@$(error Exiting)
 endif
-	@yes | docker login --username "${USERNAME}" --password "${PASSWORD}"
+	@yes | docker login --username $(USERNAME) --password $(PASSWORD)
 
 
 push:

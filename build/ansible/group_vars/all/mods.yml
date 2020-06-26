@@ -500,7 +500,7 @@ extensions_available:
       command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2]
+    disabled: [5.2, 8.0]
     5.3:
       type: pecl
       version: 0.6.3
@@ -1026,6 +1026,7 @@ extensions_available:
   xmlreader:
     already_avail: "{{ php_all_versions }}"
   xmlrpc:
+    disabled: [8.0]
     7.4:
       type: builtin
       configure: --with-iconv-dir=/usr
@@ -1054,6 +1055,9 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.3.2
+    7.0:
+      type: pecl
+      version: 2.0.4
     all:
       type: pecl
       build_dep: [libyaml-dev]

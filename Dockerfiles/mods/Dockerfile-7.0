@@ -688,10 +688,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: yaml --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install yaml \
+	&& pecl install yaml-2.0.4 \
 	# Enabling
 	&& docker-php-ext-enable yaml \
 	&& true

@@ -179,48 +179,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: mongodb --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/mongodb/mongo-php-driver /tmp/mongodb \
-	&& cd /tmp/mongodb \
-	# Custom:       Install command
-	&& git checkout v1.6 \
-&& git submodule update --init \
-# FIXME: This is a work-around to mitigate compile error with PHP 8.0
-&& rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C)/)/g' \
-&& rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C,/,/g' \
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' \
-&& rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' \
-&& rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' \
-&& sed -i'' 's/TSRMLS_SET_CTX(ctx);/\/\/TSRMLS_SET_CTX(ctx);/g' php_phongo.c \
-&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' php_phongo.c \
-&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' phongo_compat.h \
-&& sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' src/bson.c \
-\
-&& sed -i'' 's/php_phongo_handler_binary.compare_objects.*//g' src/BSON/Binary.c \
-&& sed -i'' 's/php_phongo_handler_dbpointer.compare_objects.*//g' src/BSON/DBPointer.c \
-&& sed -i'' 's/php_phongo_handler_int64.compare_objects.*//g' src/BSON/Int64.c \
-&& sed -i'' 's/php_phongo_handler_javascript.compare_objects.*//g' src/BSON/Javascript.c \
-&& sed -i'' 's/php_phongo_handler_objectid.compare_objects.*//g' src/BSON/ObjectId.c \
-&& sed -i'' 's/php_phongo_handler_symbol.compare_objects.*//g' src/BSON/Symbol.c \
-&& sed -i'' 's/php_phongo_handler_timestamp.compare_objects.*//g' src/BSON/Timestamp.c \
-&& sed -i'' 's/php_phongo_handler_regex.compare_objects.*//g' src/BSON/Regex.c \
-&& sed -i'' 's/php_phongo_handler_server.compare_objects.*//g' src/MongoDB/Server.c \
-&& sed -i'' 's/php_phongo_handler_utcdatetime.compare_objects.*//g' src/BSON/UTCDateTime.c \
-\
-&& phpize \
-&& ./configure --enable-mongodb \
-&& make all \
-&& make install \
- \
-	# Enabling
-	&& docker-php-ext-enable mongodb \
-	&& true
-
-
 # -------------------- Installing PHP Extension: mysqli --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -451,16 +409,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: xmlrpc --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         Built-in extension
-	# Custom:       configure command
-	&& docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
-	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
-	&& true
-
-
 # -------------------- Installing PHP Extension: xsl --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -640,8 +588,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
-	&& php -m | grep -oiE '^mongodb$' \
-	&& php-fpm -m | grep -oiE '^mongodb$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
 	&& php -m | grep -oiE '^mysqlnd$' \
@@ -713,8 +659,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
 	&& php-fpm -m | grep -oiE '^xmlreader$' \
-	&& php -m | grep -oiE '^xmlrpc$' \
-	&& php-fpm -m | grep -oiE '^xmlrpc$' \
 	&& php -m | grep -oiE '^xmlwriter$' \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \

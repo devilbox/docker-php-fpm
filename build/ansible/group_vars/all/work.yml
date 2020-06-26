@@ -43,6 +43,7 @@ composer_enabled:
 # -------------------------------------------------------------------------------------------------
 gem_enabled:
   - mixlib_config
+  - ffi
   - rb_inotify
   - mdl
 
@@ -248,6 +249,13 @@ gem_available:
     name: mixlib-config
     all:
       version: 2.2.4
+  # Required by rb-inotify, as otherwise rb-inotify will pull ffi as a dependency in a
+  # version which is not supported by the ruby version (>= 2.3)
+  ffi:
+    name: ffi
+    disabled: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    all:
+      version: 1.12.2
   rb_inotify:
     name: rb-inotify
     all:
