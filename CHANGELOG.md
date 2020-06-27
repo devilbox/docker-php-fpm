@@ -8,6 +8,7 @@
 
 #### Fixed
 - Fixes login to Dockerhub for CI jobs
+- Fixes imagick segfault by setting its threads to 1
 
 
 ## Release 0.106

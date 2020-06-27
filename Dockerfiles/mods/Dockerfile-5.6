@@ -220,6 +220,8 @@ RUN set -eux \
 	&& pecl install imagick \
 	# Enabling
 	&& docker-php-ext-enable imagick \
+	# Generic post-command
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
 	&& true
 
 
@@ -754,6 +756,8 @@ RUN set -eux \
 ### Post Install
 ###
 RUN set -eux \
+	# ---------- imagick ----------
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml  \
 	# ---------- oci8 ----------
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \

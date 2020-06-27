@@ -343,7 +343,11 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 5.3, 5.4, 5.5, 8.0] # 5.3, 5.4 and 5.5 segfaults
+    disabled: [5.2, 5.3, 5.4, 8.0] # Only available since 5.3. 5.3 and 5.4 segfaults
+    5.5:
+      type: pecl
+      build_dep: [libmagickwand-dev, libwebp5]
+      run_dep: [libmagickwand-6.q16-2, libwebp5]
     5.6:
       type: pecl
       run_dep: [libmagickwand-6.q16-3, libwebp6]
@@ -354,6 +358,8 @@ extensions_available:
       type: pecl
       build_dep: [libmagickwand-dev, libwebp6]
       run_dep: [libmagickwand-6.q16-6, libwebp-dev]
+      # https://bugs.php.net/bug.php?id=77683
+      post: sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml
   imap:
     disabled: [7.4, 8.0]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
     all:
