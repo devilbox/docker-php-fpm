@@ -76,6 +76,9 @@ RUN set -eux \
 		blackfire-agent \
 		build-essential \
 		bzip2 \
+{% if php_version != 5.2 and php_version != 5.3 and php_version != 5.4 and php_version != 5.5  %}
+		certbot \
+{% endif %}
 		coreutils \
 		dnsutils \
 		dos2unix \

@@ -15,13 +15,6 @@ services:
 env:
   global:
     - IMAGE: devilbox/php-fpm
-    # travis encrypt DOCKER_USERNAME=user
-    # travis encrypt DOCKER_PASSWORD=pass
-    # Must be regenerated when repository name/owner changes
-    # DOCKER_USERNAME
-    - secure: "Y7xt3qZW9Zwrsgdd/aCf8ZqA7I039506ZDf/u/WVzGwNHta5YJJ7XYy8XG7XugyqGGXRVpfBiaqmDH4xsPLXyHXdOt2G38GXZHZXIgJOiEJ6aUfpdUxyeu8XIXkD2MDMmc3Kb27Yub/OadxRMLWEflzRnSXXs3KJ8TsbPHh0yRWDMsmHYOYl16gDGUX1izLkEx4J+9iA3+JwIFZk8by/OUuIIQ93bSNORpwHT8A1j7Y1kh8kYkPZ6nRxWO8xrc2wI1Rbp0X+ivLnOotxDZo53UI/0KroeSckDpoWfoz+B7mP+M+5B6kGlI2pKDNQB/ErYvnya6PdtFSS9skbvepR4tBhUOZDDY7NMRg9m3w0b9T1no+g3A4LBGXy6+OZZoiYAGy9LvqMhFkINqbBhRBX+mZhtG0pNXunfcu5dk81Ni/XpXDiy9JU98jItwsRj4SeaPfSt0LUNNXMS/fEwZyTy6TihN1CM3krJpV30Ic5rN64FRnrRjUuNU4lJ/W36yUhM29gb13ahh+f7sDsYoCzMwDM9HFe0YLb3ar3mW1lb3FuUugU2f2EupgCPY60X2XrY9aSgCfbdiVsA84dbLtRfHTPG7UbEcJW5RH8HS+9qVZBK+AcPqon9jbOJRVh7q99YW+R8X/XeyYpz7amacVmRus80+toZ16bbU7D2Qgjdek="
-    # DOCKER_PASSWORD
-    - secure: "ZRrVOVOkSCS2UxEi1HNF1iKefK4sDT/sPRl1HxMQjLnRRaAMdG0aRnBwQf2YAM2qzhCfN85qt6zZtC4awc2mHiZ88JrAZxBjK6xj4BwOyLbDuzpBsKXnx8Nix+wyYYKSjsC3LOYrsUe+4rvkw3tVvVaX8G2llojwdksF34VDmmHBmzCG/Bsexk7UqC+qw0PZm7BtctQO+IL0btmMDijRDElxfR+AuPvf9JdkhYzw9TOO7Jqd53NssNVGyL+XSV0dfGn8PkZTp1e8D+28pLK4oGVog+Wk7Cq94hSGjk5AkWKvL5441rupG1AA8K3njeDNMKdov4o+dmnkAH7Jh8tjShMhNhoxHce3IzpczjhoE1EyYQcyPf1qdfhV35Xv096iWX5809pp1MZF2oE5eism8JaU9NpGClryVbKVKtup8ko9/tCqz01Czq5Vue40feMkGtdePulg59OhyyPLYldsObw8QlZydkrmgVZe6b+GyybeiHraTfDq4pvTgUrC4Cmm5J3IB5Ig1THEiYKHfRJ5hSSMDDODeBXc8Xh6mFssEVshNx/jbUQWuAVYQFw/GIquVHxr6btbevrWIoD+zmqcc0L98u9pYH8w7b+gMgVJNCC4QQz2NCGGWw9l9/TmLrKJgeXbG18n8D314le1zuna6/VfH9pXIlbNO4hgz5NLHJk="
   matrix:
     - PHP=5.2
     - PHP=5.3
@@ -103,44 +96,44 @@ before_script:
 ###
 script:
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
-      echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin &&
+      make login USERNAME="${DOCKER_USERNAME}" PASSWORD="${DOCKER_PASSWORD}";
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
         echo "Pushing latest";
-        until docker push "${IMAGE}:${PHP}-base"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-mods"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-prod"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-work"; do sleep 1; done;
+        make push TAG="${PHP}-base" &&
+        make push TAG="${PHP}-mods" &&
+        make push TAG="${PHP}-prod" &&
+        make push TAG="${PHP}-work";
       elif [[ ${TRAVIS_BRANCH} =~ ^(release-[.0-9]+)$ ]]; then
         echo "Pushing branch ${TRAVIS_BRANCH}";
-        docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}" &&
-        docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}" &&
-        docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}" &&
-        docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}" &&
-        until docker push "${IMAGE}:${PHP}-base-${TRAVIS_BRANCH}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-mods-${TRAVIS_BRANCH}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-prod-${TRAVIS_BRANCH}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-work-${TRAVIS_BRANCH}"; do sleep 1; done;
+        make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
+        make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
+        make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
+        make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_BRANCH}" &&
+        make push TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
+        make push TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
+        make push TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
+        make push TAG="${PHP}-work-${TRAVIS_BRANCH}";
       elif [ -n "${TRAVIS_TAG}" ]; then
         echo "Pushing tag ${TRAVIS_TAG}";
-        docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${TRAVIS_TAG}" &&
-        docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}" &&
-        docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}" &&
-        docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${TRAVIS_TAG}" &&
-        until docker push "${IMAGE}:${PHP}-base-${TRAVIS_TAG}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-mods-${TRAVIS_TAG}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-prod-${TRAVIS_TAG}"; do sleep 1; done;
-        until docker push "${IMAGE}:${PHP}-work-${TRAVIS_TAG}"; do sleep 1; done;
+        make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_TAG}" &&
+        make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_TAG}" &&
+        make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_TAG}" &&
+        make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_TAG}" &&
+        make push TAG="${PHP}-base-${TRAVIS_TAG}" &&
+        make push TAG="${PHP}-mods-${TRAVIS_TAG}" &&
+        make push TAG="${PHP}-prod-${TRAVIS_TAG}" &&
+        make push TAG="${PHP}-work-${TRAVIS_TAG}";
       elif [ "${TRAVIS_EVENT_TYPE}" = "cron" ]; then
         if MY_TAG="$( git describe --exact-match "$(git rev-parse HEAD)" 2>/dev/null )"; then
           echo "Pushing cron tag ${MY_TAG}";
-          docker tag "${IMAGE}:${PHP}-base" "${IMAGE}:${PHP}-base-${MY_TAG}" &&
-          docker tag "${IMAGE}:${PHP}-mods" "${IMAGE}:${PHP}-mods-${MY_TAG}" &&
-          docker tag "${IMAGE}:${PHP}-prod" "${IMAGE}:${PHP}-prod-${MY_TAG}" &&
-          docker tag "${IMAGE}:${PHP}-work" "${IMAGE}:${PHP}-work-${MY_TAG}" &&
-          until docker push "${IMAGE}:${PHP}-base-${MY_TAG}"; do sleep 1; done;
-          until docker push "${IMAGE}:${PHP}-mods-${MY_TAG}"; do sleep 1; done;
-          until docker push "${IMAGE}:${PHP}-prod-${MY_TAG}"; do sleep 1; done;
-          until docker push "${IMAGE}:${PHP}-work-${MY_TAG}"; do sleep 1; done;
+          make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${MY_TAG}" &&
+          make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${MY_TAG}" &&
+          make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${MY_TAG}" &&
+          make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${MY_TAG}" &&
+          make push TAG="${PHP}-base-${MY_TAG}" &&
+          make push TAG="${PHP}-mods-${MY_TAG}" &&
+          make push TAG="${PHP}-prod-${MY_TAG}" &&
+          make push TAG="${PHP}-work-${MY_TAG}";
         fi
       else
         echo "Skipping push to dockerhub on normal branches";

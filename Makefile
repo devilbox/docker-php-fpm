@@ -73,12 +73,14 @@ help:
 
 gen-readme:
 ifeq ($(strip $(VERSION)),)
+	@echo "Generate README.md for all PHP versions"
 	cd build; ./gen-readme.sh
 else
+	@echo "Generate README.md for PHP $(VERSION)"
 	@$(MAKE) --no-print-directory _check-version
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=base
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
-	cd build; ./gen-readme.sh ${VERSION}
+	cd build; ./gen-readme.sh $(VERSION)
 endif
 
 
@@ -228,6 +230,52 @@ test-work: _check-version
 
 
 # -------------------------------------------------------------------------------------------------
+#  DOCKERHUB TARGETS
+# -------------------------------------------------------------------------------------------------
+login:
+ifeq ($(strip $(USERNAME)),)
+	@$(info This make target requires the USERNAME variable to be set.)
+	@$(info make login USERNAME= PASSWORD=)
+	@$(info )
+	@$(error Exiting)
+endif
+ifeq ($(strip $(PASSWORD)),)
+	@$(info This make target requires the PASSWORD variable to be set.)
+	@$(info make login USERNAME= PASSWORD=)
+	@$(info )
+	@$(error Exiting)
+endif
+	@yes | docker login --username $(USERNAME) --password $(PASSWORD)
+
+
+push:
+ifeq ($(strip $(TAG)),)
+	@$(info This make target requires the TAG variable to be set.)
+	@$(info make push TAG=)
+	@$(info )
+	@$(error Exiting)
+endif
+	docker push $(IMAGE):$(TAG)
+
+
+tag:
+ifeq ($(strip $(OLD_TAG)),)
+	@$(info This make target requires the OLD_TAG variable to be set.)
+	@$(info make tag OLD_TAG= NEW_TAG=)
+	@$(info )
+	@$(error Exiting)
+endif
+ifeq ($(strip $(NEW_TAG)),)
+	@$(info This make target requires the NEW_TAG variable to be set.)
+	@$(info make tag OLD_TAG= NEW_TAG=)
+	@$(info )
+	@$(error Exiting)
+endif
+	docker tag $(IMAGE):$(OLD_TAG) $(IMAGE):$(NEW_TAG)
+
+
+
+# -------------------------------------------------------------------------------------------------
 #  HELPER TARGETS
 # -------------------------------------------------------------------------------------------------
 
@@ -274,6 +322,7 @@ endif
 endif
 endif
 endif
+	@echo "Version $(VERSION) is valid"
 
 
 _check-image-exists:

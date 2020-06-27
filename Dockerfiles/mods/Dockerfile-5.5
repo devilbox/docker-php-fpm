@@ -26,6 +26,7 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		libmagickwand-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -41,6 +42,7 @@ RUN set -eux \
 		libssl-dev \
 		libtidy-dev \
 		libvpx-dev \
+		libwebp5 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -191,6 +193,19 @@ RUN set -eux \
 	&& pecl install igbinary-2.0.8 \
 	# Enabling
 	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	# Generic post-command
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
 	&& true
 
 
@@ -696,6 +711,7 @@ RUN set -eux \
 	libfreetype6 \
 	libicu52 \
 	libjpeg62-turbo \
+	libmagickwand-6.q16-2 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libmysqlclient18 \
@@ -708,6 +724,7 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy-0.99-0 \
 	libvpx1 \
+	libwebp5 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
@@ -722,6 +739,8 @@ RUN set -eux \
 ### Post Install
 ###
 RUN set -eux \
+	# ---------- imagick ----------
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml  \
 	# ---------- oci8 ----------
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
@@ -790,6 +809,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^imagick$' \
+	&& php-fpm -m | grep -oiE '^imagick$' \
 	&& php -m | grep -oiE '^imap$' \
 	&& php-fpm -m | grep -oiE '^imap$' \
 	&& php -m | grep -oiE '^interbase$' \
