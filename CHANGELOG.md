@@ -12,6 +12,7 @@
 
 #### Added
 - Re-added imap for PHP 7.4
+- Adding `certbot` binary
 
 
 ## Release 0.106

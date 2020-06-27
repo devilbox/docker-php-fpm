@@ -62,6 +62,7 @@ RUN set -eux \
 		blackfire-agent \
 		build-essential \
 		bzip2 \
+		certbot \
 		coreutils \
 		dnsutils \
 		dos2unix \
