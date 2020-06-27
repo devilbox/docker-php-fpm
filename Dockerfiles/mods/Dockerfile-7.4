@@ -14,6 +14,7 @@ RUN set -eux \
 		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
+		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-dev \
 		libevent-dev \
@@ -24,6 +25,7 @@ RUN set -eux \
 		libib-util \
 		libicu-dev \
 		libjpeg-dev \
+		libkrb5-dev \
 		libldap2-dev \
 		libmagickwand-dev \
 		libmcrypt-dev \
@@ -221,6 +223,18 @@ RUN set -eux \
 	&& docker-php-ext-enable imagick \
 	# Generic post-command
 	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imap --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
 	&& true
 
 
@@ -721,6 +735,7 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
+	libc-client2007e \
 	libenchant1c2a \
 	libfbclient2 \
 	libffi6 \
@@ -830,6 +845,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
 	&& php -m | grep -oiE '^imagick$' \
 	&& php-fpm -m | grep -oiE '^imagick$' \
+	&& php -m | grep -oiE '^imap$' \
+	&& php-fpm -m | grep -oiE '^imap$' \
 	&& php -m | grep -oiE '^intl$' \
 	&& php-fpm -m | grep -oiE '^intl$' \
 	&& php -m | grep -oiE '^json$' \

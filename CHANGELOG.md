@@ -10,6 +10,9 @@
 - Fixes login to Dockerhub for CI jobs
 - Fixes imagick segfault by setting its threads to 1
 
+#### Added
+- Re-added imap for PHP 7.4
+
 
 ## Release 0.106
 
