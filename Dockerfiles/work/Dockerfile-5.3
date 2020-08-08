@@ -440,13 +440,13 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- ansible --------------------
-	&& pip install --no-cache-dir --force-reinstall ansible \
+	&& pip install --no-cache-dir --force-reinstall ansible || true \
 	\
 # -------------------- yamllint --------------------
-	&& pip install --no-cache-dir --force-reinstall yamllint \
+	&& pip install --no-cache-dir --force-reinstall yamllint || true \
 	\
 # -------------------- yq --------------------
-	&& pip install --no-cache-dir --force-reinstall yq \
+	&& pip install --no-cache-dir --force-reinstall yq || true \
 	\
 	\
 	&& rm -rf /root/.cache/pip \
