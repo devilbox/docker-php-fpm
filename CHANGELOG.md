@@ -4,6 +4,20 @@
 ## Unreleased
 
 
+## Release 0.108
+
+#### Added
+- Added ghostscript
+- Added imagick PDF support (via ghostscript)
+
+#### Fixed
+- Fixes Ansible installation
+- Fixes MongoDB for PHP 5.6
+
+#### Changed
+- Stricter version check for installed tools
+
+
 ## Release 0.107
 
 #### Fixed
