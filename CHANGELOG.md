@@ -16,6 +16,7 @@
 - Fixes Ansible installation
 - Fixes MongoDB for PHP 5.6
 - Fixes Redis for PHP 8.0
+- Fixes policy.xml for Imagick
 
 #### Changed
 - Stricter version check for installed tools
