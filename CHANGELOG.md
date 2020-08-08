@@ -8,11 +8,14 @@
 
 #### Added
 - Added ghostscript
+- Added gsfonts
 - Added imagick PDF support (via ghostscript)
+- Added mupdf and mupdf-tools
 
 #### Fixed
 - Fixes Ansible installation
 - Fixes MongoDB for PHP 5.6
+- Fixes Redis for PHP 8.0
 
 #### Changed
 - Stricter version check for installed tools
