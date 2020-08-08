@@ -208,22 +208,22 @@ apt_repositories_available:
 composer_available:
   asgardcms:
     disabled: [5.2, 5.3, 5.4, 8.0]
-    check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[.0-9]+'
+    check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+'
     name: asgardcms/asgardcms-installer
     link: asgardcms
   codeception:
     disabled: [5.2, 8.0]
-    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[.0-9]+$'
+    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$'
     name: codeception/codeception
     link: codecept
   lumen:
     disabled: [5.2, 5.3, 5.4, 8.0]
-    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[.0-9]+$'
+    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$'
     name: laravel/lumen-installer
     link: lumen
   photon:
     disabled: [5.2, 5.3, 5.4, 8.0]
-    check: photon --version | grep -E 'Installer [.0-9]+'
+    check: photon --version | grep -E 'Installer [0-9][.0-9]+'
     name: photoncms/installer
     link: photon
   prestissimo:
@@ -262,7 +262,7 @@ gem_available:
       version: 0.9.10
   mdl:
     name: mdl
-    check: mdl --version | grep -E '[.0-9]+'
+    check: mdl --version | grep -E '[0-9][.0-9]+'
     8.0:
       version: 0.5.0
     7.4:
@@ -297,43 +297,43 @@ gem_available:
 npm_available:
   angular_cli:
     name: "@angular/cli"
-    check: ng  version 2>&1 | grep -iE 'Angular CLI:\s*[.0-9]+'
+    check: ng  version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+'
   eslint:
     name: eslint
-    check: eslint -v | grep -E '[.0-9]+'
+    check: eslint -v | grep -E '[0-9][.0-9]+'
   grunt:
     name: grunt
   grunt_cli:
     name: grunt-cli
-    check: grunt --version | grep -E '[.0-9]+'
+    check: grunt --version | grep -E '[0-9][.0-9]+'
   gulp:
     name: gulp
-    check: gulp --version | grep -E '[.0-9]+'
+    check: gulp --version | grep -E '[0-9][.0-9]+'
   jsonlint:
     name: jsonlint
-    check: jsonlint --version | grep -E '[.0-9]+'
+    check: jsonlint --version | grep -E '[0-9][.0-9]+'
   pm2:
     name: pm2
-    check: pm2 --no-daemon --version | grep -E '[.0-9]+'
+    check: pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+'
   mdlint:
     name: mdlint
-    check: mdlint --version | grep -E '[.0-9]+'
+    check: mdlint --version | grep -E '[0-9][.0-9]+'
   sass:
     name: sass
-    check: sass --version | grep -E '[.0-9]+'
+    check: sass --version | grep -E '[0-9][.0-9]+'
   stylelint:
     name: stylelint
-    check: stylelint --version | grep -E '[.0-9]+'
+    check: stylelint --version | grep -E '[0-9][.0-9]+'
   vue_cli:
     name: "@vue/cli"
-    check: vue --version | grep -E '[.0-9]+'
+    check: vue --version | grep -E '[0-9][.0-9]+'
   vue_cli_service_global:
     name: "@vue/cli-service-global"
   webpack:
     name: webpack
   webpack_cli:
     name: webpack-cli
-    check: webpack --version | grep -E '[.0-9]+'
+    check: webpack --version | grep -E '[0-9][.0-9]+'
 
 
 # -------------------------------------------------------------------------------------------------
@@ -352,13 +352,13 @@ npm_available:
 pip_available:
   ansible:
     name: ansible
-    check: ansible --version | grep -E '^ansible [.0-9]+$'
+    check: ansible --version | grep -E '^ansible [0-9][.0-9]+$'
   yamllint:
     name: yamllint
-    check: yamllint --version 2>&1 | grep -E '[.0-9]+'
+    check: yamllint --version 2>&1 | grep -E '[0-9][.0-9]+'
   yq:
     name: yq
-    check: yq --version 2>&1 | grep -E '^yq\s+[.0-9]+$'
+    check: yq --version 2>&1 | grep -E '^yq\s+[0-9][.0-9]+$'
 
 
 # -------------------------------------------------------------------------------------------------
@@ -379,7 +379,7 @@ software_available:
   # Composer is a dependency for others
   composer:
     disabled: [5.2]
-    check: composer --version 2>/dev/null | grep -E 'version\s*[.0-9]+'
+    check: composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+'
     all:
       command: curl -sS -L --fail https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
   # pip is a dependency for others
@@ -395,7 +395,7 @@ software_available:
         && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
   # nvm is a dependency for others
   nvm:
-    check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[.0-9]+'
+    check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'
     all:
       pre: |
         git clone https://github.com/creationix/nvm /opt/nvm \
@@ -415,7 +415,7 @@ software_available:
         && su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
         && su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
   awesomeci:
-    check: regex-grep --version | grep -E '[.0-9]+'
+    check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:
       command: |
         git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
@@ -427,7 +427,7 @@ software_available:
         && rm -rf /usr/local/src/awesome-ci \
   deployer:
     disabled: [5.2, 5.3]
-    check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[.0-9]+'
+    check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+'
     5.4:
       command: curl -sS -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
@@ -496,12 +496,12 @@ software_available:
         && rm -rf /usr/local/src/drush9/misc \
   drupalconsole:
     disabled: [5.2, 5.3, 5.4, 8.0] # TODO: re-enable for 8.0 (currently errors)
-    check: drupal --version | grep -E 'Drupal Console Launcher\s*[.0-9]'
+    check: drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]'
     all:
       command: curl -sS -L --fail https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
   gitflow:
-    check: git-flow version | grep -E '[.0-9]+'
+    check: git-flow version | grep -E '[0-9][.0-9]+'
     all:
       command: |
         git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
@@ -509,7 +509,7 @@ software_available:
         && make install \
         && cd / && rm -rf /tmp/gitflow \
   laravel:
-    check: laravel --version | grep -E '(Installer|version)\s*[.0-9]+'
+    check: laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+'
     disabled: [5.2, 5.3, 8.0]
     5.4:
       pre: |
@@ -558,13 +558,13 @@ software_available:
       post:
         ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel
   linkcheck:
-    check: linkcheck --version | grep -E '^linkcheck\sv[.0-9]+'
+    check: linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+'
     all:
       command: |
         curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
         && chmod +x /usr/local/bin/linkcheck \
   linuxbrew:
-    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[.0-9]+'
+    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+'
     all:
       command: |
         git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
@@ -583,7 +583,7 @@ software_available:
         && chmod +x mhsendmail_linux_amd64 \
         && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
   mysqldumpsecure:
-    check: mysqldump-secure --version | grep -E 'Version:\s*[.0-9]+'
+    check: mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+'
     all:
       command: |
         git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
@@ -608,7 +608,7 @@ software_available:
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
     disabled: [5.2, 8.0]
-    check: phalcon commands | grep -E '[.0-9]+'
+    check: phalcon commands | grep -E '[0-9][.0-9]+'
     5.3:
       pre: |
         git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
@@ -693,7 +693,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/phalcon-devtools/.git \
   phpcs:
-    check: phpcs --version | grep -E 'version [.0-9]+'
+    check: phpcs --version | grep -E 'version [0-9][.0-9]+'
     5.2:
       command: |
         curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
@@ -707,7 +707,7 @@ software_available:
         curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
-    check: phpcbf --version | grep -E 'version [.0-9]+'
+    check: phpcbf --version | grep -E 'version [0-9][.0-9]+'
     5.2:
       command: |
         curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
@@ -741,7 +741,7 @@ software_available:
         && chmod +x /usr/local/bin/php-cs-fixer \
   phpmd:
     disabled: [5.2]
-    check: phpmd --version | grep -E '^PHPMD [.0-9]+'
+    check: phpmd --version | grep -E '^PHPMD [0-9][.0-9]+'
     all:
       command: |
         curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
@@ -749,7 +749,7 @@ software_available:
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
     disabled: [5.2, 8.0]
-    check: phpunit --version | grep -iE '^PHPUnit\s[.0-9]+'
+    check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+'
     5.3:
       command: |
         curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
@@ -776,13 +776,13 @@ software_available:
         && chmod +x /usr/local/bin/phpunit \
   symfony:
     disabled: [5.2, 5.3]
-    check: symfony -V | grep -Ei 'version\s*.*v[.0-9]+'
+    check: symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+'
     all:
       pre: SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )"
       command: curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_amd64" > /usr/local/bin/symfony
       post: chmod +x /usr/local/bin/symfony
   wkhtmltopdf:
-    check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [.0-9]+\s+\(.+patched.+\)"
+    check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"
     5.2:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.3:
@@ -845,7 +845,7 @@ software_available:
         && rm -rf /var/lib/apt/lists/* \
   wpcli:
     disabled: [5.2]
-    check: wp --allow-root --version | grep -E '[.0-9]+'
+    check: wp --allow-root --version | grep -E '[0-9][.0-9]+'
     5.3:
       command: curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
