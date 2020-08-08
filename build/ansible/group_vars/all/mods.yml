@@ -346,18 +346,18 @@ extensions_available:
     disabled: [5.2, 5.3, 5.4, 8.0] # Only available since 5.3. 5.3 and 5.4 segfaults
     5.5:
       type: pecl
-      build_dep: [libmagickwand-dev, libwebp5]
-      run_dep: [libmagickwand-6.q16-2, libwebp5]
+      build_dep: [libmagickwand-dev, libwebp5, ghostscript]
+      run_dep: [libmagickwand-6.q16-2, libwebp5, ghostscript]
     5.6:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3, libwebp6]
+      run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
     7.0:
       type: pecl
-      run_dep: [libmagickwand-6.q16-3, libwebp6]
+      run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
     all:
       type: pecl
-      build_dep: [libmagickwand-dev, libwebp6]
-      run_dep: [libmagickwand-6.q16-6, libwebp-dev]
+      build_dep: [libmagickwand-dev, libwebp6, ghostscript]
+      run_dep: [libmagickwand-6.q16-6, libwebp-dev, ghostscript]
       # https://bugs.php.net/bug.php?id=77683
       post: sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml
   imap:

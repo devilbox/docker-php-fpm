@@ -12,6 +12,7 @@ RUN set -eux \
 		alien \
 		firebird-dev \
 		freetds-dev \
+		ghostscript \
 		libaio-dev \
 		libbz2-dev \
 		libc-client-dev \
@@ -703,6 +704,7 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	ghostscript \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
