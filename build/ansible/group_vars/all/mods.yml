@@ -833,6 +833,10 @@ extensions_available:
       # TODO: This is a nasty work-around to fix current phpredis implementation for PHP 8.0
       command: |
         sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
+        && sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
         && phpize \
         && ./configure --enable-redis \
         && make -j$(getconf _NPROCESSORS_ONLN) \

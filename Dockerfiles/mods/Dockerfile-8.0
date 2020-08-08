@@ -323,6 +323,10 @@ RUN set -eux \
 	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
 	# Custom:       Install command
 	&& sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
+&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
+&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
+&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
+&& sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
 && phpize \
 && ./configure --enable-redis \
 && make -j$(getconf _NPROCESSORS_ONLN) \
