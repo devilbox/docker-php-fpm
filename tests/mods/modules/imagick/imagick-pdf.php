@@ -20,9 +20,12 @@ if (version_compare($PHP_VERSION, '8.0.0', '>=')) {
         exit(0);
 }
 
+$dir = realpath(dirname(__FILE__));
+$file = $dir . DIRECTORY_SEPARATOR . 'dummy.pdf';
+
 $img = new Imagick();
 
-if ($img->readImage('dummy.pdf') !== True) {
+if ($img->readImage($file) !== True) {
 	echo 'FAIL: newImage()';
 	exit(1);
 }

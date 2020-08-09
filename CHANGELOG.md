@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.109
+
+#### Fixed
+- Fixed absolute paths in tests
+
+
 ## Release 0.108
 
 #### Added
