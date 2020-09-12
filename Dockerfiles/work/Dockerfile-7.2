@@ -239,7 +239,7 @@ RUN set -eux \
 && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
-	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
+	&& ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel \
 	\
 # -------------------- linkcheck --------------------
 	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \

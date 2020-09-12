@@ -553,7 +553,7 @@ software_available:
         && cd /usr/local/src/laravel-installer \
         && git checkout v4.0.0 \
       post:
-        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
+        ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel
     all:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
