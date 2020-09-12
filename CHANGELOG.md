@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.110
+
+#### Fixed
+- [169](https://github.com/devilbox/docker-php-fpm/issues/169) Fixes download for drupal console
+
+
 ## Release 0.109
 
 #### Fixed

@@ -498,7 +498,8 @@ software_available:
     disabled: [5.2, 5.3, 5.4, 8.0] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]'
     all:
-      command: curl -sS -L --fail https://drupalconsole.com/installer -L -o /usr/local/bin/drupal
+      pre: DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')"
+      command: curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
   gitflow:
     check: git-flow version | grep -E '[0-9][.0-9]+'
