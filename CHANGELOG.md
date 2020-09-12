@@ -8,6 +8,7 @@
 
 #### Fixed
 - [169](https://github.com/devilbox/docker-php-fpm/issues/169) Fixes download for drupal console
+- Fixes laravel installer for PHP 7.2
 
 
 ## Release 0.109

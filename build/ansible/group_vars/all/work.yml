@@ -547,6 +547,13 @@ software_available:
         && git checkout $(git tag | grep '^v2\.3\.' | sort -u | tail -1) \
       post:
         ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
+    7.2:
+      pre: |
+        git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
+        && cd /usr/local/src/laravel-installer \
+        && git checkout v4.0.0 \
+      post:
+        ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel
     all:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \

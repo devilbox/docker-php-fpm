@@ -233,13 +233,13 @@ RUN set -eux \
 # -------------------- laravel --------------------
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
 && cd /usr/local/src/laravel-installer \
-&& git checkout $(git describe --abbrev=0 --tags) \
+&& git checkout v4.0.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
 && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
 && rm -rf /usr/local/src/laravel-installer/laravel/.git \
  \
-	&& ln -s /usr/local/src/laravel-installer/bin/laravel /usr/local/bin/laravel \
+	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 	\
 # -------------------- linkcheck --------------------
 	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
