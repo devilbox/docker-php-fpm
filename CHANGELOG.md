@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.112
+
+#### Added
+- Added vips extension
+
+
 ## Release 0.111
 
 #### Added
