@@ -1019,6 +1019,45 @@ extensions_available:
       configure: --enable-uploadprogress
   vips:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    7.0:
+      build_dep:
+        - fftw-dev
+        - gobject-introspection
+        - gtk-doc-tools
+        - libexif-dev
+        - libexpat1-dev
+        - libfftw3-dev
+        - libgif-dev
+        - libglib2.0-dev
+        - libmagick++-dev
+        - libmagickcore-6.q16-dev
+        - libmagickwand-dev
+        - libpoppler-glib-dev
+        - librsvg2-dev
+        - libtool
+        - libwebp-dev
+        - libwebpdemux2
+        - libwebpmux2
+      run_dep:
+        - fftw2
+        - gir1.2-poppler-0.18
+        - imagemagick-6.q16
+        - libexif12
+        - libexpat1
+        - libfftw3-3
+        - libgif7
+        - libglib2.0-0
+        - libmagick++-6.q16-7
+        - libmagick++-6.q16hdri-7
+        - libmagickcore-6.q16-3
+        - libmagickcore-6.q16-3-extra
+        - libmagickwand-6.q16-3
+        - libmagickwand-6.q16hdri-3
+        - libpoppler-glib8
+        - librsvg2-2
+        - libwebp6
+        - libwebpdemux2
+        - libwebpmux2
     all:
       type: pecl
       pre: |

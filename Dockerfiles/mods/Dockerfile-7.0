@@ -32,7 +32,6 @@ RUN set -eux \
 		libgmp-dev \
 		libib-util \
 		libicu-dev \
-		libimagequant-dev \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
@@ -61,7 +60,7 @@ RUN set -eux \
 		libwebp-dev \
 		libwebp6 \
 		libwebpdemux2 \
-		libwebpmux3 \
+		libwebpmux2 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -840,15 +839,13 @@ RUN set -eux \
 	libgif7 \
 	libglib2.0-0 \
 	libicu57 \
-	libimagequant0 \
 	libjpeg62-turbo \
-	libmagick++-6.q16-8 \
-	libmagick++-6.q16hdri-8 \
-	libmagickcore-6.q16-6 \
-	libmagickcore-6.q16-6-extra \
+	libmagick++-6.q16-7 \
+	libmagick++-6.q16hdri-7 \
+	libmagickcore-6.q16-3 \
+	libmagickcore-6.q16-3-extra \
 	libmagickwand-6.q16-3 \
-	libmagickwand-6.q16-6 \
-	libmagickwand-6.q16hdri-6 \
+	libmagickwand-6.q16hdri-3 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
@@ -865,7 +862,7 @@ RUN set -eux \
 	libvpx4 \
 	libwebp6 \
 	libwebpdemux2 \
-	libwebpmux3 \
+	libwebpmux2 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
