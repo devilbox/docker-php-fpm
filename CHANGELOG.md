@@ -8,6 +8,7 @@
 
 #### Added
 - Added vips extension
+- Added xlswriter extension
 
 
 ## Release 0.111

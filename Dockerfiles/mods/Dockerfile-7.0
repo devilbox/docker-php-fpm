@@ -734,6 +734,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: xlswriter --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xlswriter \
+	# Enabling
+	&& docker-php-ext-enable xlswriter \
+	&& true
+
+
 # -------------------- Installing PHP Extension: yaml --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -1077,6 +1088,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
+	&& php -m | grep -oiE '^xlswriter$' \
+	&& php-fpm -m | grep -oiE '^xlswriter$' \
 	&& php -m | grep -oiE '^yaml$' \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
