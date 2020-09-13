@@ -652,7 +652,7 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>8.0</th>
    <td id="80-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="80-mods">bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, intl, json, ldap, libxml, mbstring, memcached, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xml, xmlreader, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+   <td id="80-mods">bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, intl, json, ldap, libxml, mbstring, memcached, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xml, xmlreader, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
   </tr>
  </tbody>
 </table>

@@ -413,6 +413,22 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: xdebug --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         GIT extension
+	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
+	&& cd /tmp/xdebug \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-xdebug \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+	# Enabling
+	&& docker-php-ext-enable xdebug \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xsl --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -659,6 +675,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tidy$' \
 	&& php -m | grep -oiE '^tokenizer$' \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
+	&& php -m | grep -oiE '^xdebug$' \
+	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \
 	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
