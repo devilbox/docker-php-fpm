@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.111
+
+#### Added
+- Added xdebug for PHP 8.0
+
+
 ## Release 0.110
 
 #### Fixed
