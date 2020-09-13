@@ -219,7 +219,8 @@ RUN set -eux \
  \
 	\
 # -------------------- drupalconsole --------------------
-	&& curl -sS -L --fail https://drupalconsole.com/installer -L -o /usr/local/bin/drupal \
+	&& DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')" \
+	&& curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal \
 	&& chmod +x /usr/local/bin/drupal \
 	\
 # -------------------- gitflow --------------------
@@ -232,7 +233,7 @@ RUN set -eux \
 # -------------------- laravel --------------------
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
 && cd /usr/local/src/laravel-installer \
-&& git checkout $(git describe --abbrev=0 --tags) \
+&& git checkout v4.0.0 \
  \
 	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
 && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
