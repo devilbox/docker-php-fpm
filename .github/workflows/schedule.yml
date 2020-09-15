@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: "[ PHP-${{ matrix.version }} (ref: $${{ ,matrix.refs }} ]"
+    name: "[ PHP-${{ matrix.version }} (ref: ${{ matrix.refs }} ]"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: False
