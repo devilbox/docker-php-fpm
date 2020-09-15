@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: "[ ${{ matrix.version }} ]"
+    name: "[ PHP-${{ matrix.version }} (ref: $${{ ,matrix.refs }} ]"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: False
@@ -32,7 +32,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          ref: ${REF}
+          fetch-depth: 0
+
+      - name: Checkout ref
+        run: |
+          git checkout ${REF}
         env:
           REF: ${{ matrix.refs }}
 
