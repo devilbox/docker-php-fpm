@@ -33,9 +33,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          ref: ${REF}
-        env:
-          REF: ${{ matrix.refs }}
+          ref: ${{ matrix.refs }}
 
       - name: Show git info
         run: |
