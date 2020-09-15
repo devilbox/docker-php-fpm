@@ -122,9 +122,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -139,9 +141,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -160,9 +164,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -177,9 +183,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -198,9 +206,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -215,9 +225,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -236,9 +248,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -253,9 +267,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -286,9 +302,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
               sleep 10;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
