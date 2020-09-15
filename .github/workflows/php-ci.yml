@@ -120,7 +120,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -128,7 +128,7 @@ jobs:
           retry make build-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Base
         run: |
@@ -139,7 +139,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -147,7 +147,7 @@ jobs:
           retry make test-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -162,7 +162,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -170,7 +170,7 @@ jobs:
           retry make build-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Mods
         run: |
@@ -181,7 +181,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -189,7 +189,7 @@ jobs:
           retry make test-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -204,7 +204,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -212,7 +212,7 @@ jobs:
           retry make build-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Prod
         run: |
@@ -223,7 +223,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -231,7 +231,7 @@ jobs:
           retry make test-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -246,7 +246,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -254,7 +254,7 @@ jobs:
           retry make build-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Work
         run: |
@@ -265,7 +265,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -273,7 +273,7 @@ jobs:
           retry make test-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -300,7 +300,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -334,7 +334,7 @@ jobs:
           fi
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
         # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
         if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
             && (
