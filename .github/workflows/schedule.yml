@@ -43,16 +43,14 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
+          if [ -n "$( git tag --points-at HEAD )" ]; then
             GIT_TYPE=TAG
-            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
-          else
+            GIT SLUG="$( git tag --points-at HEAD )"
+          elif [ "$( git rev-parse --abbrev-ref HEAD )" != "HEAD" ]; then
             GIT_TYPE=BRANCH
-            if [ -n "${GITHUB_HEAD_REF}" ]; then
-              GIT_SLUG="${GITHUB_HEAD_REF}"
-            else
-              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
-            fi
+            GIT SLUG="$( git rev-parse --abbrev-ref HEAD )"
+          else
+            false
           fi
           echo ::set-env name=GIT_TYPE::${GIT_TYPE}
           echo ::set-env name=GIT_SLUG::${GIT_SLUG}
