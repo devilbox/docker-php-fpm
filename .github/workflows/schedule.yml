@@ -45,10 +45,10 @@ jobs:
         run: |
           if [ -n "$( git tag --points-at HEAD )" ]; then
             GIT_TYPE=TAG
-            GIT SLUG="$( git tag --points-at HEAD )"
+            GIT_SLUG="$( git tag --points-at HEAD )"
           elif [ "$( git rev-parse --abbrev-ref HEAD )" != "HEAD" ]; then
             GIT_TYPE=BRANCH
-            GIT SLUG="$( git rev-parse --abbrev-ref HEAD )"
+            GIT_SLUG="$( git rev-parse --abbrev-ref HEAD )"
           else
             false
           fi
