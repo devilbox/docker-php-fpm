@@ -69,10 +69,6 @@ install:
 ### Check generation changes, build and test
 ###
 before_script:
-  # Regenerate Dockerfiles and make sure nothing has changed (every stage)
-  - make gen-dockerfiles
-  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
-
   # Build (multiple tries due to network outages)
   - retry make build-base VERSION=${PHP}
   #- retry make test-base  VERSION=${PHP}
@@ -85,10 +81,6 @@ before_script:
 
   - retry make build-work VERSION=${PHP}
   - retry make test-work  VERSION=${PHP}
-
-  # Test if PHP modules have changed
-  - make gen-readme VERSION=${PHP}
-  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
 
 ###
