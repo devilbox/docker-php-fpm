@@ -1,0 +1,100 @@
+---
+
+name: schedule
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'
+
+jobs:
+  build:
+    name: "[ ${{ matrix.version }} ]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        version:
+          - '5.2'
+          - '5.3'
+          - '5.4'
+          - '5.5'
+          - '5.6'
+          - '7.0'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+        refs:
+          - 'master'
+          - '0.110'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${REF}
+        env:
+          REF: ${{ matrix.refs }}
+
+      - name: Show git info
+        run: |
+            git branch
+            git log | head
+
+      - name: Set variables
+        id: vars
+        run: |
+          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
+            GIT_TYPE=TAG
+            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
+          else
+            GIT_TYPE=BRANCH
+            if [ -n "${GITHUB_HEAD_REF}" ]; then
+              GIT_SLUG="${GITHUB_HEAD_REF}"
+            else
+              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
+            fi
+          fi
+          echo ::set-env name=GIT_TYPE::${GIT_TYPE}
+          echo ::set-env name=GIT_SLUG::${GIT_SLUG}
+
+      - name: Publish images (only repo owner)
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                return 0;
+              fi;
+              sleep 10;
+            done;
+            return 1;
+          }
+
+          # Info output
+          echo "Git Type: ${GIT_TYPE}"
+          echo "Git Slug: ${GIT_SLUG}"
+          # Login
+          echo "retry make login USER= PASS="
+          # Push
+          if [ "${GIT_TYPE}" = "TAG" ]; then
+            echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+            echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+          else
+            if [ "${GIT_SLUG}" = "master" ]; then
+              echo "retry make push-base VERSION=${VERSION}"
+              echo "retry make push-mods VERSION=${VERSION}"
+              echo "retry make push-prod VERSION=${VERSION}"
+              echo "retry make push-work VERSION=${VERSION}"
+            else
+              echo "retry make push-base VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-mods VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-prod VERSION=${VERSION}-${GIT_SLUG}"
+              echo "retry make push-work VERSION=${VERSION}-${GIT_SLUG}"
+            fi
+          fi
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 5
