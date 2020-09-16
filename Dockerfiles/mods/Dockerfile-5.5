@@ -704,6 +704,8 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.5-mods"
 ARG EXT_DIR
 COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
 COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 
 

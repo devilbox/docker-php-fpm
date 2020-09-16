@@ -62,14 +62,11 @@ jobs:
 
 
   build:
-    name: "[ ${{ matrix.version }} ]"
+    name: "[ PHP-${{ matrix.version }} ]"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: False
       matrix:
-        # Adding all targets and only run them if they exist.
-        # Prevents us from forgetting to update this in case
-        # we add new envs in terragrunt.
         version:
           - '5.2'
           - '5.3'
@@ -88,7 +85,7 @@ jobs:
       # Checkout repository
       # ------------------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Set variables
         id: vars
@@ -105,7 +102,6 @@ jobs:
               GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
             fi
           fi
-
           # Export variable
           # # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions#set-an-environment-variable-set-env
           echo ::set-env name=GIT_TYPE::${GIT_TYPE}
@@ -121,16 +117,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make build-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Base
         run: |
@@ -138,16 +136,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make test-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -159,16 +159,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make build-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Mods
         run: |
@@ -176,16 +178,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make test-mods VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -197,16 +201,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make build-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Prod
         run: |
@@ -214,16 +220,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make test-prod VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -235,16 +243,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make build-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
       - name: Test Work
         run: |
@@ -252,16 +262,18 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
           retry make test-work VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
 
 
       # ------------------------------------------------------------
@@ -278,7 +290,6 @@ jobs:
       # ------------------------------------------------------------
       # Push build artifacts
       # ------------------------------------------------------------
-
       # Only run this, if the PR was created by the repo owner
       - name: Publish images (only repo owner)
         run: |
@@ -286,9 +297,11 @@ jobs:
             for n in $(seq ${RETRIES}); do
               echo "[${n}/${RETRIES}] ${*}";
               if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 10;
+              sleep 2;
+              echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
           }
@@ -321,7 +334,7 @@ jobs:
           fi
         env:
           VERSION: ${{ matrix.version }}
-          RETRIES: 5
+          RETRIES: 20
         # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
         if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
             && (

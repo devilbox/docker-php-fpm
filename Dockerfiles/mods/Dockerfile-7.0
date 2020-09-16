@@ -10,42 +10,57 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		alien \
+		fftw-dev \
 		firebird-dev \
 		freetds-dev \
 		ghostscript \
+		gobject-introspection \
+		gtk-doc-tools \
 		libaio-dev \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-dev \
 		libevent-dev \
+		libexif-dev \
+		libexpat1-dev \
 		libfbclient2 \
+		libfftw3-dev \
 		libfreetype6-dev \
+		libgif-dev \
+		libglib2.0-dev \
 		libgmp-dev \
 		libib-util \
 		libicu-dev \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		libmagick++-dev \
+		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
+		libpoppler-glib-dev \
 		libpq-dev \
 		libpspell-dev \
 		librabbitmq-dev \
 		librdkafka-dev \
 		librecode-dev \
+		librsvg2-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libssh2-1-dev \
 		libssl-dev \
 		libtidy-dev \
+		libtool \
 		libvpx-dev \
 		libwebp-dev \
 		libwebp6 \
+		libwebpdemux2 \
+		libwebpmux2 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -659,6 +674,26 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: vips --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& git clone https://github.com/libvips/libvips /tmp/libvips \
+&& cd /tmp/libvips \
+&& ./autogen.sh \
+&& make -j$(getconf _NPROCESSORS_ONLN) \
+&& make install \
+&& cd /tmp \
+&& rm -rf /tmp/libvips \
+ \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install vips \
+	# Enabling
+	&& docker-php-ext-enable vips \
+	&& true
+
+
 # -------------------- Installing PHP Extension: wddx --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -695,6 +730,17 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xlswriter --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xlswriter \
+	# Enabling
+	&& docker-php-ext-enable xlswriter \
 	&& true
 
 
@@ -766,6 +812,8 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 7.0-mods"
 ARG EXT_DIR
 COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
 COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 
 
@@ -775,29 +823,46 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	fftw2 \
 	ghostscript \
+	gir1.2-poppler-0.18 \
+	imagemagick-6.q16 \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
 	libenchant1c2a \
+	libexif12 \
+	libexpat1 \
 	libfbclient2 \
+	libfftw3-3 \
 	libfreetype6 \
+	libgif7 \
+	libglib2.0-0 \
 	libicu57 \
 	libjpeg62-turbo \
+	libmagick++-6.q16-7 \
+	libmagick++-6.q16hdri-7 \
+	libmagickcore-6.q16-3 \
+	libmagickcore-6.q16-3-extra \
 	libmagickwand-6.q16-3 \
+	libmagickwand-6.q16hdri-3 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
 	libpng16-16 \
+	libpoppler-glib8 \
 	libpq5 \
 	librabbitmq4 \
 	librdkafka1 \
 	librecode0 \
+	librsvg2-2 \
 	libssh2-1 \
 	libsybdb5 \
 	libtidy5 \
 	libvpx4 \
 	libwebp6 \
+	libwebpdemux2 \
+	libwebpmux2 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
@@ -1004,6 +1069,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
 	&& php -m | grep -oiE '^uploadprogress$' \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
+	&& php -m | grep -oiE '^vips$' \
+	&& php-fpm -m | grep -oiE '^vips$' \
 	&& php -m | grep -oiE '^wddx$' \
 	&& php-fpm -m | grep -oiE '^wddx$' \
 	&& php -m | grep -oiE '^xdebug$' \
@@ -1018,6 +1085,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
+	&& php -m | grep -oiE '^xlswriter$' \
+	&& php-fpm -m | grep -oiE '^xlswriter$' \
 	&& php -m | grep -oiE '^yaml$' \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \

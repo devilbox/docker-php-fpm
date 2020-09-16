@@ -101,6 +101,7 @@ extensions_enabled:
   - tidy
   - tokenizer
   - uploadprogress
+  - vips
   - wddx
   - xdebug
   - xml
@@ -108,6 +109,7 @@ extensions_enabled:
   - xmlrpc
   - xmlwriter
   - xsl
+  - xlswriter
   - yaml
   - zip
 
@@ -560,7 +562,7 @@ extensions_available:
         \
         && phpize \
         && ./configure --enable-mongodb \
-        && make all \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
     all:
       type: pecl
@@ -1015,6 +1017,97 @@ extensions_available:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
+  vips:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    7.0:
+      build_dep:
+        - fftw-dev
+        - gobject-introspection
+        - gtk-doc-tools
+        - libexif-dev
+        - libexpat1-dev
+        - libfftw3-dev
+        - libgif-dev
+        - libglib2.0-dev
+        - libmagick++-dev
+        - libmagickcore-6.q16-dev
+        - libmagickwand-dev
+        - libpoppler-glib-dev
+        - librsvg2-dev
+        - libtool
+        - libwebp-dev
+        - libwebpdemux2
+        - libwebpmux2
+      run_dep:
+        - fftw2
+        - gir1.2-poppler-0.18
+        - imagemagick-6.q16
+        - libexif12
+        - libexpat1
+        - libfftw3-3
+        - libgif7
+        - libglib2.0-0
+        - libmagick++-6.q16-7
+        - libmagick++-6.q16hdri-7
+        - libmagickcore-6.q16-3
+        - libmagickcore-6.q16-3-extra
+        - libmagickwand-6.q16-3
+        - libmagickwand-6.q16hdri-3
+        - libpoppler-glib8
+        - librsvg2-2
+        - libwebp6
+        - libwebpdemux2
+        - libwebpmux2
+    all:
+      type: pecl
+      pre: |
+        git clone https://github.com/libvips/libvips /tmp/libvips \
+        && cd /tmp/libvips \
+        && ./autogen.sh \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+        && cd /tmp \
+        && rm -rf /tmp/libvips \
+      build_dep:
+        - fftw-dev
+        - gobject-introspection
+        - gtk-doc-tools
+        - libexif-dev
+        - libexpat1-dev
+        - libfftw3-dev
+        - libgif-dev
+        - libglib2.0-dev
+        - libimagequant-dev
+        - libmagick++-dev
+        - libmagickcore-6.q16-dev
+        - libmagickwand-dev
+        - libpoppler-glib-dev
+        - librsvg2-dev
+        - libtool
+        - libwebp-dev
+        - libwebpdemux2
+        - libwebpmux3
+      run_dep:
+        - fftw2
+        - gir1.2-poppler-0.18
+        - imagemagick-6.q16
+        - libexif12
+        - libexpat1
+        - libfftw3-3
+        - libgif7
+        - libglib2.0-0
+        - libimagequant0
+        - libmagick++-6.q16-8
+        - libmagick++-6.q16hdri-8
+        - libmagickcore-6.q16-6
+        - libmagickcore-6.q16-6-extra
+        - libmagickwand-6.q16-6
+        - libmagickwand-6.q16hdri-6
+        - libpoppler-glib8
+        - librsvg2-2
+        - libwebp6
+        - libwebpdemux2
+        - libwebpmux3
   wddx:
     # https://wiki.php.net/rfc/deprecate-and-remove-ext-wddx
     disabled: [7.4, 8.0]
@@ -1048,6 +1141,12 @@ extensions_available:
       configure: --enable-xdebug
     all:
       type: pecl
+  xlswriter:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    all:
+      type: pecl
+      build_dep: [zlib1g-dev]
+      run_dep: []
   xml:
     already_avail: "{{ php_all_versions }}"
   xmlreader:

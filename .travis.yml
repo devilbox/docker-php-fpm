@@ -69,10 +69,6 @@ install:
 ### Check generation changes, build and test
 ###
 before_script:
-  # Regenerate Dockerfiles and make sure nothing has changed (every stage)
-  - make gen-dockerfiles
-  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
-
   # Build (multiple tries due to network outages)
   - retry make build-base VERSION=${PHP}
   #- retry make test-base  VERSION=${PHP}
@@ -86,54 +82,50 @@ before_script:
   - retry make build-work VERSION=${PHP}
   - retry make test-work  VERSION=${PHP}
 
-  # Test if PHP modules have changed
-  - make gen-readme VERSION=${PHP}
-  - git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
-
 
 ###
 ### Push to Dockerhub
 ###
 script:
   - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
-      make login USERNAME="${DOCKER_USERNAME}" PASSWORD="${DOCKER_PASSWORD}";
+      retry make login USERNAME="${DOCKER_USERNAME}" PASSWORD="${DOCKER_PASSWORD}";
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
         echo "Pushing latest";
-        make push TAG="${PHP}-base" &&
-        make push TAG="${PHP}-mods" &&
-        make push TAG="${PHP}-prod" &&
-        make push TAG="${PHP}-work";
+        retry make push TAG="${PHP}-base" &&
+        retry make push TAG="${PHP}-mods" &&
+        retry make push TAG="${PHP}-prod" &&
+        retry make push TAG="${PHP}-work";
       elif [[ ${TRAVIS_BRANCH} =~ ^(release-[.0-9]+)$ ]]; then
         echo "Pushing branch ${TRAVIS_BRANCH}";
-        make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
-        make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
-        make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
-        make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_BRANCH}" &&
-        make push TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
-        make push TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
-        make push TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
-        make push TAG="${PHP}-work-${TRAVIS_BRANCH}";
+        retry make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
+        retry make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
+        retry make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
+        retry make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_BRANCH}" &&
+        retry make push TAG="${PHP}-base-${TRAVIS_BRANCH}" &&
+        retry make push TAG="${PHP}-mods-${TRAVIS_BRANCH}" &&
+        retry make push TAG="${PHP}-prod-${TRAVIS_BRANCH}" &&
+        retry make push TAG="${PHP}-work-${TRAVIS_BRANCH}";
       elif [ -n "${TRAVIS_TAG}" ]; then
         echo "Pushing tag ${TRAVIS_TAG}";
-        make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_TAG}" &&
-        make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_TAG}" &&
-        make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_TAG}" &&
-        make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_TAG}" &&
-        make push TAG="${PHP}-base-${TRAVIS_TAG}" &&
-        make push TAG="${PHP}-mods-${TRAVIS_TAG}" &&
-        make push TAG="${PHP}-prod-${TRAVIS_TAG}" &&
-        make push TAG="${PHP}-work-${TRAVIS_TAG}";
+        retry make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${TRAVIS_TAG}" &&
+        retry make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${TRAVIS_TAG}" &&
+        retry make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${TRAVIS_TAG}" &&
+        retry make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${TRAVIS_TAG}" &&
+        retry make push TAG="${PHP}-base-${TRAVIS_TAG}" &&
+        retry make push TAG="${PHP}-mods-${TRAVIS_TAG}" &&
+        retry make push TAG="${PHP}-prod-${TRAVIS_TAG}" &&
+        retry make push TAG="${PHP}-work-${TRAVIS_TAG}";
       elif [ "${TRAVIS_EVENT_TYPE}" = "cron" ]; then
         if MY_TAG="$( git describe --exact-match "$(git rev-parse HEAD)" 2>/dev/null )"; then
           echo "Pushing cron tag ${MY_TAG}";
-          make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${MY_TAG}" &&
-          make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${MY_TAG}" &&
-          make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${MY_TAG}" &&
-          make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${MY_TAG}" &&
-          make push TAG="${PHP}-base-${MY_TAG}" &&
-          make push TAG="${PHP}-mods-${MY_TAG}" &&
-          make push TAG="${PHP}-prod-${MY_TAG}" &&
-          make push TAG="${PHP}-work-${MY_TAG}";
+          retry make tag OLD_TAG="${PHP}-base" NEW_TAG="${PHP}-base-${MY_TAG}" &&
+          retry make tag OLD_TAG="${PHP}-mods" NEW_TAG="${PHP}-mods-${MY_TAG}" &&
+          retry make tag OLD_TAG="${PHP}-prod" NEW_TAG="${PHP}-prod-${MY_TAG}" &&
+          retry make tag OLD_TAG="${PHP}-work" NEW_TAG="${PHP}-work-${MY_TAG}" &&
+          retry make push TAG="${PHP}-base-${MY_TAG}" &&
+          retry make push TAG="${PHP}-mods-${MY_TAG}" &&
+          retry make push TAG="${PHP}-prod-${MY_TAG}" &&
+          retry make push TAG="${PHP}-work-${MY_TAG}";
         fi
       else
         echo "Skipping push to dockerhub on normal branches";

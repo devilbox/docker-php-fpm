@@ -4,6 +4,16 @@
 ## Unreleased
 
 
+## Release 0.112
+
+#### Fixed
+- Fixes [166](https://github.com/devilbox/docker-php-fpm/issues/166) Missing `locale-gen` binary
+
+#### Added
+- Added vips extension
+- Added xlswriter extension
+
+
 ## Release 0.111
 
 #### Added
