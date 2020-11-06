@@ -4,6 +4,19 @@
 ## Unreleased
 
 
+## Release 0.114
+
+#### Fixed
+- Disabled gd-jis: https://bugs.php.net/bug.php?id=73582
+
+#### Added
+- PHP module mongodb is added to PHP 8.0
+
+#### Changed
+- Composer is updated to v2 (/usr/local/bin/composer)
+- Composer is available as v1 and v2 (/usr/local/bin/composer-[12])
+
+
 ## Release 0.113
 
 #### Fixed
