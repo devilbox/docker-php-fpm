@@ -1,0 +1,560 @@
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
+FROM devilbox/php-fpm:8.1-prod
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+
+###
+### Labels
+###
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="8.1-work"
+LABEL "org.opencontainers.image.title"="PHP-FPM 8.1-work"
+LABEL "org.opencontainers.image.description"="PHP-FPM 8.1-work"
+
+
+###
+### Envs
+###
+ENV BASH_PROFILE=".bashrc"
+
+
+###
+### Install Tools
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		curl \
+		dirmngr \
+		gnupg \
+		\
+	&& echo "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
+	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 \
+	&& echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" > /etc/apt/sources.list.d/mongo.list \
+	&& curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	&& curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
+	\
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		ack-grep \
+		aspell \
+		autoconf \
+		automake \
+		bash-completion \
+		binutils \
+		blackfire-agent \
+		build-essential \
+		bzip2 \
+		certbot \
+		coreutils \
+		dnsutils \
+		dos2unix \
+		file \
+		gawk \
+		gcc \
+		git \
+		git-flow \
+		git-svn \
+		ghostscript \
+		graphviz \
+		gsfonts \
+		hostname \
+		htop \
+		imagemagick \
+		iputils-ping \
+		jq \
+		less \
+		libc-dev \
+		libffi-dev \
+		libssl-dev \
+		libyaml-dev \
+		locales \
+		make \
+		mongodb-org-shell \
+		mongodb-org-tools \
+		moreutils \
+		mariadb-client \
+		mupdf \
+		mupdf-tools \
+		nano \
+		net-tools \
+		netcat \
+		openssh-client \
+		patch \
+		patchelf \
+		postgresql-client \
+		redis-tools \
+		rsync \
+		rubygems \
+		ruby-dev \
+		shellcheck \
+		silversearcher-ag \
+		subversion \
+		sudo \
+		tig \
+		tree \
+		unzip \
+		vim \
+		w3m \
+		wget \
+		whois \
+		xz-utils \
+		yarn \
+		zip \
+		zlib1g-dev \
+		zsh \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install custom software
+###
+RUN set -eux \
+# -------------------- composer --------------------
+	&& curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
+&& curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+&& chmod +x /usr/local/bin/composer-1 \
+&& chmod +x /usr/local/bin/composer-2 \
+&& ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+ \
+	\
+# -------------------- pip --------------------
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+  libpython-dev \
+&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+&& rm -rf /var/lib/apt/lists/* \
+\
+&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+ \
+	\
+# -------------------- nvm --------------------
+	&& git clone https://github.com/creationix/nvm /opt/nvm \
+&& cd /opt/nvm \
+&& git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
+\
+&& { \
+  echo 'export NVM_DIR="/opt/nvm"'; \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+} >> /home/devilbox/.bashrc \
+\
+&& chown -R devilbox:devilbox /opt/nvm \
+ \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
+ \
+	\
+# -------------------- awesomeci --------------------
+	&& git clone https://github.com/cytopia/awesome-ci.git /usr/local/src/awesome-ci \
+&& cd /usr/local/src/awesome-ci \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& ./configure --prefix=/usr/local \
+&& make install \
+&& cd / \
+&& rm -rf /usr/local/src/awesome-ci \
+ \
+	\
+# -------------------- deployer --------------------
+	&& curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
+	&& chmod +x /usr/local/bin/dep \
+	\
+# -------------------- gitflow --------------------
+	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+&& cd /tmp/gitflow \
+&& make install \
+&& cd / && rm -rf /tmp/gitflow \
+ \
+	\
+# -------------------- linkcheck --------------------
+	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
+&& chmod +x /usr/local/bin/linkcheck \
+ \
+	\
+# -------------------- linuxbrew --------------------
+	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
+&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
+&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
+    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
+&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
+ \
+	\
+# -------------------- mhsendmail --------------------
+	&& curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+&& chmod +x mhsendmail_linux_amd64 \
+&& mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
+ \
+	\
+# -------------------- mysqldumpsecure --------------------
+	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+&& cd /usr/local/src/mysqldump-secure \
+&& git checkout $(git describe --abbrev=0 --tags) \
+&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+&& touch /var/log/mysqldump-secure.log \
+&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+&& chmod 0400 /etc/mysqldump-secure.conf \
+&& chmod 0400 /etc/mysqldump-secure.cnf \
+&& chmod 0644 /var/log/mysqldump-secure.log \
+&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+&& cd / \
+&& rm -rf /usr/local/src/mysqldump-secure \
+ \
+	\
+# -------------------- phpcs --------------------
+	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcs \
+ \
+	\
+# -------------------- phpcbf --------------------
+	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+&& chmod +x /usr/local/bin/phpcbf \
+ \
+	\
+# -------------------- phpmd --------------------
+	&& curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
+&& mv phpmd.phar /usr/local/bin/phpmd \
+&& chmod +x /usr/local/bin/phpmd \
+ \
+	\
+# -------------------- symfony --------------------
+	&& SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )" \
+	&& curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_amd64" > /usr/local/bin/symfony \
+	&& chmod +x /usr/local/bin/symfony \
+	\
+# -------------------- wkhtmltopdf --------------------
+	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+  libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+&& dpkg -i /tmp/wkhtmltopdf.deb \
+&& rm -f /tmp/wkhtmltopdf.deb \
+ \
+	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+&& rm -rf /var/lib/apt/lists/* \
+ \
+	\
+# -------------------- wpcli --------------------
+	&& curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& chmod +x /usr/local/bin/wp \
+	\
+# -------------------- cleanup --------------------
+	&& rm -rf /home/${MY_USER}/.*json \
+&& rm -rf /home/${MY_USER}/.cache \
+&& rm -rf /home/${MY_USER}/.composer \
+&& rm -rf /home/${MY_USER}/.config \
+&& rm -rf /home/${MY_USER}/.drush \
+&& rm -rf /home/${MY_USER}/.subversion \
+&& rm -rf /home/${MY_USER}/.v8* \
+\
+&& rm -rf /root/.*json \
+&& rm -rf /root/.cache \
+&& rm -rf /root/.composer \
+&& rm -rf /root/.config \
+&& rm -rf /root/.drush \
+&& rm -rf /root/.subversion \
+&& rm -rf /root/.v8* \
+\
+&& rm -rf /tmp/* \
+&& (rm -rf /tmp/.* || true) \
+ \
+	\
+	\
+	&& (rm -rf /root/.gem || true ) \
+	&& (rm -rf /root/.cache || true) \
+	&& (rm -rf /root/.composer || true) \
+	&& (rm -rf /root/.config || true) \
+	&& (rm -rf /root/.npm || true) \
+	\
+	&& (rm -rf /home/devilbox/.cache || true) \
+	&& (rm -rf /home/devilbox/.composer || true) \
+	&& (rm -rf /home/devilbox/.config || true) \
+	&& (rm -rf /home/devilbox/.npm || true) \
+	\
+	&& (rm -rf /usr/local/src/composer/cache/* || true) \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
+
+
+###
+### Install Composer (PHP)
+###
+RUN set -eux \
+	\
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install npm (Node)
+###
+RUN set -eux \
+# -------------------- angular_cli --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @angular/cli' devilbox \
+	\
+# -------------------- eslint --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force eslint' devilbox \
+	\
+# -------------------- grunt --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt' devilbox \
+	\
+# -------------------- grunt_cli --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt-cli' devilbox \
+	\
+# -------------------- gulp --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force gulp' devilbox \
+	\
+# -------------------- jsonlint --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
+	\
+# -------------------- pm2 --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force pm2' devilbox \
+	\
+# -------------------- mdlint --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
+	\
+# -------------------- sass --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
+	\
+# -------------------- stylelint --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force stylelint' devilbox \
+	\
+# -------------------- vue_cli --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli' devilbox \
+	\
+# -------------------- vue_cli_service_global --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli-service-global' devilbox \
+	\
+# -------------------- webpack --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack' devilbox \
+	\
+# -------------------- webpack_cli --------------------
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
+	\
+	\
+	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+	\
+	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.cache \
+	&& rm -rf /home/devilbox/.config \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install gem (Ruby)
+###
+RUN set -eux \
+# -------------------- mixlib_config --------------------
+	&& gem install mixlib-config -v 2.2.4 \
+	\
+# -------------------- rb_inotify --------------------
+	&& gem install rb-inotify -v 0.9.10 \
+	\
+# -------------------- mdl --------------------
+	&& gem install mdl -v 0.5.0 \
+	\
+	\
+	&& rm -rf /root/.gem \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Install pip (Python) packages
+###
+RUN set -eux \
+# -------------------- ansible --------------------
+	&& pip install --no-cache-dir --force-reinstall ansible || true \
+	\
+# -------------------- yamllint --------------------
+	&& pip install --no-cache-dir --force-reinstall yamllint || true \
+	\
+# -------------------- yq --------------------
+	&& pip install --no-cache-dir --force-reinstall yq || true \
+	\
+	\
+	&& rm -rf /root/.cache/pip \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true) \
+	\
+	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+
+
+###
+### Configure Bash
+###
+RUN \
+	{ \
+		echo "PATH=\${PATH}:/usr/local/bin:/usr/local/sbin:\${HOME}/.yarn/bin:/opt/nvm/versions/node/\$(nvm version default)/bin"; \
+		echo "export PATH"; \
+		echo ". /etc/bash-devilbox"; \
+		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
+
+
+###
+### Verify
+###
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^8.1' \
+	&& /usr/local/sbin/php-fpm --test \
+	\
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
+
+RUN set -eux \
+# -------------------- Software --------------------
+	&& composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+' \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+' \
+	&& regex-grep --version | grep -E '[0-9][.0-9]+' \
+	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
+	&& git-flow version | grep -E '[0-9][.0-9]+' \
+	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
+	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+' \
+	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
+	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
+	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \
+	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' \
+	&& symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+' \
+	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)" \
+	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' \
+	\
+# -------------------- Composer --------------------
+	\
+# -------------------- PIP --------------------
+	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \
+	&& yamllint --version 2>&1 | grep -E '[0-9][.0-9]+' \
+	&& yq --version 2>&1 | grep -E '^yq\s+[0-9][.0-9]+$' \
+	\
+# -------------------- NPM --------------------
+	&& ng  version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' \
+	&& eslint -v | grep -E '[0-9][.0-9]+' \
+	&& grunt --version | grep -E '[0-9][.0-9]+' \
+	&& gulp --version | grep -E '[0-9][.0-9]+' \
+	&& jsonlint --version | grep -E '[0-9][.0-9]+' \
+	&& pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' \
+	&& mdlint --version | grep -E '[0-9][.0-9]+' \
+	&& sass --version | grep -E '[0-9][.0-9]+' \
+	&& stylelint --version | grep -E '[0-9][.0-9]+' \
+	&& vue --version | grep -E '[0-9][.0-9]+' \
+	&& webpack --version | grep -E '[0-9][.0-9]+' \
+	\
+# -------------------- GEM --------------------
+	&& mdl --version | grep -E '[0-9][.0-9]+' \
+	\
+# -------------------- Cleanup --------------------
+	&& rm -rf /home/devilbox/.cache/ \
+	&& rm -rf /home/devilbox/.config/ \
+	&& rm -rf /root/.ansible \
+	&& rm -rf /root/.console \
+	&& rm -rf /root/.composer \
+	&& rm -rf /root/.drush \
+	&& rm -rf /root/.pm2 \
+	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/.* || true)
+
+
+###
+### Copy files
+###
+COPY ./data/php-ini.d/php-8.1.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-8.1.conf /usr/local/etc/php-fpm.conf
+
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+
+###
+### Volumes
+###
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+
+###
+### Ports
+###
+EXPOSE 9000
+
+
+###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+
+###
+### Entrypoint
+###
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

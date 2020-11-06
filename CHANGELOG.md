@@ -7,9 +7,11 @@
 ## Release 0.114
 
 #### Fixed
+- Use latest PHP 8.0 image
 - Disabled gd-jis: https://bugs.php.net/bug.php?id=73582
 
 #### Added
+- Add PHP 8.1
 - PHP module mongodb is added to PHP 8.0
 
 #### Changed
