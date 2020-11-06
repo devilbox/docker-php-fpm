@@ -201,6 +201,7 @@ apt_repositories_available:
 # 7.2:      is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
 # check:    [optional] Include a check command to test if it was installed successfully
+# version:  Composer version: Either '1' or '2' for composer version
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
 # version:  [optional] Specific version of Ruby gem
@@ -211,24 +212,29 @@ composer_available:
     check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+'
     name: asgardcms/asgardcms-installer
     link: asgardcms
+    version: 2
   codeception:
     disabled: [5.2, 8.0]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$'
     name: codeception/codeception
     link: codecept
+    version: 2
   lumen:
     disabled: [5.2, 5.3, 5.4, 8.0]
     check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$'
     name: laravel/lumen-installer
     link: lumen
+    version: 2
   photon:
     disabled: [5.2, 5.3, 5.4, 8.0]
     check: photon --version | grep -E 'Installer [0-9][.0-9]+'
     name: photoncms/installer
     link: photon
+    version: 2
   prestissimo:
     disabled: [5.2, 8.0]
     name: hirak/prestissimo
+    version: 1
 
 
 # -------------------------------------------------------------------------------------------------
@@ -381,7 +387,12 @@ software_available:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+'
     all:
-      command: curl -sS -L --fail https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      command: |
+        curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
+        && curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+        && chmod +x /usr/local/bin/composer-1 \
+        && chmod +x /usr/local/bin/composer-2 \
+        && ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
   # pip is a dependency for others
   pip:
     all:
@@ -456,7 +467,7 @@ software_available:
         && git checkout 7.4.0 \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
         && rm -rf /usr/local/src/drush7/.git \
         && rm -rf /usr/local/src/drush7/docs \
@@ -472,7 +483,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
         && rm -rf /usr/local/src/drush8/.git \
         && rm -rf /usr/local/src/drush8/docs \
@@ -488,7 +499,7 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
         && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
         && rm -rf /usr/local/src/drush9/.git \
         && rm -rf /usr/local/src/drush9/docs \
