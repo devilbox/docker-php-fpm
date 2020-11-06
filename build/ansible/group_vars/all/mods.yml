@@ -145,7 +145,7 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       run_dep: [librabbitmq1]
       type: pecl
@@ -168,7 +168,7 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq4]
   apcu:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     5.3:
       type: pecl
       version: 4.0.11
@@ -187,7 +187,7 @@ extensions_available:
     all:
       type: builtin
   blackfire:
-    disabled: [5.2, 5.3, 5.4, 5.5, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 8.0, 8.1]
     all:
       type: custom
       command: |
@@ -225,7 +225,7 @@ extensions_available:
     all:
       type: builtin
   ffi:
-    already_avail: [8.0]
+    already_avail: [8.0, 8.1]
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: git
@@ -238,7 +238,7 @@ extensions_available:
       build_dep: [libffi-dev]
       run_dep: [libffi6]
   fileinfo:
-    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     5.2:
       type: pecl
       build_dep: [libmagic-dev]
@@ -247,7 +247,7 @@ extensions_available:
   filter:
     already_avail: "{{ php_all_versions }}" # Available by default
   ftp:
-    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     all:
       type: builtin
       configure: --with-openssl-dir
@@ -261,55 +261,58 @@ extensions_available:
         ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
         mkdir /usr/include/freetype2/freetype && \
         ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
-      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.3:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
-      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.4:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
-      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.5:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
-      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.6:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
-      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     7.0:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     7.1:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
     7.2:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
     7.3:
       type: builtin
-      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
     7.4:
       type: builtin
-      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
     8.0:
       type: builtin
-      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
+    8.1:
+      type: builtin
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
-      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
   gettext:
@@ -326,7 +329,7 @@ extensions_available:
   iconv:
     already_avail: "{{ php_all_versions }}"
   igbinary:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       type: pecl
       version: 2.0.7
@@ -345,7 +348,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 5.3, 5.4, 8.0] # Only available since 5.3. 5.3 and 5.4 segfaults
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1] # Only available since 5.3. 5.3 and 5.4 segfaults
     5.5:
       type: pecl
       build_dep: [libmagickwand-dev, libwebp5, ghostscript]
@@ -373,7 +376,7 @@ extensions_available:
         && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
         && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
   imap:
-    disabled: [8.0]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
+    disabled: [8.0, 8.1]   # TODO: re-enable. currently fails with: configure: error: OpenSSL libraries not found.
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
@@ -381,7 +384,7 @@ extensions_available:
       build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
       run_dep: [libc-client2007e]
   interbase:
-    disabled: [7.4, 8.0]
+    disabled: [7.4, 8.0, 8.1]
     all:
       type: builtin
       build_dep: [libfbclient2, libib-util, firebird-dev]
@@ -410,7 +413,7 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu63]
   ioncube:
-    disabled: [7.4, 8.0]
+    disabled: [7.4, 8.0, 8.1]
     all:
       type: custom
       command: |
@@ -434,11 +437,11 @@ extensions_available:
   libxml:
     already_avail: "{{ php_all_versions }}" # Available by default
   mbstring:
-    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     all:
       type: builtin
   mcrypt:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     7.2:
       type: pecl
       version: 1.0.1
@@ -452,7 +455,7 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       type: pecl
       version: 2.2.7
@@ -504,12 +507,24 @@ extensions_available:
         && ./configure --enable-memcached \
         && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
+    8.1:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: |
+        true \
+        # FIXME: This is a work-around to mitigate compile error with PHP 8.1
+        && sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
+        && phpize \
+        && ./configure --enable-memcached \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
     all:
       type: pecl
       build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
       run_dep: [libmemcachedutil2]
   mongo:
-    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1] # Deprecated
     5.2:
       type: pecl
       command: yes yes | pecl install mongo-1.5.8
@@ -518,7 +533,7 @@ extensions_available:
       command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2, 8.0]
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 0.6.3
@@ -535,31 +550,16 @@ extensions_available:
       type: git
       git_url: https://github.com/mongodb/mongo-php-driver
       command: |
-        git checkout v1.6 \
-        && git submodule update --init \
-        # FIXME: This is a work-around to mitigate compile error with PHP 8.0
-        && rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C)/)/g' \
-        && rgrep -I 'TSRMLS_C' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_C,/,/g' \
-        && rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC)/)/g' \
-        && rgrep -I 'TSRMLS_CC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_CC,/,/g' \
-        && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC)/)/g' \
-        && rgrep -I 'TSRMLS_DC' | cut -d':' -f1 | sort -u | xargs -n1 sed -i'' 's/TSRMLS_DC,/,/g' \
-        && sed -i'' 's/TSRMLS_SET_CTX(ctx);/\/\/TSRMLS_SET_CTX(ctx);/g' php_phongo.c \
-        && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' php_phongo.c \
-        && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' phongo_compat.h \
-        && sed -i'' 's/TSRMLS_FETCH();/\/\/TSRMLS_FETCH();/g' src/bson.c \
-        \
-        && sed -i'' 's/php_phongo_handler_binary.compare_objects.*//g' src/BSON/Binary.c \
-        && sed -i'' 's/php_phongo_handler_dbpointer.compare_objects.*//g' src/BSON/DBPointer.c \
-        && sed -i'' 's/php_phongo_handler_int64.compare_objects.*//g' src/BSON/Int64.c \
-        && sed -i'' 's/php_phongo_handler_javascript.compare_objects.*//g' src/BSON/Javascript.c \
-        && sed -i'' 's/php_phongo_handler_objectid.compare_objects.*//g' src/BSON/ObjectId.c \
-        && sed -i'' 's/php_phongo_handler_symbol.compare_objects.*//g' src/BSON/Symbol.c \
-        && sed -i'' 's/php_phongo_handler_timestamp.compare_objects.*//g' src/BSON/Timestamp.c \
-        && sed -i'' 's/php_phongo_handler_regex.compare_objects.*//g' src/BSON/Regex.c \
-        && sed -i'' 's/php_phongo_handler_server.compare_objects.*//g' src/MongoDB/Server.c \
-        && sed -i'' 's/php_phongo_handler_utcdatetime.compare_objects.*//g' src/BSON/UTCDateTime.c \
-        \
+        git submodule update --init \
+        && phpize \
+        && ./configure --enable-mongodb \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+    8.1:
+      type: git
+      git_url: https://github.com/mongodb/mongo-php-driver
+      command: |
+        git submodule update --init \
         && phpize \
         && ./configure --enable-mongodb \
         && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -568,7 +568,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       type: pecl
       version: 0.5.7
@@ -588,7 +588,7 @@ extensions_available:
       type: pecl
   mysql:
     already_avail: [5.2, 5.3]
-    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] # Deprecated in newer versions
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1] # Deprecated in newer versions
     5.6:
       type: builtin
       run_dep: [libmariadbclient18]
@@ -601,9 +601,9 @@ extensions_available:
       type: builtin
   mysqlnd:
     disabled: [5.2]
-    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   oauth:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       type: pecl
       version: 1.2.3
@@ -702,6 +702,9 @@ extensions_available:
     8.0:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    8.1:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
     all:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr,${ORACLE_VERSION_MAJOR}
@@ -731,7 +734,7 @@ extensions_available:
   pdo_sqlite:
     already_avail: "{{ php_all_versions }}"
   pdo_sqlsrv:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0, 8.1]
     7.0:
       type: pecl
       version: 5.3.0
@@ -752,7 +755,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   psr:
-    disabled: [5.2, 5.3, 8.0] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
+    disabled: [5.2, 5.3, 8.0, 8.1] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
     5.4:
       type: pecl
       version: 0.5.1
@@ -765,7 +768,7 @@ extensions_available:
     all:
       type: pecl
   phalcon:
-    disabled: [5.2, 8.0] # TODO: currently disabled for 7.4 as it breaks
+    disabled: [5.2, 8.0, 8.1] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
@@ -802,7 +805,7 @@ extensions_available:
       git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1)
       command: cd build && ./install
   phar:
-    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     5.2:
       type: pecl
       build_dep: [libssl-dev]
@@ -816,7 +819,7 @@ extensions_available:
   readline:
     already_avail: "{{ php_all_versions }}"
   recode:
-    disabled: [7.4, 8.0]
+    disabled: [7.4, 8.0, 8.1]
     already_avail: [5.3, 5.4]
     all:
       type: builtin
@@ -853,12 +856,27 @@ extensions_available:
         && ./configure --enable-redis \
         && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
+    8.1:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
+      # TODO: This is a nasty work-around to fix current phpredis implementation for PHP 8.1
+      command: |
+        sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
+        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
+        && sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
+        && phpize \
+        && ./configure --enable-redis \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
     all:
       type: pecl
   reflection:
-    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   rdkafka:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     5.3:
       type: pecl
       version: 3.0.5
@@ -913,14 +931,14 @@ extensions_available:
       type: builtin
       build_dep: [libsodium-dev]
   solr:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.0, 8.1]
     all:
       type: pecl
       build_dep: [libxml2-dev, libcurl4-openssl-dev]
   spl:
     already_avail: "{{ php_all_versions }}"
   sqlsrv:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0, 8.1]
     7.0:
       type: pecl
       version: 5.3.0
@@ -936,14 +954,14 @@ extensions_available:
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
   ssh2:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     all:
       type: pecl
       version: 1.2
       build_dep: [libssh2-1-dev]
       run_dep: [libssh2-1]
   swoole:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     5.3:
       type: pecl
       version: 1.9.23
@@ -1002,7 +1020,7 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     5.2:
       type: pecl
     5.3:
@@ -1018,7 +1036,7 @@ extensions_available:
       git_url: https://github.com/php/pecl-php-uploadprogress
       configure: --enable-uploadprogress
   vips:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     7.0:
       build_dep:
         - fftw-dev
@@ -1110,7 +1128,7 @@ extensions_available:
         - libwebpmux3
   wddx:
     # https://wiki.php.net/rfc/deprecate-and-remove-ext-wddx
-    disabled: [7.4, 8.0]
+    disabled: [7.4, 8.0, 8.1]
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
@@ -1139,10 +1157,14 @@ extensions_available:
       type: git
       git_url: https://github.com/xdebug/xdebug
       configure: --enable-xdebug
+    8.1:
+      type: git
+      git_url: https://github.com/xdebug/xdebug
+      configure: --enable-xdebug
     all:
       type: pecl
   xlswriter:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     all:
       type: pecl
       build_dep: [zlib1g-dev]
@@ -1152,7 +1174,7 @@ extensions_available:
   xmlreader:
     already_avail: "{{ php_all_versions }}"
   xmlrpc:
-    disabled: [8.0]
+    disabled: [8.0, 8.1]
     7.4:
       type: builtin
       configure: --with-iconv-dir=/usr
@@ -1168,7 +1190,7 @@ extensions_available:
       build_dep: [libxslt-dev]
       run_dep: [libxslt1.1]
   yaml:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     5.3:
       type: pecl
       version: 1.3.2

@@ -195,7 +195,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
-	&& docker-php-ext-configure gd --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-jis-conv --enable-gd-native-ttf \
+	&& docker-php-ext-configure gd --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& true

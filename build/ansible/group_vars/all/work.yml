@@ -154,6 +154,8 @@ apt_repositories_available:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     8.0:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    8.1:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
@@ -201,34 +203,40 @@ apt_repositories_available:
 # 7.2:      is specific version of defines
 # disabled: [optional] Array of PHP versions for which to disable this module
 # check:    [optional] Include a check command to test if it was installed successfully
+# version:  Composer version: Either '1' or '2' for composer version
 #
 # all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
 # version:  [optional] Specific version of Ruby gem
 #
 composer_available:
   asgardcms:
-    disabled: [5.2, 5.3, 5.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
     check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+'
     name: asgardcms/asgardcms-installer
     link: asgardcms
+    version: 2
   codeception:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$'
     name: codeception/codeception
     link: codecept
+    version: 2
   lumen:
-    disabled: [5.2, 5.3, 5.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
     check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$'
     name: laravel/lumen-installer
     link: lumen
+    version: 2
   photon:
-    disabled: [5.2, 5.3, 5.4, 8.0]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
     check: photon --version | grep -E 'Installer [0-9][.0-9]+'
     name: photoncms/installer
     link: photon
+    version: 2
   prestissimo:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     name: hirak/prestissimo
+    version: 1
 
 
 # -------------------------------------------------------------------------------------------------
@@ -253,7 +261,7 @@ gem_available:
   # version which is not supported by the ruby version (>= 2.3)
   ffi:
     name: ffi
-    disabled: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0]
+    disabled: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     all:
       version: 1.12.2
   rb_inotify:
@@ -263,6 +271,8 @@ gem_available:
   mdl:
     name: mdl
     check: mdl --version | grep -E '[0-9][.0-9]+'
+    8.1:
+      version: 0.5.0
     8.0:
       version: 0.5.0
     7.4:
@@ -381,7 +391,12 @@ software_available:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+'
     all:
-      command: curl -sS -L --fail https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      command: |
+        curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
+        && curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+        && chmod +x /usr/local/bin/composer-1 \
+        && chmod +x /usr/local/bin/composer-2 \
+        && ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
   # pip is a dependency for others
   pip:
     all:
@@ -447,7 +462,7 @@ software_available:
       command: curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
   drush7:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     check: drush7 --version | grep -E '7[.0-9]+\s*$'
     all:
       pre: |
@@ -456,14 +471,14 @@ software_available:
         && git checkout 7.4.0 \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
         && rm -rf /usr/local/src/drush7/.git \
         && rm -rf /usr/local/src/drush7/docs \
         && rm -rf /usr/local/src/drush7/examples \
         && rm -rf /usr/local/src/drush7/misc \
   drush8:
-    disabled: [5.2, 5.3, 8.0]
+    disabled: [5.2, 5.3, 8.0, 8.1]
     check: drush8 --version | grep -E '8[.0-9]+\s*$'
     all:
       pre: |
@@ -472,14 +487,14 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
         && ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
         && rm -rf /usr/local/src/drush8/.git \
         && rm -rf /usr/local/src/drush8/docs \
         && rm -rf /usr/local/src/drush8/examples \
         && rm -rf /usr/local/src/drush8/misc \
   drush9:
-    disabled: [5.2, 5.3, 5.4, 5.5, 8.0]
+    disabled: [5.2, 5.3, 5.4, 5.5, 8.0, 8.1]
     check: drush9 --version | grep -E '9[.0-9]+\s*$'
     all:
       pre: |
@@ -488,14 +503,14 @@ software_available:
         && git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
       command: |
         chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress' \
+        && su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
         && ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
         && rm -rf /usr/local/src/drush9/.git \
         && rm -rf /usr/local/src/drush9/docs \
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
   drupalconsole:
-    disabled: [5.2, 5.3, 5.4, 8.0] # TODO: re-enable for 8.0 (currently errors)
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]'
     all:
       pre: DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')"
@@ -511,7 +526,7 @@ software_available:
         && cd / && rm -rf /tmp/gitflow \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+'
-    disabled: [5.2, 5.3, 8.0]
+    disabled: [5.2, 5.3, 8.0, 8.1]
     5.4:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -615,7 +630,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     check: phalcon commands | grep -E '[0-9][.0-9]+'
     5.3:
       pre: |
@@ -729,7 +744,7 @@ software_available:
         curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
         && chmod +x /usr/local/bin/phpcbf \
   php-cs-fixer:
-    disabled: [5.2, 7.4, 8.0]
+    disabled: [5.2, 7.4, 8.0, 8.1]
     check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
     5.3:
       command: |
@@ -756,7 +771,7 @@ software_available:
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
-    disabled: [5.2, 8.0]
+    disabled: [5.2, 8.0, 8.1]
     check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+'
     5.3:
       command: |
@@ -832,6 +847,14 @@ software_available:
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     8.0:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    8.1:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \

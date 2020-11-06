@@ -113,7 +113,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
-	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --enable-gd-jis-conv \
+	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& true
@@ -176,6 +176,24 @@ RUN set -eux \
  \
 	# Enabling
 	&& docker-php-ext-enable memcached \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongodb --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         GIT extension
+	&& git clone https://github.com/mongodb/mongo-php-driver /tmp/mongodb \
+	&& cd /tmp/mongodb \
+	# Custom:       Install command
+	&& git submodule update --init \
+&& phpize \
+&& ./configure --enable-mongodb \
+&& make -j$(getconf _NPROCESSORS_ONLN) \
+&& make install \
+ \
+	# Enabling
+	&& docker-php-ext-enable mongodb \
 	&& true
 
 
@@ -610,6 +628,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mongodb$' \
+	&& php-fpm -m | grep -oiE '^mongodb$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
 	&& php -m | grep -oiE '^mysqlnd$' \

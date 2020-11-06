@@ -1,15 +1,5 @@
-{{ edit_comment_base }}
-{% if php_version == 5.2 %}
-FROM devilbox/php-fpm-5.2
-{% elif php_version == 5.3 %}
-FROM devilbox/php-fpm-5.3
-{% elif php_version == 8.0 %}
-FROM devilbox/php-fpm-8.0
-{% elif php_version == 8.1 %}
+# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
 FROM devilbox/php-fpm-8.1
-{% else %}
-FROM php:{{ php_version }}-fpm
-{% endif %}
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -27,9 +17,9 @@ LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/dock
 LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
 LABEL "org.opencontainers.image.vendor"="devilbox"
 LABEL "org.opencontainers.image.licenses"="MIT"
-LABEL "org.opencontainers.image.ref.name"="{{ php_version }}-base"
-LABEL "org.opencontainers.image.title"="PHP-FPM {{ php_version }}-base"
-LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-base"
+LABEL "org.opencontainers.image.ref.name"="8.1-base"
+LABEL "org.opencontainers.image.title"="PHP-FPM 8.1-base"
+LABEL "org.opencontainers.image.description"="PHP-FPM 8.1-base"
 
 
 ###
@@ -39,7 +29,7 @@ ENV MY_USER="devilbox" \
 	MY_GROUP="devilbox" \
 	MY_UID="1000" \
 	MY_GID="1000" \
-	PHP_VERSION="{{ php_version }}"
+	PHP_VERSION="8.1"
 
 
 ###
@@ -53,15 +43,6 @@ RUN set -eux \
 ###
 ### Upgrade (install ps)
 ###
-{% if php_version in [5.2, 5.3, 5.4, 5.5] %}
-RUN set -eux \
-	&& rm -f /etc/apt/sources.list \
-	&& { \
-		echo "deb http://ftp.debian.org/debian jessie main"; \
-		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
-		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
-	} | tee /etc/apt/sources.list
-{% endif %}
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests procps \
@@ -83,20 +64,19 @@ RUN set -eux \
 ###
 ### Copy files
 ###
-COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
-COPY ./data/php-fpm.conf/php-fpm-{{ php_version }}.conf /usr/local/etc/php-fpm.conf
+COPY ./data/php-ini.d/php-8.1.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-8.1.conf /usr/local/etc/php-fpm.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d /docker-entrypoint.d
 
 
-{% if debug %}
 ###
 ### Verify
 ###
 RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^8.1' \
 	&& /usr/local/sbin/php-fpm --test \
 	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
@@ -111,7 +91,6 @@ RUN set -eux \
 	&& rm -f /usr/local/etc/php/php.ini
 
 
-{% endif %}
 ###
 ### Ports
 ###

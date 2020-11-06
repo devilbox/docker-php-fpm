@@ -1,5 +1,5 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
-FROM devilbox/php-fpm:5.6-prod
+FROM devilbox/php-fpm:8.1-prod
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -17,9 +17,9 @@ LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/dock
 LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
 LABEL "org.opencontainers.image.vendor"="devilbox"
 LABEL "org.opencontainers.image.licenses"="MIT"
-LABEL "org.opencontainers.image.ref.name"="5.6-work"
-LABEL "org.opencontainers.image.title"="PHP-FPM 5.6-work"
-LABEL "org.opencontainers.image.description"="PHP-FPM 5.6-work"
+LABEL "org.opencontainers.image.ref.name"="8.1-work"
+LABEL "org.opencontainers.image.title"="PHP-FPM 8.1-work"
+LABEL "org.opencontainers.image.description"="PHP-FPM 8.1-work"
 
 
 ###
@@ -43,7 +43,7 @@ RUN set -eux \
 	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
-	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
+	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 \
 	&& echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" > /etc/apt/sources.list.d/mongo.list \
 	&& curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
@@ -90,7 +90,7 @@ RUN set -eux \
 		mongodb-org-shell \
 		mongodb-org-tools \
 		moreutils \
-		mysql-client \
+		mariadb-client \
 		mupdf \
 		mupdf-tools \
 		nano \
@@ -179,55 +179,8 @@ RUN set -eux \
  \
 	\
 # -------------------- deployer --------------------
-	&& curl -sS -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep \
+	&& curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
-	\
-# -------------------- drush7 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush7 \
-&& cd /usr/local/src/drush7 \
-&& git checkout 7.4.0 \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush7 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush7 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
-&& ln -s /usr/local/src/drush7/drush /usr/local/bin/drush7 \
-&& rm -rf /usr/local/src/drush7/.git \
-&& rm -rf /usr/local/src/drush7/docs \
-&& rm -rf /usr/local/src/drush7/examples \
-&& rm -rf /usr/local/src/drush7/misc \
- \
-	\
-# -------------------- drush8 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush8 \
-&& cd /usr/local/src/drush8 \
-&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/8[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush8 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush8 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress --no-dev' \
-&& ln -s /usr/local/src/drush8/drush /usr/local/bin/drush8 \
-&& rm -rf /usr/local/src/drush8/.git \
-&& rm -rf /usr/local/src/drush8/docs \
-&& rm -rf /usr/local/src/drush8/examples \
-&& rm -rf /usr/local/src/drush8/misc \
- \
-	\
-# -------------------- drush9 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
-&& cd /usr/local/src/drush9 \
-&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
-&& ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
-&& rm -rf /usr/local/src/drush9/.git \
-&& rm -rf /usr/local/src/drush9/docs \
-&& rm -rf /usr/local/src/drush9/examples \
-&& rm -rf /usr/local/src/drush9/misc \
- \
-	\
-# -------------------- drupalconsole --------------------
-	&& DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')" \
-	&& curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal \
-	&& chmod +x /usr/local/bin/drupal \
 	\
 # -------------------- gitflow --------------------
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
@@ -235,17 +188,6 @@ RUN set -eux \
 && make install \
 && cd / && rm -rf /tmp/gitflow \
  \
-	\
-# -------------------- laravel --------------------
-	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
-&& cd /usr/local/src/laravel-installer \
-&& git checkout v2.0.0 \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/laravel-installer \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/laravel-installer && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install --no-interaction --no-progress --no-dev' \
-&& rm -rf /usr/local/src/laravel-installer/laravel/.git \
- \
-	&& ln -s /usr/local/src/laravel-installer/laravel /usr/local/bin/laravel \
 	\
 # -------------------- linkcheck --------------------
 	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
@@ -293,19 +235,6 @@ RUN set -eux \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
 	\
-# -------------------- phalcon --------------------
-	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
-&& cd /usr/local/src/phalcon-devtools \
-&& git checkout v3.4.11 \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
-&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-&& ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
-&& chmod +x /usr/local/bin/phalcon \
-&& cd / \
-&& rm -rf /usr/local/src/phalcon-devtools/.git \
- \
-	\
 # -------------------- phpcs --------------------
 	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
 && chmod +x /usr/local/bin/phpcs \
@@ -316,20 +245,10 @@ RUN set -eux \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
-# -------------------- php-cs-fixer --------------------
-	&& curl -sS -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
-&& chmod +x /usr/local/bin/php-cs-fixer \
- \
-	\
 # -------------------- phpmd --------------------
 	&& curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
 && mv phpmd.phar /usr/local/bin/phpmd \
 && chmod +x /usr/local/bin/phpmd \
- \
-	\
-# -------------------- phpunit --------------------
-	&& curl -sS -L --fail https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit 2>/dev/null \
-&& chmod +x /usr/local/bin/phpunit \
  \
 	\
 # -------------------- symfony --------------------
@@ -341,7 +260,7 @@ RUN set -eux \
 	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+  libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
 && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
 && dpkg -i /tmp/wkhtmltopdf.deb \
 && rm -f /tmp/wkhtmltopdf.deb \
@@ -396,25 +315,6 @@ RUN set -eux \
 ### Install Composer (PHP)
 ###
 RUN set -eux \
-# -------------------- asgardcms --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  asgardcms/asgardcms-installer \
-	&& ln -s /usr/local/src/composer/vendor/asgardcms/asgardcms-installer/asgardcms /usr/local/bin/ \
-	\
-# -------------------- codeception --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  codeception/codeception \
-	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
-	\
-# -------------------- lumen --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  laravel/lumen-installer \
-	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
-	\
-# -------------------- photon --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  photoncms/installer \
-	&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/ \
-	\
-# -------------------- prestissimo --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require  hirak/prestissimo \
-	\
 	\
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
@@ -555,7 +455,7 @@ RUN \
 ###
 RUN set -eux \
 	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.6' \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^8.1' \
 	&& /usr/local/sbin/php-fpm --test \
 	\
 	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
@@ -575,30 +475,18 @@ RUN set -eux \
 	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+' \
 	&& regex-grep --version | grep -E '[0-9][.0-9]+' \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
-	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
-	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
-	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
-	&& drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
-	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
 	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
-	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
 	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \
-	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \
 	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' \
-	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' \
 	&& symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+' \
 	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)" \
 	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Composer --------------------
-	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+' \
-	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' \
-	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' \
-	&& photon --version | grep -E 'Installer [0-9][.0-9]+' \
 	\
 # -------------------- PIP --------------------
 	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \
@@ -636,8 +524,8 @@ RUN set -eux \
 ###
 ### Copy files
 ###
-COPY ./data/php-ini.d/php-5.6.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
-COPY ./data/php-fpm.conf/php-fpm-5.6.conf /usr/local/etc/php-fpm.conf
+COPY ./data/php-ini.d/php-8.1.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-8.1.conf /usr/local/etc/php-fpm.conf
 
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/

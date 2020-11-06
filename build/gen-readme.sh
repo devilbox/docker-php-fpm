@@ -25,6 +25,7 @@ print_usage() {
 	echo "       gen-readme.sh 7.3"
 	echo "       gen-readme.sh 7.4"
 	echo "       gen-readme.sh 8.0"
+	echo "       gen-readme.sh 8.1"
 }
 
 
@@ -94,6 +95,7 @@ if [ "${#}" -eq "0" ]; then
 	update_readme "7.3"
 	update_readme "7.4"
 	update_readme "8.0"
+	update_readme "8.1"
 elif [ "${#}" -gt "1" ]; then
 	# Specifying more than 1 argument is wrong
 	echo "Error, invalid number of arguments."
@@ -110,7 +112,8 @@ else
 	&& [ "${1}" != "7.2" ] \
 	&& [ "${1}" != "7.3" ] \
 	&& [ "${1}" != "7.4" ] \
-	&& [ "${1}" != "8.0" ]; then
+	&& [ "${1}" != "8.0" ] \
+	&& [ "${1}" != "8.1" ]; then
 		# Argument does not match any of the PHP versions
 		echo "Error, invalid argument."
 		print_usage
