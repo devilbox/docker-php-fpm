@@ -47,9 +47,7 @@ ENV MY_USER="devilbox" \
 ###
 RUN set -eux \
 	&& groupadd -g ${MY_GID} -r ${MY_GROUP} \
-	&& useradd -u ${MY_UID} -m -s /bin/bash -g ${MY_GROUP} ${MY_USER} \
-	&& sed -i'' 's/^UID_MAX.*/UID_MAX 10000000/g' /etc/login.defs \
-	&& sed -i'' 's/^GID_MAX.*/GID_MAX 10000000/g' /etc/login.defs
+	&& useradd -u ${MY_UID} -m -s /bin/bash -g ${MY_GROUP} ${MY_USER}
 
 
 ###

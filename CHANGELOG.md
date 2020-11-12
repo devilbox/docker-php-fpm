@@ -7,7 +7,7 @@
 ## Release 0.115
 
 #### Fixed
-- [#703](https://github.com/cytopia/devilbox/issues/703) Allow big uid's and gid's
+- [#703](https://github.com/cytopia/devilbox/issues/703) Don't fail on uid/gid change
 
 
 ## Release 0.114
