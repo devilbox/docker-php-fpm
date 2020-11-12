@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.115
+
+#### Fixed
+- [#703](https://github.com/cytopia/devilbox/issues/703) Allow big uid's and gid's
+
+
 ## Release 0.114
 
 #### Fixed
