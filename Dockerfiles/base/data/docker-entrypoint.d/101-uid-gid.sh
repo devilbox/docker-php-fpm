@@ -60,10 +60,15 @@ set_uid() {
 			fi
 			# Change uid and fix homedir permissions
 			log "info" "Changing user '${username}' uid to: ${uid}" "${debug}"
-			run "usermod -u ${uid} ${username}" "${debug}"
-			run "chown -R ${username} ${homedir} || true" "${debug}"
+			if ! run "usermod -u ${uid} ${username} 2>/dev/null" "${debug}"; then
+				run "usermod -u ${uid} ${username}" "${debug}"
+			fi
+			run "chown -R ${username} ${homedir} 2>/dev/null || true" "${debug}"
 			run "chown -R ${username} /var/lib/php/session" "${debug}"
 			run "chown -R ${username} /var/lib/php/wsdlcache" "${debug}"
+			if [ -f "/var/spool/mail/devilbox" ]; then
+				run "chown -R ${username} /var/spool/mail/devilbox" "${debug}"
+			fi
 		fi
 	fi
 }
@@ -100,12 +105,17 @@ set_gid() {
 					run "groupmod -g ${spare_gid} ${target_groupname}" "${debug}"
 				fi
 			fi
-			# Change ugd and fix homedir permissions
+			# Change gid and fix homedir permissions
 			log "info" "Changing group '${groupname}' gid to: ${gid}" "${debug}"
-			run "groupmod -g ${gid} ${groupname}" "${debug}"
-			run "chown -R :${groupname} ${homedir} || true" "${debug}"
+			if ! run "groupmod -g ${gid} ${groupname} 2>/dev/null" "${debug}"; then
+				run "groupmod -g ${gid} ${groupname}" "${debug}"
+			fi
+			run "chown -R :${groupname} ${homedir} 2>/dev/null || true" "${debug}"
 			run "chown -R :${groupname} /var/lib/php/session" "${debug}"
 			run "chown -R :${groupname} /var/lib/php/wsdlcache" "${debug}"
+			if [ -f "/var/spool/mail/devilbox" ]; then
+				run "chown -R :${groupname} /var/spool/mail/devilbox" "${debug}"
+			fi
 		fi
 	fi
 }
