@@ -33,7 +33,7 @@ disable_modules() {
 			mod="$( echo "${mod}" | xargs )" # trim
 
 			# Find all config files that enable that module
-			files="$( grep -Er "^(zend_)?extension.*(=|/)${mod}\.so" "${cfg_path}" || true )"
+			files="$( grep -Er "^(zend_)?extension.*(=|/)${mod}(\\.so)?\$" "${cfg_path}" || true )"
 
 			if [ -n "${files}" ]; then
 				while read -r f; do
