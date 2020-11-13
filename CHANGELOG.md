@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.116
+
+#### Fixed
+- [#749](https://github.com/cytopia/devilbox/issues/749) Fix to disable PHP modules without trailing `*.so` extension
+
+
 ## Release 0.115
 
 #### Fixed
