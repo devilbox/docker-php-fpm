@@ -69,6 +69,9 @@ set_uid() {
 			if [ -f "/var/spool/mail/devilbox" ]; then
 				run "chown -R ${username} /var/spool/mail/devilbox" "${debug}"
 			fi
+			if [ -d "/etc/supervisor/custom.d" ]; then
+				run "chown -R ${username} /etc/supervisor/custom.d" "${debug}"
+			fi
 		fi
 	fi
 }
@@ -115,6 +118,9 @@ set_gid() {
 			run "chown -R :${groupname} /var/lib/php/wsdlcache" "${debug}"
 			if [ -f "/var/spool/mail/devilbox" ]; then
 				run "chown -R :${groupname} /var/spool/mail/devilbox" "${debug}"
+			fi
+			if [ -d "/etc/supervisor/custom.d" ]; then
+				run "chown -R :${groupname} /etc/supervisor/custom.d" "${debug}"
 			fi
 		fi
 	fi

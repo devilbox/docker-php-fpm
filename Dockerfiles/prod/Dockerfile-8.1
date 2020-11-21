@@ -40,8 +40,10 @@ RUN set -eux \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& rm -rf /etc/supervisor* \
-	&& mkdir -p /etc/supervisor/conf.d \
 	&& mkdir -p /var/log/supervisor \
+	&& mkdir -p /etc/supervisor/conf.d \
+	&& mkdir -p /etc/supervisor/custom.d \
+	&& chown devilbox:devilbox /etc/supervisor/custom.d \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \

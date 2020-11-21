@@ -108,9 +108,9 @@ jobs:
             false
           fi
           # Export variable
-          # # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions#set-an-environment-variable-set-env
-          echo ::set-env name=GIT_TYPE::${GIT_TYPE}
-          echo ::set-env name=GIT_SLUG::${GIT_SLUG}
+          # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
+          echo "GIT_TYPE=${GIT_TYPE}" >> $GITHUB_ENV
+          echo "GIT_SLUG=${GIT_SLUG}" >> $GITHUB_ENV
 
 
       # ------------------------------------------------------------
