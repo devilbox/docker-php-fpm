@@ -883,7 +883,7 @@ Have a look at the following table to see all offered volumes for each Docker im
  </thead>
  <tbody>
   <tr>
-   <td rowspan="7"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="8"><strong>prod</strong><br/><br/><strong>work</strong></td>
    <td><code>/etc/php-custom.d</code></td>
    <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
   </tr>
@@ -910,6 +910,10 @@ Have a look at the following table to see all offered volumes for each Docker im
   <tr>
    <td><code>/var/mail</code></td>
    <td>Emails caught be the postfix catch-all (<code>ENABLE_MAIL=2</code>) will be available in this directory.</td>
+  </tr>
+  <tr>
+   <td><code>/etc/supervisor/custom.d</code></td>
+   <td>Mount this directory into your host computer and add your own `*.conf` supervisor start-up files.<br/><br/>**Note:** Directory and file permission will be recursively set to this of `NEW_UID` and `NEW_GID`.</td>
   </tr>
   <tr>
    <td colspan="3"></td>
