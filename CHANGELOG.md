@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.117
+
+#### Fixed
+- [#755](https://github.com/cytopia/devilbox/issues/755) Add .composer/vendir/bin to PATH variable
+
+
 ## Release 0.116
 
 #### Fixed
