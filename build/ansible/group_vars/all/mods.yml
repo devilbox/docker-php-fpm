@@ -1152,7 +1152,7 @@ extensions_available:
       version: 2.4.1
     7.0:
       type: pecl
-      version: 2.9.8
+      version: 2.9.0
     7.1:
       type: pecl
       version: 2.9.8
