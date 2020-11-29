@@ -97,14 +97,24 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          # Detached from branch
-          if [ "$( git rev-parse --abbrev-ref HEAD )" = "HEAD" ]; then
-            GIT_TYPE=TAG
-            GIT_SLUG="$( git tag --points-at HEAD | head -1 )"
-          else
-            GIT_TYPE=BRANCH
-            GIT_SLUG="$( git rev-parse --abbrev-ref HEAD )"
-          fi
+
+          # Retrieve git info (tags, etc)
+          git fetch --all
+
+          # BRANCH, TAG or COMMIT
+          GIT_TYPE="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_TYPE' \
+            | sed 's|.*=||g' \
+          )"
+          # Branch name, Tag name or Commit Hash
+          GIT_SLUG="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_NAME' \
+            | sed 's|.*=||g' \
+          )"
 
           # Output
           echo "GIT_TYPE=${GIT_TYPE}"
