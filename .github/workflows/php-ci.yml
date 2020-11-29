@@ -32,7 +32,7 @@ jobs:
       fail-fast: False
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Show environment
         run: |
@@ -91,18 +91,19 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          # Set git branch or git tag as slug
-          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
+          # Detached from branch
+          if [ "$( git rev-parse --abbrev-ref HEAD )" = "HEAD" ]; then
             GIT_TYPE=TAG
-            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
+            GIT_SLUG="$( git tag --points-at HEAD | head -1 )"
           else
             GIT_TYPE=BRANCH
-            if [ -n "${GITHUB_HEAD_REF}" ]; then
-              GIT_SLUG="${GITHUB_HEAD_REF}"
-            else
-              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
-            fi
+            GIT_SLUG="$( git rev-parse --abbrev-ref HEAD )"
           fi
+
+          # Output
+          echo "GIT_TYPE=${GIT_TYPE}"
+          echo "GIT_SLUG=${GIT_SLUG}"
+
           # Export variable
           # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
           echo "GIT_TYPE=${GIT_TYPE}" >> $GITHUB_ENV
