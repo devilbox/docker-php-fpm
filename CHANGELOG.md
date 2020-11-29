@@ -6,6 +6,9 @@
 
 ## Release 0.118
 
+#### Fixed
+- Fixed `mdl` rubygem
+
 #### Added
 - [#182](https://github.com/devilbox/docker-php-fpm/issues/182) Added `ioncube` to PHP 7.4
 - Added `sqlsrv` to PHP 7.4
