@@ -709,7 +709,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install xdebug-2.9.0 \
+	&& pecl install xdebug-2.9.8 \
 	# Enabling
 	&& docker-php-ext-enable xdebug \
 	&& true

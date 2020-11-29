@@ -435,8 +435,10 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         GIT extension
-	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
+	&& git clone ttps://github.com/xdebug/xdebug /tmp/xdebug \
 	&& cd /tmp/xdebug \
+	# Custom:       Branch
+	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
 	# Default:      Install command
 	&& phpize \
 	&& ./configure  --enable-xdebug \
