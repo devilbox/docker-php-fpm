@@ -26,7 +26,7 @@ jobs:
       fail-fast: False
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Show environment
         run: |
@@ -82,7 +82,7 @@ jobs:
           - '8.1'
         refs:
           - 'master'
-          - '0.114'
+          - '0.118'
     steps:
 
       # ------------------------------------------------------------
@@ -97,16 +97,29 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          # Set git branch or git tag as slug
-          if [ -n "$( git tag --points-at HEAD )" ]; then
-            GIT_TYPE=TAG
-            GIT_SLUG="$( git tag --points-at HEAD )"
-          elif [ "$( git rev-parse --abbrev-ref HEAD )" != "HEAD" ]; then
-            GIT_TYPE=BRANCH
-            GIT_SLUG="$( git rev-parse --abbrev-ref HEAD )"
-          else
-            false
-          fi
+
+          # Retrieve git info (tags, etc)
+          git fetch --all
+
+          # BRANCH, TAG or COMMIT
+          GIT_TYPE="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_TYPE' \
+            | sed 's|.*=||g' \
+          )"
+          # Branch name, Tag name or Commit Hash
+          GIT_SLUG="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_NAME' \
+            | sed 's|.*=||g' \
+          )"
+
+          # Output
+          echo "GIT_TYPE=${GIT_TYPE}"
+          echo "GIT_SLUG=${GIT_SLUG}"
+
           # Export variable
           # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
           echo "GIT_TYPE=${GIT_TYPE}" >> $GITHUB_ENV

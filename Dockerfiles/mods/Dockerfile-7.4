@@ -68,6 +68,7 @@ RUN set -eux \
 		libyaml-dev \
 		libzip-dev \
 		snmp \
+		unixodbc-dev \
 		zlib1g-dev \
 		ca-certificates \
 		git
@@ -86,6 +87,23 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: ioncube --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Custom extension
+	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+&& if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+&& tar xvfz ioncube.tar.gz \
+&& cd ioncube \
+&& cp "ioncube_loader_lin_7.4.so" "${EXTENSION_DIR}/ioncube.so" \
+&& cd ../ \
+&& rm -rf ioncube \
+&& rm -rf ioncube.tar.gz \
+ \
+	&& true
+
 
 # -------------------- Installing PHP Extension: amqp --------------------
 RUN set -eux \
@@ -581,6 +599,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: sqlsrv --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install sqlsrv \
+	# Enabling
+	&& docker-php-ext-enable sqlsrv \
+	&& true
+
+
 # -------------------- Installing PHP Extension: ssh2 --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -839,6 +868,7 @@ RUN set -eux \
 	libyaml-0-2 \
 	libzip4 \
 	snmp \
+	unixodbc \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -1021,6 +1051,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^solr$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
+	&& php -m | grep -oiE '^sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^ssh2$' \
 	&& php-fpm -m | grep -oiE '^ssh2$' \
 	&& php -m | grep -oiE '^swoole$' \

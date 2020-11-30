@@ -32,7 +32,7 @@ jobs:
       fail-fast: False
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Show environment
         run: |
@@ -87,22 +87,35 @@ jobs:
       # ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Set variables
         id: vars
         run: |
-          # Set git branch or git tag as slug
-          if [[ ${GITHUB_REF} =~ ^refs\/tags\/ ]]; then
-            GIT_TYPE=TAG
-            GIT_SLUG="${GITHUB_REF/refs\/tags\//}"
-          else
-            GIT_TYPE=BRANCH
-            if [ -n "${GITHUB_HEAD_REF}" ]; then
-              GIT_SLUG="${GITHUB_HEAD_REF}"
-            else
-              GIT_SLUG="${GITHUB_REF/refs\/heads\//}"
-            fi
-          fi
+
+          # Retrieve git info (tags, etc)
+          git fetch --all
+
+          # BRANCH, TAG or COMMIT
+          GIT_TYPE="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_TYPE' \
+            | sed 's|.*=||g' \
+          )"
+          # Branch name, Tag name or Commit Hash
+          GIT_SLUG="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_NAME' \
+            | sed 's|.*=||g' \
+          )"
+
+          # Output
+          echo "GIT_TYPE=${GIT_TYPE}"
+          echo "GIT_SLUG=${GIT_SLUG}"
+
           # Export variable
           # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
           echo "GIT_TYPE=${GIT_TYPE}" >> $GITHUB_ENV
