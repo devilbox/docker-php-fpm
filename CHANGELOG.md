@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.119
+
+#### Fixed
+- Fixed `drupal` (drupal console launcher) for PHP 5.5, 5.6, 7.0 and 7.1
+
+
 ## Release 0.118
 
 #### Fixed
