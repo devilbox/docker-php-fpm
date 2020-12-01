@@ -8,6 +8,7 @@
 
 #### Fixed
 - Fixed `drupal` (drupal console launcher) for PHP 5.5, 5.6, 7.0 and 7.1
+- Fixed `zsh` install for PHP 5.6 and 7.0
 
 
 ## Release 0.118
