@@ -120,6 +120,7 @@ RUN set -eux \
 		zip \
 		zlib1g-dev \
 		zsh \
+		zsh-common=5.3.1-4 \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -225,7 +226,7 @@ RUN set -eux \
  \
 	\
 # -------------------- drupalconsole --------------------
-	&& DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')" \
+	&& DURL="https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.9.4/drupal.phar" \
 	&& curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal \
 	&& chmod +x /usr/local/bin/drupal \
 	\

@@ -138,7 +138,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -147,6 +147,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
       - name: Test Base
         run: |
@@ -157,7 +158,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -166,6 +167,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
 
       # ------------------------------------------------------------
@@ -180,7 +182,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -189,6 +191,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
       - name: Test Mods
         run: |
@@ -199,7 +202,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -208,6 +211,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
 
       # ------------------------------------------------------------
@@ -222,7 +226,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -231,6 +235,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
       - name: Test Prod
         run: |
@@ -241,7 +246,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -250,6 +255,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
 
       # ------------------------------------------------------------
@@ -264,7 +270,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -273,6 +279,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
       - name: Test Work
         run: |
@@ -283,7 +290,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -292,6 +299,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
 
 
       # ------------------------------------------------------------
@@ -318,7 +326,7 @@ jobs:
                 echo "[SUCC] ${n}/${RETRIES}";
                 return 0;
               fi;
-              sleep 2;
+              sleep ${PAUSE};
               echo "[FAIL] ${n}/${RETRIES}";
             done;
             return 1;
@@ -353,6 +361,7 @@ jobs:
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
+          PAUSE: 10
         # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
         if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
             && (
