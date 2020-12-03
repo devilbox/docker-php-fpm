@@ -120,7 +120,7 @@ RUN set -eux \
 		zip \
 		zlib1g-dev \
 		zsh \
-		zsh-common=5.3.1-4 \
+		zsh-common \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
