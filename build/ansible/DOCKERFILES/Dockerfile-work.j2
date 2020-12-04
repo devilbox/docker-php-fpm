@@ -141,7 +141,7 @@ RUN set -eux \
 		zlib1g-dev \
 		zsh \
 {% if php_version in [5.6, 7.0] %}
-		zsh-common=5.3.1-4 \
+		zsh-common \
 {% endif %}
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \

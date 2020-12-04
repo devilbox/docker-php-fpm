@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.120
+
+#### Fixed
+- Fixed `zsh` install for PHP 5.6 and 7.0
+
+
 ## Release 0.119
 
 #### Fixed
