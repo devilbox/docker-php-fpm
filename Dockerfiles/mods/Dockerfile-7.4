@@ -326,10 +326,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcache --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install memcache \
+	&& pecl install memcache-4.0.5.2 \
 	# Enabling
 	&& docker-php-ext-enable memcache \
 	&& true
@@ -535,9 +535,26 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: redis --------------------
 RUN set -eux \
 	# Installation: Generic
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install redis \
+	# Type:         GIT extension
+	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
+	&& cd /tmp/redis \
+	# Custom:       Branch
+	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
+	# Custom:       Install command
+	&& REDIS_ARGS=""; \
+if [ -d "/usr/local/include/php/ext/igbinary" ]; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+fi; \
+if [ -d "/usr/local/include/php/ext/msgpack" ]; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+fi; \
+phpize \
+&& ./configure --enable-redis ${REDIS_ARGS} \
+&& make -j$(getconf _NPROCESSORS_ONLN) \
+&& make install \
+&& rm -rf /usr/local/include/php/ext/igbinary \
+&& rm -rf /usr/local/include/php/ext/msgpack \
+ \
 	# Enabling
 	&& docker-php-ext-enable redis \
 	&& true

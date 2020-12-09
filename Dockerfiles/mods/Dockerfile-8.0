@@ -333,22 +333,26 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: redis --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         GIT extension
 	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
 	&& cd /tmp/redis \
 	# Custom:       Branch
 	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
 	# Custom:       Install command
-	&& sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
-&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
-&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
-&& sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
-&& sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
-&& phpize \
-&& ./configure --enable-redis \
+	&& REDIS_ARGS=""; \
+if [ -d "/usr/local/include/php/ext/igbinary" ]; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+fi; \
+if [ -d "/usr/local/include/php/ext/msgpack" ]; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+fi; \
+phpize \
+&& ./configure --enable-redis ${REDIS_ARGS} \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
+&& rm -rf /usr/local/include/php/ext/igbinary \
+&& rm -rf /usr/local/include/php/ext/msgpack \
  \
 	# Enabling
 	&& docker-php-ext-enable redis \

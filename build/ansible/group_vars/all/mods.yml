@@ -471,6 +471,21 @@ extensions_available:
     5.6:
       type: pecl
       version: 2.2.7
+    7.0:
+      type: pecl
+      version: 4.0.5.2
+    7.1:
+      type: pecl
+      version: 4.0.5.2
+    7.2:
+      type: pecl
+      version: 4.0.5.2
+    7.3:
+      type: pecl
+      version: 4.0.5.2
+    7.4:
+      type: pecl
+      version: 4.0.5.2
     all:
       type: pecl
       build_dep: [zlib1g-dev]
@@ -841,38 +856,24 @@ extensions_available:
     5.6:
       type: pecl
       version: 4.3.0
-    8.0:
-      type: git
-      git_url: https://github.com/phpredis/phpredis
-      git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
-      # TODO: This is a nasty work-around to fix current phpredis implementation for PHP 8.0
-      command: |
-        sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
-        && sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
-        && phpize \
-        && ./configure --enable-redis \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-    8.1:
-      type: git
-      git_url: https://github.com/phpredis/phpredis
-      git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
-      # TODO: This is a nasty work-around to fix current phpredis implementation for PHP 8.1
-      command: |
-        sed -i'' 's/, ZSTR_LEN(ra->algorithm)//g' redis_array_impl.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' library.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' redis_array_impl.c \
-        && sed -i'' 's|.*sctx->cb\.no_separation.*||g' cluster_library.c \
-        && sed -i'' 's|.*->no_separation.*||g' redis_array_impl.c \
-        && phpize \
-        && ./configure --enable-redis \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
     all:
-      type: pecl
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
+      command: |
+        REDIS_ARGS=""; \
+        if [ -d "/usr/local/include/php/ext/igbinary" ]; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+        fi; \
+        if [ -d "/usr/local/include/php/ext/msgpack" ]; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+        fi; \
+        phpize \
+        && ./configure --enable-redis ${REDIS_ARGS} \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+        && rm -rf /usr/local/include/php/ext/igbinary \
+        && rm -rf /usr/local/include/php/ext/msgpack \
   reflection:
     already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   rdkafka:

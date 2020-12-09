@@ -4,6 +4,15 @@
 ## Unreleased
 
 
+## Release 0.121
+
+#### Fixed
+- Fixed `msgpack` install for PHP 7.0 - 7.4
+
+#### Changed
+- Compile `redis` extension with `msgpack` and `igbinary`
+
+
 ## Release 0.120
 
 #### Fixed
