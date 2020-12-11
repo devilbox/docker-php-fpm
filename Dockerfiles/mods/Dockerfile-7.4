@@ -552,8 +552,6 @@ phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
-&& rm -rf /usr/local/include/php/ext/igbinary \
-&& rm -rf /usr/local/include/php/ext/msgpack \
  \
 	# Enabling
 	&& docker-php-ext-enable redis \
