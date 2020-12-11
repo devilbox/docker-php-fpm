@@ -168,7 +168,7 @@ extensions_available:
       build_dep: [librabbitmq-dev]
       run_dep: [librabbitmq4]
   apcu:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.1]
     5.3:
       type: pecl
       version: 4.0.11
@@ -329,7 +329,7 @@ extensions_available:
   iconv:
     already_avail: "{{ php_all_versions }}"
   igbinary:
-    disabled: [8.0, 8.1]
+    disabled: [8.1]
     5.2:
       type: pecl
       version: 2.0.7
@@ -441,21 +441,33 @@ extensions_available:
     all:
       type: builtin
   mcrypt:
-    disabled: [8.0, 8.1]
+    disabled: [8.1]
+    5.2:
+      type: builtin
+    5.3:
+      type: builtin
+    5.4:
+      type: builtin
+    5.5:
+      type: builtin
+    5.6:
+      type: builtin
+    7.0:
+      type: builtin
+    7.1:
+      type: builtin
     7.2:
       type: pecl
       version: 1.0.1
     7.3:
       type: pecl
       version: 1.0.2
-    7.4:
-      type: pecl
     all:
-      type: builtin
+      type: pecl
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    disabled: [8.0, 8.1]
+    disabled: [8.1]
     5.2:
       type: pecl
       version: 2.2.7
@@ -561,15 +573,6 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.7.5
-    8.0:
-      type: git
-      git_url: https://github.com/mongodb/mongo-php-driver
-      command: |
-        git submodule update --init \
-        && phpize \
-        && ./configure --enable-mongodb \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
     8.1:
       type: git
       git_url: https://github.com/mongodb/mongo-php-driver
@@ -583,7 +586,7 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: [8.0, 8.1]
+    disabled: [8.1]
     5.2:
       type: pecl
       version: 0.5.7
@@ -618,7 +621,7 @@ extensions_available:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   oauth:
-    disabled: [8.0, 8.1]
+    disabled: [8.1]
     5.2:
       type: pecl
       version: 1.2.3
@@ -770,7 +773,7 @@ extensions_available:
       build_dep: [libpq-dev]
       run_dep: [libpq5]
   psr:
-    disabled: [5.2, 5.3, 8.0, 8.1] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
+    disabled: [5.2, 5.3, 8.1] # IMPORTANT: Required by PHP >= 7.2 by phalcon >=4.0 module
     5.4:
       type: pecl
       version: 0.5.1
@@ -872,8 +875,6 @@ extensions_available:
         && ./configure --enable-redis ${REDIS_ARGS} \
         && make -j$(getconf _NPROCESSORS_ONLN) \
         && make install \
-        && rm -rf /usr/local/include/php/ext/igbinary \
-        && rm -rf /usr/local/include/php/ext/msgpack \
   reflection:
     already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   rdkafka:
@@ -932,7 +933,7 @@ extensions_available:
       type: builtin
       build_dep: [libsodium-dev]
   solr:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 8.1]
     all:
       type: pecl
       build_dep: [libxml2-dev, libcurl4-openssl-dev]
@@ -1157,11 +1158,6 @@ extensions_available:
     7.1:
       type: pecl
       version: 2.9.8
-    8.0:
-      type: git
-      git_url: https://github.com/xdebug/xdebug
-      git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
-      configure: --enable-xdebug
     8.1:
       type: git
       git_url: https://github.com/xdebug/xdebug
@@ -1170,7 +1166,7 @@ extensions_available:
     all:
       type: pecl
   xlswriter:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.1]
     all:
       type: pecl
       build_dep: [zlib1g-dev]
@@ -1196,7 +1192,7 @@ extensions_available:
       build_dep: [libxslt-dev]
       run_dep: [libxslt1.1]
   yaml:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.1]
     5.3:
       type: pecl
       version: 1.3.2

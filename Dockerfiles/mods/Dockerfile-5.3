@@ -254,8 +254,9 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mcrypt --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
 	&& true
 

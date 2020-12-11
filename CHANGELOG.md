@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.122
+
+#### Added
+- Added `apcu`, `igbinary`, `mcrypt`, `memcache`, `msgpack`, `oauth`, `psr`, `solr`, `xlswriter`, `yaml` to PHP 8.0
+
+
 ## Release 0.121
 
 #### Fixed

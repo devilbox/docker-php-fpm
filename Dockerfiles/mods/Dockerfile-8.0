@@ -14,6 +14,7 @@ RUN set -eux \
 		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
+		libcurl4-openssl-dev \
 		libenchant-dev \
 		libevent-dev \
 		libfbclient2 \
@@ -23,7 +24,9 @@ RUN set -eux \
 		libicu-dev \
 		libjpeg-dev \
 		libldap2-dev \
+		libmcrypt-dev \
 		libmemcached-dev \
+		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
 		libpspell-dev \
@@ -37,6 +40,7 @@ RUN set -eux \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
+		libyaml-dev \
 		libzip-dev \
 		snmp \
 		zlib1g-dev \
@@ -57,6 +61,17 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: apcu --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install apcu \
+	# Enabling
+	&& docker-php-ext-enable apcu \
+	&& true
+
 
 # -------------------- Installing PHP Extension: bcmath --------------------
 RUN set -eux \
@@ -137,6 +152,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: igbinary --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install igbinary \
+	# Enabling
+	&& docker-php-ext-enable igbinary \
+	&& true
+
+
 # -------------------- Installing PHP Extension: intl --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -154,6 +180,39 @@ RUN set -eux \
 	# Custom:       configure command
 	&& docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mcrypt --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install mcrypt \
+	# Enabling
+	&& docker-php-ext-enable mcrypt \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache \
+	# Enabling
+	&& docker-php-ext-enable memcache \
 	&& true
 
 
@@ -181,17 +240,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mongodb --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/mongodb/mongo-php-driver /tmp/mongodb \
-	&& cd /tmp/mongodb \
-	# Custom:       Install command
-	&& git submodule update --init \
-&& phpize \
-&& ./configure --enable-mongodb \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
- \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install mongodb \
 	# Enabling
 	&& docker-php-ext-enable mongodb \
 	&& true
@@ -202,6 +254,17 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
+	&& true
+
+
+# -------------------- Installing PHP Extension: oauth --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install oauth \
+	# Enabling
+	&& docker-php-ext-enable oauth \
 	&& true
 
 
@@ -323,6 +386,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: psr --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install psr \
+	# Enabling
+	&& docker-php-ext-enable psr \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pspell --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -351,8 +425,6 @@ phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
-&& rm -rf /usr/local/include/php/ext/igbinary \
-&& rm -rf /usr/local/include/php/ext/msgpack \
  \
 	# Enabling
 	&& docker-php-ext-enable redis \
@@ -403,6 +475,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: solr --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install solr \
+	# Enabling
+	&& docker-php-ext-enable solr \
+	&& true
+
+
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -437,17 +520,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
-	&& cd /tmp/xdebug \
-	# Custom:       Branch
-	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --enable-xdebug \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xdebug \
 	# Enabling
 	&& docker-php-ext-enable xdebug \
 	&& true
@@ -458,6 +534,28 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xlswriter --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xlswriter \
+	# Enabling
+	&& docker-php-ext-enable xlswriter \
+	&& true
+
+
+# -------------------- Installing PHP Extension: yaml --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install yaml \
+	# Enabling
+	&& docker-php-ext-enable yaml \
 	&& true
 
 
@@ -537,6 +635,7 @@ RUN set -eux \
 	libfreetype6 \
 	libicu63 \
 	libjpeg62-turbo \
+	libmcrypt4 \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
@@ -546,6 +645,7 @@ RUN set -eux \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
+	libyaml-0-2 \
 	libzip4 \
 	snmp \
 	ca-certificates \
@@ -586,6 +686,8 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
+	&& php -m | grep -oiE '^apcu$' \
+	&& php-fpm -m | grep -oiE '^apcu$' \
 	&& php -m | grep -oiE '^bcmath$' \
 	&& php-fpm -m | grep -oiE '^bcmath$' \
 	&& php -m | grep -oiE '^bz2$' \
@@ -622,6 +724,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^hash$' \
 	&& php -m | grep -oiE '^iconv$' \
 	&& php-fpm -m | grep -oiE '^iconv$' \
+	&& php -m | grep -oiE '^igbinary$' \
+	&& php-fpm -m | grep -oiE '^igbinary$' \
 	&& php -m | grep -oiE '^intl$' \
 	&& php-fpm -m | grep -oiE '^intl$' \
 	&& php -m | grep -oiE '^json$' \
@@ -632,6 +736,12 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
+	&& php -m | grep -oiE '^mcrypt$' \
+	&& php-fpm -m | grep -oiE '^mcrypt$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
+	&& php -m | grep -oiE '^memcache$' \
+	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mongodb$' \
@@ -640,6 +750,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
 	&& php -m | grep -oiE '^mysqlnd$' \
 	&& php-fpm -m | grep -oiE '^mysqlnd$' \
+	&& php -m | grep -oiE '^oauth$' \
+	&& php-fpm -m | grep -oiE '^oauth$' \
 	&& php -m | grep -oiE '^oci8$' \
 	&& php-fpm -m | grep -oiE '^oci8$' \
 	&& php -m | grep -oiE '^Zend Opcache$' \
@@ -666,6 +778,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^psr$' \
+	&& php-fpm -m | grep -oiE '^psr$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
@@ -691,6 +805,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^sodium$' \
 	&& php-fpm -m | grep -oiE '^sodium$' \
+	&& php -m | grep -oiE '^solr$' \
+	&& php-fpm -m | grep -oiE '^solr$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
@@ -713,6 +829,10 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
+	&& php -m | grep -oiE '^xlswriter$' \
+	&& php-fpm -m | grep -oiE '^xlswriter$' \
+	&& php -m | grep -oiE '^yaml$' \
+	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& true
