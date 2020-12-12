@@ -113,7 +113,7 @@ One main problem with a running Docker container is to **synchronize the ownersh
 
 #### Unsynchronized permissions
 
-Consider the following directory structure of a mounted volume. Your hosts computer uid/gid are `1000` which does not have a corresponding user/group within the container. Fortunately the `tmp/` directory allows everybody to create new files in it. 
+Consider the following directory structure of a mounted volume. Your hosts computer uid/gid are `1000` which does not have a corresponding user/group within the container. Fortunately the `tmp/` directory allows everybody to create new files in it.
 
 ```shell
                   [Host]                   |             [Container]

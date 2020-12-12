@@ -33,9 +33,21 @@ jobs:
       # ------------------------------------------------------------
       # Lint repository
       # ------------------------------------------------------------
+      - name: Lint Files
+        run: |
+          make lint-files
+
+      - name: Lint Yaml
+        run: |
+          make lint-yaml
+
       - name: Lint workflow
         run: |
           make lint-workflow
+
+      - name: Lint Changelog
+        run: |
+          make lint-changelog
 
       - name: Diff generated Docker files
         run: |

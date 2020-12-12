@@ -7,6 +7,8 @@ endif
 # Docker configuration
 # -------------------------------------------------------------------------------------------------
 
+CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
 DIR = Dockerfiles
 IMAGE = devilbox/php-fpm
 NO_CACHE =
@@ -14,6 +16,11 @@ PHP_EXT_DIR =
 
 # Run checks after each module has been installed (slow, but yields errors faster)
 FAIL_FAST = False
+
+# File lint
+FL_VERSION = 0.3
+FL_IGNORES = .git/,.github/
+
 
 # -------------------------------------------------------------------------------------------------
 #  DEFAULT TARGET
@@ -74,9 +81,15 @@ help:
 #  Lint Targets
 # -------------------------------------------------------------------------------------------------
 
+lint: lint-files
+lint: lint-yaml
+lint: lint-changelog
 lint: lint-workflow
 
 lint-workflow:
+	@echo "################################################################################"
+	@echo "# Lint Workflow"
+	@echo "################################################################################"
 	@\
 	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
 	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
@@ -88,6 +101,43 @@ lint-workflow:
 		else \
 		echo "[OK] Git Tag present in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
 	fi
+	@echo
+
+lint-changelog:
+	@echo "################################################################################"
+	@echo "# Lint Changelog"
+	@echo "################################################################################"
+	@\
+	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
+	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
+	GIT_NEXT_TAG="$${GIT_CURR_MAJOR}.$$(( GIT_CURR_MINOR + 1 ))"; \
+	if ! grep -E "^## Release $${GIT_NEXT_TAG}$$" CHANGELOG.md >/dev/null; then \
+		echo "[ERR] Missing '## Release $${GIT_NEXT_TAG}' section in CHANGELOG.md"; \
+		exit 1; \
+	else \
+		echo "[OK] Section '## Release $${GIT_NEXT_TAG}' present in CHANGELOG.md"; \
+	fi
+	@echo
+
+lint-files:
+	@echo "################################################################################"
+	@echo "# Lint Files"
+	@echo "################################################################################"
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-cr --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-crlf --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-single-newline --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-space --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8 --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8-bom --text --ignore '$(FL_IGNORES)' --path .
+	@echo
+
+lint-yaml:
+	@# Lint all files
+	@echo "################################################################################"
+	@echo "# Lint Yaml"
+	@echo "################################################################################"
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/yamllint .
+	@echo
 
 
 # -------------------------------------------------------------------------------------------------
