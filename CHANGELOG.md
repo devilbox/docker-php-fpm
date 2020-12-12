@@ -10,6 +10,9 @@
 - Added `apcu`, `blackfire`, `igbinary`, `imap`, `mcrypt`, `memcache`, `msgpack`, `oauth`, `psr`, `solr`, `xlswriter`, `yaml` to PHP 8.0
 - Added `apcu`, `igbinary`, `imap`, `mcrypt`, `memcache`, `msgpack`, `oauth`, `psr`, `solr`, `xlswriter`, `yaml` to PHP 8.1
 
+#### Changed
+- Migrate from Travis CI to GitHub Actions
+
 
 ## Release 0.121
 
