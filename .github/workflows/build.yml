@@ -328,10 +328,10 @@ jobs:
           retry make login USERNAME=${{ secrets.DOCKERHUB_USERNAME }} PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
 
           # Push
-          echo "retry make push TAG=${DOCKER_TAG_BASE}"
-          echo "retry make push TAG=${DOCKER_TAG_MODS}"
-          echo "retry make push TAG=${DOCKER_TAG_PROD}"
-          echo "retry make push TAG=${DOCKER_TAG_WORK}"
+          retry make push TAG=${DOCKER_TAG_BASE}
+          retry make push TAG=${DOCKER_TAG_MODS}
+          retry make push TAG=${DOCKER_TAG_PROD}
+          retry make push TAG=${DOCKER_TAG_WORK}
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
