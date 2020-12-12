@@ -307,7 +307,7 @@ jobs:
           docker images
 
           # Login
-          retry make login USER=${{ secrets.DOCKERHUB_USERNAME }} PASS=${{ secrets.DOCKERHUB_PASSWORD }}
+          retry make login USERNAME=${{ secrets.DOCKERHUB_USERNAME }} PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
 
           # Push
           echo "retry make push-base VERSION=${DOCKER_TAG}"
