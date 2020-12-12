@@ -72,21 +72,33 @@ jobs:
           )"
           # Docker Tag
           if [ "${GIT_TYPE}" = "BRANCH" ] && [ "${GIT_SLUG}" = "master" ]; then
-            DOCKER_TAG="${VERSION}"
+            DOCKER_TAG_BASE="${VERSION}-base"
+            DOCKER_TAG_MODS="${VERSION}-mods"
+            DOCKER_TAG_PROD="${VERSION}-prod"
+            DOCKER_TAG_WORK="${VERSION}-work"
           else
-            DOCKER_TAG="${VERSION}-${GIT_SLUG}"
+            DOCKER_TAG_BASE="${VERSION}-base-${GIT_SLUG}"
+            DOCKER_TAG_MODS="${VERSION}-mods-${GIT_SLUG}"
+            DOCKER_TAG_PROD="${VERSION}-prod-${GIT_SLUG}"
+            DOCKER_TAG_WORK="${VERSION}-work-${GIT_SLUG}"
           fi
 
           # Output
           echo "GIT_TYPE=${GIT_TYPE}"
           echo "GIT_SLUG=${GIT_SLUG}"
-          echo "DOCKER_TAG=${DOCKER_TAG}"
+          echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}"
+          echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}"
+          echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}"
+          echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}"
 
           # Export variable
           # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
-          echo "GIT_TYPE=${GIT_TYPE}"     >> ${GITHUB_ENV}
-          echo "GIT_SLUG=${GIT_SLUG}"     >> ${GITHUB_ENV}
-          echo "DOCKER_TAG=${DOCKER_TAG}" >> ${GITHUB_ENV}
+          echo "GIT_TYPE=${GIT_TYPE}"               >> ${GITHUB_ENV}
+          echo "GIT_SLUG=${GIT_SLUG}"               >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}" >> ${GITHUB_ENV}
         env:
           VERSION: ${{ matrix.version }}
 
@@ -299,27 +311,36 @@ jobs:
           # Output
           echo "GIT_TYPE=${GIT_TYPE}"
           echo "GIT_SLUG=${GIT_SLUG}"
-          echo "DOCKER_TAG=${DOCKER_TAG}"
+          echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}"
+          echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}"
+          echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}"
+          echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}"
 
+          # Tag image
+          retry make tag OLD_TAG="${VERSION}-base" NEW_TAG="${DOCKER_TAG_BASE}"
+          retry make tag OLD_TAG="${VERSION}-mods" NEW_TAG="${DOCKER_TAG_MODS}"
+          retry make tag OLD_TAG="${VERSION}-prod" NEW_TAG="${DOCKER_TAG_PROD}"
+          retry make tag OLD_TAG="${VERSION}-work" NEW_TAG="${DOCKER_TAG_WORK}"
           docker images
 
           # Login
           retry make login USERNAME=${{ secrets.DOCKERHUB_USERNAME }} PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
 
           # Push
-          echo "retry make push-base VERSION=${DOCKER_TAG}"
-          echo "retry make push-mods VERSION=${DOCKER_TAG}"
-          echo "retry make push-prod VERSION=${DOCKER_TAG}"
-          echo "retry make push-work VERSION=${DOCKER_TAG}"
+          echo "retry make push TAG=${DOCKER_TAG_BASE}"
+          echo "retry make push TAG=${DOCKER_TAG_MODS}"
+          echo "retry make push TAG=${DOCKER_TAG_PROD}"
+          echo "retry make push TAG=${DOCKER_TAG_WORK}"
         env:
+          VERSION: ${{ matrix.version }}
           RETRIES: 20
           PAUSE: 10
         # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
         if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
             && (
-              (github.event_name == 'schedule'     && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+              (github.event_name == 'schedule' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
               ||
-              (github.event_name == 'push'         && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+              (github.event_name == 'push'     && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
               ||
               (github.event_name == 'push'     && startsWith(github.ref, 'refs/heads/release-'))
             )
