@@ -39,5 +39,5 @@ jobs:
 
       - name: Diff generated Docker files
         run: |
-          make gen-readme
+          make gen-dockerfiles
           git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
