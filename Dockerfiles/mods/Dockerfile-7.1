@@ -295,8 +295,9 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mcrypt --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
 	&& true
 
@@ -554,8 +555,6 @@ phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
-&& rm -rf /usr/local/include/php/ext/igbinary \
-&& rm -rf /usr/local/include/php/ext/msgpack \
  \
 	# Enabling
 	&& docker-php-ext-enable redis \

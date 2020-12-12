@@ -1,9 +1,8 @@
 # PHP-FPM Docker images
 
-[![Linting](https://github.com/devilbox/docker-php-fpm/workflows/Linting/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=Linting)
-[![CI](https://github.com/devilbox/docker-php-fpm/workflows/PHP-CI/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-CI)
-[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
-[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![lint](https://github.com/devilbox/docker-php-fpm/workflows/lint/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=lint)
+[![build](https://github.com/devilbox/docker-php-fpm/workflows/build/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=build)
+[![nightly](https://github.com/devilbox/docker-php-fpm/workflows/nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)
 [![Release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg?colorB=orange)](https://github.com/devilbox/docker-php-fpm/releases)
 [![Gitter](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Discourse](https://img.shields.io/discourse/https/devilbox.discourse.group/status.svg?colorB=%234CB697)](https://devilbox.discourse.group)
@@ -114,7 +113,7 @@ One main problem with a running Docker container is to **synchronize the ownersh
 
 #### Unsynchronized permissions
 
-Consider the following directory structure of a mounted volume. Your hosts computer uid/gid are `1000` which does not have a corresponding user/group within the container. Fortunately the `tmp/` directory allows everybody to create new files in it. 
+Consider the following directory structure of a mounted volume. Your hosts computer uid/gid are `1000` which does not have a corresponding user/group within the container. Fortunately the `tmp/` directory allows everybody to create new files in it.
 
 ```shell
                   [Host]                   |             [Container]
@@ -681,12 +680,12 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>8.0</th>
    <td id="80-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="80-mods">bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, intl, json, ldap, libxml, mbstring, memcached, mongodb, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xml, xmlreader, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+   <td id="80-mods">apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
    <th>8.1</th>
    <td id="81-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="81-mods">bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, intl, json, ldap, libxml, mbstring, memcached, mongodb, mysqli, mysqlnd, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xml, xmlreader, xmlwriter, xsl, Zend OPcache, zip, zlib</td>
+   <td id="81-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
   </tr>
  </tbody>
 </table>
@@ -978,7 +977,7 @@ If you plan to use the PHP-FPM image for development, hence being able to execut
 
 The **work** Docker image has many common tools already installed which on one hand increases its image size, but on the other hand removes the necessity to install those tools locally.
 
-You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpcs` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by travis-ci it is assured that you are always at the latest version of your favorite dev tool.
+You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpcs` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by GitHub Actions it is assured that you are always at the latest version of your favorite dev tool.
 
 
 #### What tools can you expect
@@ -1284,10 +1283,9 @@ $ docker exec -it php mysqldump-secure
 
 <h2><img id="automated-builds" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Automated builds</h2>
 
-[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
-[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![nightly](https://github.com/devilbox/docker-php-fpm/workflows/nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)
 
-Docker images are built and tested every night by **[travis-ci](https://travis-ci.org/devilbox/docker-php-fpm)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
+Docker images are built and tested every night by **[GitHub Actions](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
 
 <h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributing</h2>
 

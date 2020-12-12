@@ -304,7 +304,7 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mcrypt --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
 	&& pecl install mcrypt \
@@ -552,8 +552,6 @@ phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
-&& rm -rf /usr/local/include/php/ext/igbinary \
-&& rm -rf /usr/local/include/php/ext/msgpack \
  \
 	# Enabling
 	&& docker-php-ext-enable redis \

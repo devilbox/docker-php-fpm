@@ -4,4 +4,3 @@ Defaults   secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/loca
 
 # Allow devilbox user to do anything without password
 %devilbox  ALL=(ALL)       NOPASSWD: ALL
-

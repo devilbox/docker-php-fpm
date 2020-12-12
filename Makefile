@@ -7,6 +7,8 @@ endif
 # Docker configuration
 # -------------------------------------------------------------------------------------------------
 
+CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
 DIR = Dockerfiles
 IMAGE = devilbox/php-fpm
 NO_CACHE =
@@ -14,6 +16,11 @@ PHP_EXT_DIR =
 
 # Run checks after each module has been installed (slow, but yields errors faster)
 FAIL_FAST = False
+
+# File lint
+FL_VERSION = 0.3
+FL_IGNORES = .git/,.github/
+
 
 # -------------------------------------------------------------------------------------------------
 #  DEFAULT TARGET
@@ -30,6 +37,8 @@ help:
 	@echo
 	@echo "Targets"
 	@echo "--------------------------------------------------------------------------------"
+	@echo
+	@echo "lint                          Lint project files and repository"
 	@echo
 	@echo "gen-readme [VERSION=]         Update README with PHP modules from built images."
 	@echo "gen-dockerfiles [FAIL_FAST=]  Generate Dockerfiles from templates."
@@ -67,6 +76,70 @@ help:
 	@echo "ARGS                          Can be added to all build-* and rebuild-* targets"
 	@echo "                              to supply additional docker build options."
 
+
+# -------------------------------------------------------------------------------------------------
+#  Lint Targets
+# -------------------------------------------------------------------------------------------------
+
+lint: lint-files
+lint: lint-yaml
+lint: lint-changelog
+lint: lint-workflow
+
+lint-workflow:
+	@echo "################################################################################"
+	@echo "# Lint Workflow"
+	@echo "################################################################################"
+	@\
+	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
+	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
+	GIT_NEXT_TAG="$${GIT_CURR_MAJOR}.$$(( GIT_CURR_MINOR + 1 ))"; \
+		if ! grep 'refs:' -A 100 .github/workflows/nightly.yml \
+		| grep  "          - '$${GIT_NEXT_TAG}'" >/dev/null; then \
+		echo "[ERR] New Tag required in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
+			exit 1; \
+		else \
+		echo "[OK] Git Tag present in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
+	fi
+	@echo
+
+lint-changelog:
+	@echo "################################################################################"
+	@echo "# Lint Changelog"
+	@echo "################################################################################"
+	@\
+	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
+	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
+	GIT_NEXT_TAG="$${GIT_CURR_MAJOR}.$$(( GIT_CURR_MINOR + 1 ))"; \
+	if ! grep -E "^## Release $${GIT_NEXT_TAG}$$" CHANGELOG.md >/dev/null; then \
+		echo "[ERR] Missing '## Release $${GIT_NEXT_TAG}' section in CHANGELOG.md"; \
+		exit 1; \
+	else \
+		echo "[OK] Section '## Release $${GIT_NEXT_TAG}' present in CHANGELOG.md"; \
+	fi
+	@echo
+
+lint-files:
+	@echo "################################################################################"
+	@echo "# Lint Files"
+	@echo "################################################################################"
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-cr --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-crlf --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-single-newline --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-space --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8 --text --ignore '$(FL_IGNORES)' --path .
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8-bom --text --ignore '$(FL_IGNORES)' --path .
+	@echo
+
+lint-yaml:
+	@# Lint all files
+	@echo "################################################################################"
+	@echo "# Lint Yaml"
+	@echo "################################################################################"
+	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/yamllint .
+	@echo
+
+
 # -------------------------------------------------------------------------------------------------
 #  GENERATE TARGETS
 # -------------------------------------------------------------------------------------------------
@@ -82,7 +155,6 @@ else
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
 	cd build; ./gen-readme.sh $(VERSION)
 endif
-
 
 gen-dockerfiles:
 	docker run --rm \
@@ -180,7 +252,7 @@ build-work:
 #  REBUILD TARGETS
 # -------------------------------------------------------------------------------------------------
 
-rebuild-base: _pull-root-image
+rebuild-base: _pull-base-image
 rebuild-base: NO_CACHE=--no-cache
 rebuild-base: build-base
 
@@ -338,6 +410,6 @@ _check-image-exists:
 	fi;
 
 
-_pull-root-image:
+_pull-base-image:
 	@echo "Pulling root image for PHP ${VERSION}"
 	@docker pull $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
