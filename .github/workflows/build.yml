@@ -120,6 +120,7 @@ jobs:
             done;
             return 1;
           }
+          retry make _pull-base-image VERSION=${VERSION}
           retry make build-base VERSION=${VERSION}
         env:
           VERSION: ${{ matrix.version }}

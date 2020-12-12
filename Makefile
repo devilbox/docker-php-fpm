@@ -202,7 +202,7 @@ build-work:
 #  REBUILD TARGETS
 # -------------------------------------------------------------------------------------------------
 
-rebuild-base: _pull-root-image
+rebuild-base: _pull-base-image
 rebuild-base: NO_CACHE=--no-cache
 rebuild-base: build-base
 
@@ -360,6 +360,6 @@ _check-image-exists:
 	fi;
 
 
-_pull-root-image:
+_pull-base-image:
 	@echo "Pulling root image for PHP ${VERSION}"
 	@docker pull $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
