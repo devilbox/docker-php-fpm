@@ -977,7 +977,7 @@ If you plan to use the PHP-FPM image for development, hence being able to execut
 
 The **work** Docker image has many common tools already installed which on one hand increases its image size, but on the other hand removes the necessity to install those tools locally.
 
-You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpcs` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by travis-ci it is assured that you are always at the latest version of your favorite dev tool.
+You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpcs` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by GitHub Actions it is assured that you are always at the latest version of your favorite dev tool.
 
 
 #### What tools can you expect
@@ -1283,10 +1283,9 @@ $ docker exec -it php mysqldump-secure
 
 <h2><img id="automated-builds" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Automated builds</h2>
 
-[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
-[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![nightly](https://github.com/devilbox/docker-php-fpm/workflows/nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)
 
-Docker images are built and tested every night by **[travis-ci](https://travis-ci.org/devilbox/docker-php-fpm)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
+Docker images are built and tested every night by **[GitHub Actions](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
 
 <h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributing</h2>
 
