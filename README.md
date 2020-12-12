@@ -1,9 +1,8 @@
 # PHP-FPM Docker images
 
-[![Linting](https://github.com/devilbox/docker-php-fpm/workflows/Linting/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=Linting)
-[![CI](https://github.com/devilbox/docker-php-fpm/workflows/PHP-CI/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-CI)
-[![Nightly](https://github.com/devilbox/docker-php-fpm/workflows/PHP-Nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=PHP-Nightly)
-[![Travis](https://travis-ci.org/devilbox/docker-php-fpm.svg?branch=master)](https://travis-ci.org/devilbox/docker-php-fpm)
+[![lint](https://github.com/devilbox/docker-php-fpm/workflows/lint/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=lint)
+[![build](https://github.com/devilbox/docker-php-fpm/workflows/build/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=build)
+[![nightly](https://github.com/devilbox/docker-php-fpm/workflows/nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)
 [![Release](https://img.shields.io/github/release/devilbox/docker-php-fpm.svg?colorB=orange)](https://github.com/devilbox/docker-php-fpm/releases)
 [![Gitter](https://badges.gitter.im/devilbox/Lobby.svg)](https://gitter.im/devilbox/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Discourse](https://img.shields.io/discourse/https/devilbox.discourse.group/status.svg?colorB=%234CB697)](https://devilbox.discourse.group)

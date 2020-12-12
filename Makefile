@@ -31,6 +31,8 @@ help:
 	@echo "Targets"
 	@echo "--------------------------------------------------------------------------------"
 	@echo
+	@echo "lint                          Lint project files and repository"
+	@echo
 	@echo "gen-readme [VERSION=]         Update README with PHP modules from built images."
 	@echo "gen-dockerfiles [FAIL_FAST=]  Generate Dockerfiles from templates."
 	@echo
@@ -67,6 +69,27 @@ help:
 	@echo "ARGS                          Can be added to all build-* and rebuild-* targets"
 	@echo "                              to supply additional docker build options."
 
+
+# -------------------------------------------------------------------------------------------------
+#  Lint Targets
+# -------------------------------------------------------------------------------------------------
+
+lint: lint-workflow
+
+lint-workflow:
+	@\
+	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
+	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
+	GIT_NEXT_TAG="$${GIT_CURR_MAJOR}.$$(( GIT_CURR_MINOR + 1 ))"; \
+		if ! grep 'refs:' -A 100 .github/workflows/nightly.yml \
+		| grep  "          - '$${GIT_NEXT_TAG}'" >/dev/null; then \
+		echo "[ERR] New Tag required in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
+			exit 1; \
+		else \
+		echo "[OK] Git Tag present in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
+	fi
+
+
 # -------------------------------------------------------------------------------------------------
 #  GENERATE TARGETS
 # -------------------------------------------------------------------------------------------------
@@ -82,7 +105,6 @@ else
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
 	cd build; ./gen-readme.sh $(VERSION)
 endif
-
 
 gen-dockerfiles:
 	docker run --rm \

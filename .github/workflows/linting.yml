@@ -1,27 +1,42 @@
 ---
 
-###
-### Lints all generic and json files in the whole git repository
-###
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: lint
 
-name: Linting
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
 on:
+  # Runs on Pull Requests
   pull_request:
 
+
+# -------------------------------------------------------------------------------------------------
+# What to run
+# -------------------------------------------------------------------------------------------------
 jobs:
   lint:
     name: "[ ${{ matrix.job }} ]"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: False
-      matrix:
-        job: [gen-dockerfiles]
     steps:
+      # ------------------------------------------------------------
+      # Setup repository
+      # ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      # ------------------------------------------------------------
+      # Lint repository
+      # ------------------------------------------------------------
+      - name: Lint workflow
+        id: vars
+        run: |
+          make lint-workflow
+
       - name: Diff generated Docker files
         run: |
-          make "${JOB}"
+          make gen-readme
           git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
-        env:
-          JOB: ${{ matrix.job }}
