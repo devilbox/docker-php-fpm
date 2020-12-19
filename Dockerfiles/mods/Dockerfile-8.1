@@ -11,7 +11,6 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
 		alien \
 		firebird-dev \
-		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
 		libc-client-dev \
@@ -329,16 +328,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: pdo_dblib --------------------
-RUN set -eux \
-	# Generic pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
-	# Installation: Generic
-	# Type:         Built-in extension
-	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
-	&& true
-
-
 # -------------------- Installing PHP Extension: pdo_firebird --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -421,7 +410,7 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: redis --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         GIT extension
 	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
 	&& cd /tmp/redis \
@@ -437,6 +426,8 @@ if [ -d "/usr/local/include/php/ext/msgpack" ]; then \
 fi; \
 phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
+&& sed -i'' 's/ops->hash_init(ctx);/ops->hash_init(ctx, NULL);/g' library.c \
+&& sed -i'' 's/ops->hash_init(ctx);/ops->hash_init(ctx, NULL);/g' redis_array_impl.c \
 && make -j$(getconf _NPROCESSORS_ONLN) \
 && make install \
  \
@@ -661,7 +652,6 @@ RUN set -eux \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
-	libsybdb5 \
 	libtidy5deb1 \
 	libvpx5 \
 	libwebp6 \
@@ -788,8 +778,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^pdo$' \
 	&& php-fpm -m | grep -oiE '^pdo$' \
-	&& php -m | grep -oiE '^pdo_dblib$' \
-	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
 	&& php -m | grep -oiE '^pdo_firebird$' \
 	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
 	&& php -m | grep -oiE '^pdo_mysql$' \

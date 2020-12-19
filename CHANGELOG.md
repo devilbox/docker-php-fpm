@@ -4,6 +4,16 @@
 ## Unreleased
 
 
+## Release 0.123
+
+#### Fixed
+- Fixex `redis` module compilation for PHP 8.1
+- Fixed PHP Xdebug v3 defaults
+
+#### Changed
+- Removed `pdo_dblib` from PHP 8.1 due to errors
+
+
 ## Release 0.122
 
 #### Added
