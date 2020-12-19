@@ -8,7 +8,12 @@
 
 #### Fixed
 - Fixex `redis` module compilation for PHP 8.1
-- Fixed PHP Xdebug v3 defaults
+- Fixed PHP Xdebug v3 defaults to:
+  ```ini
+  xdebug.mode               = Off
+  xdebug.start_with_request = default
+  xdebug.client_port        = 9000
+  ```
 
 #### Changed
 - Removed `pdo_dblib` from PHP 8.1 due to errors

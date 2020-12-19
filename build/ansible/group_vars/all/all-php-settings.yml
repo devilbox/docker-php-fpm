@@ -46,7 +46,7 @@ php_settings_ini:
     xdebug2_remote_autostart:   'Off'
     # Xdebug3 settings
     xdebug3_mode:               'Off'
-    xdebug3_start_with_request: 'Off'
+    xdebug3_start_with_request: 'default'
     xdebug3_client_port:        '9000'
 
   # ---- Inherits from base ----
@@ -71,7 +71,7 @@ php_settings_ini:
     xdebug2_remote_autostart:   'Off'
     # Xdebug3 settings
     xdebug3_mode:               'Off'
-    xdebug3_start_with_request: 'Off'
+    xdebug3_start_with_request: 'default'
     xdebug3_client_port:        '9000'
 
 # -------------------------------------------------------------------------------------------------
