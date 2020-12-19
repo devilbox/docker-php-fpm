@@ -17,33 +17,37 @@ php_settings_ini:
   # ---- Sane default ----
   base:
     # Memory
-    memory_limit:              512M
+    memory_limit:               512M
     # Timeouts
-    max_execution_time:        "{{ php_timeout }}"
-    max_input_time:            "{{ php_timeout }}"
+    max_execution_time:         "{{ php_timeout }}"
+    max_input_time:             "{{ php_timeout }}"
     # Uploads
     # Note: "post_max_size" should be greater than "upload_max_filesize"
-    post_max_size:             72M
-    upload_max_filesize:       64M
-    max_file_uploads:          20
+    post_max_size:              72M
+    upload_max_filesize:        64M
+    max_file_uploads:           20
     # Variables
-    variables_order:           EGPCS
-    max_input_vars:            8000
-    max_input_nesting_level:   64
+    variables_order:            EGPCS
+    max_input_vars:             8000
+    max_input_nesting_level:    64
     # Error reporting
-    error_reporting:           E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
-    xmlrpc_errors:             'Off'
-    report_memleaks:           'On'
-    display_errors:            'Off'
-    display_startup_errors:    'Off'
-    track_errors:              'On'
-    log_errors:                'On'
-    html_errors:               'Off'
-    # Xdebug settings
-    xdebug_default_enable:     'Off'
-    xdebug_profiler_enable:    'Off'
-    xdebug_remote_enable:      'Off'
-    xdebug_remote_autostart:   'Off'
+    error_reporting:            E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+    xmlrpc_errors:              'Off'
+    report_memleaks:            'On'
+    display_errors:             'Off'
+    display_startup_errors:     'Off'
+    track_errors:               'On'
+    log_errors:                 'On'
+    html_errors:                'Off'
+    # Xdebug2 settings
+    xdebug2_default_enable:     'Off'
+    xdebug2_profiler_enable:    'Off'
+    xdebug2_remote_enable:      'Off'
+    xdebug2_remote_autostart:   'Off'
+    # Xdebug3 settings
+    xdebug3_mode:               'Off'
+    xdebug3_start_with_request: 'default'
+    xdebug3_client_port:        '9000'
 
   # ---- Inherits from base ----
   mods:
@@ -52,20 +56,23 @@ php_settings_ini:
   # ---- Inherits from base and overwrites certain values ----
   work:
     # Error reporting
-    error_reporting:           E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
-    xmlrpc_errors:             'Off'
-    report_memleaks:           'On'
-    display_errors:            'On'
-    display_startup_errors:    'On'
-    track_errors:              'On'
-    log_errors:                'On'
-    html_errors:               'On'
-    # Xdebug settings
-    xdebug_default_enable:     'Off'
-    xdebug_profiler_enable:    'Off'
-    xdebug_remote_enable:      'Off'
-    xdebug_remote_autostart:   'Off'
-
+    error_reporting:            E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
+    xmlrpc_errors:              'Off'
+    report_memleaks:            'On'
+    display_errors:             'On'
+    display_startup_errors:     'On'
+    track_errors:               'On'
+    log_errors:                 'On'
+    html_errors:                'On'
+    # Xdebug2 settings
+    xdebug2_default_enable:     'Off'
+    xdebug2_profiler_enable:    'Off'
+    xdebug2_remote_enable:      'Off'
+    xdebug2_remote_autostart:   'Off'
+    # Xdebug3 settings
+    xdebug3_mode:               'Off'
+    xdebug3_start_with_request: 'default'
+    xdebug3_client_port:        '9000'
 
 # -------------------------------------------------------------------------------------------------
 # php-fpm.conf
