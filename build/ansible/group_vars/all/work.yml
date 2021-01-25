@@ -413,7 +413,7 @@ software_available:
         && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         && rm -rf /var/lib/apt/lists/* \
         \
-        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+        && curl -sS -L --fail https://bootstrap.pypa.io/2.7/get-pip.py | python \
   # nvm is a dependency for others
   nvm:
     check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'
