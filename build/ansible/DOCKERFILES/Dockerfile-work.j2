@@ -375,7 +375,7 @@ RUN set -eux \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
-
+{% if 'pip' in software_enabled %}
 ###
 ### Install pip (Python) packages
 ###
@@ -425,6 +425,7 @@ RUN set -eux \
 	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
+{%- endif -%}
 
 ###
 ### Configure Bash
@@ -489,6 +490,7 @@ RUN set -eux \
 	{%- endif -%}
 {%- endfor -%}{{ "\n\t" }}\
 # -------------------- PIP --------------------
+{% if 'pip' in software_enabled %}
 {%- for tool in pip_enabled -%}
 	{#- Not disabled -#}
 	{%- if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) -%}
@@ -497,6 +499,7 @@ RUN set -eux \
 		{%- endif -%}
 	{%- endif -%}
 {%- endfor -%}{{ "\n\t" }}\
+{%- endif -%}
 # -------------------- NPM --------------------
 {%- for tool in npm_enabled -%}
 	{#- Not disabled -#}
