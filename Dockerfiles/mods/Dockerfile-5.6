@@ -465,8 +465,6 @@ RUN set -eux \
 	# Type:         PECL extension
 	# Default:      Pecl command
 	&& pecl install psr-0.6.0 \
-	# Enabling
-	&& docker-php-ext-enable psr \
 	&& true
 
 
@@ -480,8 +478,6 @@ RUN set -eux \
 	&& git checkout v3.4.4 \
 	# Custom:       Install command
 	&& cd build && ./install \
-	# Enabling
-	&& docker-php-ext-enable phalcon \
 	&& true
 
 
@@ -909,10 +905,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
-	&& php -m | grep -oiE '^psr$' \
-	&& php-fpm -m | grep -oiE '^psr$' \
-	&& php -m | grep -oiE '^phalcon$' \
-	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \

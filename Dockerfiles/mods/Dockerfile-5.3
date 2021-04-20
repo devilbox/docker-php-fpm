@@ -439,8 +439,6 @@ RUN set -eux \
 	&& git checkout phalcon-v2.0.9 \
 	# Custom:       Install command
 	&& cd build && ./install \
-	# Enabling
-	&& docker-php-ext-enable phalcon \
 	&& true
 
 

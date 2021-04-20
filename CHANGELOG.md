@@ -3,6 +3,8 @@
 
 ## Unreleased
 
+#### Fixed
+- Disabled `psr` and `phalcon` from all images to fix compatibility issues with running code.
 
 ## Release 0.123
 
