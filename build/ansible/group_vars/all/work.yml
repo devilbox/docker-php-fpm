@@ -367,12 +367,15 @@ npm_available:
 #
 pip_available:
   ansible:
+    disabled: [5.2]
     name: ansible
     check: ansible --version | grep -E '^ansible [0-9][.0-9]+$'
   yamllint:
+    disabled: [5.2]
     name: yamllint
     check: yamllint --version 2>&1 | grep -E '[0-9][.0-9]+'
   yq:
+    disabled: [5.2]
     name: yq
     check: yq --version 2>&1 | grep -E '^yq\s+[0-9][.0-9]+$'
 
@@ -405,15 +408,16 @@ software_available:
         && ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
   # pip is a dependency for others
   pip:
+    disabled: [5.2]
     all:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libpython-dev \
+          libpython3-dev python3 \
         && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         && rm -rf /var/lib/apt/lists/* \
         \
-        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python3 \
   # nvm is a dependency for others
   nvm:
     check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'

@@ -132,16 +132,6 @@ RUN set -eux \
 ### Install custom software
 ###
 RUN set -eux \
-# -------------------- pip --------------------
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libpython-dev \
-&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-&& rm -rf /var/lib/apt/lists/* \
-\
-&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
- \
-	\
 # -------------------- nvm --------------------
 	&& git clone https://github.com/creationix/nvm /opt/nvm \
 && cd /opt/nvm \
@@ -375,15 +365,6 @@ RUN set -eux \
 ### Install pip (Python) packages
 ###
 RUN set -eux \
-# -------------------- ansible --------------------
-	&& pip install --no-cache-dir --force-reinstall ansible || true \
-	\
-# -------------------- yamllint --------------------
-	&& pip install --no-cache-dir --force-reinstall yamllint || true \
-	\
-# -------------------- yq --------------------
-	&& pip install --no-cache-dir --force-reinstall yq || true \
-	\
 	\
 	&& rm -rf /root/.cache/pip \
 	&& rm -rf /tmp/* \
@@ -450,9 +431,6 @@ RUN set -eux \
 # -------------------- Composer --------------------
 	\
 # -------------------- PIP --------------------
-	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \
-	&& yamllint --version 2>&1 | grep -E '[0-9][.0-9]+' \
-	&& yq --version 2>&1 | grep -E '^yq\s+[0-9][.0-9]+$' \
 	\
 # -------------------- NPM --------------------
 	&& ng  version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' \

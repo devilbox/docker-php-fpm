@@ -467,6 +467,8 @@ RUN set -eux \
 	&& pecl install psr-0.6.0 \
 	# Enabling
 	&& docker-php-ext-enable psr \
+	# Generic post-command
+	&& echo 'true' \
 	&& true
 
 
@@ -482,6 +484,8 @@ RUN set -eux \
 	&& cd build && ./install \
 	# Enabling
 	&& docker-php-ext-enable phalcon \
+	# Generic post-command
+	&& echo 'true' \
 	&& true
 
 
@@ -787,6 +791,10 @@ RUN set -eux \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
   \
+	# ---------- psr ----------
+	&& echo 'true'  \
+	# ---------- phalcon ----------
+	&& echo 'true'  \
 	&& true
 
 

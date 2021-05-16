@@ -685,7 +685,7 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>8.1</th>
    <td id="81-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="81-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
+   <td id="81-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, zip, zlib</td>
   </tr>
  </tbody>
 </table>
@@ -823,7 +823,7 @@ Have a look at the following table to see all supported environment variables fo
    <td><code>ENABLE_MODULES</code></td>
    <td>string</td>
    <td><code>''</code></td>
-   <td>Comma separated list of PHP modules to enable, which are not enabled by default.<br/><strong>Example:</strong><br/><code>ENABLE_MODULES=blackfire, ioncube</code></td>
+   <td>Comma separated list of PHP modules to enable, which are not enabled by default.<br/><strong>Example:</strong><br/><code>ENABLE_MODULES=blackfire, ioncube, psr, phalcon</code></td>
   </tr>
   <tr>
    <td><code>DISABLE_MODULES</code></td>

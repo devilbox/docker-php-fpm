@@ -7,7 +7,12 @@
 ## Release 0.124
 
 #### Changed
-- Removed `linuxbrew`
+- Updated `pdo_sqlsrv` for PHP 7.2
+- Updated `swoole` for PHP 7.1
+- Update to Python3 on work images
+- Removed `opcache` for PHP 8.1
+- Removed `linuxbrew` for all work images
+- Remove pip packages for PHP 5.2 on work image
 
 
 ## Release 0.123

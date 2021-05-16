@@ -143,11 +143,11 @@ RUN set -eux \
 # -------------------- pip --------------------
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libpython-dev \
+  libpython3-dev python3 \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
 \
-&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python3 \
  \
 	\
 # -------------------- nvm --------------------
