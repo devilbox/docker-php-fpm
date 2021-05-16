@@ -35,6 +35,8 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
 		curl \
 		dirmngr \
 		gnupg \
@@ -143,11 +145,11 @@ RUN set -eux \
 # -------------------- pip --------------------
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libpython3-dev \
-  python3 \
-  python3-pip \
+  libpython-dev \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
+\
+&& curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
  \
 	\
 # -------------------- nvm --------------------
@@ -208,20 +210,6 @@ RUN set -eux \
 && rm -rf /usr/local/src/drush8/docs \
 && rm -rf /usr/local/src/drush8/examples \
 && rm -rf /usr/local/src/drush8/misc \
- \
-	\
-# -------------------- drush9 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
-&& cd /usr/local/src/drush9 \
-&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
-&& ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
-&& rm -rf /usr/local/src/drush9/.git \
-&& rm -rf /usr/local/src/drush9/docs \
-&& rm -rf /usr/local/src/drush9/examples \
-&& rm -rf /usr/local/src/drush9/misc \
  \
 	\
 # -------------------- drupalconsole --------------------
@@ -499,8 +487,14 @@ RUN set -eux \
 ### Install pip (Python) packages
 ###
 RUN set -eux \
+# -------------------- ansible --------------------
+	&& pip install --no-cache-dir --force-reinstall ansible || true \
+	\
+# -------------------- yamllint --------------------
+	&& pip install --no-cache-dir --force-reinstall yamllint || true \
+	\
 # -------------------- yq --------------------
-	&& pip3 install --no-cache-dir --force-reinstall yq || true \
+	&& pip install --no-cache-dir --force-reinstall yq || true \
 	\
 	\
 	&& rm -rf /root/.cache/pip \
@@ -562,7 +556,6 @@ RUN set -eux \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
-	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
 	&& drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
@@ -585,6 +578,8 @@ RUN set -eux \
 	&& photon --version | grep -E 'Installer [0-9][.0-9]+' \
 	\
 # -------------------- PIP --------------------
+	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \
+	&& yamllint --version 2>&1 | grep -E '[0-9][.0-9]+' \
 	&& yq --version 2>&1 | grep -E '^yq\s+[0-9][.0-9]+$' \
 	\
 # -------------------- NPM --------------------

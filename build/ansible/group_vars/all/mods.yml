@@ -783,7 +783,6 @@ extensions_available:
       version: 0.6.0  # NOTE: 0.6.1 fails with: Package "psr" Version "0.6.1" does not have REST xml available
     all:
       type: pecl
-      post: echo 'true'  # FIXME: disable module
   phalcon:
     disabled: [5.2, 8.0, 8.1] # TODO: currently disabled for 7.4 as it breaks
     5.3:
@@ -821,7 +820,6 @@ extensions_available:
       git_url: https://github.com/phalcon/cphalcon
       git_ref: $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | sed 's/^.*tags\///g' | grep -E '^v[.0-9]+$' | tail -1)
       command: cd build && ./install
-      post: echo 'true'  # FIXME: disable module
   phar:
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     5.2:

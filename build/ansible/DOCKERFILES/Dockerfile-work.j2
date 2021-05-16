@@ -35,6 +35,8 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
 		curl \
 		dirmngr \
 		gnupg \
@@ -391,13 +393,13 @@ RUN set -eux \
 		{%- endif -%}
 		{#- Version specific gem version available? -#}
 		{%- if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] -%}
-			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} || true \
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} || true \
 		{#- Generic gem version  available? -#}
 		{%- elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] -%}
-			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} || true \
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} || true \
 		{#- No version info available -#}
 		{%- else -%}
-			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} || true \
+			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} || true \
 		{%- endif -%}
 		{#- Fail fast version -#}
 		{%- if build_fail_fast -%}

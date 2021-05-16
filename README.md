@@ -685,7 +685,7 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>8.1</th>
    <td id="81-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="81-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, zip, zlib</td>
+   <td id="81-mods">apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xml, xmlreader, xmlwriter, xsl, yaml, zip, zlib</td>
   </tr>
  </tbody>
 </table>
@@ -990,6 +990,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   </tr>
  </thead>
   <tr>
+   <td><a href="https://www.ansible.com/">Ansible</a></td>
+   <td>Automation tool.</td>
+  </tr>
+  <tr>
    <td><a href="https://asgardcms.com/install">asgardcms</a></td>
    <td>AsgardCMS cli installer.</td>
   </tr>
@@ -1124,6 +1128,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   <tr>
    <td><a href="https://wp-cli.org">wp-cli</a></td>
    <td>WP-CLI is the command-line interface for WordPress.</td>
+  </tr>
+  <tr>
+   <td><a href="https://github.com/adrienverge/yamllint">yamllint</a></td>
+   <td>Yaml command line linter.</td>
   </tr>
   <tr>
    <td><a href="https://yarnpkg.com/en">yarn</a></td>

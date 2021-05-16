@@ -445,8 +445,6 @@ RUN set -eux \
 	&& pecl install psr-0.5.1 \
 	# Enabling
 	&& docker-php-ext-enable psr \
-	# Generic post-command
-	&& echo 'true' \
 	&& true
 
 
@@ -462,8 +460,6 @@ RUN set -eux \
 	&& cd build && ./install \
 	# Enabling
 	&& docker-php-ext-enable phalcon \
-	# Generic post-command
-	&& echo 'true' \
 	&& true
 
 
@@ -747,10 +743,6 @@ RUN set -eux \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
   \
-	# ---------- psr ----------
-	&& echo 'true'  \
-	# ---------- phalcon ----------
-	&& echo 'true'  \
 	&& true
 
 
@@ -937,6 +929,15 @@ RUN set -eux \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& true
+
+
+
+
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
 
 
 ###

@@ -10,14 +10,13 @@
 - Fixed `pdo_sqlsrv` version for PHP 7.2
 - Fixed `sqlsrv` version for PHP 7.2
 - Fixed `swoole` version for PHP 7.1
+- Fixed pip installation
 
 #### Changed
 - Removed `opcache` for PHP 8.1
 - Removed `xlswriter` for PHP 8.1
 - Removed `linuxbrew` for all versions
-- Removed `ansible` for all versions
-- Removed `yamllint` for all versions
-- Updated Python2 to Python3
+- [#201](https://github.com/devilbox/docker-php-fpm/issues/201) Deactivated `psr` and `phalcon` by default
 
 
 ## Release 0.123
