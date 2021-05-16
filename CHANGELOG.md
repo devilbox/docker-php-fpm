@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.124
+
+#### Changed
+- Removed `linuxbrew`
+
+
 ## Release 0.123
 
 #### Fixed
