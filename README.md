@@ -990,10 +990,6 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   </tr>
  </thead>
   <tr>
-   <td><a href="https://www.ansible.com/">Ansible</a></td>
-   <td>Automation tool.</td>
-  </tr>
-  <tr>
    <td><a href="https://asgardcms.com/install">asgardcms</a></td>
    <td>AsgardCMS cli installer.</td>
   </tr>
@@ -1128,10 +1124,6 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   <tr>
    <td><a href="https://wp-cli.org">wp-cli</a></td>
    <td>WP-CLI is the command-line interface for WordPress.</td>
-  </tr>
-  <tr>
-   <td><a href="https://github.com/adrienverge/yamllint">yamllint</a></td>
-   <td>Yaml command line linter.</td>
   </tr>
   <tr>
    <td><a href="https://yarnpkg.com/en">yarn</a></td>

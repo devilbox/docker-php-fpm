@@ -391,13 +391,13 @@ RUN set -eux \
 		{%- endif -%}
 		{#- Version specific gem version available? -#}
 		{%- if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} || true \
+			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} || true \
 		{#- Generic gem version  available? -#}
 		{%- elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} || true \
+			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} || true \
 		{#- No version info available -#}
 		{%- else -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} || true \
+			{{ "\n\t" }}&& pip3 install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} || true \
 		{%- endif -%}
 		{#- Fail fast version -#}
 		{%- if build_fail_fast -%}

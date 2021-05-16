@@ -6,13 +6,18 @@
 
 ## Release 0.124
 
+#### Fixed
+- Fixed `pdo_sqlsrv` version for PHP 7.2
+- Fixed `sqlsrv` version for PHP 7.2
+- Fixed `swoole` version for PHP 7.1
+
 #### Changed
-- Updated `pdo_sqlsrv` for PHP 7.2
-- Updated `swoole` for PHP 7.1
-- Update to Python3 on work images
 - Removed `opcache` for PHP 8.1
-- Removed `linuxbrew` for all work images
-- Remove pip packages for PHP 5.2 on work image
+- Removed `xlswriter` for PHP 8.1
+- Removed `linuxbrew` for all versions
+- Removed `ansible` for all versions
+- Removed `yamllint` for all versions
+- Updated Python2 to Python3
 
 
 ## Release 0.123

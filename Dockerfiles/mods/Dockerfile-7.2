@@ -628,10 +628,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: sqlsrv --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install sqlsrv \
+	&& pecl install sqlsrv-5.8.1 \
 	# Enabling
 	&& docker-php-ext-enable sqlsrv \
 	&& true
