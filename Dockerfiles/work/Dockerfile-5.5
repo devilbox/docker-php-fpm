@@ -23,6 +23,19 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.5-work"
 
 
 ###
+### Re-activate modules which have been deactivated in mods.
+### NOTE: They will be removed at the very bottom
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+
+###
 ### Envs
 ###
 ENV BASH_PROFILE=".bashrc"
@@ -611,6 +624,13 @@ RUN set -eux \
 	&& rm -rf /root/.pm2 \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true)
+
+
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
 
 
 ###
