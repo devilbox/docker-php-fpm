@@ -1058,10 +1058,6 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Search for URLs in files (optionally limited by extension) and validate their HTTP status code.</td>
   </tr>
   <tr>
-   <td><a href="http://linuxbrew.sh">linuxbrew</a></td>
-   <td>The Homebrew package manager for Linux.</td>
-  </tr>
-  <tr>
    <td><a href="https://github.com/markdownlint/markdownlint">mdl</a></td>
    <td>Markdown command line linter.</td>
   </tr>

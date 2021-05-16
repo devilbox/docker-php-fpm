@@ -194,18 +194,6 @@ RUN set -eux \
 && chmod +x /usr/local/bin/linkcheck \
  \
 	\
-# -------------------- linuxbrew --------------------
-	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
- \
-	\
 # -------------------- mhsendmail --------------------
 	&& curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
 && chmod +x mhsendmail_linux_amd64 \
@@ -480,7 +468,6 @@ RUN set -eux \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
-	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
 	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \

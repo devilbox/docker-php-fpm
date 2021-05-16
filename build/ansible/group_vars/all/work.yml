@@ -96,7 +96,7 @@ software_enabled:
   - gitflow
   - laravel
   - linkcheck
-  - linuxbrew
+  # - linuxbrew
   - mhsendmail
   - mysqldumpsecure
   - phalcon
