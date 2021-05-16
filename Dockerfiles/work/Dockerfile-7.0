@@ -213,20 +213,6 @@ RUN set -eux \
 && rm -rf /usr/local/src/drush8/misc \
  \
 	\
-# -------------------- drush9 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
-&& cd /usr/local/src/drush9 \
-&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
-&& ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
-&& rm -rf /usr/local/src/drush9/.git \
-&& rm -rf /usr/local/src/drush9/docs \
-&& rm -rf /usr/local/src/drush9/examples \
-&& rm -rf /usr/local/src/drush9/misc \
- \
-	\
 # -------------------- gitflow --------------------
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
 && cd /tmp/gitflow \
@@ -566,7 +552,6 @@ RUN set -eux \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
-	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \

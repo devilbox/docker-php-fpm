@@ -500,7 +500,7 @@ software_available:
         && rm -rf /usr/local/src/drush8/examples \
         && rm -rf /usr/local/src/drush8/misc \
   drush9:
-    disabled: [5.2, 5.3, 5.4, 5.5, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 7.0, 7.1, 8.0, 8.1]
     check: drush9 --version | grep -E '9[.0-9]+\s*$'
     all:
       pre: |

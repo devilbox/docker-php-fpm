@@ -17,6 +17,8 @@
 - Removed `xlswriter` for PHP 8.1
 - Removed `linuxbrew` for all versions
 - [#201](https://github.com/devilbox/docker-php-fpm/issues/201) Deactivated `psr` and `phalcon` by default
+- Removed `drush9` from PHP 7.0 and 7.1
+- Removed `drupalconsole` from PHP 7.0 and 7.1
 
 
 ## Release 0.123
