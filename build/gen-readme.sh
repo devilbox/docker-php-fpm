@@ -47,6 +47,14 @@ get_modules() {
 		ALL_MODULES="${ALL_MODULES},blackfire";
 	fi
 
+	if docker run --rm $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
+		ALL_MODULES="${ALL_MODULES},psr";
+	fi
+
+	if docker run --rm $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
+		ALL_MODULES="${ALL_MODULES},phalcon";
+	fi
+
 	# Process module string into correct format for README.md
 	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/^\[.*//g' )" # Remove PHP Modules headlines
 	PHP_MODULES="${ALL_MODULES}${PHP_MODULES}"                  # Append all available modules

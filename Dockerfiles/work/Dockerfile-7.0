@@ -23,6 +23,19 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 7.0-work"
 
 
 ###
+### Re-activate modules which have been deactivated in mods.
+### NOTE: They will be removed at the very bottom
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+
+###
 ### Envs
 ###
 ENV BASH_PROFILE=".bashrc"
@@ -35,6 +48,8 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
 		curl \
 		dirmngr \
 		gnupg \
@@ -148,7 +163,7 @@ RUN set -eux \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
 \
-&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+&& curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
  \
 	\
 # -------------------- nvm --------------------
@@ -211,25 +226,6 @@ RUN set -eux \
 && rm -rf /usr/local/src/drush8/misc \
  \
 	\
-# -------------------- drush9 --------------------
-	&& git clone https://github.com/drush-ops/drush.git /usr/local/src/drush9 \
-&& cd /usr/local/src/drush9 \
-&& git checkout $( git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags | sort -n | grep -E 'tags/9[.0-9]+$' | tail -1 | sed 's|.*/||g' ) \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/drush9 \
-&& su - ${MY_USER} -c 'PATH=/usr/local/bin:$PATH; cd /usr/local/src/drush9 && COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 install --no-interaction --no-progress' \
-&& ln -s /usr/local/src/drush9/drush /usr/local/bin/drush9 \
-&& rm -rf /usr/local/src/drush9/.git \
-&& rm -rf /usr/local/src/drush9/docs \
-&& rm -rf /usr/local/src/drush9/examples \
-&& rm -rf /usr/local/src/drush9/misc \
- \
-	\
-# -------------------- drupalconsole --------------------
-	&& DURL="https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.9.4/drupal.phar" \
-	&& curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal \
-	&& chmod +x /usr/local/bin/drupal \
-	\
 # -------------------- gitflow --------------------
 	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
 && cd /tmp/gitflow \
@@ -251,18 +247,6 @@ RUN set -eux \
 # -------------------- linkcheck --------------------
 	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
 && chmod +x /usr/local/bin/linkcheck \
- \
-	\
-# -------------------- linuxbrew --------------------
-	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
 	\
 # -------------------- mhsendmail --------------------
@@ -581,12 +565,9 @@ RUN set -eux \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& drush8 --version | grep -E '8[.0-9]+\s*$' \
-	&& drush9 --version | grep -E '9[.0-9]+\s*$' \
-	&& drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
-	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
 	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
@@ -635,6 +616,13 @@ RUN set -eux \
 	&& rm -rf /root/.pm2 \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true)
+
+
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
 
 
 ###

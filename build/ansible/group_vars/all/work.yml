@@ -96,7 +96,7 @@ software_enabled:
   - gitflow
   - laravel
   - linkcheck
-  - linuxbrew
+  # - linuxbrew
   - mhsendmail
   - mysqldumpsecure
   - phalcon
@@ -177,13 +177,13 @@ apt_repositories_available:
       key: 9DA31620334BD75D9DCB49F368818C72E52529D4
   pgsql:
     5.2:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.3:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.4:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.5:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
       pre: curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
@@ -413,7 +413,7 @@ software_available:
         && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         && rm -rf /var/lib/apt/lists/* \
         \
-        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
   # nvm is a dependency for others
   nvm:
     check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'
@@ -500,7 +500,7 @@ software_available:
         && rm -rf /usr/local/src/drush8/examples \
         && rm -rf /usr/local/src/drush8/misc \
   drush9:
-    disabled: [5.2, 5.3, 5.4, 5.5, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 7.0, 7.1, 8.0, 8.1]
     check: drush9 --version | grep -E '9[.0-9]+\s*$'
     all:
       pre: |
@@ -516,7 +516,7 @@ software_available:
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
   drupalconsole:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1] # TODO: re-enable for 8.0 (currently errors)
+    disabled: [5.2, 5.3, 5.4, 7.0, 7.1, 8.0, 8.1] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]'
     5.5:
       pre: DURL="https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.9.4/drupal.phar"

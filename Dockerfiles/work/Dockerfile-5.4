@@ -23,6 +23,19 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.4-work"
 
 
 ###
+### Re-activate modules which have been deactivated in mods.
+### NOTE: They will be removed at the very bottom
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+
+###
 ### Envs
 ###
 ENV BASH_PROFILE=".bashrc"
@@ -35,6 +48,8 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
 		curl \
 		dirmngr \
 		gnupg \
@@ -48,7 +63,7 @@ RUN set -eux \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
 	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
 	&& curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	&& echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
@@ -147,7 +162,7 @@ RUN set -eux \
 && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 && rm -rf /var/lib/apt/lists/* \
 \
-&& curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python \
+&& curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
  \
 	\
 # -------------------- nvm --------------------
@@ -231,18 +246,6 @@ RUN set -eux \
 # -------------------- linkcheck --------------------
 	&& curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
 && chmod +x /usr/local/bin/linkcheck \
- \
-	\
-# -------------------- linuxbrew --------------------
-	&& git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-    'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
  \
 	\
 # -------------------- mhsendmail --------------------
@@ -554,7 +557,6 @@ RUN set -eux \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
-	&& su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
 	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
@@ -600,6 +602,13 @@ RUN set -eux \
 	&& rm -rf /root/.pm2 \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true)
+
+
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
 
 
 ###
