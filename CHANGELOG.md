@@ -8,6 +8,7 @@
 
 #### Changed
 - Re-added `opcache` for PHP 8.1
+- Pin `ansible` version for all work images
 
 
 ## Release 0.124

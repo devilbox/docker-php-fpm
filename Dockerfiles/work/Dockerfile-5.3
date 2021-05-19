@@ -452,7 +452,7 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- ansible --------------------
-	&& pip install --no-cache-dir --force-reinstall ansible || true \
+	&& pip install --no-cache-dir --force-reinstall ansible==3.4.0 || true \
 	\
 # -------------------- yamllint --------------------
 	&& pip install --no-cache-dir --force-reinstall yamllint || true \

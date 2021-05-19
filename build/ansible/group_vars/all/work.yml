@@ -368,6 +368,8 @@ npm_available:
 pip_available:
   ansible:
     name: ansible
+    all:
+      version: 3.4.0
     check: ansible --version | grep -E '^ansible [0-9][.0-9]+$'
   yamllint:
     name: yamllint
