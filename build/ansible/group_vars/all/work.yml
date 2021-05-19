@@ -896,6 +896,12 @@ software_available:
     5.3:
       command: curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
+    5.4:
+      command: curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
+    5.5:
+      command: curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar -L -o /usr/local/bin/wp
+      post: chmod +x /usr/local/bin/wp
     all:
       command: curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
