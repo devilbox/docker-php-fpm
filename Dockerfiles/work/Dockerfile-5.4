@@ -334,7 +334,7 @@ RUN set -eux \
  \
 	\
 # -------------------- wpcli --------------------
-	&& curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp \
+	&& curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
 	\
 # -------------------- cleanup --------------------
@@ -486,7 +486,7 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- ansible --------------------
-	&& pip install --no-cache-dir --force-reinstall ansible || true \
+	&& pip install --no-cache-dir --force-reinstall ansible==3.4.0 || true \
 	\
 # -------------------- yamllint --------------------
 	&& pip install --no-cache-dir --force-reinstall yamllint || true \

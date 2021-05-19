@@ -312,6 +312,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: opcache --------------------
+RUN set -eux \
+	# Version specific pre-command
+	&& curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) opcache \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pcntl --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -749,6 +760,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^oauth$' \
 	&& php -m | grep -oiE '^oci8$' \
 	&& php-fpm -m | grep -oiE '^oci8$' \
+	&& php -m | grep -oiE '^Zend Opcache$' \
+	&& php-fpm -m | grep -oiE '^Zend Opcache$' \
 	&& php -m | grep -oiE '^openssl$' \
 	&& php-fpm -m | grep -oiE '^openssl$' \
 	&& php -m | grep -oiE '^pcntl$' \

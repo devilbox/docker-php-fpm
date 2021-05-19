@@ -4,6 +4,14 @@
 ## Unreleased
 
 
+## Release 0.125
+
+#### Changed
+- Re-added `opcache` for PHP 8.1
+- Pin `ansible` version for all work images
+- Pin `wp-cli` version for PHP 5.4 and 5.5
+
+
 ## Release 0.124
 
 #### Fixed
