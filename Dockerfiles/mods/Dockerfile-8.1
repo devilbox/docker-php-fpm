@@ -315,7 +315,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: opcache --------------------
 RUN set -eux \
 	# Version specific pre-command
-	&& wget https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h -P /usr/local/include/php/Zend/Optimizer \
+	&& curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Installation

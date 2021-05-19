@@ -672,7 +672,7 @@ extensions_available:
       command: pecl install zendopcache
     8.1:
       type: builtin
-      pre: wget https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h -P /usr/local/include/php/Zend/Optimizer
+      pre: curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h
     all:
       type: builtin
   openssl:
