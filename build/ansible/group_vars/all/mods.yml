@@ -660,7 +660,7 @@ extensions_available:
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
-    disabled: [8.1]  # TODO: fatal error: zend_dfg.h: No such file or directory
+    disabled: []
     5.2:
       type: pecl
       command: pecl install zendopcache
@@ -670,6 +670,9 @@ extensions_available:
     5.4:
       type: pecl
       command: pecl install zendopcache
+    8.1:
+      type: builtin
+      pre: wget https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h -P /usr/local/include/php/Zend/Optimizer
     all:
       type: builtin
   openssl:
