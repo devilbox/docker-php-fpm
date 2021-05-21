@@ -4,6 +4,31 @@
 ## Unreleased
 
 
+## Release 0.125
+
+#### Changed
+- Re-added `opcache` for PHP 8.1
+- Pin `ansible` version for all work images
+- Pin `wp-cli` version for PHP 5.4 and 5.5
+
+
+## Release 0.124
+
+#### Fixed
+- Fixed `pdo_sqlsrv` version for PHP 7.2
+- Fixed `sqlsrv` version for PHP 7.2
+- Fixed `swoole` version for PHP 7.1
+- Fixed pip installation
+
+#### Changed
+- Removed `opcache` for PHP 8.1
+- Removed `xlswriter` for PHP 8.1
+- Removed `linuxbrew` for all versions
+- [#201](https://github.com/devilbox/docker-php-fpm/issues/201) Deactivated `psr` and `phalcon` by default
+- Removed `drush9` from PHP 7.0 and 7.1
+- Removed `drupalconsole` from PHP 7.0 and 7.1
+
+
 ## Release 0.123
 
 #### Fixed

@@ -23,6 +23,19 @@ LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-work"
 
 
 ###
+### Re-activate modules which have been deactivated in mods.
+### NOTE: They will be removed at the very bottom
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+
+###
 ### Envs
 ###
 ENV BASH_PROFILE=".bashrc"
@@ -35,6 +48,8 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
 		curl \
 		dirmngr \
 		gnupg \
@@ -528,6 +543,13 @@ RUN set -eux \
 
 
 {% endif %}
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
+
+
 ###
 ### Copy files
 ###

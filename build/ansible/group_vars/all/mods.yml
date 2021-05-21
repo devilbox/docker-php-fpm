@@ -660,6 +660,7 @@ extensions_available:
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
+    disabled: []
     5.2:
       type: pecl
       command: pecl install zendopcache
@@ -669,6 +670,9 @@ extensions_available:
     5.4:
       type: pecl
       command: pecl install zendopcache
+    8.1:
+      type: builtin
+      pre: curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h
     all:
       type: builtin
   openssl:
@@ -753,6 +757,11 @@ extensions_available:
     7.1:
       type: pecl
       version: 5.6.1
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    7.2:
+      type: pecl
+      version: 5.8.1
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
     all:
@@ -961,6 +970,11 @@ extensions_available:
       version: 5.6.1
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
+    7.2:
+      type: pecl
+      version: 5.8.1
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
     all:
       type: pecl
       build_dep: [unixodbc-dev]
@@ -992,6 +1006,9 @@ extensions_available:
     7.0:
       type: pecl
       version: 4.2.13
+    7.1:
+      type: pecl
+      version: 4.4.26
     all:
       type: pecl
       command: yes yes | pecl install swoole
@@ -1176,7 +1193,7 @@ extensions_available:
     all:
       type: pecl
   xlswriter:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.1]  # TODO: re-enable for PHP 8.1
     all:
       type: pecl
       build_dep: [zlib1g-dev]

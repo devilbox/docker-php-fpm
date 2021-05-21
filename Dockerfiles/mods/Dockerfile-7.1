@@ -643,10 +643,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: swoole --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
-	# Custom:       Pecl command
-	&& yes yes | pecl install swoole \
+	# Default:      Pecl command
+	&& pecl install swoole-4.4.26 \
 	# Enabling
 	&& docker-php-ext-enable swoole \
 	&& true
@@ -1122,6 +1122,13 @@ RUN set -eux \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& true
+
+
+# Deactive PSR and Phalcon:
+# https://github.com/devilbox/docker-php-fpm/issues/201
+RUN set -eux \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
 
 
 ###
