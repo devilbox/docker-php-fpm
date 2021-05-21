@@ -1042,6 +1042,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
    <td>Grunt command line JS tool.</td>
   </tr>
   <tr>
+   <td><a href="https://brew.sh/">Homebrew</a></td>
+   <td>The Missing Package Manager for macOS (or Linux).</td>
+  </tr>
+  <tr>
    <td><a href="https://github.com/zaach/jsonlint">jsonlint</a></td>
    <td>Json command line linter.</td>
   </tr>
