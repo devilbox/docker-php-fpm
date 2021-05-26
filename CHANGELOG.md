@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.126
+
+#### Changed
+- Added Homebrew for all versions
+
+
 ## Release 0.125
 
 #### Changed
