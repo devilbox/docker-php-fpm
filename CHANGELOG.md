@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.127
+
+#### Changed
+- Adding `pdo_sqlsrv` to more PHP versions
+
+
 ## Release 0.126
 
 #### Changed
