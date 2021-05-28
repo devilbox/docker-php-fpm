@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.128
+
+#### Changed
+- Adding `uploadprogress` for PHP 8.0
+
+
 ## Release 0.127
 
 #### Changed

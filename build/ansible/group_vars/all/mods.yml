@@ -1049,21 +1049,9 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    disabled: [8.0, 8.1]
-    5.2:
-      type: pecl
-    5.3:
-      type: pecl
-    5.4:
-      type: pecl
-    5.5:
-      type: pecl
-    5.6:
-      type: pecl
+    disabled: [8.1]
     all:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
+      type: pecl
   vips:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     7.0:
