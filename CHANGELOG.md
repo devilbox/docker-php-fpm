@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.128
+
+#### Fixed
+- Fix opcache for PHP 8.1
+
+
 ## Release 0.127
 
 #### Changed
