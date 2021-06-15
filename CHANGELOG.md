@@ -4,10 +4,16 @@
 ## Unreleased
 
 
+## Release 0.128
+
+#### Added
+- Adding `pdo_sqlsrv` to more PHP versions
+
+
 ## Release 0.127
 
 #### Changed
-- Adding `pdo_sqlsrv` to more PHP versions
+- Adding `swoole` to more PHP 8.0
 
 
 ## Release 0.126
