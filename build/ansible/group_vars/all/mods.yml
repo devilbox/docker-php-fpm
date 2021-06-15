@@ -987,7 +987,7 @@ extensions_available:
       build_dep: [libssh2-1-dev]
       run_dep: [libssh2-1]
   swoole:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.1]
     5.3:
       type: pecl
       version: 1.9.23
