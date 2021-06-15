@@ -537,6 +537,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+	
+	
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
