@@ -28,6 +28,7 @@ RUN set -eux \
 		libldap2-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
+		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
@@ -537,6 +538,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -689,6 +701,7 @@ RUN set -eux \
 	libjpeg62-turbo \
 	libmcrypt4 \
 	libmemcachedutil2 \
+	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
 	libsybdb5 \
@@ -868,6 +881,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
