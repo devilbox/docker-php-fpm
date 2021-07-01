@@ -28,6 +28,7 @@ RUN set -eux \
 		libldap2-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
+		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
@@ -45,6 +46,7 @@ RUN set -eux \
 		libyaml-dev \
 		libzip-dev \
 		snmp \
+		unixodbc-dev \
 		zlib1g-dev \
 		ca-certificates \
 		git
@@ -406,6 +408,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: pdo_sqlsrv --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install pdo_sqlsrv \
+	# Enabling
+	&& docker-php-ext-enable pdo_sqlsrv \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pgsql --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -511,6 +524,28 @@ RUN set -eux \
 	&& pecl install solr \
 	# Enabling
 	&& docker-php-ext-enable solr \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sqlsrv --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install sqlsrv \
+	# Enabling
+	&& docker-php-ext-enable sqlsrv \
+	&& true
+
+
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
 	&& true
 
 
@@ -666,6 +701,7 @@ RUN set -eux \
 	libjpeg62-turbo \
 	libmcrypt4 \
 	libmemcachedutil2 \
+	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
 	libsybdb5 \
@@ -677,6 +713,7 @@ RUN set -eux \
 	libyaml-0-2 \
 	libzip4 \
 	snmp \
+	unixodbc \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -807,6 +844,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
 	&& php -m | grep -oiE '^pdo_sqlite$' \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
+	&& php -m | grep -oiE '^pdo_sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^psr$' \
@@ -840,6 +879,10 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^solr$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
+	&& php -m | grep -oiE '^sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^sqlsrv$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \

@@ -748,7 +748,7 @@ extensions_available:
   pdo_sqlite:
     already_avail: "{{ php_all_versions }}"
   pdo_sqlsrv:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.4, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.1]
     7.0:
       type: pecl
       version: 5.3.0
@@ -959,7 +959,7 @@ extensions_available:
   spl:
     already_avail: "{{ php_all_versions }}"
   sqlsrv:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.1]
     7.0:
       type: pecl
       version: 5.3.0
@@ -987,7 +987,7 @@ extensions_available:
       build_dep: [libssh2-1-dev]
       run_dep: [libssh2-1]
   swoole:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.1]
     5.3:
       type: pecl
       version: 1.9.23

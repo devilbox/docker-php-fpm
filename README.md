@@ -675,12 +675,12 @@ Check out this table to see which Docker image provides what PHP modules.
   <tr>
    <th>7.4</th>
    <td id="74-base">Core, ctype, curl, date, dom, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="74-mods">amqp, apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, intl, ioncube, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, phalcon, Phar, posix, pspell, psr, rdkafka, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, sqlsrv, ssh2, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, vips, xdebug, xlswriter, xml, xmlreader, xmlrpc, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
+   <td id="74-mods">amqp, apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imagick, imap, intl, ioncube, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pdo_sqlsrv, pgsql, phalcon, Phar, posix, pspell, psr, rdkafka, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, sqlsrv, ssh2, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, vips, xdebug, xlswriter, xml, xmlreader, xmlrpc, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
    <th>8.0</th>
    <td id="80-base">Core, ctype, curl, date, dom, FFI, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, Reflection, session, SimpleXML, sodium, SPL, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
-   <td id="80-mods">apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
+   <td id="80-mods">apcu, bcmath, blackfire, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, exif, FFI, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mongodb, msgpack, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, PDO_OCI, pdo_pgsql, pdo_sqlite, pdo_sqlsrv, pgsql, Phar, posix, pspell, psr, readline, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, sodium, solr, SPL, sqlite3, sqlsrv, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, xdebug, xlswriter, xml, xmlreader, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
    <th>8.1</th>
@@ -1040,6 +1040,10 @@ You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpc
   <tr>
    <td><a href="https://gruntjs.com/">grunt</a></td>
    <td>Grunt command line JS tool.</td>
+  </tr>
+  <tr>
+   <td><a href="https://brew.sh/">Homebrew</a></td>
+   <td>The Missing Package Manager for macOS (or Linux).</td>
   </tr>
   <tr>
    <td><a href="https://github.com/zaach/jsonlint">jsonlint</a></td>
