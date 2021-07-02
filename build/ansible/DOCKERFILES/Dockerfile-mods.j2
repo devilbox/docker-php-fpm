@@ -233,7 +233,7 @@ RUN set -eux \
 		{%- elif 'all' in extensions_available[ext] and 'load_ext' in extensions_available[ext]['all'] -%}
 			{{- "\n\t" }}# Activate:     Generic extension
 			{{- "\n\t" }}&& if [ ! -f "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini" ]; then \
-			{{- "\n\t" }}	echo "extenstion={{ extensions_available[ext]['all']['load_ext'] }}" > "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini"; \
+			{{- "\n\t" }}	echo "extension={{ extensions_available[ext]['all']['load_ext'] }}" > "/usr/local/etc/php/conf.d/docker-php-ext-{{ ext }}.ini"; \
 			{{- "\n\t" }}fi \
 		{%- endif -%}
 	{%- endif %}
