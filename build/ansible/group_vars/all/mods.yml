@@ -9,112 +9,6 @@
 
 
 # -------------------------------------------------------------------------------------------------
-# Extensions to enable (in defined order)
-# -------------------------------------------------------------------------------------------------
-extensions_enabled:
-  #  # ioncube must be loaded first
-  - ioncube
-  - amqp
-  - apcu
-  - bcmath
-  - blackfire
-  - bz2
-  - calendar
-  - ctype
-  - curl
-  - dba
-  - dom
-  - enchant
-  - exif
-  - ffi
-  - fileinfo
-  - filter
-  - ftp
-  - gd
-  - gettext
-  - gmp
-  - hash
-  - iconv
-  - igbinary
-  - imagick
-  - imap
-  - interbase
-  - intl
-  - json
-  - ldap
-  - libxml
-  - mbstring
-  - mcrypt
-  - msgpack
-  - memcache
-  # requires igbinary and msgpack to be installed
-  - memcached
-  - mongo
-  - mongodb
-  - mysql
-  - mysqli
-  - mysqlnd
-  - oauth
-  - oci8
-  - odbc
-  - opcache
-  - openssl
-  - pcntl
-  - pcre
-  - pdo
-  - pdo_dblib
-  - pdo_firebird
-  - pdo_mysql
-  - pdo_oci
-  - pdo_odbc
-  - pdo_pgsql
-  - pdo_sqlite
-  - pdo_sqlsrv
-  - pgsql
-  - psr
-  # requires psr to be installed
-  - phalcon
-  - phar
-  - posix
-  - pspell
-  - readline
-  - recode
-  - redis
-  - reflection
-  - rdkafka
-  - session
-  - shmop
-  - simplexml
-  - snmp
-  - soap
-  - sockets
-  - sodium
-  - solr
-  - spl
-  - sqlsrv
-  - ssh2
-  # requires sockets to be installed
-  - swoole
-  - sysvmsg
-  - sysvsem
-  - sysvshm
-  - tidy
-  - tokenizer
-  - uploadprogress
-  - vips
-  - wddx
-  - xdebug
-  - xml
-  - xmlreader
-  - xmlrpc
-  - xmlwriter
-  - xsl
-  - xlswriter
-  - yaml
-  - zip
-
-
-# -------------------------------------------------------------------------------------------------
 # Extension definition
 # -------------------------------------------------------------------------------------------------
 
@@ -225,7 +119,7 @@ extensions_available:
     all:
       type: builtin
   ffi:
-    already_avail: [8.0, 8.1]
+    already_avail: [7.4, 8.0, 8.1]
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
       type: git

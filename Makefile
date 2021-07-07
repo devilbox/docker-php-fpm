@@ -191,35 +191,13 @@ build-mods: _check-version
 build-mods: _EXIST_IMAGE=base
 build-mods: _check-image-exists
 build-mods:
-ifeq ($(strip $(TARGET)),)
 	docker build $(NO_CACHE) \
-		--target builder \
-		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
-	@# $(NO_CACHE) is removed, as it would otherwise rebuild the 'builder' image again.
-	docker build \
-		--target final \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		--build-arg EXT_DIR="$$( docker run --rm --entrypoint=php $(IMAGE):$(VERSION)-mods -i \
-			| grep ^extension_dir \
-			| awk -F '=>' '{print $$2}' \
-			| xargs \
-		)" \
-		$(ARGS) \
-		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
-else
-	docker build $(NO_CACHE) \
-		--target $(TARGET) \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
 		$(ARGS) \
 		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods
-endif
+		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
 
 
 build-prod: _check-version
