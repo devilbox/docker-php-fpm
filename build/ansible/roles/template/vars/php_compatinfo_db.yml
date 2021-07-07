@@ -1,0 +1,98 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Extensions to enable (in defined order)
+# -------------------------------------------------------------------------------------------------
+extensions_enabled:
+  - amqp
+  - apcu
+  - ast
+  - bcmath
+  - bz2
+  - calendar
+  - enchant
+  - exif
+  - ffi
+  - gd
+  - gettext
+  - gmp
+  - http
+  - igbinary
+  - imagick
+  - imap
+  - intl
+  - ldap
+  - lzf
+  - mailparse
+  - mcrypt
+  - memcache
+  - memcached
+  - mongodb
+  - msgpack
+  - mysqli
+  - oauth
+  - oci8
+  - odbc
+  - opcache
+  - pcntl
+  - pdo_mysql
+  - pdo_oci
+  - pdo_pgsql
+  - pdo_sqlsrv
+  - pgsql
+  - propro
+  - raphf
+  - rdkafka
+  - recode
+  - redis
+  - snmp
+  - soap
+  - solr
+  - sqlsrv
+  - ssh2
+  - sysvmsg
+  - sysvsem
+  - sysvshm
+  - tidy
+  - uopz
+  - wddx
+  - xdebug
+  - xhprof
+  - xmldiff
+  - xmlrpc
+  - xsl
+  - yaml
+  - zip
+  - zstd
+
+# -------------------------------------------------------------------------------------------------
+# PHP Composer packages to install
+# -------------------------------------------------------------------------------------------------
+composer_enabled: []
+
+# -------------------------------------------------------------------------------------------------
+# Ruby gem packages to install
+# -------------------------------------------------------------------------------------------------
+gem_enabled: []
+
+# -------------------------------------------------------------------------------------------------
+# Node npm packages to install
+# -------------------------------------------------------------------------------------------------
+npm_enabled: []
+
+# -------------------------------------------------------------------------------------------------
+# Python pip packages to install
+# -------------------------------------------------------------------------------------------------
+pip_enabled: []
+
+# -------------------------------------------------------------------------------------------------
+# Software to install (in defined order)
+# -------------------------------------------------------------------------------------------------
+software_enabled:
+  # Composer, pip and nvm need to be first, others rely on it
+  - composer
+  - pip
+  - nvm
+  # Normal packages start here
+  # Cleanup needs to be last
+  - cleanup

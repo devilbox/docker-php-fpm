@@ -181,9 +181,10 @@ disable_modules "DISABLE_MODULES" "${DEBUG_LEVEL}"
 ###
 ### mysqldump-secure
 ###
-fix_mds_permissions "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
-set_mds_settings "MYSQL_BACKUP_USER" "MYSQL_BACKUP_PASS" "MYSQL_BACKUP_HOST" "${DEBUG_LEVEL}"
-
+if [ -f "/usr/local/bin/mysqldump-secure" ]; then
+  fix_mds_permissions "${MY_USER}" "${MY_GROUP}" "${DEBUG_LEVEL}"
+  set_mds_settings "MYSQL_BACKUP_USER" "MYSQL_BACKUP_PASS" "MYSQL_BACKUP_HOST" "${DEBUG_LEVEL}"
+fi
 
 ###
 ### Fix mountpoint permissions
