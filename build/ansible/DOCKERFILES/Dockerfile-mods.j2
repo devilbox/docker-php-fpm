@@ -4,6 +4,7 @@ FROM devilbox/php-fpm:{{ php_version }}-base as builder
 
 #ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+#COPY ./data/install-php-extensions /usr/local/bin/
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions && sync
 
@@ -20,13 +21,16 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions && sync
     {%- set ext_deactivated = ['psr', 'phalcon'] -%}
 
     {%- for ext in extensions_enabled -%}
-        {%- if (
-            (ext not in ext_deactivated) and (
-            (ext not in extensions_available) or
-            ('disabled' not in extensions_available[ext]) or
-            (php_version not in extensions_available[ext]['disabled'])
-        )) -%}
-{{- "\n" }}RUN install-php-extensions {{ ext }}
+        {%- if (ext not in extensions_available) -%}
+            {# cannot install this ext module, if not declared #}
+        {%- else -%}
+            {%- if (
+                (ext not in ext_deactivated)
+                and ('disabled' not in extensions_available[ext] or php_version not in extensions_available[ext]['disabled'])
+                and ('already_avail' not in extensions_available[ext] or php_version not in extensions_available[ext]['already_avail'])
+            ) -%}
+{{- "\n" }}RUN install-php-extensions {{ ext }}{%- if php_version in extensions_available[ext] and 'version' in extensions_available[ext][php_version] -%}-{{ extensions_available[ext][php_version]['version'] }}{%- endif %}
+            {%- endif %}
         {%- endif %}
     {%- endfor -%}
 {% endif %}
