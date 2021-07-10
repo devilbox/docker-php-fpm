@@ -4,16 +4,25 @@
 ## Unreleased
 
 
-## Release 0.128
+## Release 0.129
 
 #### Added
-- Adding `pdo_sqlsrv` to more PHP versions
+- Adding support to new `ast` extension for PHP 7.0 until 8.1
+
+#### Changed
+- [#214](https://github.com/devilbox/docker-php-fpm/issues/214) Cannot start PHP container when mysqldumpsecure is not installed
+
+
+## Release 0.128
+
+#### Changed
+- Adding `swoole` to more PHP 8.0
 
 
 ## Release 0.127
 
-#### Changed
-- Adding `swoole` to more PHP 8.0
+#### Added
+- Adding `pdo_sqlsrv` to more PHP versions
 
 
 ## Release 0.126
