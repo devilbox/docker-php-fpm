@@ -39,7 +39,7 @@ extensions_available:
     5.6:
       version: 4.0.11
   ast:
-    disabled: [ 5.2, 5.3, 5.4, 5.5, 5.6 ]
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
   bcmath: {}
   blackfire:
     disabled: [5.2, 5.3, 5.4, 5.5, 8.1]
