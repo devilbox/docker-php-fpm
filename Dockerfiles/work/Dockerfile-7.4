@@ -332,6 +332,11 @@ RUN set -eux \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
+# -------------------- php-cs-fixer --------------------
+	&& curl -sS -L --fail https://cs.symfony.com/download/php-cs-fixer-v3.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+&& chmod +x /usr/local/bin/php-cs-fixer \
+ \
+	\
 # -------------------- phpmd --------------------
 	&& curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
 && mv phpmd.phar /usr/local/bin/phpmd \
@@ -600,6 +605,7 @@ RUN set -eux \
 	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
 	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \
+	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \
 	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' \
 	&& symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+' \
