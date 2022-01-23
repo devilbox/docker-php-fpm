@@ -145,7 +145,7 @@ apt_repositories_available:
   blackfire:
     all:
       deb: deb http://packages.blackfire.io/debian any main
-      pre: curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   git:
     7.2:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
@@ -160,6 +160,8 @@ apt_repositories_available:
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
+  # Get keys
+  # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
   mongo:
     5.2:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
@@ -185,13 +187,25 @@ apt_repositories_available:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.5:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
-    all:
+    5.6:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.0:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.1:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.2:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    all:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
       deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 # -------------------------------------------------------------------------------------------------
@@ -408,7 +422,7 @@ software_available:
         && ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
   # pip is a dependency for others
   pip:
-    all:
+    5.2:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
@@ -417,6 +431,79 @@ software_available:
         && rm -rf /var/lib/apt/lists/* \
         \
         && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    5.3:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    5.4:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    5.5:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    5.6:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    7.0:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    7.1:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    7.2:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython-dev \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    all:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libpython3-dev \
+          python3-distutils \
+        && DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        && rm -rf /var/lib/apt/lists/* \
+        \
+        && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python3 \
   # nvm is a dependency for others
   nvm:
     check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'
@@ -453,22 +540,22 @@ software_available:
     disabled: [5.2, 5.3]
     check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+'
     5.4:
-      command: curl -sS -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     5.5:
-      command: curl -sS -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     5.6:
-      command: curl -sS -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     7.0:
-      command: curl -sS -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     7.1:
-      command: curl -sS -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
     all:
-      command: curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
   drush7:
     disabled: [5.2, 8.0, 8.1]
@@ -748,55 +835,55 @@ software_available:
     check: phpcs --version | grep -E 'version [0-9][.0-9]+'
     5.2:
       command: |
-        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs \
         && chmod +x /usr/local/bin/phpcs \
     5.3:
       command: |
-        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs \
         && chmod +x /usr/local/bin/phpcs \
     all:
       command: |
-        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs \
         && chmod +x /usr/local/bin/phpcs \
   phpcbf:
     check: phpcbf --version | grep -E 'version [0-9][.0-9]+'
     5.2:
       command: |
-        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf \
         && chmod +x /usr/local/bin/phpcbf \
     5.3:
       command: |
-        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf \
         && chmod +x /usr/local/bin/phpcbf \
     all:
       command: |
-        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+        curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf \
         && chmod +x /usr/local/bin/phpcbf \
   php-cs-fixer:
     disabled: [5.2, 7.4, 8.0, 8.1]
     check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
     5.3:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.4:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.5:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     all:
       command: |
-        curl -sS -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+        curl -sS -k -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
   phpmd:
     disabled: [5.2]
     check: phpmd --version | grep -E '^PHPMD [0-9][.0-9]+'
     all:
       command: |
-        curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
+        curl -sS -k -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
@@ -804,27 +891,27 @@ software_available:
     check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+'
     5.3:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
     5.4:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
     5.5:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-4.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
     5.6:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-5.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
     7.0:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-6.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
     all:
       command: |
-        curl -sS -L --fail https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
+        curl -sS -k -L --fail https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit \
         && chmod +x /usr/local/bin/phpunit \
   symfony:
     disabled: [5.2, 5.3]

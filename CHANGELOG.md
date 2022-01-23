@@ -4,6 +4,33 @@
 ## Unreleased
 
 
+## Release 0.129
+
+#### Fixed
+- Pinned module: `uploadprogress`
+- Pinned module: `mongodb`
+- Pinned lib: `libenchant`
+- Pinned lib: `libicu`
+- Pinned lib: `libvpx`
+- Pinned PHP 8.0: https://github.com/devilbox/docker-php-fpm-8.0/pull/16
+- Pinned PHP 8.1: https://github.com/devilbox/docker-php-fpm-8.1/pull/9
+- Fixed `pgsql` apt key
+- Fixed `deployer` download on cert issues
+- Fixed `phpmd` download on cert issues
+- Fixed `phpunit` download on cert issues
+- Fixed `php-cs-fixer` download on cert issues
+- Fixed building `sockets` on PHP 8.0 and PHP 8.1
+- Fixed building `ffi` on PHP 7.4
+
+#### Changed
+- Removed `mcrypt` from PHP 8.1 as it is not yet supported
+- Removed `enchant` from PHP 7.3 and PHP 7.4 as libenchant1 is not available via apt
+- Updated PHP 8.0 base image to BullsEye: https://github.com/devilbox/docker-php-fpm-8.0/pull/17
+- Updated PHP 8.1 base image to BullsEye: https://github.com/devilbox/docker-php-fpm-8.1/pull/10
+- Updated PostgreSQL repos to Bullseye for PHP >= 7.3
+- Updated `pip` to use Python3 for PHP >= 7.3
+
+
 ## Release 0.128
 
 #### Added

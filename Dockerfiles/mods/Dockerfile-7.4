@@ -6,9 +6,9 @@ FROM devilbox/php-fpm:7.4-base as builder
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 		alien \
 		fftw-dev \
 		firebird-dev \
@@ -20,7 +20,6 @@ RUN set -eux \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
-		libenchant-dev \
 		libevent-dev \
 		libexif-dev \
 		libexpat1-dev \
@@ -173,14 +172,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: enchant --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         Built-in extension
-	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
-	&& true
-
-
 # -------------------- Installing PHP Extension: exif --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -192,17 +183,8 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: ffi --------------------
 RUN set -eux \
 	# Installation: Generic
-	# Type:         GIT extension
-	&& git clone https://github.com/dstogov/php-ffi /tmp/ffi \
-	&& cd /tmp/ffi \
-	# Custom:       Install command
-	&& phpize \
-&& ./configure --with-ffi \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
- \
-	# Enabling
-	&& docker-php-ext-enable ffi \
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ffi \
 	&& true
 
 
@@ -845,8 +827,8 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 	fftw2 \
 	ghostscript \
 	gir1.2-poppler-0.18 \
@@ -854,16 +836,15 @@ RUN set -eux \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
-	libenchant1c2a \
 	libexif12 \
 	libexpat1 \
 	libfbclient2 \
-	libffi6 \
+	libffi7 \
 	libfftw3-3 \
 	libfreetype6 \
 	libgif7 \
 	libglib2.0-0 \
-	libicu63 \
+	libicu67 \
 	libimagequant0 \
 	libjpeg62-turbo \
 	libmagick++-6.q16-8 \
@@ -884,7 +865,7 @@ RUN set -eux \
 	libssh2-1 \
 	libsybdb5 \
 	libtidy5deb1 \
-	libvpx5 \
+	libvpx6 \
 	libwebp-dev \
 	libwebp6 \
 	libwebpdemux2 \
@@ -962,8 +943,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^dba$' \
 	&& php -m | grep -oiE '^dom$' \
 	&& php-fpm -m | grep -oiE '^dom$' \
-	&& php -m | grep -oiE '^enchant$' \
-	&& php-fpm -m | grep -oiE '^enchant$' \
 	&& php -m | grep -oiE '^exif$' \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^ffi$' \

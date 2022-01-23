@@ -214,13 +214,40 @@ extensions_available:
   dom:
     already_avail: "{{ php_all_versions }}"
   enchant:
+    disabled: [7.3, 7.4]
     5.2:
       type: pecl
       command: echo "/usr" | pecl install enchant
-    all:
-      type: builtin
       build_dep: [libenchant-dev]
       run_dep: [libenchant1c2a]
+    5.3:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.4:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.5:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.6:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.0:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.1:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.2:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    # https://www.php.net/manual/en/enchant.requirements.php
+    # 7.3: requires enchant 1, but not avail via apt install
+    # 7.4: requires enchant 1, but not avail via apt install
+    all:
+      type: builtin
+      build_dep: [libenchant-2-dev]
+      run_dep: [libenchant-2-2]
   exif:
     all:
       type: builtin
@@ -228,15 +255,9 @@ extensions_available:
     already_avail: [8.0, 8.1]
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
     all:
-      type: git
-      git_url: https://github.com/dstogov/php-ffi
-      command: |
-        phpize \
-        && ./configure --with-ffi \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
+      type: builtin
       build_dep: [libffi-dev]
-      run_dep: [libffi6]
+      run_dep: [libffi7]
   fileinfo:
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     5.2:
@@ -294,9 +315,11 @@ extensions_available:
     7.1:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
     7.2:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
     7.3:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
@@ -314,7 +337,7 @@ extensions_available:
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6]
   gettext:
     all:
       type: builtin
@@ -408,10 +431,16 @@ extensions_available:
     7.0:
       type: builtin
       run_dep: [libicu57]
+    7.1:
+      type: builtin
+      run_dep: [libicu63]
+    7.2:
+      type: builtin
+      run_dep: [libicu63]
     all:
       type: builtin
       build_dep: [libicu-dev]
-      run_dep: [libicu63]
+      run_dep: [libicu67]
   ioncube:
     disabled: [8.0, 8.1]
     all:
@@ -441,7 +470,9 @@ extensions_available:
     all:
       type: builtin
   mcrypt:
-    disabled: []
+    # mcrypt 1.0.4 requires PHP 8.1.0 or older
+    # version >= 7.2.0, version <= 8.1.0, excluded versions: 8.1.0
+    disabled: [8.1]
     5.2:
       type: builtin
     5.3:
@@ -573,6 +604,12 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.7.5
+    7.0:
+      type: pecl
+      version: 1.9.2
+    7.1:
+      type: pecl
+      version: 1.11.1
     all:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
@@ -784,6 +821,15 @@ extensions_available:
     5.6:
       type: pecl
       version: 0.6.0  # NOTE: 0.6.1 fails with: Package "psr" Version "0.6.1" does not have REST xml available
+    7.0:
+      type: pecl
+      version: 1.1.0
+    7.1:
+      type: pecl
+      version: 1.1.0
+    7.2:
+      type: pecl
+      version: 1.1.0
     all:
       type: pecl
   phalcon:
@@ -943,6 +989,16 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   sockets:
+    8.0:
+      # Remove ucred (currently breaks build)
+      pre: |
+        docker-php-ext-configure sockets \
+        && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
+    8.1:
+      # Remove ucred (currently breaks build)
+      pre: |
+        docker-php-ext-configure sockets \
+        && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
     all:
       type: builtin
   sodium:
@@ -1052,14 +1108,19 @@ extensions_available:
     disabled: [8.0, 8.1]
     5.2:
       type: pecl
+      version: 1.1.4
     5.3:
       type: pecl
+      version: 1.1.4
     5.4:
       type: pecl
+      version: 1.1.4
     5.5:
       type: pecl
+      version: 1.1.4
     5.6:
       type: pecl
+      version: 1.1.4
     all:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress

@@ -6,16 +6,16 @@ FROM devilbox/php-fpm:8.1-base as builder
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 		alien \
 		firebird-dev \
 		libaio-dev \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
-		libenchant-dev \
+		libenchant-2-dev \
 		libevent-dev \
 		libfbclient2 \
 		libfreetype6-dev \
@@ -25,7 +25,6 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
-		libmcrypt-dev \
 		libmemcached-dev \
 		libpcre3-dev \
 		libpng-dev \
@@ -193,17 +192,6 @@ RUN set -eux \
 	# Custom:       configure command
 	&& docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
-	&& true
-
-
-# -------------------- Installing PHP Extension: mcrypt --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install mcrypt \
-	# Enabling
-	&& docker-php-ext-enable mcrypt \
 	&& true
 
 
@@ -469,6 +457,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: sockets --------------------
 RUN set -eux \
+	# Version specific pre-command
+	&& docker-php-ext-configure sockets \
+&& sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
+ \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
@@ -629,23 +621,22 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
-	libenchant1c2a \
+	libenchant-2-2 \
 	libfbclient2 \
-	libffi6 \
+	libffi7 \
 	libfreetype6 \
-	libicu63 \
+	libicu67 \
 	libjpeg62-turbo \
-	libmcrypt4 \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
 	libtidy5deb1 \
-	libvpx5 \
+	libvpx6 \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
@@ -742,8 +733,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^mbstring$' \
 	&& php-fpm -m | grep -oiE '^mbstring$' \
-	&& php -m | grep -oiE '^mcrypt$' \
-	&& php-fpm -m | grep -oiE '^mcrypt$' \
 	&& php -m | grep -oiE '^msgpack$' \
 	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcache$' \

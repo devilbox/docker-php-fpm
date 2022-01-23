@@ -6,9 +6,9 @@ FROM devilbox/php-fpm:7.2-base as builder
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 		alien \
 		fftw-dev \
 		firebird-dev \
@@ -275,8 +275,9 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: intl --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
 	&& true
 
@@ -498,10 +499,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: psr --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install psr \
+	&& pecl install psr-1.1.0 \
 	# Enabling
 	&& docker-php-ext-enable psr \
 	&& true
@@ -850,8 +851,8 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 	fftw2 \
 	ghostscript \
 	gir1.2-poppler-0.18 \
