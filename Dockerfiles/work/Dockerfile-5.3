@@ -56,7 +56,7 @@ RUN set -eux \
 		\
 	&& echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until \
 	&& echo "deb http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
-	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
@@ -273,17 +273,17 @@ RUN set -eux \
  \
 	\
 # -------------------- phpcs --------------------
-	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs 2>/dev/null \
+	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar > /usr/local/bin/phpcs \
 && chmod +x /usr/local/bin/phpcs \
  \
 	\
 # -------------------- phpcbf --------------------
-	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf 2>/dev/null \
+	&& curl -sS -L --fail https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar > /usr/local/bin/phpcbf \
 && chmod +x /usr/local/bin/phpcbf \
  \
 	\
 # -------------------- php-cs-fixer --------------------
-	&& curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer 2>/dev/null \
+	&& curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
 && chmod +x /usr/local/bin/php-cs-fixer \
  \
 	\
