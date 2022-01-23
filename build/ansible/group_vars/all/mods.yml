@@ -467,7 +467,9 @@ extensions_available:
     all:
       type: builtin
   mcrypt:
-    disabled: []
+    # mcrypt 1.0.4 requires PHP 8.1.0 or older
+    # version >= 7.2.0, version <= 8.1.0, excluded versions: 8.1.0
+    disabled: [8.1]
     5.2:
       type: builtin
     5.3:
