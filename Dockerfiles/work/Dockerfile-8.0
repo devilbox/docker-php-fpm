@@ -194,7 +194,7 @@ RUN set -eux \
  \
 	\
 # -------------------- deployer --------------------
-	&& curl -sS -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
+	&& curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep \
 	&& chmod +x /usr/local/bin/dep \
 	\
 # -------------------- gitflow --------------------
