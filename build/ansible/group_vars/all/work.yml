@@ -798,7 +798,7 @@ software_available:
     check: phpmd --version | grep -E '^PHPMD [0-9][.0-9]+'
     all:
       command: |
-        curl -sS -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
+        curl -sS -k -L --fail https://phpmd.org/static/latest/phpmd.phar > phpmd.phar \
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
