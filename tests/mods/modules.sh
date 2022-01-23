@@ -58,22 +58,22 @@ docker run \
 		set -e
 		set -u
 		if [ -f \"\${1:-}\" ]; then
-			fail=0
-			printf \"[TEST] %s\" \"\${1}\"
+			error=0
 
 			if script -e -c \"php \${1}\" /dev/null 2>&1 | grep -Ei \"core|segmentation|fatal|except|err|warn|notice\" 2>&1 >/dev/null; then
-				fail=1
-			fi
-			if ! php \"\${1}\" 2>&1 | grep -E \"^(OK|SKIP)$\" 2>&1 >/dev/null; then
-				fail=1
-			fi
-
-			if [ \"\${fail}\" != \"0\" ]; then
 				printf \"\\r[FAIL] %s\\n\" \"\${1}\"
 				php \"\${1}\" || true
 				exit 1
 			else
-				printf \"\\r[OK]   %s\\n\" \"\${1}\"
+				if php \"\${1}\" 2>&1 | grep -E \"^(OK)$\" 2>&1 >/dev/null; then
+					printf \"\\r[OK]   %s\\n\" \"\${1}\"
+				elif php \"\${1}\" 2>&1 | grep -E \"^(SKIP)$\" 2>&1 >/dev/null; then
+					printf \"\\r[SKIP] %s\\n\" \"\${1}\"
+				else
+					printf \"\\r[FAIL] %s\\n\" \"\${1}\"
+					php \"\${1}\" || true
+					exit 1
+				fi
 			fi
 		fi
 

@@ -7,6 +7,22 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
+// FIXME: Currently disabled for PHP 7.3 and PHP 7.4
+if (PHP_MAJOR_VERSION == 7) {
+	if (PHP_MINOR_VERSION == 3 || PHP_MINOR_VERSION == 4) {
+		echo 'SKIP';
+		exit(0);
+	}
+}
+
+// FIXME: Currently not available for PHP 8.0 and PHP 8.1
+if (PHP_MAJOR_VERSION == 8) {
+	if (PHP_MINOR_VERSION == 0 || PHP_MINOR_VERSION == 1) {
+		echo 'SKIP';
+		exit(0);
+	}
+}
+
 
 $backend = 'ispell';
 

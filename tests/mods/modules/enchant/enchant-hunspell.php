@@ -24,12 +24,12 @@ if (PHP_MAJOR_VERSION == 7) {
  * https://github.com/AbiWord/enchant/blob/master/NEWS
  */
 // Only available since 5.4.0
-if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+if (version_compare(PHP_VERSION, '7.3.0', '<')) {
 	echo 'SKIP';
 	exit(0);
 }
 
-$backend = 'myspell';
+$backend = 'hunspell';
 
 $tag = 'en_US';
 if (($r = enchant_broker_init()) === FALSE) {
