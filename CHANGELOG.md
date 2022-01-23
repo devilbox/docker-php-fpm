@@ -27,8 +27,8 @@
 - Removed `enchant` from PHP 7.3 and PHP 7.4 as libenchant1 is not available via apt
 - Updated PHP 8.0 base image to BullsEye: https://github.com/devilbox/docker-php-fpm-8.0/pull/17
 - Updated PHP 8.1 base image to BullsEye: https://github.com/devilbox/docker-php-fpm-8.1/pull/10
-- Update PostgreSQL repos to Bullseye for PHP >= 7.3
-- Update `pip` to use Python3 for PHP >= 7.3
+- Updated PostgreSQL repos to Bullseye for PHP >= 7.3
+- Updated `pip` to use Python3 for PHP >= 7.3
 
 
 ## Release 0.128
