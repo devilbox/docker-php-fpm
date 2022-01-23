@@ -214,6 +214,7 @@ extensions_available:
   dom:
     already_avail: "{{ php_all_versions }}"
   enchant:
+    disabled: [7.3, 7.4]
     5.2:
       type: pecl
       command: echo "/usr" | pecl install enchant
@@ -241,8 +242,8 @@ extensions_available:
       build_dep: [libenchant-dev]
       run_dep: [libenchant1c2a]
     # https://www.php.net/manual/en/enchant.requirements.php
-    # 7.3: requires enchant 1
-    # 7.4: requires enchant 1
+    # 7.3: requires enchant 1, but not avail via apt install
+    # 7.4: requires enchant 1, but not avail via apt install
     all:
       type: builtin
       build_dep: [libenchant-2-dev]
