@@ -254,16 +254,12 @@ extensions_available:
   ffi:
     already_avail: [8.0, 8.1]
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3]
-    all:
-      type: git
-      git_url: https://github.com/dstogov/php-ffi
-      command: |
-        phpize \
-        && ./configure --with-ffi \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-      build_dep: [libffi-dev]
+    7.4:
       run_dep: [libffi6]
+    all:
+      type: builtin
+      build_dep: [libffi-dev]
+      run_dep: [libffi7]
   fileinfo:
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     5.2:
