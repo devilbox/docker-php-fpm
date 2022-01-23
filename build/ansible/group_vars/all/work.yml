@@ -160,6 +160,8 @@ apt_repositories_available:
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
+  # Get keys
+  # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
   mongo:
     5.2:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
@@ -187,11 +189,11 @@ apt_repositories_available:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
       deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg 2>/dev/null | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      pre: curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 # -------------------------------------------------------------------------------------------------

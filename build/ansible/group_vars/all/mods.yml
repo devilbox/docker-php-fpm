@@ -240,6 +240,9 @@ extensions_available:
     7.2:
       build_dep: [libenchant-dev]
       run_dep: [libenchant1c2a]
+    # https://www.php.net/manual/en/enchant.requirements.php
+    # 7.3: requires enchant 1
+    # 7.4: requires enchant 1
     all:
       type: builtin
       build_dep: [libenchant-2-dev]
@@ -598,7 +601,7 @@ extensions_available:
       version: 1.7.5
     7.0:
       type: pecl
-      version: 1.10.0
+      version: 1.9.2
     7.1:
       type: pecl
       version: 1.11.1
