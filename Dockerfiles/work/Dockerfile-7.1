@@ -324,7 +324,7 @@ RUN set -eux \
  \
 	\
 # -------------------- phpunit --------------------
-	&& curl -sS -L --fail https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit 2>/dev/null \
+	&& curl -sS -k -L --fail https://phar.phpunit.de/phpunit-7.phar > /usr/local/bin/phpunit \
 && chmod +x /usr/local/bin/phpunit \
  \
 	\
