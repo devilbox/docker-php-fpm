@@ -337,10 +337,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mongodb --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install mongodb \
+	&& pecl install mongodb-1.10.0 \
 	# Enabling
 	&& docker-php-ext-enable mongodb \
 	&& true
@@ -495,10 +495,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: psr --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install psr \
+	&& pecl install psr-1.1.0 \
 	# Enabling
 	&& docker-php-ext-enable psr \
 	&& true

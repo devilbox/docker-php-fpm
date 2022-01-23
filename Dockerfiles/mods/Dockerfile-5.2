@@ -459,7 +459,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install uploadprogress \
+	&& pecl install uploadprogress-1.1.4 \
 	# Enabling
 	&& docker-php-ext-enable uploadprogress \
 	&& true

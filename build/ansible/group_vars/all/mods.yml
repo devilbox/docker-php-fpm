@@ -217,10 +217,33 @@ extensions_available:
     5.2:
       type: pecl
       command: echo "/usr" | pecl install enchant
-    all:
-      type: builtin
       build_dep: [libenchant-dev]
       run_dep: [libenchant1c2a]
+    5.3:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.4:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.5:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.6:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.0:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.1:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.2:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    all:
+      type: builtin
+      build_dep: [libenchant-2-dev]
+      run_dep: [libenchant-2-2]
   exif:
     all:
       type: builtin
@@ -573,6 +596,12 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.7.5
+    7.0:
+      type: pecl
+      version: 1.10.0
+    7.1:
+      type: pecl
+      version: 1.11.1
     all:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
@@ -784,6 +813,15 @@ extensions_available:
     5.6:
       type: pecl
       version: 0.6.0  # NOTE: 0.6.1 fails with: Package "psr" Version "0.6.1" does not have REST xml available
+    7.0:
+      type: pecl
+      version: 1.1.0
+    7.1:
+      type: pecl
+      version: 1.1.0
+    7.2:
+      type: pecl
+      version: 1.1.0
     all:
       type: pecl
   phalcon:
@@ -1052,14 +1090,19 @@ extensions_available:
     disabled: [8.0, 8.1]
     5.2:
       type: pecl
+      version: 1.1.4
     5.3:
       type: pecl
+      version: 1.1.4
     5.4:
       type: pecl
+      version: 1.1.4
     5.5:
       type: pecl
+      version: 1.1.4
     5.6:
       type: pecl
+      version: 1.1.4
     all:
       type: git
       git_url: https://github.com/php/pecl-php-uploadprogress
