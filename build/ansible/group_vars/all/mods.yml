@@ -321,9 +321,11 @@ extensions_available:
     7.1:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
     7.2:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
     7.3:
       type: builtin
       configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
@@ -341,7 +343,7 @@ extensions_available:
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6]
   gettext:
     all:
       type: builtin
@@ -435,10 +437,16 @@ extensions_available:
     7.0:
       type: builtin
       run_dep: [libicu57]
+    7.1:
+      type: builtin
+      run_dep: [libicu63]
+    7.2:
+      type: builtin
+      run_dep: [libicu63]
     all:
       type: builtin
       build_dep: [libicu-dev]
-      run_dep: [libicu63]
+      run_dep: [libicu67]
   ioncube:
     disabled: [8.0, 8.1]
     all:
