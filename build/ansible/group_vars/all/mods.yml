@@ -986,6 +986,16 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   sockets:
+    8.0:
+      # Remove ucred (currently breaks build)
+      pre: |
+        docker-php-ext-configure sockets \
+        && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
+    8.1:
+      # Remove ucred (currently breaks build)
+      pre: |
+        docker-php-ext-configure sockets \
+        && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
     all:
       type: builtin
   sodium:
