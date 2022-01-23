@@ -779,19 +779,19 @@ software_available:
     check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
     5.3:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.4:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     5.5:
       command: |
-        curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
+        curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
     all:
       command: |
-        curl -sS -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer \
+        curl -sS -k -L --fail https://cs.symfony.com/download/php-cs-fixer-v2.phar > /usr/local/bin/php-cs-fixer \
         && chmod +x /usr/local/bin/php-cs-fixer \
   phpmd:
     disabled: [5.2]

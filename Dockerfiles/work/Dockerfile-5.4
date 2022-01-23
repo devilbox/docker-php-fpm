@@ -312,7 +312,7 @@ RUN set -eux \
  \
 	\
 # -------------------- php-cs-fixer --------------------
-	&& curl -sS -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
+	&& curl -sS -k -L --fail https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar > /usr/local/bin/php-cs-fixer \
 && chmod +x /usr/local/bin/php-cs-fixer \
  \
 	\
