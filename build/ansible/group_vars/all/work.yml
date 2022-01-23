@@ -187,8 +187,20 @@ apt_repositories_available:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.5:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
-    all:
+    5.6:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.0:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.1:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    7.2:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+    all:
+      deb: deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main
       pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   yarn:
     all:
