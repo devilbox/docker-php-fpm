@@ -49,6 +49,7 @@ RUN set -eux \
 		libyaml-dev \
 		libzip-dev \
 		snmp \
+		uuid-dev \
 		zlib1g-dev \
 		ca-certificates \
 		git
@@ -578,6 +579,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: uuid --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uuid \
+	# Enabling
+	&& docker-php-ext-enable uuid \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -720,6 +732,7 @@ RUN set -eux \
 	libyaml-0-2 \
 	libzip4 \
 	snmp \
+	uuid \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -908,6 +921,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
 	&& php -m | grep -oiE '^uploadprogress$' \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
+	&& php -m | grep -oiE '^uuid$' \
+	&& php-fpm -m | grep -oiE '^uuid$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \

@@ -15,6 +15,7 @@
 - Added extension `imagick` to PHP 8.0 and PHP 8.1
 - Added extension `xlswriter` to PHP 8.1
 - Added extension `pdo_dblib` to PHP 8.1
+- Added extension `uuid` to all PHP versions (except 5.2)
 
 
 ## Release 0.130

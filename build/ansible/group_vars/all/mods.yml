@@ -101,6 +101,7 @@ extensions_enabled:
   - tidy
   - tokenizer
   - uploadprogress
+  - uuid
   - vips
   - wddx
   - xdebug
@@ -1131,6 +1132,24 @@ extensions_available:
       version: 1.1.4
     all:
       type: pecl
+  uuid:
+    disabled: [5.2]
+    5.3:
+      type: pecl
+      version: 1.0.5
+    5.4:
+      type: pecl
+      version: 1.0.5
+    5.5:
+      type: pecl
+      version: 1.1.5
+    5.6:
+      type: pecl
+      version: 1.1.5
+    all:
+      type: pecl
+      run_dep: [uuid]
+      build_dep: [uuid-dev]
   vips:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     7.0:
