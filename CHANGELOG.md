@@ -9,6 +9,7 @@
 #### Added
 - Added AVIF support in GD for PHP 8.1 (#834)[https://github.com/cytopia/devilbox/issues/834]
 - Added `sqlite3` binary to all PHP images (#856)[https://github.com/cytopia/devilbox/issues/856]
+- Added `laravel` binary to PHP 8.0 and PHP 8.1 (#823)[https://github.com/cytopia/devilbox/issues/823]
 - Added `amqp` extension for PHP 8.0 and PHP 8.1 (#826)[https://github.com/cytopia/devilbox/issues/826]
 
 
