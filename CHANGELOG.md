@@ -7,7 +7,8 @@
 ## Release 0.131
 
 #### Added
-- AVIF support in GD for PHP 8.1 (#834)[https://github.com/cytopia/devilbox/issues/834]
+- Added AVIF support in GD for PHP 8.1 (#834)[https://github.com/cytopia/devilbox/issues/834]
+- Added `sqlite3` binary to all PHP images (#856)[https://github.com/cytopia/devilbox/issues/856]
 
 
 ## Release 0.130
