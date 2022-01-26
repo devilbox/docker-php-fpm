@@ -13,6 +13,7 @@
 - Added `amqp` extension for PHP 8.0 and PHP 8.1 (#826)[https://github.com/cytopia/devilbox/issues/826]
 - Added `uploadprogress` extension for PHP 8.0 and PHP 8.1
 - Added `xlswriter` extension for PHP 8.1
+- Added `pdo_dblib` extension for PHP 8.1
 
 
 ## Release 0.130

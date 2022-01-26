@@ -724,7 +724,7 @@ extensions_available:
   pdo:
     already_avail: "{{ php_all_versions }}"
   pdo_dblib:
-    disabled: [8.1]  # php: symbol lookup error: pdo_dblib.so: undefined symbol: dbinit
+    disabled: []
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
