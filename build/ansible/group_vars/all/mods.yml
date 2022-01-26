@@ -1142,10 +1142,10 @@ extensions_available:
       version: 1.0.5
     5.5:
       type: pecl
-      version: 1.1.5
+      version: 1.0.5
     5.6:
       type: pecl
-      version: 1.1.5
+      version: 1.0.5
     all:
       type: pecl
       run_dep: [uuid]
