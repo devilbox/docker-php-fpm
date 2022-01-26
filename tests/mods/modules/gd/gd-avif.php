@@ -9,7 +9,7 @@ error_reporting(-1);
 
 
 // Only available since PHP 8.1.x
-if (version_compare($PHP_VERSION, '8.1.0', '<=')) {
+if (version_compare(PHP_VERSION, '8.1.0', '<=')) {
 	echo 'SKIP';
 	exit(0);
 }
