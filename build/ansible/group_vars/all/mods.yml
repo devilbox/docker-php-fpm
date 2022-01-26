@@ -373,7 +373,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1] # Only available since 5.3. 5.3 and 5.4 segfaults
+    disabled: [5.2, 5.3, 5.4] # Only available since 5.3. 5.3 and 5.4 segfaults
     5.5:
       type: pecl
       build_dep: [libmagickwand-dev, libwebp5, ghostscript]

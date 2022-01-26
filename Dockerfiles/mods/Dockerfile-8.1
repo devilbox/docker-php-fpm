@@ -12,6 +12,7 @@ RUN set -eux \
 		alien \
 		firebird-dev \
 		freetds-dev \
+		ghostscript \
 		libaio-dev \
 		libavif-dev \
 		libbz2-dev \
@@ -27,6 +28,7 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		libmagickwand-dev \
 		libmemcached-dev \
 		libpcre3-dev \
 		libpng-dev \
@@ -40,6 +42,7 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -174,6 +177,28 @@ RUN set -eux \
 	&& pecl install igbinary \
 	# Enabling
 	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	# Generic post-command
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+ \
 	&& true
 
 
@@ -669,6 +694,7 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	ghostscript \
 	libaio1 \
 	libaspell15 \
 	libavif9 \
@@ -679,6 +705,7 @@ RUN set -eux \
 	libfreetype6 \
 	libicu67 \
 	libjpeg62-turbo \
+	libmagickwand-6.q16-6 \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
@@ -686,6 +713,7 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
+	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
@@ -702,6 +730,17 @@ RUN set -eux \
 ### Post Install
 ###
 RUN set -eux \
+	# ---------- imagick ----------
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+  \
 	# ---------- oci8 ----------
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
@@ -772,6 +811,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^imagick$' \
+	&& php-fpm -m | grep -oiE '^imagick$' \
 	&& php -m | grep -oiE '^imap$' \
 	&& php-fpm -m | grep -oiE '^imap$' \
 	&& php -m | grep -oiE '^intl$' \
