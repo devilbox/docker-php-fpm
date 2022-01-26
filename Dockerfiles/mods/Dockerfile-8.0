@@ -33,6 +33,7 @@ RUN set -eux \
 		libpng-dev \
 		libpq-dev \
 		libpspell-dev \
+		librabbitmq-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libsodium-dev \
@@ -65,6 +66,17 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: amqp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install amqp \
+	# Enabling
+	&& docker-php-ext-enable amqp \
+	&& true
+
 
 # -------------------- Installing PHP Extension: apcu --------------------
 RUN set -eux \
@@ -708,6 +720,7 @@ RUN set -eux \
 	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
+	librabbitmq4 \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
@@ -756,6 +769,8 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
+	&& php -m | grep -oiE '^amqp$' \
+	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \
 	&& php-fpm -m | grep -oiE '^apcu$' \
 	&& php -m | grep -oiE '^bcmath$' \

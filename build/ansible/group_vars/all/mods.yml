@@ -145,7 +145,7 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: [8.0, 8.1]
+    disabled: []
     5.2:
       run_dep: [librabbitmq1]
       type: pecl
