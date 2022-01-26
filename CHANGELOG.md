@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.131
+
+#### Added
+- AVIF support in GD for PHP 8.1 (#834)[https://github.com/cytopia/devilbox/issues/834]
+
+
 ## Release 0.130
 
 #### Fixed

@@ -331,7 +331,9 @@ extensions_available:
       configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
     8.1:
       type: builtin
-      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev, libavif-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6, libavif9]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/

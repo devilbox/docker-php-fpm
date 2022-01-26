@@ -12,6 +12,7 @@ RUN set -eux \
 		alien \
 		firebird-dev \
 		libaio-dev \
+		libavif-dev \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
@@ -128,7 +129,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
-	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype \
+	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& true
@@ -625,6 +626,7 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
+	libavif9 \
 	libc-client2007e \
 	libenchant-2-2 \
 	libfbclient2 \
