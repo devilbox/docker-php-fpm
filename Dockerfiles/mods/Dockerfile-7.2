@@ -69,6 +69,7 @@ RUN set -eux \
 		libzip-dev \
 		snmp \
 		unixodbc-dev \
+		uuid-dev \
 		zlib1g-dev \
 		ca-certificates \
 		git
@@ -691,16 +692,22 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: uploadprogress --------------------
 RUN set -eux \
 	# Installation: Generic
-	# Type:         GIT extension
-	&& git clone https://github.com/php/pecl-php-uploadprogress /tmp/uploadprogress \
-	&& cd /tmp/uploadprogress \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --enable-uploadprogress \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uploadprogress \
 	# Enabling
 	&& docker-php-ext-enable uploadprogress \
+	&& true
+
+
+# -------------------- Installing PHP Extension: uuid --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uuid \
+	# Enabling
+	&& docker-php-ext-enable uuid \
 	&& true
 
 
@@ -901,6 +908,7 @@ RUN set -eux \
 	libzip4 \
 	snmp \
 	unixodbc \
+	uuid \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -1105,6 +1113,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
 	&& php -m | grep -oiE '^uploadprogress$' \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
+	&& php -m | grep -oiE '^uuid$' \
+	&& php-fpm -m | grep -oiE '^uuid$' \
 	&& php -m | grep -oiE '^vips$' \
 	&& php-fpm -m | grep -oiE '^vips$' \
 	&& php -m | grep -oiE '^wddx$' \

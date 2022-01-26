@@ -101,6 +101,7 @@ extensions_enabled:
   - tidy
   - tokenizer
   - uploadprogress
+  - uuid
   - vips
   - wddx
   - xdebug
@@ -145,7 +146,7 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: [8.0, 8.1]
+    disabled: []
     5.2:
       run_dep: [librabbitmq1]
       type: pecl
@@ -331,7 +332,9 @@ extensions_available:
       configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
     8.1:
       type: builtin
-      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev, libavif-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6, libavif9]
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
@@ -371,7 +374,7 @@ extensions_available:
     all:
       type: pecl
   imagick:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1] # Only available since 5.3. 5.3 and 5.4 segfaults
+    disabled: [5.2, 5.3, 5.4] # Only available since 5.3. 5.3 and 5.4 segfaults
     5.5:
       type: pecl
       build_dep: [libmagickwand-dev, libwebp5, ghostscript]
@@ -722,7 +725,7 @@ extensions_available:
   pdo:
     already_avail: "{{ php_all_versions }}"
   pdo_dblib:
-    disabled: [8.1]  # php: symbol lookup error: pdo_dblib.so: undefined symbol: dbinit
+    disabled: []
     all:
       type: builtin
       pre: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
@@ -943,7 +946,7 @@ extensions_available:
   reflection:
     already_avail: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
   rdkafka:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2]
     5.3:
       type: pecl
       version: 3.0.5
@@ -1105,7 +1108,7 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    disabled: [8.0, 8.1]
+    disabled: []
     5.2:
       type: pecl
       version: 1.1.4
@@ -1121,10 +1124,32 @@ extensions_available:
     5.6:
       type: pecl
       version: 1.1.4
+    7.0:
+      type: pecl
+      version: 1.1.4
+    7.1:
+      type: pecl
+      version: 1.1.4
     all:
-      type: git
-      git_url: https://github.com/php/pecl-php-uploadprogress
-      configure: --enable-uploadprogress
+      type: pecl
+  uuid:
+    disabled: [5.2]
+    5.3:
+      type: pecl
+      version: 1.0.5
+    5.4:
+      type: pecl
+      version: 1.0.5
+    5.5:
+      type: pecl
+      version: 1.0.5
+    5.6:
+      type: pecl
+      version: 1.0.5
+    all:
+      type: pecl
+      run_dep: [uuid]
+      build_dep: [uuid-dev]
   vips:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1]
     7.0:
@@ -1254,7 +1279,7 @@ extensions_available:
     all:
       type: pecl
   xlswriter:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.1]  # TODO: re-enable for PHP 8.1
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
     all:
       type: pecl
       build_dep: [zlib1g-dev]

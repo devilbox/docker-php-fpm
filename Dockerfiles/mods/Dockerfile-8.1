@@ -11,7 +11,10 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 		alien \
 		firebird-dev \
+		freetds-dev \
+		ghostscript \
 		libaio-dev \
+		libavif-dev \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
@@ -25,11 +28,14 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		libmagickwand-dev \
 		libmemcached-dev \
 		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
 		libpspell-dev \
+		librabbitmq-dev \
+		librdkafka-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libsodium-dev \
@@ -37,12 +43,14 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
+		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
 		libyaml-dev \
 		libzip-dev \
 		snmp \
+		uuid-dev \
 		zlib1g-dev \
 		ca-certificates \
 		git
@@ -61,6 +69,17 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: amqp --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install amqp \
+	# Enabling
+	&& docker-php-ext-enable amqp \
+	&& true
+
 
 # -------------------- Installing PHP Extension: apcu --------------------
 RUN set -eux \
@@ -128,7 +147,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
-	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype \
+	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& true
@@ -160,6 +179,28 @@ RUN set -eux \
 	&& pecl install igbinary \
 	# Enabling
 	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	# Generic post-command
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+ \
 	&& true
 
 
@@ -319,6 +360,16 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: pdo_dblib --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pdo_firebird --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -427,6 +478,17 @@ phpize \
 	&& true
 
 
+# -------------------- Installing PHP Extension: rdkafka --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install rdkafka \
+	# Enabling
+	&& docker-php-ext-enable rdkafka \
+	&& true
+
+
 # -------------------- Installing PHP Extension: shmop --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -518,6 +580,28 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: uploadprogress --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uploadprogress \
+	# Enabling
+	&& docker-php-ext-enable uploadprogress \
+	&& true
+
+
+# -------------------- Installing PHP Extension: uuid --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install uuid \
+	# Enabling
+	&& docker-php-ext-enable uuid \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -541,6 +625,17 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
+	&& true
+
+
+# -------------------- Installing PHP Extension: xlswriter --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xlswriter \
+	# Enabling
+	&& docker-php-ext-enable xlswriter \
 	&& true
 
 
@@ -623,8 +718,10 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	ghostscript \
 	libaio1 \
 	libaspell15 \
+	libavif9 \
 	libc-client2007e \
 	libenchant-2-2 \
 	libfbclient2 \
@@ -632,17 +729,23 @@ RUN set -eux \
 	libfreetype6 \
 	libicu67 \
 	libjpeg62-turbo \
+	libmagickwand-6.q16-6 \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
+	librabbitmq4 \
+	librdkafka1 \
+	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
+	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
 	libzip4 \
 	snmp \
+	uuid \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -653,6 +756,17 @@ RUN set -eux \
 ### Post Install
 ###
 RUN set -eux \
+	# ---------- imagick ----------
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+  \
 	# ---------- oci8 ----------
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
@@ -681,6 +795,8 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
+	&& php -m | grep -oiE '^amqp$' \
+	&& php-fpm -m | grep -oiE '^amqp$' \
 	&& php -m | grep -oiE '^apcu$' \
 	&& php-fpm -m | grep -oiE '^apcu$' \
 	&& php -m | grep -oiE '^bcmath$' \
@@ -721,6 +837,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^iconv$' \
 	&& php -m | grep -oiE '^igbinary$' \
 	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^imagick$' \
+	&& php-fpm -m | grep -oiE '^imagick$' \
 	&& php -m | grep -oiE '^imap$' \
 	&& php-fpm -m | grep -oiE '^imap$' \
 	&& php -m | grep -oiE '^intl$' \
@@ -759,6 +877,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^pdo$' \
 	&& php-fpm -m | grep -oiE '^pdo$' \
+	&& php -m | grep -oiE '^pdo_dblib$' \
+	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
 	&& php -m | grep -oiE '^pdo_firebird$' \
 	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
 	&& php -m | grep -oiE '^pdo_mysql$' \
@@ -784,6 +904,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^reflection$' \
 	&& php-fpm -m | grep -oiE '^reflection$' \
+	&& php -m | grep -oiE '^rdkafka$' \
+	&& php-fpm -m | grep -oiE '^rdkafka$' \
 	&& php -m | grep -oiE '^session$' \
 	&& php-fpm -m | grep -oiE '^session$' \
 	&& php -m | grep -oiE '^shmop$' \
@@ -812,6 +934,10 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^tidy$' \
 	&& php -m | grep -oiE '^tokenizer$' \
 	&& php-fpm -m | grep -oiE '^tokenizer$' \
+	&& php -m | grep -oiE '^uploadprogress$' \
+	&& php-fpm -m | grep -oiE '^uploadprogress$' \
+	&& php -m | grep -oiE '^uuid$' \
+	&& php-fpm -m | grep -oiE '^uuid$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \
@@ -822,6 +948,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
+	&& php -m | grep -oiE '^xlswriter$' \
+	&& php-fpm -m | grep -oiE '^xlswriter$' \
 	&& php -m | grep -oiE '^yaml$' \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
