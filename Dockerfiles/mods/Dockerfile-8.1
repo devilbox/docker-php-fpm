@@ -35,6 +35,7 @@ RUN set -eux \
 		libpq-dev \
 		libpspell-dev \
 		librabbitmq-dev \
+		librdkafka-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libsodium-dev \
@@ -477,6 +478,17 @@ phpize \
 	&& true
 
 
+# -------------------- Installing PHP Extension: rdkafka --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install rdkafka \
+	# Enabling
+	&& docker-php-ext-enable rdkafka \
+	&& true
+
+
 # -------------------- Installing PHP Extension: shmop --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -722,6 +734,7 @@ RUN set -eux \
 	libpng16-16 \
 	libpq5 \
 	librabbitmq4 \
+	librdkafka1 \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
@@ -891,6 +904,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^reflection$' \
 	&& php-fpm -m | grep -oiE '^reflection$' \
+	&& php -m | grep -oiE '^rdkafka$' \
+	&& php-fpm -m | grep -oiE '^rdkafka$' \
 	&& php -m | grep -oiE '^session$' \
 	&& php-fpm -m | grep -oiE '^session$' \
 	&& php -m | grep -oiE '^shmop$' \

@@ -13,6 +13,7 @@
 - Added extension `amqp` to PHP 8.0 and PHP 8.1 (#826)[https://github.com/cytopia/devilbox/issues/826]
 - Added extension `uploadprogress` to PHP 8.0 and PHP 8.1
 - Added extension `imagick` to PHP 8.0 and PHP 8.1
+- Added extension `rdkafka` to PHP 8.0 and PHP 8.1
 - Added extension `xlswriter` to PHP 8.1
 - Added extension `pdo_dblib` to PHP 8.1
 - Added extension `uuid` to all PHP versions (except 5.2)
