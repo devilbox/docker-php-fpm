@@ -50,6 +50,7 @@ RUN set -eux \
 		libyaml-dev \
 		libzip-dev \
 		snmp \
+		unixodbc-dev \
 		uuid-dev \
 		zlib1g-dev \
 		ca-certificates \
@@ -423,6 +424,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: pdo_sqlsrv --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install pdo_sqlsrv \
+	# Enabling
+	&& docker-php-ext-enable pdo_sqlsrv \
+	&& true
+
+
 # -------------------- Installing PHP Extension: pgsql --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -545,6 +557,17 @@ RUN set -eux \
 	&& pecl install solr \
 	# Enabling
 	&& docker-php-ext-enable solr \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sqlsrv --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install sqlsrv \
+	# Enabling
+	&& docker-php-ext-enable sqlsrv \
 	&& true
 
 
@@ -745,6 +768,7 @@ RUN set -eux \
 	libyaml-0-2 \
 	libzip4 \
 	snmp \
+	unixodbc \
 	uuid \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -889,6 +913,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
 	&& php -m | grep -oiE '^pdo_sqlite$' \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
+	&& php -m | grep -oiE '^pdo_sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^psr$' \
@@ -924,6 +950,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^solr$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
+	&& php -m | grep -oiE '^sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
