@@ -4,6 +4,15 @@
 ## Unreleased
 
 
+## Release 0.132
+
+#### Fixed
+- Fixed `nvm` PATH priority [#846](https://github.com/cytopia/devilbox/issues/846)
+
+#### Changed
+- Changed postfix hostname to `php` instead of GitHub runners long name
+
+
 ## Release 0.131
 
 #### Added
