@@ -88,7 +88,7 @@ set_postfix() {
 
 		# Postfix catch-all
 		if [ "${enable_mail}" = "2" ]; then
-			run "postconf -e 'myhostname=php'" "${debug}"
+			run "postconf -e 'myhostname=localhost'" "${debug}"
 			run "postconf -e 'virtual_alias_maps=pcre:/etc/postfix/virtual'" "${debug}"
 			run "echo '/.*@.*/ ${username}' >> /etc/postfix/virtual" "${debug}"
 			run "newaliases" "${debug}"

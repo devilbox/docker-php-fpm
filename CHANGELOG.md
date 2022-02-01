@@ -14,7 +14,7 @@
 - added extension `pdo_sqlsrv` to php 8.1
 
 #### Changed
-- Changed postfix hostname to `php` instead of GitHub runners long name
+- Changed postfix hostname to `localhost` instead of GitHub runners long name
 
 
 ## Release 0.131
