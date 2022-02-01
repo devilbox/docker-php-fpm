@@ -9,6 +9,10 @@
 #### Fixed
 - Fixed `nvm` PATH priority [#846](https://github.com/cytopia/devilbox/issues/846)
 
+#### Added
+- added extension `sqlsrv` to php 8.1
+- added extension `pdo_sqlsrv` to php 8.1
+
 #### Changed
 - Changed postfix hostname to `php` instead of GitHub runners long name
 
