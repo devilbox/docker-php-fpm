@@ -17,7 +17,7 @@ if (PHP_MAJOR_VERSION == 7) {
 
 // FIXME: Currently not available for PHP 8.0 and PHP 8.1
 if (PHP_MAJOR_VERSION == 8) {
-	if (PHP_MINOR_VERSION == 0 || PHP_MINOR_VERSION == 1) {
+	if (PHP_MINOR_VERSION == 0 || PHP_MINOR_VERSION == 1 || PHP_MINOR_VERSION == 2) {
 		echo 'SKIP';
 		exit(0);
 	}

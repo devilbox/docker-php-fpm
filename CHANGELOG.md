@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.133
+
+#### Added
+- Added PHP 8.2: https://github.com/devilbox/docker-php-fpm-8.2
+
+
 ## Release 0.132
 
 #### Fixed

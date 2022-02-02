@@ -11,3 +11,4 @@ php-7.3 php_version=7.3 ansible_connection=local
 php-7.4 php_version=7.4 ansible_connection=local
 php-8.0 php_version=8.0 ansible_connection=local
 php-8.1 php_version=8.1 ansible_connection=local
+php-8.2 php_version=8.2 ansible_connection=local
