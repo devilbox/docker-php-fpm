@@ -63,7 +63,7 @@ help:
 	@echo "--------------------------------------------------------------------------------"
 	@echo
 	@echo "VERSION                       One of '5.2', '5.3', '5.4', '5.5', '5.6', '7.0',"
-	@echo "                                      '7.1', '7.2', '7.3', '7.4', '8.0', '8.1'."
+	@echo "                                      '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2'."
 	@echo "                              For gen-readme target it is optional and if not"
 	@echo "                              specified, it will generate for all versions."
 	@echo
@@ -382,9 +382,12 @@ ifeq ($(VERSION),8.0)
 else
 ifeq ($(VERSION),8.1)
 else
-	@$(info VERSION can only be: '5.2', '5.3', '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' or '8.1')
+ifeq ($(VERSION),8.2)
+else
+	@$(info VERSION can only be: '5.2', '5.3', '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' or '8.2')
 	@$(info )
 	@$(error Exiting)
+endif
 endif
 endif
 endif

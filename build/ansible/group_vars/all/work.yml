@@ -158,6 +158,8 @@ apt_repositories_available:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     8.1:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
+    8.2:
+      deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main
     all:
       deb: deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main
       key: A1715D88E1DF1F24
@@ -226,31 +228,31 @@ apt_repositories_available:
 #
 composer_available:
   asgardcms:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
     check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+'
     name: asgardcms/asgardcms-installer
     link: asgardcms
     version: 2
   codeception:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.0, 8.1, 8.2]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$'
     name: codeception/codeception
     link: codecept
     version: 2
   lumen:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
     check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$'
     name: laravel/lumen-installer
     link: lumen
     version: 2
   photon:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
     check: photon --version | grep -E 'Installer [0-9][.0-9]+'
     name: photoncms/installer
     link: photon
     version: 2
   prestissimo:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.0, 8.1, 8.2]
     name: hirak/prestissimo
     version: 1
 
@@ -277,7 +279,7 @@ gem_available:
   # version which is not supported by the ruby version (>= 2.3)
   ffi:
     name: ffi
-    disabled: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
+    disabled: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
     all:
       version: 1.12.2
   rb_inotify:
@@ -287,6 +289,8 @@ gem_available:
   mdl:
     name: mdl
     check: mdl --version | grep -E '[0-9][.0-9]+'
+    8.2:
+      version: 0.5.0
     8.1:
       version: 0.5.0
     8.0:
@@ -559,7 +563,7 @@ software_available:
       command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
       post: chmod +x /usr/local/bin/dep
   drush7:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.0, 8.1, 8.2]
     check: drush7 --version | grep -E '7[.0-9]+\s*$'
     all:
       pre: |
@@ -575,7 +579,7 @@ software_available:
         && rm -rf /usr/local/src/drush7/examples \
         && rm -rf /usr/local/src/drush7/misc \
   drush8:
-    disabled: [5.2, 5.3, 8.0, 8.1]
+    disabled: [5.2, 5.3, 8.0, 8.1, 8.2]
     check: drush8 --version | grep -E '8[.0-9]+\s*$'
     all:
       pre: |
@@ -591,7 +595,7 @@ software_available:
         && rm -rf /usr/local/src/drush8/examples \
         && rm -rf /usr/local/src/drush8/misc \
   drush9:
-    disabled: [5.2, 5.3, 5.4, 5.5, 7.0, 7.1, 8.0, 8.1]
+    disabled: [5.2, 5.3, 5.4, 5.5, 7.0, 7.1, 8.0, 8.1, 8.2]
     check: drush9 --version | grep -E '9[.0-9]+\s*$'
     all:
       pre: |
@@ -607,7 +611,7 @@ software_available:
         && rm -rf /usr/local/src/drush9/examples \
         && rm -rf /usr/local/src/drush9/misc \
   drupalconsole:
-    disabled: [5.2, 5.3, 5.4, 7.0, 7.1, 8.0, 8.1] # TODO: re-enable for 8.0 (currently errors)
+    disabled: [5.2, 5.3, 5.4, 7.0, 7.1, 8.0, 8.1, 8.2] # TODO: re-enable for 8.0 (currently errors)
     check: drupal --version | grep -E 'Drupal Console Launcher\s*[0-9][.0-9]'
     5.5:
       pre: DURL="https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.9.4/drupal.phar"
@@ -643,7 +647,7 @@ software_available:
         && su - ${MY_USER} -c '/usr/local/src/brew/bin/brew config' \
   laravel:
     check: laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+'
-    disabled: [5.2, 5.3]
+    disabled: [5.2, 5.3, 8.2]
     5.4:
       pre: |
         git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
@@ -747,7 +751,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.0, 8.1, 8.2]
     check: phalcon commands | grep -E '[0-9][.0-9]+'
     5.3:
       pre: |
@@ -861,7 +865,7 @@ software_available:
         curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar > /usr/local/bin/phpcbf \
         && chmod +x /usr/local/bin/phpcbf \
   php-cs-fixer:
-    disabled: [5.2]
+    disabled: [5.2, 8.2]
     check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+'
     5.3:
       command: |
@@ -908,7 +912,7 @@ software_available:
         && mv phpmd.phar /usr/local/bin/phpmd \
         && chmod +x /usr/local/bin/phpmd \
   phpunit:
-    disabled: [5.2, 8.0, 8.1]
+    disabled: [5.2, 8.0, 8.1, 8.2]
     check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+'
     5.3:
       command: |
@@ -992,6 +996,14 @@ software_available:
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
     8.1:
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    8.2:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
