@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.134
+
+#### Changed
+- Added extension `xdebug` to PHP 8.2
+
+
 ## Release 0.133
 
 #### Added
