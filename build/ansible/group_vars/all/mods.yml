@@ -1290,7 +1290,7 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
-    disabled: [8.2]
+    disabled: []
     5.2:
       type: pecl
       version: 2.2.7
@@ -1316,6 +1316,12 @@ extensions_available:
       type: git
       git_url: https://github.com/xdebug/xdebug
       git_ref: $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1)
+      configure: --enable-xdebug
+    # FIXME: Switch back to official xdebug after changes have been merged
+    8.2:
+      type: git
+      git_url: https://github.com/shivammathur/xdebug
+      git_ref: fix-jmpznz
       configure: --enable-xdebug
     all:
       type: pecl
