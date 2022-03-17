@@ -6,7 +6,10 @@
 
 ## Release 0.135
 
-#### CHANGED
+#### Fixed
+- Fixed cloning of gitflow
+
+#### Changed
 - Changed PHP 5.2 and PHP 5.3 base images to Debian stretch
 
 

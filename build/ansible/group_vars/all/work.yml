@@ -613,7 +613,7 @@ software_available:
     check: git-flow version | grep -E '[0-9][.0-9]+'
     all:
       command: |
-        git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+        git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
         && cd /tmp/gitflow \
         && make install \
         && cd / && rm -rf /tmp/gitflow \
