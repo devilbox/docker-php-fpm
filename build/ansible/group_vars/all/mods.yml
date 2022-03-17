@@ -444,7 +444,9 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu67]
   ioncube:
-    disabled: [8.0, 8.1, 8.2]
+    # ioncube on amd64 is only available from 4.1 up to 7.4
+    # ioncube on arm64 is only available from 5.5 up to 7.4
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
     all:
       type: custom
       command: |
