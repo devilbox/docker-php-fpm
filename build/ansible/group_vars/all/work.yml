@@ -937,67 +937,37 @@ software_available:
       post: chmod +x /usr/local/bin/symfony
   wkhtmltopdf:
     check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"
-    5.2:
-      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
-    5.3:
-      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
     5.4:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
     5.5:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
-    7.1:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
         && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
-    7.2:
+    5.6:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
         && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
-    7.3:
+    7.0:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
-    7.4:
-      command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
-    8.0:
-      command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
-    8.1:
-      command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
-    8.2:
-      command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
         && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
@@ -1006,7 +976,7 @@ software_available:
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \
         && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
         && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
         && dpkg -i /tmp/wkhtmltopdf.deb \
         && rm -f /tmp/wkhtmltopdf.deb \
