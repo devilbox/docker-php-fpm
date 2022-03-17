@@ -607,10 +607,7 @@ extensions_available:
       command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2]
-    5.3:
-      type: pecl
-      version: 0.6.3
+    disabled: [5.2, 5.3]
     5.4:
       type: pecl
       version: 1.2.11

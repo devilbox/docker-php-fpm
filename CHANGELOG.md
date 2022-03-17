@@ -13,6 +13,7 @@
 #### Changed
 - Changed PHP 5.2 and PHP 5.3 base images to Debian stretch
 - Removed photoncms binaries (their GitHub organization went private)
+- Removed `mongodb` extension from PHP 5.3 due to build errors
 
 
 ## Release 0.134
