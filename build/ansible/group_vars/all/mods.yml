@@ -149,7 +149,7 @@ extensions_available:
     disabled: []
     5.2:
       type: pecl
-      version: 1.4.0
+      version: 1.6.1
     5.3:
       type: pecl
       version: 1.9.3
