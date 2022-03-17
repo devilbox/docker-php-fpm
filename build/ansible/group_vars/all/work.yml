@@ -34,7 +34,7 @@ composer_enabled:
   - asgardcms
   - codeception
   - lumen
-  - photon
+  #- photon
   - prestissimo
 
 
@@ -229,12 +229,12 @@ composer_available:
     name: laravel/lumen-installer
     link: lumen
     version: 2
-  photon:
-    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
-    check: photon --version | grep -E 'Installer [0-9][.0-9]+'
-    name: photoncms/installer
-    link: photon
-    version: 2
+  #photon:
+  #  disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
+  #  check: photon --version | grep -E 'Installer [0-9][.0-9]+'
+  #  name: photoncms/installer
+  #  link: photon
+  #  version: 2
   prestissimo:
     disabled: [5.2, 8.0, 8.1, 8.2]
     name: hirak/prestissimo

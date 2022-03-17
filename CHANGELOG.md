@@ -12,6 +12,7 @@
 
 #### Changed
 - Changed PHP 5.2 and PHP 5.3 base images to Debian stretch
+- Removed photoncms binaries (their GitHub organization went private)
 
 
 ## Release 0.134
