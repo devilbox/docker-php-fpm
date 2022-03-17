@@ -55,7 +55,7 @@ RUN set -eux \
 ###
 ### Upgrade (install ps)
 ###
-{% if php_version in [5.2, 5.3, 5.4, 5.5] %}
+{% if php_version in [5.4, 5.5] %}
 RUN set -eux \
 	&& rm -f /etc/apt/sources.list \
 	&& { \

@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.135
+
+#### CHANGED
+- Changed PHP 5.2 and PHP 5.3 base images to Debian stretch
+
+
 ## Release 0.134
 
 #### Changed

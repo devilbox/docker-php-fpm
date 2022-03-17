@@ -128,12 +128,6 @@ software_enabled:
 #
 apt_repositories_available:
   backports:
-    5.2:
-      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian jessie-backports main
-    5.3:
-      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian jessie-backports main
     5.4:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
       deb: deb http://archive.debian.org/debian jessie-backports main
@@ -166,12 +160,6 @@ apt_repositories_available:
   # Get keys
   # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
   mongo:
-    5.2:
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    5.3:
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     5.4:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
       key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
@@ -182,10 +170,6 @@ apt_repositories_available:
       deb: deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main
       key: 9DA31620334BD75D9DCB49F368818C72E52529D4
   pgsql:
-    5.2:
-      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
-    5.3:
-      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.4:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.5:
