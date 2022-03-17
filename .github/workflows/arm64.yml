@@ -1,0 +1,352 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: build-arm64
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  # Runs on Push
+  push:
+
+
+# -------------------------------------------------------------------------------------------------
+# What to run
+# -------------------------------------------------------------------------------------------------
+jobs:
+  build:
+    name: "[ PHP-${{ matrix.version }} (arm64) ]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: False
+      matrix:
+        version:
+          - '5.2'
+          - '5.3'
+          - '5.4'
+          - '5.5'
+          - '5.6'
+          - '7.0'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+    steps:
+
+      # ------------------------------------------------------------
+      # Setup repository
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables
+        id: vars
+        run: |
+
+          # Retrieve git info (tags, etc)
+          git fetch --all
+
+          # Branch, Tag or Commit
+          GIT_TYPE="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_TYPE' \
+            | sed 's|.*=||g' \
+          )"
+          # Branch name, Tag name or Commit Hash
+          GIT_SLUG="$( \
+            curl -sS https://raw.githubusercontent.com/cytopia/git-tools/master/git-info.sh \
+            | sh \
+            | grep '^GIT_NAME' \
+            | sed 's|.*=||g' \
+          )"
+          # Docker Tag
+          if [ "${GIT_TYPE}" = "BRANCH" ] && [ "${GIT_SLUG}" = "master" ]; then
+            DOCKER_TAG_BASE="${VERSION}-base"
+            DOCKER_TAG_MODS="${VERSION}-mods"
+            DOCKER_TAG_PROD="${VERSION}-prod"
+            DOCKER_TAG_WORK="${VERSION}-work"
+          else
+            DOCKER_TAG_BASE="${VERSION}-base-${GIT_SLUG}"
+            DOCKER_TAG_MODS="${VERSION}-mods-${GIT_SLUG}"
+            DOCKER_TAG_PROD="${VERSION}-prod-${GIT_SLUG}"
+            DOCKER_TAG_WORK="${VERSION}-work-${GIT_SLUG}"
+          fi
+
+          # Output
+          echo "GIT_TYPE=${GIT_TYPE}"
+          echo "GIT_SLUG=${GIT_SLUG}"
+          echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}"
+          echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}"
+          echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}"
+          echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}"
+
+          # Export variable
+          # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#environment-files
+          echo "GIT_TYPE=${GIT_TYPE}"               >> ${GITHUB_ENV}
+          echo "GIT_SLUG=${GIT_SLUG}"               >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}" >> ${GITHUB_ENV}
+          echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}" >> ${GITHUB_ENV}
+        env:
+          VERSION: ${{ matrix.version }}
+
+      - name: "[SETUP] Setup QEMU environment"
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+
+
+      # ------------------------------------------------------------
+      # Base
+      # ------------------------------------------------------------
+      - name: Build Base
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          retry make _pull-base-image VERSION=${VERSION} ARCH=linux/arm64
+          retry make build-base VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+      - name: Test Base
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          #retry make test-base VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+
+      # ------------------------------------------------------------
+      # Mods
+      # ------------------------------------------------------------
+      - name: Build Mods
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          retry make build-mods VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+      - name: Test Mods
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          #retry make test-mods VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+
+      # ------------------------------------------------------------
+      # Prod
+      # ------------------------------------------------------------
+      - name: Build Prod
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          retry make build-prod VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+      - name: Test Prod
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          #retry make test-prod VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+
+      # ------------------------------------------------------------
+      # Work
+      # ------------------------------------------------------------
+      - name: Build Work
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          retry make build-work VERSION=${VERSION} ARCH=linux/arm64
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+      - name: Test Work
+        run: |
+          retry() {
+            for n in $(seq ${RETRIES}); do
+              echo "[${n}/${RETRIES}] ${*}";
+              if eval "${*}"; then
+                echo "[SUCC] ${n}/${RETRIES}";
+                return 0;
+              fi;
+              sleep ${PAUSE};
+              echo "[FAIL] ${n}/${RETRIES}";
+            done;
+            return 1;
+          }
+          #retry make test-work VERSION=${VERSION}
+        env:
+          VERSION: ${{ matrix.version }}
+          RETRIES: 20
+          PAUSE: 10
+
+
+      # ------------------------------------------------------------
+      # Diff README.md
+      # ------------------------------------------------------------
+      - name: Diff README.md
+        run: |
+          make gen-readme VERSION=${VERSION}
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+        env:
+          VERSION: ${{ matrix.version }}
+
+
+      # ------------------------------------------------------------
+      # Deploy
+      # ------------------------------------------------------------
+      #- name: Publish images (only repo owner)
+      #  run: |
+      #    retry() {
+      #      for n in $(seq ${RETRIES}); do
+      #        echo "[${n}/${RETRIES}] ${*}";
+      #        if eval "${*}"; then
+      #          echo "[SUCC] ${n}/${RETRIES}";
+      #          return 0;
+      #        fi;
+      #        sleep ${PAUSE};
+      #        echo "[FAIL] ${n}/${RETRIES}";
+      #      done;
+      #      return 1;
+      #    }
+
+      #    # Output
+      #    echo "GIT_TYPE=${GIT_TYPE}"
+      #    echo "GIT_SLUG=${GIT_SLUG}"
+      #    echo "DOCKER_TAG_BASE=${DOCKER_TAG_BASE}"
+      #    echo "DOCKER_TAG_MODS=${DOCKER_TAG_MODS}"
+      #    echo "DOCKER_TAG_PROD=${DOCKER_TAG_PROD}"
+      #    echo "DOCKER_TAG_WORK=${DOCKER_TAG_WORK}"
+
+      #    # Tag image
+      #    retry make tag OLD_TAG="${VERSION}-base" NEW_TAG="${DOCKER_TAG_BASE}"
+      #    retry make tag OLD_TAG="${VERSION}-mods" NEW_TAG="${DOCKER_TAG_MODS}"
+      #    retry make tag OLD_TAG="${VERSION}-prod" NEW_TAG="${DOCKER_TAG_PROD}"
+      #    retry make tag OLD_TAG="${VERSION}-work" NEW_TAG="${DOCKER_TAG_WORK}"
+      #    docker images
+
+      #    # Login
+      #    retry make login USERNAME=${{ secrets.DOCKERHUB_USERNAME }} PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
+
+      #    # Push
+      #    retry make push TAG=${DOCKER_TAG_BASE}
+      #    retry make push TAG=${DOCKER_TAG_MODS}
+      #    retry make push TAG=${DOCKER_TAG_PROD}
+      #    retry make push TAG=${DOCKER_TAG_WORK}
+      #  env:
+      #    VERSION: ${{ matrix.version }}
+      #    RETRIES: 20
+      #    PAUSE: 10
+      #  # https://help.github.com/en/github/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions#functions
+      #  if: github.event.pull_request.base.repo.id == github.event.pull_request.head.repo.id
+      #      && (
+      #        (github.event_name == 'schedule' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+      #        ||
+      #        (github.event_name == 'push'     && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')))
+      #        ||
+      #        (github.event_name == 'push'     && startsWith(github.ref, 'refs/heads/release-'))
+      #      )

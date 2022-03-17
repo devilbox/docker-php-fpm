@@ -11,6 +11,8 @@ CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 DIR = Dockerfiles
 IMAGE = devilbox/php-fpm
+ARCH  = linux/amd64
+
 NO_CACHE =
 PHP_EXT_DIR =
 
@@ -158,6 +160,7 @@ endif
 
 gen-dockerfiles:
 	docker run --rm \
+		--platform $(ARCH) \
 		$$(tty -s && echo "-it" || echo) \
 		-e USER=ansible \
 		-e MY_UID=$$(id -u) \
@@ -179,6 +182,7 @@ gen-dockerfiles:
 build-base: _check-version
 build-base:
 	docker build $(NO_CACHE) \
+		--platform $(ARCH) \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD))" \
@@ -193,16 +197,18 @@ build-mods: _check-image-exists
 build-mods:
 ifeq ($(strip $(TARGET)),)
 	docker build $(NO_CACHE) \
+		--platform $(ARCH) \
 		--target builder \
 		-t $(IMAGE):$(VERSION)-mods \
 		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
 	@# $(NO_CACHE) is removed, as it would otherwise rebuild the 'builder' image again.
 	docker build \
+		--platform $(ARCH) \
 		--target final \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		--build-arg EXT_DIR="$$( docker run --rm --entrypoint=php $(IMAGE):$(VERSION)-mods -i \
+		--build-arg EXT_DIR="$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(VERSION)-mods -i \
 			| grep ^extension_dir \
 			| awk -F '=>' '{print $$2}' \
 			| xargs \
@@ -212,6 +218,7 @@ ifeq ($(strip $(TARGET)),)
 		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
 else
 	docker build $(NO_CACHE) \
+		--platform $(ARCH) \
 		--target $(TARGET) \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
@@ -227,6 +234,7 @@ build-prod: _EXIST_IMAGE=mods
 build-prod: _check-image-exists
 build-prod:
 	docker build $(NO_CACHE) \
+		--platform $(ARCH) \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
@@ -240,6 +248,7 @@ build-work: _EXIST_IMAGE=prod
 build-work: _check-image-exists
 build-work:
 	docker build $(NO_CACHE) \
+		--platform $(ARCH) \
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
@@ -415,4 +424,4 @@ _check-image-exists:
 
 _pull-base-image:
 	@echo "Pulling root image for PHP ${VERSION}"
-	@docker pull $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
+	@docker pull --platform $(ARCH) $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
