@@ -149,13 +149,13 @@ lint-yaml:
 gen-readme:
 ifeq ($(strip $(VERSION)),)
 	@echo "Generate README.md for all PHP versions"
-	cd build; ./gen-readme.sh
+	cd build; ./gen-readme.sh $(ARCH)
 else
 	@echo "Generate README.md for PHP $(VERSION)"
 	@$(MAKE) --no-print-directory _check-version
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=base
 	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
-	cd build; ./gen-readme.sh $(VERSION)
+	cd build; ./gen-readme.sh $(ARCH) $(VERSION)
 endif
 
 gen-dockerfiles:
@@ -286,28 +286,28 @@ test-base: _check-version
 test-base: _EXIST_IMAGE=base
 test-base: _check-image-exists
 test-base:
-	./tests/test.sh ${VERSION} base
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) base
 
 
 test-mods: _check-version
 test-mods: _EXIST_IMAGE=mods
 test-mods: _check-image-exists
 test-mods: _check-version
-	./tests/test.sh ${VERSION} mods
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) mods
 
 
 test-prod: _check-version
 test-prod: _EXIST_IMAGE=prod
 test-prod: _check-image-exists
 test-prod: _check-version
-	./tests/test.sh ${VERSION} prod
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) prod
 
 
 test-work: _check-version
 test-work: _EXIST_IMAGE=work
 test-work: _check-image-exists
 test-work: _check-version
-	./tests/test.sh ${VERSION} work
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) work
 
 
 # -------------------------------------------------------------------------------------------------
