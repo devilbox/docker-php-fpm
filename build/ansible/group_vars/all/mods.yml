@@ -279,14 +279,12 @@ extensions_available:
         ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
         ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
         ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
-        mkdir -p /usr/include/freetype2/freetype && \
-        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.3:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir -p /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
+      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]

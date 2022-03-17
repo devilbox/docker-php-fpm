@@ -165,7 +165,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: gd --------------------
 RUN set -eux \
 	# Version specific pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir -p /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
