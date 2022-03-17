@@ -424,4 +424,4 @@ _check-image-exists:
 
 _pull-base-image:
 	@echo "Pulling root image for PHP ${VERSION}"
-	@docker pull --platform $(ARCH) $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
+	docker pull --platform $(ARCH) $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
