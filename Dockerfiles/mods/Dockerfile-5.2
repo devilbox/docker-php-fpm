@@ -166,7 +166,7 @@ RUN set -eux \
 	&& ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
 ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
 ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
-mkdir /usr/include/freetype2/freetype && \
+mkdir -p /usr/include/freetype2/freetype && \
 ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
  \
 	# Installation: Version specific
