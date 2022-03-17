@@ -8,6 +8,7 @@
 
 #### Fixed
 - Fixed cloning of gitflow
+- Fixed pidof issue on QUEMU by replacing it with pgrep [#854](https://github.com/cytopia/devilbox/issues/854)
 
 #### Changed
 - Changed PHP 5.2 and PHP 5.3 base images to Debian stretch
