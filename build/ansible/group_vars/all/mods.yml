@@ -146,13 +146,14 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: []
+    # Does not build on arm64 on PHP 5.3
+    disabled: [5.3]
     5.2:
       type: pecl
       version: 1.6.1
-    5.3:
-      type: pecl
-      version: 1.9.3
+    #5.3:
+    #  type: pecl
+    #  version: 1.9.3
     5.4:
       type: pecl
       version: 1.9.3
