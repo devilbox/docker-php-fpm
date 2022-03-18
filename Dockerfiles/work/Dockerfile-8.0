@@ -148,7 +148,7 @@ RUN set -eux \
 ### Instal Architecture Dependent software
 ###
 RUN set -eux \
-	&& if [ "${ARCH}" = "linux/amd64" ]; \
+	&& if [ "${ARCH}" = "linux/amd64" ]; then \
 		DEBIAN_FRONTEND=noninteractive apt-get update -q \
 		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
 			mongodb-org-shell \
