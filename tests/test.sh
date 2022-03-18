@@ -16,7 +16,6 @@ IFS=$'\n'
 ###
 ### Variables
 ###
-
 # Current directory
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
@@ -31,51 +30,56 @@ CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 ###
 ### Sanity check
 ###
-if [ "${#}" -ne "2" ]; then
-	echo "Usage: start.ci <version> <flavour>"
+if [ "${#}" -ne "4" ]; then
+	echo "Usage: start.ci <image> <arch> <version> <flavour>"
 	exit 1
 fi
+
+IMAGE="${1}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 
 ###
 ### Run tests
 ###
-if [ "${2}" = "base" ] || [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
+if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find ${CWD} -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} devilbox/php-fpm ${1} ${2}
+		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
 	done
 fi
 
-if [ "${2}" = "mods" ] || [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
+if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find ${CWD} -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} devilbox/php-fpm ${1} ${2}
+		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
 	done
 fi
 
-if [ "${2}" = "prod" ] || [ "${2}" = "work" ]; then
+if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find ${CWD} -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} devilbox/php-fpm ${1} ${2}
+		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
 	done
 fi
 
-if [ "${2}" = "work" ]; then
+if [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find ${CWD} -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${1}-${2}]: ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} devilbox/php-fpm ${1} ${2}
+		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
 	done
 fi

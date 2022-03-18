@@ -45,7 +45,9 @@ RUN set -eux \
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests procps \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+		dpkg-dev \
+		procps \
 	&& rm -rf /var/lib/apt/lists/*
 
 

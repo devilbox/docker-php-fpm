@@ -54,16 +54,16 @@ RUN set -eux \
 		dirmngr \
 		gnupg \
 		\
-	&& echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until \
-	&& echo "deb http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 \
+	&& echo "deb http://ftp.debian.org/debian stretch-backports main" > /etc/apt/sources.list.d/backports.list \
 	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
-	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
-	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 \
+	&& echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" > /etc/apt/sources.list.d/mongo.list \
 	&& curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-	&& echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
@@ -78,6 +78,7 @@ RUN set -eux \
 		blackfire-agent \
 		build-essential \
 		bzip2 \
+		certbot \
 		coreutils \
 		dnsutils \
 		dos2unix \
@@ -209,7 +210,7 @@ RUN set -eux \
  \
 	\
 # -------------------- gitflow --------------------
-	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+	&& git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
 && cd /tmp/gitflow \
 && make install \
 && cd / && rm -rf /tmp/gitflow \
@@ -300,10 +301,10 @@ RUN set -eux \
  \
 	\
 # -------------------- wkhtmltopdf --------------------
-	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )" \
+	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
 && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+  libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
 && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
 && dpkg -i /tmp/wkhtmltopdf.deb \
 && rm -f /tmp/wkhtmltopdf.deb \
@@ -358,10 +359,6 @@ RUN set -eux \
 ### Install Composer (PHP)
 ###
 RUN set -eux \
-# -------------------- codeception --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  codeception/codeception \
-	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
-	\
 # -------------------- prestissimo --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require  hirak/prestissimo \
 	\
@@ -544,7 +541,6 @@ RUN set -eux \
 	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Composer --------------------
-	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' \
 	\
 # -------------------- PIP --------------------
 	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \

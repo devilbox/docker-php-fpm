@@ -248,7 +248,7 @@ RUN set -eux \
 	&& chmod +x /usr/local/bin/drupal \
 	\
 # -------------------- gitflow --------------------
-	&& git clone git://github.com/petervanderdoes/gitflow.git /tmp/gitflow \
+	&& git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
 && cd /tmp/gitflow \
 && make install \
 && cd / && rm -rf /tmp/gitflow \
@@ -426,10 +426,6 @@ RUN set -eux \
 # -------------------- lumen --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  laravel/lumen-installer \
 	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
-	\
-# -------------------- photon --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  photoncms/installer \
-	&& ln -s /usr/local/src/composer/vendor/photoncms/installer/photon /usr/local/bin/ \
 	\
 # -------------------- prestissimo --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require  hirak/prestissimo \
@@ -619,7 +615,6 @@ RUN set -eux \
 	&& asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+' \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' \
 	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' \
-	&& photon --version | grep -E 'Installer [0-9][.0-9]+' \
 	\
 # -------------------- PIP --------------------
 	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \

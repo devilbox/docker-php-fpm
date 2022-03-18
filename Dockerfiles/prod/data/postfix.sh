@@ -29,15 +29,15 @@ MAILPID="/var/spool/postfix/pid/master.pid"
 ###
 ### Sanity checks
 ###
-if ! command -v pidof >/dev/null 2>&1; then
-	echo "pidof is required for cleaning up tail command."
+if ! command -v pgrep >/dev/null 2>&1; then
+	echo "pgrep is required for cleaning up tail command."
 	exit 1
 fi
 
 # Give rsyslogd some time to start up
 sleep 2
 
-if ! pidof rsyslogd >/dev/null 2>&1; then
+if ! pgrep rsyslogd >/dev/null 2>&1; then
 	echo "rsyslogd is not running, but required for mail logging."
 	exit 1
 fi

@@ -44,15 +44,10 @@ RUN set -eux \
 ### Upgrade (install ps)
 ###
 RUN set -eux \
-	&& rm -f /etc/apt/sources.list \
-	&& { \
-		echo "deb http://ftp.debian.org/debian jessie main"; \
-		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
-		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
-	} | tee /etc/apt/sources.list
-RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests procps \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+		dpkg-dev \
+		procps \
 	&& rm -rf /var/lib/apt/lists/*
 
 

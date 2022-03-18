@@ -94,7 +94,7 @@ RUN set -eux \
 	# Type:         Custom extension
 	&& EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
 && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
-&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+&& curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_$(dpkg-architecture --query DEB_HOST_GNU_CPU | sed 's/_/-/g').tar.gz -L -o ioncube.tar.gz \
 && tar xvfz ioncube.tar.gz \
 && cd ioncube \
 && cp "ioncube_loader_lin_7.3.so" "${EXTENSION_DIR}/ioncube.so" \
@@ -184,7 +184,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: gd --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
@@ -205,7 +205,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: gmp --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
+	&& ln /usr/include/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/gmp.h /usr/include/ \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
@@ -248,7 +248,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: imap --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libkrb5* /usr/lib/ \
 	# Installation: Generic
 	# Type:         Built-in extension
 	# Custom:       configure command
@@ -276,7 +276,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: ldap --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libldap* /usr/lib/ \
 	# Installation: Generic
 	# Type:         Built-in extension
 	# Custom:       configure command
@@ -362,19 +362,27 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: oci8 --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 \
 && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+  --query DEB_HOST_GNU_CPU).rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+  --query DEB_HOST_GNU_CPU).rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
  \
 	# Installation: Generic
 	# Type:         Built-in extension
@@ -382,7 +390,7 @@ RUN set -eux \
 	&& docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
 	# Generic post-command
-	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
@@ -409,7 +417,7 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: pdo_dblib --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/ \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
@@ -437,19 +445,27 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: pdo_oci --------------------
 RUN set -eux \
 	# Generic pre-command
-	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 \
 && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-  https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+  --query DEB_HOST_GNU_CPU).rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+  --query DEB_HOST_GNU_CPU).rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
 && (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
  \
 	# Installation: Version specific
@@ -920,7 +936,7 @@ RUN set -eux \
 && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
   \
 	# ---------- oci8 ----------
-	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
 && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
 && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \

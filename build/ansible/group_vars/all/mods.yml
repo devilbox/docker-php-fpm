@@ -148,13 +148,11 @@ extensions_available:
   amqp:
     disabled: []
     5.2:
-      run_dep: [librabbitmq1]
       type: pecl
-      version: 1.4.0
+      version: 1.6.1
     5.3:
       type: pecl
       version: 1.9.3
-      run_dep: [librabbitmq1]
     5.4:
       type: pecl
       version: 1.9.3
@@ -278,35 +276,31 @@ extensions_available:
     5.2:
       type: builtin
       pre: |
-        ln -s /usr/lib/x86_64-linux-gnu/libjpeg.* /usr/lib/ && \
-        ln -s /usr/lib/x86_64-linux-gnu/libpng.* /usr/lib/ && \
-        ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && \
-        mkdir /usr/include/freetype2/freetype && \
-        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     5.3:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ && mkdir /usr/include/freetype2/freetype && ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     5.4:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.5:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
       run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
     5.6:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
     7.0:
@@ -342,7 +336,7 @@ extensions_available:
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6, libavif9]
     all:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
       build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
       run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6]
@@ -353,7 +347,7 @@ extensions_available:
     disabled: [5.2]
     all:
       type: builtin
-      pre: ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/
+      pre: ln /usr/include/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/gmp.h /usr/include/
       build_dep: [libgmp-dev]
   hash:
     already_avail: "{{ php_all_versions }}"
@@ -410,7 +404,7 @@ extensions_available:
     disabled: []
     all:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libkrb5* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libkrb5* /usr/lib/
       configure: --with-kerberos --with-imap-ssl --with-imap
       build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
       run_dep: [libc-client2007e]
@@ -423,10 +417,10 @@ extensions_available:
   intl:
     5.2:
       type: pecl
-      run_dep: [libicu52]
+      run_dep: [libicu57]
     5.3:
       type: builtin
-      run_dep: [libicu52]
+      run_dep: [libicu57]
     5.4:
       type: builtin
       run_dep: [libicu52]
@@ -450,13 +444,15 @@ extensions_available:
       build_dep: [libicu-dev]
       run_dep: [libicu67]
   ioncube:
-    disabled: [8.0, 8.1, 8.2]
+    # ioncube on amd64 is only available from 4.1 up to 7.4
+    # ioncube on arm64 is only available from 5.5 up to 7.4
+    disabled: [5.2, 5.3, 5.4, 8.0, 8.1, 8.2]
     all:
       type: custom
       command: |
         EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
         && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
-        && curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -L -o ioncube.tar.gz \
+        && curl https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_$(dpkg-architecture --query DEB_HOST_GNU_CPU | sed 's/_/-/g').tar.gz -L -o ioncube.tar.gz \
         && tar xvfz ioncube.tar.gz \
         && cd ioncube \
         && cp "ioncube_loader_lin_{{ php_version }}.so" "${EXTENSION_DIR}/ioncube.so" \
@@ -468,7 +464,7 @@ extensions_available:
   ldap:
     all:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libldap* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libldap* /usr/lib/
       configure: --with-ldap --with-ldap-sasl
       build_dep: [libldap2-dev, libsasl2-dev]
   libxml:
@@ -611,10 +607,7 @@ extensions_available:
       command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2]
-    5.3:
-      type: pecl
-      version: 0.6.3
+    disabled: [5.2, 5.3]
     5.4:
       type: pecl
       version: 1.2.11
@@ -655,12 +648,15 @@ extensions_available:
   mysql:
     already_avail: [5.2, 5.3]
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated in newer versions
-    5.6:
-      type: builtin
-      run_dep: [libmariadbclient18]
-    all:
+    5.4:
       type: builtin
       run_dep: [libmysqlclient18]
+    5.5:
+      type: builtin
+      run_dep: [libmysqlclient18]
+    all:
+      type: builtin
+      run_dep: [libmariadbclient18]
   mysqli:
     already_avail: [5.2]
     all:
@@ -694,23 +690,31 @@ extensions_available:
       type: builtin
       configure: --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
       pre: |
-        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
         && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
         && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
         \
         && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+          --query DEB_HOST_GNU_CPU).rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+          --query DEB_HOST_GNU_CPU).rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
       build_dep: [alien, libaio-dev]
       run_dep: [libaio1]
       post: |
-        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
         && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
         && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
         && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
@@ -748,7 +752,7 @@ extensions_available:
     disabled: []
     all:
       type: builtin
-      pre: ln -s /usr/lib/x86_64-linux-gnu/libsybdb.* /usr/lib/
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/
       build_dep: [freetds-dev]
       run_dep: [libsybdb5]
   pdo_firebird:
@@ -786,19 +790,27 @@ extensions_available:
       type: builtin
       configure: --with-pdo-oci=instantclient,/usr,${ORACLE_VERSION_MAJOR}
       pre: |
-        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
+        ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
         && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
         && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
         \
         && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
-        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-          https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && alien -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.x86_64.rpm \
-        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.x86_64.rpm \
+        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && curl -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+          --query DEB_HOST_GNU_CPU).rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture \
+          --query DEB_HOST_GNU_CPU).rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.$(dpkg-architecture --query DEB_HOST_GNU_CPU).rpm \
         && (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
       build_dep: [alien]
   pdo_odbc:
@@ -1091,7 +1103,6 @@ extensions_available:
     5.3:
       type: pecl
       version: 1.9.23
-      run_dep: [libnghttp2-5]
     5.4:
       type: pecl
       version: 1.9.23
@@ -1126,10 +1137,10 @@ extensions_available:
   tidy:
     5.2:
       type: builtin
-      run_dep: [libtidy-0.99-0]
+      run_dep: [libtidy5]
     5.3:
       type: builtin
-      run_dep: [libtidy-0.99-0]
+      run_dep: [libtidy5]
     5.4:
       type: builtin
       run_dep: [libtidy-0.99-0]
