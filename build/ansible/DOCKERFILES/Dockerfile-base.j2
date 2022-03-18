@@ -3,6 +3,8 @@
 FROM devilbox/php-fpm-5.2
 {% elif php_version == 5.3 %}
 FROM devilbox/php-fpm-5.3
+{% elif php_version == 5.5 %}
+FROM devilbox/php-fpm-5.5
 {% elif php_version == 8.0 %}
 FROM devilbox/php-fpm-8.0
 {% elif php_version == 8.1 %}

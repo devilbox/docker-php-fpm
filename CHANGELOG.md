@@ -11,6 +11,7 @@
 
 #### Changed
 - Removed `amqp` on PHP 5.3
+- Switch PHP 5.5 base image to [devilbox/php-fpm-5.5](https://github.com/devilbox/docker-php-fpm-5.5) for arm64 support
 
 
 ## Release 0.135
