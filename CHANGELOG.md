@@ -4,6 +4,15 @@
 ## Unreleased
 
 
+## Release 0.136
+
+#### Fixed
+- Fixed `mongodb-org-shell` and `mongodb-org-tools` install
+
+#### Changed
+- Removed `amqp` on PHP 5.3
+
+
 ## Release 0.135
 
 #### Fixed
