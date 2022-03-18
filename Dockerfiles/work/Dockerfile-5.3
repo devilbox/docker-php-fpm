@@ -359,10 +359,6 @@ RUN set -eux \
 ### Install Composer (PHP)
 ###
 RUN set -eux \
-# -------------------- codeception --------------------
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require  codeception/codeception \
-	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
-	\
 # -------------------- prestissimo --------------------
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require  hirak/prestissimo \
 	\
@@ -545,7 +541,6 @@ RUN set -eux \
 	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Composer --------------------
-	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' \
 	\
 # -------------------- PIP --------------------
 	&& ansible --version | grep -E '^ansible [0-9][.0-9]+$' \

@@ -224,7 +224,7 @@ composer_available:
     link: asgardcms
     version: 2
   codeception:
-    disabled: [5.2, 8.0, 8.1, 8.2]
+    disabled: [5.2, 5.3, 8.0, 8.1, 8.2]
     check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$'
     name: codeception/codeception
     link: codecept

@@ -15,6 +15,7 @@
 - Removed photoncms binaries (their GitHub organization went private)
 - Removed `mongodb` extension from PHP 5.3 due to build errors
 - Removed `ioncube` extension for PHP 5.2, PHP 5.3 and PHP 5.4 (arm64 only supported from PHP 5.5 onwards)
+- Removed `codeception` from PHP 5.3
 
 
 ## Release 0.134
