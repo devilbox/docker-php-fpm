@@ -10,9 +10,8 @@
 - Fixed `mongodb-org-shell` and `mongodb-org-tools` install
 
 #### Changed
-- Removed `amqp` on PHP 5.3
+- Switch PHP 5.4 base image to [devilbox/php-fpm-5.4](https://github.com/devilbox/docker-php-fpm-5.4) for arm64 support
 - Switch PHP 5.5 base image to [devilbox/php-fpm-5.5](https://github.com/devilbox/docker-php-fpm-5.5) for arm64 support
-- Changed PHP 5.5 to Debian stretch
 
 
 ## Release 0.135

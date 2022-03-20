@@ -154,7 +154,7 @@ RUN set -eux \
 			mongodb-org-tools; \
 	fi \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/lib/apt/lists/*
 
 
 ###

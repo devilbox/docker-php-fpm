@@ -128,7 +128,16 @@ software_enabled:
 #
 apt_repositories_available:
   backports:
+    5.2:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
+    5.3:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
     5.4:
+      pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
+      deb: deb http://archive.debian.org/debian jessie-backports main
+    5.5:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
       deb: deb http://archive.debian.org/debian jessie-backports main
     all:
@@ -157,7 +166,16 @@ apt_repositories_available:
   # Get keys
   # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
   mongo:
+    5.2:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    5.3:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     5.4:
+      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    5.5:
       deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
       key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     all:
@@ -165,16 +183,13 @@ apt_repositories_available:
       key: 9DA31620334BD75D9DCB49F368818C72E52529D4
   pgsql:
     5.2:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.3:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.4:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.5:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
     5.6:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
       pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
@@ -932,7 +947,34 @@ software_available:
       post: chmod +x /usr/local/bin/symfony
   wkhtmltopdf:
     check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"
+    5.2:
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    5.3:
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
     5.4:
+      pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
+      command: |
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+        && dpkg -i /tmp/wkhtmltopdf.deb \
+        && rm -f /tmp/wkhtmltopdf.deb \
+    5.5:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
       command: |
         DEBIAN_FRONTEND=noninteractive apt-get update -qq \

@@ -28,6 +28,7 @@ RUN set -eux \
 		libldap2-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
+		libmysqlclient-dev \
 		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
@@ -40,6 +41,7 @@ RUN set -eux \
 		libssl-dev \
 		libtidy-dev \
 		libvpx-dev \
+		libwebp-dev \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -47,8 +49,28 @@ RUN set -eux \
 		snmp \
 		uuid-dev \
 		zlib1g-dev \
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -91,7 +113,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install bcmath \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
 	&& true
 
 
@@ -99,7 +121,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install bz2 \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bz2 \
 	&& true
 
 
@@ -107,7 +129,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install calendar \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) calendar \
 	&& true
 
 
@@ -115,7 +137,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install dba \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) dba \
 	&& true
 
 
@@ -123,7 +145,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install enchant \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) enchant \
 	&& true
 
 
@@ -131,30 +153,25 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install exif \
-	&& true
-
-
-# -------------------- Installing PHP Extension: ftp --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         Built-in extension
-	# Custom:       configure command
-	&& docker-php-ext-configure ftp --with-openssl-dir \
-	&& docker-php-ext-install ftp \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
 	&& true
 
 
 # -------------------- Installing PHP Extension: gd --------------------
 RUN set -eux \
 	# Version specific pre-command
-	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+mkdir /usr/include/freetype2/freetype && \
+ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+ \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure gd --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf \
 	# Installation
-	&& docker-php-ext-install gd \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
 	&& true
 
 
@@ -162,7 +179,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install gettext \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
 	&& true
 
 
@@ -172,7 +189,7 @@ RUN set -eux \
 	&& ln /usr/include/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/gmp.h /usr/include/ \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install gmp \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gmp \
 	&& true
 
 
@@ -195,7 +212,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl --with-imap \
-	&& docker-php-ext-install imap \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) imap \
 	&& true
 
 
@@ -203,7 +220,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install interbase \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
 	&& true
 
 
@@ -212,7 +229,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Installation
-	&& docker-php-ext-install intl \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) intl \
 	&& true
 
 
@@ -224,15 +241,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure ldap --with-ldap --with-ldap-sasl \
-	&& docker-php-ext-install ldap \
-	&& true
-
-
-# -------------------- Installing PHP Extension: mbstring --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         Built-in extension
-	&& docker-php-ext-install mbstring \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) ldap \
 	&& true
 
 
@@ -241,7 +250,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Installation
-	&& docker-php-ext-install mcrypt \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mcrypt \
 	&& true
 
 
@@ -304,16 +313,19 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
+	# Default:      configure command
+	&& docker-php-ext-configure mysql --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" \
 	# Installation
-	&& docker-php-ext-install mysql \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
 	&& true
 
 
 # -------------------- Installing PHP Extension: mysqli --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	&& docker-php-ext-install mysqli \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& true
 
 
@@ -357,7 +369,7 @@ https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architec
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
-	&& docker-php-ext-install oci8 \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
 	# Generic post-command
 	&& ORACLE_HREF="$( curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/$(dpkg-architecture --query DEB_HOST_GNU_CPU)/ | tac | tac | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' | tail -1 )" \
 && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
@@ -382,7 +394,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pcntl \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pcntl \
 	&& true
 
 
@@ -392,7 +404,7 @@ RUN set -eux \
 	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/ \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pdo_dblib \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
 	&& true
 
 
@@ -400,17 +412,18 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pdo_firebird \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
 	&& true
 
 
 # -------------------- Installing PHP Extension: pdo_mysql --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	# Custom:       configure command
+	# Default:      configure command
 	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
-	&& docker-php-ext-install pdo_mysql \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
 	&& true
 
 
@@ -418,7 +431,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pdo_pgsql \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
 	&& true
 
 
@@ -426,7 +439,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pgsql \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
 	&& true
 
 
@@ -460,7 +473,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install pspell \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
 	&& true
 
 
@@ -490,7 +503,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install shmop \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) shmop \
 	&& true
 
 
@@ -500,7 +513,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure snmp --with-openssl-dir \
-	&& docker-php-ext-install snmp \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
 	&& true
 
 
@@ -510,7 +523,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure soap --with-libxml-dir=/usr \
-	&& docker-php-ext-install soap \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
 	&& true
 
 
@@ -518,7 +531,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install sockets \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
 	&& true
 
 
@@ -537,7 +550,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install sysvmsg \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvmsg \
 	&& true
 
 
@@ -545,7 +558,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install sysvsem \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvsem \
 	&& true
 
 
@@ -553,7 +566,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install sysvshm \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sysvshm \
 	&& true
 
 
@@ -562,7 +575,7 @@ RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Installation
-	&& docker-php-ext-install tidy \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) tidy \
 	&& true
 
 
@@ -594,7 +607,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure wddx --with-libxml-dir=/usr \
-	&& docker-php-ext-install wddx \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) wddx \
 	&& true
 
 
@@ -615,7 +628,7 @@ RUN set -eux \
 	# Type:         Built-in extension
 	# Custom:       configure command
 	&& docker-php-ext-configure xmlrpc --with-libxml-dir=/usr --with-iconv-dir=/usr \
-	&& docker-php-ext-install xmlrpc \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xmlrpc \
 	&& true
 
 
@@ -623,7 +636,7 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	&& docker-php-ext-install xsl \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) xsl \
 	&& true
 
 
@@ -645,7 +658,7 @@ RUN set -eux \
 	# Custom:       configure command
 	&& docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr \
 	# Installation
-	&& docker-php-ext-install zip \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
 	&& true
 
 
@@ -727,11 +740,13 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy-0.99-0 \
 	libvpx1 \
+	libwebp5 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
 	snmp \
 	uuid \
+	zlib1g \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\

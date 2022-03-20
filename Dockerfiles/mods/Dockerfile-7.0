@@ -38,6 +38,7 @@ RUN set -eux \
 		libmagick++-dev \
 		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
+		libmariadbclient-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -58,7 +59,6 @@ RUN set -eux \
 		libtool \
 		libvpx-dev \
 		libwebp-dev \
-		libwebp6 \
 		libwebpdemux2 \
 		libwebpmux2 \
 		libxml2-dev \
@@ -70,8 +70,28 @@ RUN set -eux \
 		unixodbc-dev \
 		uuid-dev \
 		zlib1g-dev \
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -885,6 +905,7 @@ RUN set -eux \
 	libmagickcore-6.q16-3-extra \
 	libmagickwand-6.q16-3 \
 	libmagickwand-6.q16hdri-3 \
+	libmariadbclient18 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \

@@ -146,14 +146,15 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    # Does not build on arm64 on PHP 5.3
-    disabled: [5.3]
+    disabled: []
     5.2:
       type: pecl
       version: 1.6.1
-    #5.3:
-    #  type: pecl
-    #  version: 1.9.3
+      run_dep: [librabbitmq1]
+    5.3:
+      type: pecl
+      version: 1.9.3
+      run_dep: [librabbitmq1]
     5.4:
       type: pecl
       version: 1.9.3
@@ -161,6 +162,7 @@ extensions_available:
     5.5:
       type: pecl
       version: 1.9.3
+      run_dep: [librabbitmq1]
     all:
       type: pecl
       command: echo "/usr" | pecl install amqp
@@ -262,41 +264,52 @@ extensions_available:
     5.2:
       type: pecl
       build_dep: [libmagic-dev]
-    all:
-      type: builtin
+      run_dep: [libmagic1]
   filter:
     already_avail: "{{ php_all_versions }}" # Available by default
   ftp:
-    already_avail: [5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
-    all:
-      type: builtin
-      configure: --with-openssl-dir
-      build_dep: [libssl-dev]
+    already_avail: "{{ php_all_versions }}" # Available by default
   gd:
     5.2:
       type: builtin
       pre: |
         ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
         ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
-        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
     5.3:
       type: builtin
-      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
       configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
     5.4:
       type: builtin
-      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev]
-      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
     5.5:
       type: builtin
-      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
       configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
-      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
     5.6:
       type: builtin
       pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
@@ -375,6 +388,7 @@ extensions_available:
     disabled: [5.2, 5.3, 5.4] # Only available since 5.3. 5.3 and 5.4 segfaults
     5.5:
       type: pecl
+      run_dep: [libmagickwand-6.q16-2, libwebp5, ghostscript]
     5.6:
       type: pecl
       run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
@@ -383,8 +397,8 @@ extensions_available:
       run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
     all:
       type: pecl
-      build_dep: [libmagickwand-dev, libwebp6, ghostscript]
-      run_dep: [libmagickwand-6.q16-6, libwebp-dev, ghostscript]
+      build_dep: [libmagickwand-dev, libwebp-dev, ghostscript]
+      run_dep: [libmagickwand-6.q16-6, libwebp6, ghostscript]
       # https://bugs.php.net/bug.php?id=77683
       # https://github.com/Imagick/imagick/issues/262 (policy prevents PDF from being read)
       post: |
@@ -414,16 +428,16 @@ extensions_available:
   intl:
     5.2:
       type: pecl
-      run_dep: [libicu57]
+      run_dep: [libicu52]
     5.3:
       type: builtin
-      run_dep: [libicu57]
+      run_dep: [libicu52]
     5.4:
       type: builtin
       run_dep: [libicu52]
     5.5:
       type: builtin
-      run_dep: [libicu57]
+      run_dep: [libicu52]
     5.6:
       type: builtin
       run_dep: [libicu57]
@@ -467,9 +481,7 @@ extensions_available:
   libxml:
     already_avail: "{{ php_all_versions }}" # Available by default
   mbstring:
-    already_avail: [5.2, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
-    all:
-      type: builtin
+    already_avail: "{{ php_all_versions }}" # Available by default
   mcrypt:
     # mcrypt 1.0.4 requires PHP 8.1.0 or older
     # version >= 7.2.0, version <= 8.1.0, excluded versions: 8.1.0
@@ -499,7 +511,6 @@ extensions_available:
       run_dep: [libmcrypt4]
       build_dep: [libmcrypt-dev]
   memcache:
-    disabled: []
     5.2:
       type: pecl
       version: 2.2.7
@@ -604,7 +615,10 @@ extensions_available:
       command: yes yes | pecl install mongo
       build_dep: [libssl-dev, libsasl2-dev]
   mongodb:
-    disabled: [5.2, 5.3]
+    disabled: [5.2]
+    5.3:
+      type: pecl
+      version: 0.6.3
     5.4:
       type: pecl
       version: 1.2.11
@@ -624,7 +638,6 @@ extensions_available:
       type: pecl
       build_dep: [libssl-dev, libsasl2-dev]
   msgpack:
-    disabled: []
     5.2:
       type: pecl
       version: 0.5.7
@@ -643,25 +656,53 @@ extensions_available:
     all:
       type: pecl
   mysql:
-    already_avail: [5.2, 5.3]
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated in newer versions
+    5.2:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.3:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
     5.4:
       type: builtin
       run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
     5.5:
       type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    all:
+      type: builtin
+      configure: --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
+  mysqli:
+    5.2:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.3:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.4:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.5:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
     all:
       type: builtin
       run_dep: [libmariadbclient18]
-  mysqli:
-    already_avail: [5.2]
-    all:
-      type: builtin
+      build_dep: [libmariadbclient-dev]
   mysqlnd:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
   oauth:
-    disabled: []
     5.2:
       type: pecl
       version: 1.2.3
@@ -717,7 +758,6 @@ extensions_available:
   odbc:
     disabled: "{{ php_all_versions }}" # TODO: sqlext.h' not found!
   opcache:
-    disabled: []
     5.2:
       type: pecl
       command: pecl install zendopcache
@@ -745,7 +785,6 @@ extensions_available:
   pdo:
     already_avail: "{{ php_all_versions }}"
   pdo_dblib:
-    disabled: []
     all:
       type: builtin
       pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/
@@ -757,11 +796,27 @@ extensions_available:
       build_dep: [libfbclient2, libib-util, firebird-dev]
       run_dep: [libfbclient2]
   pdo_mysql:
-    already_avail: [5.2]
+    5.2:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.3:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.4:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.5:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
     all:
       type: builtin
       configure: --with-zlib-dir=/usr
-      build_dep: [zlib1g-dev]
+      run_dep: [libmariadbclient18]
+      build_dep: [zlib1g-dev, libmariadbclient-dev]
   pdo_oci:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
     7.2:
@@ -916,7 +971,7 @@ extensions_available:
     already_avail: "{{ php_all_versions }}"
   recode:
     disabled: [7.4, 8.0, 8.1, 8.2]
-    already_avail: [5.3, 5.4]
+    already_avail: [5.2, 5.3, 5.4, 5.5]
     all:
       type: builtin
       build_dep: [librecode-dev]
@@ -1030,7 +1085,6 @@ extensions_available:
       build_dep: [libssl-dev, libsnmp-dev, snmp]
       run_dep: [snmp]
   soap:
-    already_avail: [5.2]
     7.4:
       type: builtin
     all:
@@ -1099,6 +1153,7 @@ extensions_available:
     5.3:
       type: pecl
       version: 1.9.23
+      run_dep: [libnghttp2-5]
     5.4:
       type: pecl
       version: 1.9.23
@@ -1132,16 +1187,16 @@ extensions_available:
   tidy:
     5.2:
       type: builtin
-      run_dep: [libtidy5]
+      run_dep: [libtidy-0.99-0]
     5.3:
       type: builtin
-      run_dep: [libtidy5]
+      run_dep: [libtidy-0.99-0]
     5.4:
       type: builtin
       run_dep: [libtidy-0.99-0]
     5.5:
       type: builtin
-      run_dep: [libtidy5]
+      run_dep: [libtidy-0.99-0]
     5.6:
       type: builtin
       run_dep: [libtidy5]
@@ -1155,7 +1210,6 @@ extensions_available:
   tokenizer:
     already_avail: "{{ php_all_versions }}"
   uploadprogress:
-    disabled: []
     5.2:
       type: pecl
       version: 1.1.4
@@ -1296,7 +1350,6 @@ extensions_available:
       configure: --with-libxml-dir=/usr
       build_dep: [libxml2-dev]
   xdebug:
-    disabled: []
     5.2:
       type: pecl
       version: 2.2.7
@@ -1383,22 +1436,22 @@ extensions_available:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
-      run_dep: []
+      run_dep: [zlib1g]
     5.3:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
-      run_dep: []
+      run_dep: [zlib1g]
     5.4:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
-      run_dep: []
+      run_dep: [zlib1g]
     5.5:
       type: builtin
       configure: --with-zlib-dir=/usr --with-pcre-dir=/usr
       build_dep: [zlib1g-dev]
-      run_dep: []
+      run_dep: [zlib1g]
     7.4:
       type: builtin
       configure: --with-zip

@@ -92,7 +92,7 @@ RUN set -eux \
 		blackfire-agent \
 		build-essential \
 		bzip2 \
-{% if php_version != 5.4 %}
+{% if php_version not in [5.2, 5.3, 5.4, 5.5] %}
 		certbot \
 {% endif %}
 		coreutils \
@@ -177,7 +177,7 @@ RUN set -eux \
 			mongodb-org-tools; \
 	fi \
 	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/lib/apt/lists/*
 
 
 ###
