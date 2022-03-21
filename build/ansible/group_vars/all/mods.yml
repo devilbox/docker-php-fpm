@@ -687,6 +687,10 @@ extensions_available:
       type: builtin
       run_dep: [libmariadbclient18]
       build_dep: [libmariadbclient-dev]
+    7.0:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
     all:
       type: builtin
       run_dep: [libmariadbd19]
@@ -805,6 +809,10 @@ extensions_available:
       run_dep: [libmysqlclient18]
       build_dep: [zlib1g-dev, libmysqlclient-dev]
     5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [zlib1g-dev, libmariadbclient-dev]
+    7.0:
       type: builtin
       run_dep: [libmariadbclient18]
       build_dep: [zlib1g-dev, libmariadbclient-dev]

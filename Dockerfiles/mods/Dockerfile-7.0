@@ -38,7 +38,7 @@ RUN set -eux \
 		libmagick++-dev \
 		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
-		libmariadb-dev \
+		libmariadbclient-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -369,8 +369,9 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mysqli --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& true
 
@@ -461,10 +462,11 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: pdo_mysql --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	# Custom:       configure command
+	# Default:      configure command
 	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
 	&& true
 
@@ -905,7 +907,7 @@ RUN set -eux \
 	libmagickcore-6.q16-3-extra \
 	libmagickwand-6.q16-3 \
 	libmagickwand-6.q16hdri-3 \
-	libmariadbd19 \
+	libmariadbclient18 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
