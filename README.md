@@ -663,7 +663,7 @@ Check out this table to see which Docker image provides what PHP modules.
   </tr>
   <tr>
    <th>5.3</th>
-   <td id="53-base">Core, ctype, curl, date, dom, ereg, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mhash, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, recode, Reflection, session, SimpleXML, SPL, SQLite, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib<</td>
+   <td id="53-base">Core, ctype, curl, date, dom, ereg, fileinfo, filter, ftp, hash, iconv, json, libxml, mbstring, mhash, mysqlnd, openssl, pcre, PDO, pdo_sqlite, Phar, posix, readline, recode, Reflection, session, SimpleXML, SPL, SQLite, sqlite3, standard, tokenizer, xml, xmlreader, xmlwriter, zlib</td>
    <td id="53-mods">amqp, apc, apcu, bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, enchant, ereg, exif, fileinfo, filter, ftp, gd, gettext, gmp, hash, iconv, igbinary, imap, interbase, intl, json, ldap, libxml, mbstring, mcrypt, memcache, memcached, mhash, mongo, mongodb, msgpack, mysql, mysqli, mysqlnd, OAuth, oci8, openssl, pcntl, pcre, PDO, pdo_dblib, PDO_Firebird, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, phalcon, Phar, posix, pspell, rdkafka, readline, recode, redis, Reflection, session, shmop, SimpleXML, snmp, soap, sockets, SPL, SQLite, sqlite3, standard, swoole, sysvmsg, sysvsem, sysvshm, tidy, tokenizer, uploadprogress, uuid, wddx, xdebug, xml, xmlreader, xmlrpc, xmlwriter, xsl, yaml, Zend OPcache, zip, zlib</td>
   </tr>
   <tr>
