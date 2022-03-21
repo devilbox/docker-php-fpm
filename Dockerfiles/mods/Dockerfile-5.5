@@ -30,6 +30,7 @@ RUN set -eux \
 		libmagickwand-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
+		libmysqlclient-dev \
 		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
@@ -37,13 +38,12 @@ RUN set -eux \
 		libpspell-dev \
 		librabbitmq-dev \
 		librdkafka-dev \
-		librecode-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libssl-dev \
 		libtidy-dev \
 		libvpx-dev \
-		libwebp5 \
+		libwebp-dev \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -51,8 +51,28 @@ RUN set -eux \
 		snmp \
 		uuid-dev \
 		zlib1g-dev \
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -159,7 +179,12 @@ RUN set -eux \
 # -------------------- Installing PHP Extension: gd --------------------
 RUN set -eux \
 	# Version specific pre-command
-	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+mkdir /usr/include/freetype2/freetype && \
+ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+ \
 	# Installation: Version specific
 	# Type:         Built-in extension
 	# Custom:       configure command
@@ -327,17 +352,19 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mysql --------------------
 RUN set -eux \
-	# Installation: Version specific
+	# Installation: Generic
 	# Type:         Built-in extension
-	# Installation
+	# Custom:       configure command
+	&& docker-php-ext-configure mysql --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
 	&& true
 
 
 # -------------------- Installing PHP Extension: mysqli --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& true
 
@@ -428,10 +455,11 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: pdo_mysql --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	# Custom:       configure command
+	# Default:      configure command
 	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
 	&& true
 
@@ -483,14 +511,6 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pspell \
-	&& true
-
-
-# -------------------- Installing PHP Extension: recode --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         Built-in extension
-	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) recode \
 	&& true
 
 
@@ -765,6 +785,7 @@ RUN set -eux \
 	libyaml-0-2 \
 	snmp \
 	uuid \
+	zlib1g \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -878,6 +899,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mhash$' \
+	&& php-fpm -m | grep -oiE '^mhash$' \
 	&& php -m | grep -oiE '^mongo$' \
 	&& php-fpm -m | grep -oiE '^mongo$' \
 	&& php -m | grep -oiE '^mongodb$' \

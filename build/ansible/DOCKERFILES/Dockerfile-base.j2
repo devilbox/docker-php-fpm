@@ -3,6 +3,10 @@
 FROM devilbox/php-fpm-5.2
 {% elif php_version == 5.3 %}
 FROM devilbox/php-fpm-5.3
+{% elif php_version == 5.4 %}
+FROM devilbox/php-fpm-5.4
+{% elif php_version == 5.5 %}
+FROM devilbox/php-fpm-5.5
 {% elif php_version == 8.0 %}
 FROM devilbox/php-fpm-8.0
 {% elif php_version == 8.1 %}
@@ -55,15 +59,6 @@ RUN set -eux \
 ###
 ### Upgrade (install ps)
 ###
-{% if php_version in [5.4, 5.5] %}
-RUN set -eux \
-	&& rm -f /etc/apt/sources.list \
-	&& { \
-		echo "deb http://ftp.debian.org/debian jessie main"; \
-		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
-		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
-	} | tee /etc/apt/sources.list
-{% endif %}
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \

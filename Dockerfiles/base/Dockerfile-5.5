@@ -1,5 +1,5 @@
 # Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead.
-FROM php:5.5-fpm
+FROM devilbox/php-fpm-5.5
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 
@@ -43,13 +43,6 @@ RUN set -eux \
 ###
 ### Upgrade (install ps)
 ###
-RUN set -eux \
-	&& rm -f /etc/apt/sources.list \
-	&& { \
-		echo "deb http://ftp.debian.org/debian jessie main"; \
-		echo "#deb http://ftp.debian.org/debian jessie-updates main"; \
-		echo "deb http://security.debian.org/debian-security jessie/updates main"; \
-	} | tee /etc/apt/sources.list
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \

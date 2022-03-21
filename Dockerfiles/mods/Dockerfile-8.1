@@ -29,6 +29,7 @@ RUN set -eux \
 		libkrb5-dev \
 		libldap2-dev \
 		libmagickwand-dev \
+		libmariadb-dev \
 		libmemcached-dev \
 		libpcre3-dev \
 		libpng-dev \
@@ -43,7 +44,6 @@ RUN set -eux \
 		libtidy-dev \
 		libvpx-dev \
 		libwebp-dev \
-		libwebp6 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -53,8 +53,28 @@ RUN set -eux \
 		unixodbc-dev \
 		uuid-dev \
 		zlib1g-dev \
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -769,6 +789,7 @@ RUN set -eux \
 	libicu67 \
 	libjpeg62-turbo \
 	libmagickwand-6.q16-6 \
+	libmariadbd19 \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
@@ -777,7 +798,6 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
-	libwebp-dev \
 	libwebp6 \
 	libxpm4 \
 	libxslt1.1 \

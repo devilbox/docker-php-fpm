@@ -37,8 +37,28 @@ RUN set -eux \
 {% for build_dep in build_deps | unique | sort %}
 		{{ build_dep }} \
 {% endfor %}
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -94,9 +114,12 @@ RUN set -eux \
 				{%- if 'configure' in extensions_available[ext][php_version] -%}
 					{{- "\n\t" }}# Custom:       configure command
 					{{- "\n\t" }}&& docker-php-ext-configure {{ ext }} {{ extensions_available[ext][php_version]['configure'] }} \
+				{%- elif 'configure' in extensions_available[ext]['all'] -%}
+					{{- "\n\t" }}# Default:      configure command
+					{{- "\n\t" }}&& docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
 				{%- endif -%}
 				{{- "\n\t" }}# Installation
-				{{- "\n\t" }}&& docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+				{{- "\n\t" }}&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) {{ ext }} \
 			{#-
 			 # -------------------- 2.) PECL --------------------
 			-#}
@@ -157,7 +180,7 @@ RUN set -eux \
 					{{- "\n\t" }}# Custom:       configure command
 					{{- "\n\t" }}&& docker-php-ext-configure {{ ext }} {{ extensions_available[ext]['all']['configure'] }} \
 				{%- endif -%}
-				{{- "\n\t" }}&& docker-php-ext-install{% if php_version != 5.4 %} -j$(getconf _NPROCESSORS_ONLN){% endif %} {{ ext }} \
+				{{- "\n\t" }}&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) {{ ext }} \
 			{#-
 			 # -------------------- 2.) PECL --------------------
 			-#}

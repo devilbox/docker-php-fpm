@@ -39,6 +39,7 @@ RUN set -eux \
 		libmagick++-dev \
 		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
+		libmariadb-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -58,7 +59,6 @@ RUN set -eux \
 		libtool \
 		libvpx-dev \
 		libwebp-dev \
-		libwebp6 \
 		libwebpdemux2 \
 		libwebpmux3 \
 		libxml2-dev \
@@ -70,8 +70,28 @@ RUN set -eux \
 		unixodbc-dev \
 		uuid-dev \
 		zlib1g-dev \
+# Build tools
+		autoconf \
+		bison \
+		bisonc++ \
 		ca-certificates \
-		git
+		curl \
+		dpkg-dev \
+		file \
+		flex \
+		g++ \
+		gcc \
+		git \
+		lemon \
+		libc-client-dev \
+		libc-dev \
+		libcurl4-openssl-dev \
+		libssl-dev \
+		make \
+		patch \
+		pkg-config \
+		re2c \
+		xz-utils
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -591,6 +611,8 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure snmp --with-snmp \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
 	&& true
@@ -600,6 +622,8 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure soap --enable-soap \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
 	&& true
@@ -876,6 +900,7 @@ RUN set -eux \
 	libmagickcore-6.q16-6-extra \
 	libmagickwand-6.q16-6 \
 	libmagickwand-6.q16hdri-6 \
+	libmariadbd19 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
@@ -889,7 +914,6 @@ RUN set -eux \
 	libsybdb5 \
 	libtidy5deb1 \
 	libvpx6 \
-	libwebp-dev \
 	libwebp6 \
 	libwebpdemux2 \
 	libwebpmux3 \

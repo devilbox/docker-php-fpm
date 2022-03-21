@@ -252,6 +252,7 @@ build-work:
 		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
 		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
 		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
+		--build-arg ARCH=$(ARCH) \
 		$(ARGS) \
 		-t $(IMAGE):${VERSION}-work \
 		-f $(DIR)/work/Dockerfile-${VERSION} $(DIR)/work
