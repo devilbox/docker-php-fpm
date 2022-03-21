@@ -49,6 +49,7 @@ extensions_enabled:
   - memcache
   # requires igbinary and msgpack to be installed
   - memcached
+  - mhash
   - mongo
   - mongodb
   - mysql
@@ -605,6 +606,9 @@ extensions_available:
       type: pecl
       build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
       run_dep: [libmemcachedutil2]
+  mhash:
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated
+    already_avail: [5.2, 5.3, 5.4, 5.5, 5.6]
   mongo:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated
     5.2:

@@ -708,6 +708,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^memcache$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mhash$' \
+	&& php-fpm -m | grep -oiE '^mhash$' \
 	&& php -m | grep -oiE '^mongo$' \
 	&& php-fpm -m | grep -oiE '^mongo$' \
 	&& php -m | grep -oiE '^mysql$' \
