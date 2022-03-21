@@ -1081,6 +1081,7 @@ extensions_available:
   snmp:
     7.4:
       type: builtin
+      configure: --with-snmp
       build_dep: [libssl-dev, libsnmp-dev, snmp]
       run_dep: [snmp]
     all:

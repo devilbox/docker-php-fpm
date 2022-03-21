@@ -611,8 +611,8 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
-	# Default:      configure command
-	&& docker-php-ext-configure snmp --with-openssl-dir \
+	# Custom:       configure command
+	&& docker-php-ext-configure snmp --with-snmp \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
 	&& true
