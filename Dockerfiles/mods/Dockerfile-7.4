@@ -622,8 +622,8 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Version specific
 	# Type:         Built-in extension
-	# Default:      configure command
-	&& docker-php-ext-configure soap --with-libxml-dir=/usr \
+	# Custom:       configure command
+	&& docker-php-ext-configure soap --enable-soap \
 	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
 	&& true

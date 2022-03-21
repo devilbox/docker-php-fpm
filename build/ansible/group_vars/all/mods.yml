@@ -1096,6 +1096,7 @@ extensions_available:
   soap:
     7.4:
       type: builtin
+      configure: --enable-soap
     all:
       type: builtin
       configure: --with-libxml-dir=/usr
