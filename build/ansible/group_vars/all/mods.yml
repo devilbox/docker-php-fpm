@@ -657,27 +657,15 @@ extensions_available:
       type: pecl
   mysql:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated in newer versions
-    5.2:
+    5.6:
       type: builtin
-      run_dep: [libmysqlclient18]
-      build_dep: [libmysqlclient-dev]
-    5.3:
-      type: builtin
-      run_dep: [libmysqlclient18]
-      build_dep: [libmysqlclient-dev]
-    5.4:
-      type: builtin
-      run_dep: [libmysqlclient18]
-      build_dep: [libmysqlclient-dev]
-    5.5:
-      type: builtin
-      run_dep: [libmysqlclient18]
-      build_dep: [libmysqlclient-dev]
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
     all:
       type: builtin
       configure: --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"
-      run_dep: [libmariadbclient18]
-      build_dep: [libmariadbclient-dev]
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
   mysqli:
     5.2:
       type: builtin
@@ -695,10 +683,14 @@ extensions_available:
       type: builtin
       run_dep: [libmysqlclient18]
       build_dep: [libmysqlclient-dev]
-    all:
+    5.6:
       type: builtin
       run_dep: [libmariadbclient18]
       build_dep: [libmariadbclient-dev]
+    all:
+      type: builtin
+      run_dep: [libmariadbd19]
+      build_dep: [libmariadb-dev]
   mysqlnd:
     disabled: [5.2]
     already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
@@ -812,11 +804,15 @@ extensions_available:
       type: builtin
       run_dep: [libmysqlclient18]
       build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [zlib1g-dev, libmariadbclient-dev]
     all:
       type: builtin
       configure: --with-zlib-dir=/usr
-      run_dep: [libmariadbclient18]
-      build_dep: [zlib1g-dev, libmariadbclient-dev]
+      run_dep: [libmariadbd19]
+      build_dep: [zlib1g-dev, libmariadb-dev]
   pdo_oci:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
     7.2:
@@ -1161,6 +1157,7 @@ extensions_available:
     5.5:
       type: pecl
       version: 1.9.23
+      run_dep: [libnghttp2-5]
     5.6:
       type: pecl
       version: 1.9.23

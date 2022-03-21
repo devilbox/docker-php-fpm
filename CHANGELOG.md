@@ -9,9 +9,13 @@
 #### Fixed
 - Fixed `mongodb-org-shell` and `mongodb-org-tools` install
 
+#### Added
+- Re-added `mongodb` for PHP 5.3
+
 #### Changed
-- Switch PHP 5.4 base image to [devilbox/php-fpm-5.4](https://github.com/devilbox/docker-php-fpm-5.4) for arm64 support
-- Switch PHP 5.5 base image to [devilbox/php-fpm-5.5](https://github.com/devilbox/docker-php-fpm-5.5) for arm64 support
+- Switch PHP 5.4 base image to [devilbox/php-fpm-5.4](https://github.com/devilbox/docker-php-fpm-5.4) for potential arm64 support
+- Switch PHP 5.5 base image to [devilbox/php-fpm-5.5](https://github.com/devilbox/docker-php-fpm-5.5) for potential arm64 support
+- Changed base image back to Debian Jessie for PHP 5.2 and PHP 5.3
 
 
 ## Release 0.135

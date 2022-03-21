@@ -28,7 +28,7 @@ RUN set -eux \
 		libkrb5-dev \
 		libldap2-dev \
 		libmagickwand-dev \
-		libmariadbclient-dev \
+		libmariadb-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libnghttp2-dev \
@@ -813,7 +813,7 @@ RUN set -eux \
 	libicu67 \
 	libjpeg62-turbo \
 	libmagickwand-6.q16-6 \
-	libmariadbclient18 \
+	libmariadbd19 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \

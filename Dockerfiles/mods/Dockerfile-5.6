@@ -363,18 +363,20 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: mysql --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	# Custom:       configure command
+	# Default:      configure command
 	&& docker-php-ext-configure mysql --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" \
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
 	&& true
 
 
 # -------------------- Installing PHP Extension: mysqli --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
 	&& true
 
@@ -465,10 +467,11 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: pdo_mysql --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         Built-in extension
-	# Custom:       configure command
+	# Default:      configure command
 	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	# Installation
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
 	&& true
 
