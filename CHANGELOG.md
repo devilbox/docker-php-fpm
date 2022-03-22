@@ -12,6 +12,9 @@
 #### Changed
 - Ensured CI tests are platform agnostic (amd64 vs arm64)
 
+#### Removed
+- Removed homebrew due to arm64 issues
+
 
 ## Release 0.136
 

@@ -94,10 +94,9 @@ software_enabled:
   - drush9
   - drupalconsole
   - gitflow
-  - homebrew
+  #- homebrew
   - laravel
   - linkcheck
-  # - linuxbrew
   - mhsendmail
   - mysqldumpsecure
   - phalcon
@@ -709,19 +708,6 @@ software_available:
       command: |
         curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
         && chmod +x /usr/local/bin/linkcheck \
-  linuxbrew:
-    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+'
-    all:
-      command: |
-        git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-        && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
   mhsendmail:
     all:
       command: |

@@ -267,18 +267,6 @@ RUN set -eux \
 && cd / && rm -rf /tmp/gitflow \
  \
 	\
-# -------------------- homebrew --------------------
-	&& git clone https://github.com/Homebrew/brew.git /usr/local/src/brew \
-&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/brew \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-'echo "PATH=/usr/local/src/brew/bin:/usr/local/src/brew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-'echo "export MANPATH=/usr/local/src/brew/manpages:${MANPATH}"   >> /home/devilbox/${v}' \
-&& v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-'echo "export INFOPATH=/usr/local/src/brew/manpages:${INFOPATH}" >> /home/devilbox/${v}' \
-&& su - ${MY_USER} -c '/usr/local/src/brew/bin/brew config' \
- \
-	\
 # -------------------- laravel --------------------
 	&& git clone https://github.com/laravel/installer /usr/local/src/laravel-installer \
 && cd /usr/local/src/laravel-installer \
