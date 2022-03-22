@@ -46,9 +46,8 @@ ENV BASH_PROFILE=".bashrc"
 ### Install Tools
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		apt-transport-https \
 		ca-certificates \
 		curl \
@@ -64,8 +63,8 @@ RUN set -eux \
 	&& curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		ack-grep \
 		aspell \
 		autoconf \
@@ -131,7 +130,6 @@ RUN set -eux \
 		zip \
 		zlib1g-dev \
 		zsh \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -144,12 +142,12 @@ RUN set -eux \
 ###
 #RUN set -eux \
 #	&& if [ "${ARCH}" = "linux/amd64" ]; then \
-#		DEBIAN_FRONTEND=noninteractive apt-get update -q \
-#		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+#		DEBIAN_FRONTEND=noninteractive apt-get update \
+#		&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 #			mongodb-org-shell \
 #			mongodb-org-tools; \
 #	fi \
-#	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+#	&& DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 #	&& rm -rf /var/lib/apt/lists/*
 
 

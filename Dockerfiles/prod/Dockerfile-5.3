@@ -26,7 +26,7 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.3-prod"
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		locales-all \
 		postfix \
