@@ -14,6 +14,7 @@
 
 #### Removed
 - Removed homebrew due to arm64 issues
+- Removed postgres cmd client and apt repositories due to arm64 issues
 
 
 ## Release 0.136

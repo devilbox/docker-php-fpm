@@ -23,7 +23,7 @@ apt_repositories_enabled:
   - blackfire
   - git
   - mongo
-  - pgsql
+  #- pgsql
   - yarn
 
 
