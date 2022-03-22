@@ -169,15 +169,15 @@ RUN set -eux \
 ###
 ### Instal Architecture Dependent software
 ###
-RUN set -eux \
-	&& if [ "${ARCH}" = "linux/amd64" ]; then \
-		DEBIAN_FRONTEND=noninteractive apt-get update -q \
-		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
-			mongodb-org-shell \
-			mongodb-org-tools; \
-	fi \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/*
+#RUN set -eux \
+#	&& if [ "${ARCH}" = "linux/amd64" ]; then \
+#		DEBIAN_FRONTEND=noninteractive apt-get update -q \
+#		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+#			mongodb-org-shell \
+#			mongodb-org-tools; \
+#	fi \
+#	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+#	&& rm -rf /var/lib/apt/lists/*
 
 
 ###

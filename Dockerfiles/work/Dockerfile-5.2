@@ -61,8 +61,6 @@ RUN set -eux \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
-	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 \
-	&& echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main" > /etc/apt/sources.list.d/mongo.list \
 	&& curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
@@ -144,15 +142,15 @@ RUN set -eux \
 ###
 ### Instal Architecture Dependent software
 ###
-RUN set -eux \
-	&& if [ "${ARCH}" = "linux/amd64" ]; then \
-		DEBIAN_FRONTEND=noninteractive apt-get update -q \
-		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
-			mongodb-org-shell \
-			mongodb-org-tools; \
-	fi \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-	&& rm -rf /var/lib/apt/lists/*
+#RUN set -eux \
+#	&& if [ "${ARCH}" = "linux/amd64" ]; then \
+#		DEBIAN_FRONTEND=noninteractive apt-get update -q \
+#		&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+#			mongodb-org-shell \
+#			mongodb-org-tools; \
+#	fi \
+#	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
+#	&& rm -rf /var/lib/apt/lists/*
 
 
 ###

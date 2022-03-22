@@ -22,7 +22,7 @@ apt_repositories_enabled:
   - backports
   - blackfire
   - git
-  - mongo
+  #- mongo
   #- pgsql
   - yarn
 
