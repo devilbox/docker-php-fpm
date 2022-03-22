@@ -282,9 +282,12 @@ RUN set -eux \
  \
 	\
 # -------------------- mhsendmail --------------------
-	&& curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
-&& chmod +x mhsendmail_linux_amd64 \
-&& mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
+	&& # Only on amd64 systems
+if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+  curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+  && chmod +x mhsendmail_linux_amd64 \
+  && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail; \
+fi \
  \
 	\
 # -------------------- mysqldumpsecure --------------------
@@ -356,15 +359,19 @@ RUN set -eux \
 	\
 # -------------------- wkhtmltopdf --------------------
 	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-&& DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-  libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-&& dpkg -i /tmp/wkhtmltopdf.deb \
-&& rm -f /tmp/wkhtmltopdf.deb \
+	&& if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+  DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+    libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+  && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+  && dpkg -i /tmp/wkhtmltopdf.deb \
+  && rm -f /tmp/wkhtmltopdf.deb; \
+fi \
  \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-&& rm -rf /var/lib/apt/lists/* \
+	&& if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+  DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*; \
+fi \
  \
 	\
 # -------------------- wpcli --------------------
@@ -606,7 +613,7 @@ RUN set -eux \
 	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' \
 	&& symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+' \
-	&& wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)" \
+	&& if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"; fi \
 	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Composer --------------------
