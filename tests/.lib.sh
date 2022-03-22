@@ -93,8 +93,8 @@ function get_random_name() {
 	local name=
 
 	for i in {1..15}; do
-		rand="$( shuf -i 0-${len} -n 1 )"
-		rand=$(( rand - 1 ))
+		rand="$( shuf -i "0-${len}" -n 1 )"
+		rand="$(( rand - 1 ))"
 		name="${name}${chr[$rand]}"
 		i="${i}" # simply to get rid of shellcheck complaints
 	done
@@ -107,16 +107,18 @@ function get_random_name() {
 ###
 function docker_run() {
 	local image_name="${1}"
-
+	local architecture="${2}"
 	shift
+	shift
+
 	local args="${*}"
 
 	# Returns docker-id
-	did="$( run "docker run --rm -d --name $( get_random_name ) ${args} ${image_name}" "1" )"
+	did="$( run "docker run --rm -d --platform ${architecture} --name $( get_random_name ) ${args} ${image_name}" "1" )"
 	sleep 10
 
 	# If it fails, start again in foreground to fail again, but show errors
-	if ! docker exec $(tty -s && echo "-it" || echo ) ${did} ls >/dev/null 2>&1; then
+	if ! docker exec "$(tty -s && echo "-it" || echo )" "${did}" ls >/dev/null 2>&1; then
 		run "docker run --rm --name $( get_random_name ) ${args} ${image_name}" "1"
 		return 1
 	fi

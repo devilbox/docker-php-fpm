@@ -9,6 +9,9 @@
 #### Fixed
 - Fixed imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
 
+#### Changed
+- Ensured CI tests are platform agnostic (amd64 vs arm64)
+
 
 ## Release 0.136
 

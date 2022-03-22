@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -23,7 +24,7 @@ FLAVOUR="${3}"
 ### Postfix
 ###
 MOUNTPOINT="$( mktemp --directory )"
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABLE_MAIL=2 -v ${MOUNTPOINT}:/var/mail" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABLE_MAIL=2 -v ${MOUNTPOINT}:/var/mail" )"
 run "sleep 10"
 
 if ! run "docker logs ${did} 2>&1 | grep -q 'ENABLE_MAIL'"; then

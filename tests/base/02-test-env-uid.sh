@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -22,7 +23,7 @@ FLAVOUR="${3}"
 ###
 ### uid: 1005 (new uid)
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1005" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1005" )"
 
 if ! run "docker logs ${did} 2>&1 | grep -q '1005'"; then
 	docker_logs "${did}" || true
@@ -42,7 +43,7 @@ docker_stop "${did}"
 ###
 ### uid: 1000 (same uid)
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1000" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1000" )"
 
 if ! run "docker logs ${did} 2>&1 | grep -q '1000'"; then
 	docker_logs "${did}" || true
@@ -62,7 +63,7 @@ docker_stop "${did}"
 ###
 ### uid: 33 (existing uid)
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=33" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=33" )"
 
 if ! run "docker logs ${did} 2>&1 | grep -q '33'"; then
 	docker_logs "${did}" || true

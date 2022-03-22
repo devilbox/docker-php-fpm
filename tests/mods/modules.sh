@@ -12,9 +12,10 @@ if [ "${#}" != "4" ]; then
 fi
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
-MODULE="${4}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+MODULE="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -47,6 +48,7 @@ fi
 WORKDIR="/tmp/${MODULE}"
 docker run \
 	--rm \
+	--platform "${ARCH}" \
 	-e DEBUG_ENTRYPOINT=0 \
 	-e NEW_UID="$(id -u)" \
 	-e NEW_GID="$(id -g)" \

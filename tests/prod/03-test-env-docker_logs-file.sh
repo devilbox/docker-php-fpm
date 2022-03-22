@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -39,13 +40,15 @@ chmod 0777 -R "${LOG_DIR_HOST}"
 chmod 0777 -R "${CFG_DIR_HOST}"
 chmod 0777 -R "${WWW_DIR_HOST}"
 
+# Pull Image
+run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 ###
 ### Start container
 ###
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e DOCKER_LOGS=0 -v ${WWW_DIR_HOST}:${WWW_DIR_CONT} -v ${LOG_DIR_HOST}:/var/log/php" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e DOCKER_LOGS=0 -v ${WWW_DIR_HOST}:${WWW_DIR_CONT} -v ${LOG_DIR_HOST}:/var/log/php" )"
 name="$( docker_name "${did}" )"
 
 # Nginx.conf
@@ -67,7 +70,7 @@ name="$( docker_name "${did}" )"
 
 
 # Start Nginx
-ndid="$( docker_run "${CONTAINER}" "-v ${WWW_DIR_HOST}:${WWW_DIR_CONT} -v ${CFG_DIR_HOST}:${CFG_DIR_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
+ndid="$( docker_run "${CONTAINER}" "${ARCH}" "-v ${WWW_DIR_HOST}:${WWW_DIR_CONT} -v ${CFG_DIR_HOST}:${CFG_DIR_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
 # Wait for both containers to be up and running
 run "sleep 10"
@@ -96,7 +99,7 @@ fi
 
 if [ ! -f "${LOG_DIR_HOST}/php-fpm.access" ]; then
 	echo "Access log does not exist: ${LOG_DIR_HOST}/php-fpm.access"
-	ls -lap ${LOG_DIR_HOST}/
+	ls -lap "${LOG_DIR_HOST}/"
 	docker_logs "${did}" || true
 	docker_stop "${ndid}" || true
 	docker_stop "${did}" || true
@@ -108,7 +111,7 @@ if [ ! -f "${LOG_DIR_HOST}/php-fpm.access" ]; then
 fi
 if [ ! -r "${LOG_DIR_HOST}/php-fpm.access" ]; then
 	echo "Access log is not readable"
-	ls -lap ${LOG_DIR_HOST}/
+	ls -lap "${LOG_DIR_HOST}/"
 	docker_logs "${did}" || true
 	docker_stop "${ndid}" || true
 	docker_stop "${did}" || true
@@ -121,7 +124,7 @@ fi
 
 if [ ! -f "${LOG_DIR_HOST}/php-fpm.error" ]; then
 	echo "Error log does not exist: ${LOG_DIR_HOST}/php-fpm.error"
-	ls -lap ${LOG_DIR_HOST}/
+	ls -lap "${LOG_DIR_HOST}/"
 	docker_logs "${did}" || true
 	docker_stop "${ndid}" || true
 	docker_stop "${did}" || true
@@ -133,7 +136,7 @@ if [ ! -f "${LOG_DIR_HOST}/php-fpm.error" ]; then
 fi
 if [ ! -r "${LOG_DIR_HOST}/php-fpm.error" ]; then
 	echo "Error log is not readable"
-	ls -lap ${LOG_DIR_HOST}/
+	ls -lap "${LOG_DIR_HOST}/"
 	docker_logs "${did}" || true
 	docker_stop "${ndid}" || true
 	docker_stop "${did}" || true

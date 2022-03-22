@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -25,14 +26,14 @@ FLAVOUR="${3}"
 CONTAINER="mysql:5.6"
 
 # Pull Container
-run "until docker pull ${CONTAINER}; do sleep 1; done"
+run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start mysql container
-mdid="$( docker_run "${CONTAINER}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
+mdid="$( docker_run "${CONTAINER}" "${ARCH}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
 mname="$( docker_name "${mdid}" )"
 run "sleep 5"
 
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${mname}:3306 --link ${mname}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${mname}:3306 --link ${mname}" )"
 if ! run "docker logs ${did} 2>&1 | grep 'Forwarding ${mname}:3306'"; then
 	docker_logs "${did}"  || true
 	docker_logs "${mdid}" || true

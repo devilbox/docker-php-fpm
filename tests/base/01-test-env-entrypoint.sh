@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -22,7 +23,7 @@ FLAVOUR="${3}"
 ###
 ### Debug == 0
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=0" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=0" )"
 
 if ! run_fail "docker logs ${did} 2>&1 | grep 'Debug level'"; then
 	docker_logs "${did}" || true
@@ -48,7 +49,7 @@ docker_stop "${did}"
 ###
 ### Debug == 1
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=1" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=1" )"
 
 if ! run "docker logs ${did} 2>&1 | grep 'Debug level: 1'"; then
 	docker_logs "${did}" || true
@@ -74,7 +75,7 @@ docker_stop "${did}"
 ###
 ### Debug == 2
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2" )"
 
 if ! run "docker logs ${did} 2>&1 | grep 'Debug level: 2'"; then
 	docker_logs "${did}" || true

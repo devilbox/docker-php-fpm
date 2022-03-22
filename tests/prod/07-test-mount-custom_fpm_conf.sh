@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -49,10 +50,10 @@ chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
 # Pull container
-run "until docker pull ${CONTAINER}; do sleep 1; done"
+run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_CNF_HOST}:${PHP_CNF_CONT}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_CNF_HOST}:${PHP_CNF_CONT}" )"
 name="$( docker_name "${did}" )"
 
 # Nginx.conf
@@ -74,7 +75,7 @@ name="$( docker_name "${did}" )"
 
 
 # Start Nginx
-ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
+ndid="$( docker_run "${CONTAINER}" "${ARCH}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
 # Wait for both containers to be up and running
 run "sleep 10"

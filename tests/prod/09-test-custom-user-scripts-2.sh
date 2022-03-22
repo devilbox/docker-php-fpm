@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -33,7 +34,7 @@ printf "#!/bin/bash\\necho 'abcdefghijklmnopq';\\n" > "${RUN_SH_HOST}/myscript1.
 chmod +x "${RUN_SH_HOST}/myscript1.sh"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${RUN_SH_HOST}:${RUN_SH_CONT}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${RUN_SH_HOST}:${RUN_SH_CONT}" )"
 
 # Wait for both containers to be up and running
 run "sleep 10"

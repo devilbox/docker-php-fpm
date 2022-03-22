@@ -7,8 +7,9 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -38,10 +39,10 @@ chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
 # Pull Image
-run "until docker pull ${CONTAINER}; do sleep 1; done"
+run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"
+did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"
 name="$( docker_name "${did}" )"
 
 # Nginx.conf
@@ -62,7 +63,7 @@ name="$( docker_name "${did}" )"
 } > "${CONFIG_HOST}/php.conf"
 
 # Start Nginx
-ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
+ndid="$( docker_run "${CONTAINER}" "${ARCH}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
 
 # Wait for both containers to be up and running
 run "sleep 10"
@@ -75,7 +76,7 @@ run "sleep 10"
 # On pm = ondemand, there will be no child process, so we need to create some traffic
 # in order to have child proccesses spawn
 for i in $(seq 1 10); do
-	curl http://127.0.0.1:${WWW_PORT}/index.php?${i} >/dev/null 2>&1 &
+	curl "http://127.0.0.1:${WWW_PORT}/index.php?${i}" >/dev/null 2>&1 &
 done
 if ! docker_exec "${did}" "ps auxw | grep -E '(php-fpm: pool|php-cgi)' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
 	docker_exec "${did}" "ps auxw"
