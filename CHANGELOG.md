@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.137
+
+#### Fixed
+- Fixed imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
+
+
 ## Release 0.136
 
 #### Fixed
