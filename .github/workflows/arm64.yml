@@ -146,7 +146,7 @@ jobs:
             done;
             return 1;
           }
-          #retry make test-base VERSION=${VERSION} ARCH=linux/arm64
+          retry make test-base VERSION=${VERSION} ARCH=linux/arm64
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
@@ -190,7 +190,7 @@ jobs:
             done;
             return 1;
           }
-          #retry make test-mods VERSION=${VERSION} ARCH=linux/arm64
+          retry make test-mods VERSION=${VERSION} ARCH=linux/arm64
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
@@ -234,7 +234,7 @@ jobs:
             done;
             return 1;
           }
-          #retry make test-prod VERSION=${VERSION}
+          retry make test-prod VERSION=${VERSION} ARCH=linux/arm64
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
@@ -278,7 +278,7 @@ jobs:
             done;
             return 1;
           }
-          #retry make test-work VERSION=${VERSION}
+          retry make test-work VERSION=${VERSION} ARCH=linux/arm64
         env:
           VERSION: ${{ matrix.version }}
           RETRIES: 20
