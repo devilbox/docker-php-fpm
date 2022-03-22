@@ -711,7 +711,6 @@ software_available:
   mhsendmail:
     all:
       command: |
-        # Only on amd64 systems
         if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
           curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
           && chmod +x mhsendmail_linux_amd64 \

@@ -262,8 +262,7 @@ RUN set -eux \
  \
 	\
 # -------------------- mhsendmail --------------------
-	&& # Only on amd64 systems
-if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+	&& if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
   curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
   && chmod +x mhsendmail_linux_amd64 \
   && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail; \
