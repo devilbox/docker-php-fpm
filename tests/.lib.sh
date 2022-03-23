@@ -139,7 +139,7 @@ function docker_run() {
 	>&2 echo  "------------------------------ [STARTING CONTAINER] ------------------------------"
 	name="$( get_random_name )"
 	run "docker run --rm --platform ${architecture} --name ${name} ${args} ${image_name} &" 1>&2
-	run "sleep 10"
+	run "sleep 15"
 
 	>&2 echo "[CHECK IF RUNNING] docker ps"
 	# Check docker ps if running
@@ -157,22 +157,6 @@ function docker_run() {
 	fi
 	>&2 echo "------------------------------ [STARTING CONTAINER] OK ------------------------------"
 	echo "${name}"
-
-	## If it fails, start again without --rm in order to show errors
-	#	run "docker logs  ${did}" "1" || true
-	#	run "docker kill  ${did}" "1" || true
-	#	run "docker rm -f ${did}" "1" || true
-	#	name="$( get_random_name )"
-	#	run "docker run -d --platform ${architecture} --name ${name} ${args} ${image_name}" "1"
-	#	run "sleep 10" "1"
-	#	run "docker logs  ${name}" "1" || true
-	#	run "docker kill  ${name}" "1" || true
-	#	run "docker rm -f ${name}" "1" || true
-	#	return 1
-	#fi
-
-	## Only get 8 digits of docker id
-	#echo "${did}" | grep -Eo '^[0-9a-zA-Z]{8}'
 }
 
 
