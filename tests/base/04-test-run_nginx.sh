@@ -38,12 +38,13 @@ chmod 0777 "${CONFIG_HOST}"
 chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
-print_h2 "Start PHP-FPM and Nginx"
 
 # Pull Image
+print_h2 "Pulling Nginx"
 run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
+print_h2 "Starting PHP-FPM"
 if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT}" )"; then
 	exit 1
 fi
@@ -66,6 +67,7 @@ fi
 } > "${CONFIG_HOST}/php.conf"
 
 # Start Nginx
+print_h2 "Starting Nginx"
 if ! nginx_name="$( docker_run "${CONTAINER}" "${ARCH}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"; then
 	docker_stop "${name}"  || true
 	exit 1
