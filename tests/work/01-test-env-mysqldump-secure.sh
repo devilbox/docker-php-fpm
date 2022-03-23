@@ -25,7 +25,7 @@ FLAVOUR="${4}"
 ###
 MYSQL_ROOT_PASSWORD="toor"
 MOUNTPOINT="$( mktemp --directory )"
-CONTAINER="mariadb:10.6"
+CONTAINER="devilbox/mysql:mysql-8.0"
 
 # Pull Container
 print_h2 "Pulling MySQL"
@@ -48,7 +48,7 @@ run "sleep 15"
 
 
 print_h2 "Run mysqldump-secure"
-if ! docker_exec "${name}" mysqldump-secure; then
+if ! docker_exec "${name}" "mysqldump-secure -vv"; then
 	docker_logs "${name_mysql}" || true
 	docker_logs "${name}"       || true
 	docker_stop "${name_mysql}" || true
@@ -56,6 +56,7 @@ if ! docker_exec "${name}" mysqldump-secure; then
 	rm -rf "${MOUNTPOINT}"
 	exit 1
 fi
+
 
 print_h2 "Test backup directory"
 if ! run "test -d ${MOUNTPOINT}/mysql"; then
