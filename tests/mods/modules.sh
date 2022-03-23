@@ -6,8 +6,8 @@ set -o pipefail
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-if [ "${#}" != "4" ]; then
-	>&2 echo "Error, requires 4 arguments: <IMAGE> <VERSION> <FLAVOUR> <MODULE>"
+if [ "${#}" != "5" ]; then
+	>&2 echo "Error, requires 4 arguments: <IMAGE> <ARCH> <VERSION> <FLAVOUR> <MODULE>"
 	exit 1
 fi
 
