@@ -23,7 +23,7 @@ FLAVOUR="${4}"
 ###
 ### Socat forwarding
 ###
-CONTAINER="mysql:8.0-oracle"
+CONTAINER="devilbox/mysql:mysql-8.0"
 
 # Pull Container
 print_h2 "Pulling MySQL"
