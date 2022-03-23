@@ -23,28 +23,39 @@ FLAVOUR="${4}"
 ###
 ### Socat forwarding
 ###
-CONTAINER="mysql:5.6"
+CONTAINER="mysql:8.0-oracle"
 
 # Pull Container
+print_h2 "Pulling MySQL"
 run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start mysql container
-mdid="$( docker_run "${CONTAINER}" "${ARCH}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"
-mname="$( docker_name "${mdid}" )"
-run "sleep 5"
+print_h2 "Starting MySQL"
+if ! name_mysql="$( docker_run "${CONTAINER}" "${ARCH}" "-e MYSQL_ALLOW_EMPTY_PASSWORD=yes" )"; then
+	exit 1
+fi
+run "sleep 60"
 
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${mname}:3306 --link ${mname}" )"
-if ! run "docker logs ${did} 2>&1 | grep 'Forwarding ${mname}:3306'"; then
-	docker_logs "${did}"  || true
-	docker_logs "${mdid}" || true
-	docker_stop "${did}"  || true
-	docker_stop "${mdid}" || true
+
+# Start PHP-FPM
+print_h2 "Start PHP-FPM"
+if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${name_mysql}:3306 --link ${name_mysql}" )"; then
+	docker_stop "${name_mysql}"  || true
+	exit 1
+fi
+run "sleep 15"
+
+
+print_h2 "Ensure forwarding info is present in docker logs"
+if ! run "docker logs ${name} 2>&1 | grep 'Forwarding ${name_mysql}:3306'"; then
+	docker_logs "${name_mysql}"  || true
+	docker_logs "${name}"        || true
+	docker_stop "${name_mysql}"  || true
+	docker_stop "${name}"        || true
 	echo "Failed"
 	exit 1
 fi
 
-# Wait for both containers to come up
-run "sleep 10"
 
 # Test connectivity
 #docker_exec "${did}" "ping -c 1 ${mname}"
@@ -53,22 +64,27 @@ run "sleep 10"
 
 # Only work container has mysql binary installed
 if [ "${FLAVOUR}" = "work" ]; then
-	if ! docker_exec "${did}" "mysql --user=root --password= --host=${mname} -e 'SHOW DATABASES;'"; then
-		docker_logs "${did}"  || true
-		docker_logs "${mdid}" || true
-		docker_stop "${did}"  || true
-		docker_stop "${mdid}" || true
+	print_h2 "Test connectivity against hostname"
+	if ! docker_exec "${name}" "mysql --user=root --password= --host=${name_mysql} -e 'SHOW DATABASES;'"; then
+		docker_logs "${name_mysql}"  || true
+		docker_logs "${name}"        || true
+		docker_stop "${name_mysql}"  || true
+		docker_stop "${name}"        || true
 		echo "Failed"
 		exit 1
 	fi
-	if ! docker_exec "${did}" "mysql --user=root --password= --host=127.0.0.1 -e 'SHOW DATABASES;'"; then
-		docker_logs "${did}"  || true
-		docker_logs "${mdid}" || true
-		docker_stop "${did}"  || true
-		docker_stop "${mdid}" || true
+	print_h2 "Test connectivity against 127.0.0.1"
+	if ! docker_exec "${name}" "mysql --user=root --password= --host=127.0.0.1 -e 'SHOW DATABASES;'"; then
+		docker_logs "${name_mysql}"  || true
+		docker_logs "${name}"        || true
+		docker_stop "${name_mysql}"  || true
+		docker_stop "${name}"        || true
 		echo "Failed"
 		exit 1
 	fi
 fi
-docker_stop "${mdid}"
-docker_stop "${did}"
+
+
+print_h2 "Cleanup"
+docker_stop "${name_mysql}"
+docker_stop "${name}"
