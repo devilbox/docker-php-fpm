@@ -23,12 +23,15 @@ FLAVOUR="${4}"
 ###
 ### Ensuring 'apt update' works without any issues
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2" )"
+print_h2 "Ensure 'apt update' works"
+if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2" )"; then
+	exit 1
+fi
 
-if ! docker_exec "${did}" "apt update"; then
-	docker_logs "${did}" || true
-	docker_stop "${did}" || true
+if ! docker_exec "${name}" "apt update"; then
+	docker_logs "${name}" || true
+	docker_stop "${name}" || true
 	echo "Failed"
 	exit 1
 fi
-docker_stop "${did}"
+docker_stop "${name}"
