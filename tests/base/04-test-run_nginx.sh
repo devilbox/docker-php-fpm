@@ -85,7 +85,7 @@ print_h2 "Check PHP-FPM user"
 for i in $(seq 1 10); do
 	curl "http://127.0.0.1:${WWW_PORT}/index.php?${i}" >/dev/null 2>&1 &
 done
-if ! docker_exec "${name}" "ps auxw | grep -E '(php-fpm: pool|php-cgi)' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
+if ! docker_exec "${name}" "ps auxw | grep -E '(php-fpm|php-cgi)' | grep -v grep | awk '{ print \$1 }' | tail -1 | grep devilbox"; then
 	docker_exec "${name}" "ps auxw"
 
 	# Shutdown
