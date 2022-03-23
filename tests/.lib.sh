@@ -10,11 +10,11 @@ set -o pipefail
 ###
 function run() {
 	local cmd="${1}"
-	local to_stderr=0
+	local to_stdout=0
 
-	# Output to stderr instead?
+	# Output to stdout instead?
 	if [ "${#}" -eq "2" ]; then
-		to_stderr="${2}"
+		to_stdout="${2}"
 	fi
 
 	local red="\033[0;31m"
@@ -22,24 +22,24 @@ function run() {
 	local yellow="\033[0;33m"
 	local reset="\033[0m"
 
-	if [ "${to_stderr}" -eq "0" ]; then
-		printf "${yellow}[%s] ${red}%s \$ ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)"
-	else
+	if [ "${to_stdout}" -eq "0" ]; then
 		printf "${yellow}[%s] ${red}%s \$ ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)" >&2
+	else
+		printf "${yellow}[%s] ${red}%s \$ ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)"
 	fi
 
 	if sh -c "${cmd}"; then
-		if [ "${to_stderr}" -eq "0" ]; then
-			printf "${green}[%s]${reset}\n" "OK"
-		else
+		if [ "${to_stdout}" -eq "0" ]; then
 			printf "${green}[%s]${reset}\n" "OK" >&2
+		else
+			printf "${green}[%s]${reset}\n" "OK"
 		fi
 		return 0
 	else
-		if [ "${to_stderr}" -eq "0" ]; then
-			printf "${red}[%s]${reset}\n" "NO"
-		else
+		if [ "${to_stdout}" -eq "0" ]; then
 			printf "${red}[%s]${reset}\n" "NO" >&2
+		else
+			printf "${red}[%s]${reset}\n" "NO"
 		fi
 		return 1
 	fi
@@ -49,11 +49,11 @@ function run() {
 ###
 function run_fail() {
 	local cmd="${1}"
-	local to_stderr=0
+	local to_stdout=0
 
-	# Output to stderr instead?
+	# Output to stdout instead?
 	if [ "${#}" -eq "2" ]; then
-		to_stderr="${2}"
+		to_stdout="${2}"
 	fi
 
 	local red="\033[0;31m"
@@ -61,28 +61,50 @@ function run_fail() {
 	local yellow="\033[0;33m"
 	local reset="\033[0m"
 
-	if [ "${to_stderr}" -eq "0" ]; then
-		printf "${yellow}[%s] ${red}%s \$ ${yellow}[NOT] ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)"
-	else
+	if [ "${to_stdout}" -eq "0" ]; then
 		printf "${yellow}[%s] ${red}%s \$ ${yellow}[NOT] ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)" >&2
+	else
+		printf "${yellow}[%s] ${red}%s \$ ${yellow}[NOT] ${green}${cmd}${reset}\n" "$(hostname)" "$(whoami)"
 	fi
 
 	if ! sh -c "${cmd}"; then
-		if [ "${to_stderr}" -eq "0" ]; then
-			printf "${green}[%s]${reset}\n" "OK"
-		else
+		if [ "${to_stdout}" -eq "0" ]; then
 			printf "${green}[%s]${reset}\n" "OK" >&2
+		else
+			printf "${green}[%s]${reset}\n" "OK"
 		fi
 		return 0
 	else
-		if [ "${to_stderr}" -eq "0" ]; then
-			printf "${red}[%s]${reset}\n" "NO"
-		else
+		if [ "${to_stdout}" -eq "0" ]; then
 			printf "${red}[%s]${reset}\n" "NO" >&2
+		else
+			printf "${red}[%s]${reset}\n" "NO"
 		fi
 		return 1
 	fi
 }
+
+
+###
+### Print H2
+###
+function print_h2() {
+	local text="${1}"
+
+	local red="\033[0;31m"
+	local green="\033[0;32m"
+	local yellow="\033[0;33m"
+	local purple="\033[0;35m"
+	local reset="\033[0m"
+
+	echo
+	echo
+	printf "${purple}%s${reset}\n" "###"
+	printf "${purple}%s${reset}\n" "### ${text}"
+	printf "${purple}%s${reset}\n" "###"
+	echo
+}
+
 
 ###
 ### Get 15 character random word
@@ -114,17 +136,43 @@ function docker_run() {
 	local args="${*}"
 
 	# Returns docker-id
-	did="$( run "docker run --rm -d --platform ${architecture} --name $( get_random_name ) ${args} ${image_name}" "1" )"
-	sleep 10
+	>&2 echo  "------------------------------ [STARTING CONTAINER] ------------------------------"
+	name="$( get_random_name )"
+	run "docker run --rm --platform ${architecture} --name ${name} ${args} ${image_name} &" 1>&2
+	run "sleep 10"
 
-	# If it fails, start again in foreground to fail again, but show errors
-	if ! docker exec "$(tty -s && echo "-it" || echo )" "${did}" ls >/dev/null 2>&1; then
-		run "docker run --rm --name $( get_random_name ) ${args} ${image_name}" "1"
+	>&2 echo "[CHECK IF RUNNING] docker ps"
+	# Check docker ps if running
+	if ! run "docker ps | grep '${name}'" 1>&2; then
+		docker_stop "${name}"
+		>&2 echo "------------------------------ [STARTING CONTAINER] FAILED ------------------------------"
 		return 1
 	fi
+	# Check if we can ls
+	>&2 echo "[CHECK IF RUNNING] docker exec"
+	if ! run "docker exec $(tty -s && echo "-it" || echo ) ${name} id" 1>&2; then
+		docker_stop "${name}"
+		>&2 echo "------------------------------ [STARTING CONTAINER] FAILED ------------------------------"
+		return 1
+	fi
+	>&2 echo "------------------------------ [STARTING CONTAINER] OK ------------------------------"
+	echo "${name}"
 
-	# Only get 8 digits of docker id
-	echo "${did}" | grep -Eo '^[0-9a-zA-Z]{8}'
+	## If it fails, start again without --rm in order to show errors
+	#	run "docker logs  ${did}" "1" || true
+	#	run "docker kill  ${did}" "1" || true
+	#	run "docker rm -f ${did}" "1" || true
+	#	name="$( get_random_name )"
+	#	run "docker run -d --platform ${architecture} --name ${name} ${args} ${image_name}" "1"
+	#	run "sleep 10" "1"
+	#	run "docker logs  ${name}" "1" || true
+	#	run "docker kill  ${name}" "1" || true
+	#	run "docker rm -f ${name}" "1" || true
+	#	return 1
+	#fi
+
+	## Only get 8 digits of docker id
+	#echo "${did}" | grep -Eo '^[0-9a-zA-Z]{8}'
 }
 
 
@@ -132,9 +180,9 @@ function docker_run() {
 ### Show Docker logs
 ###
 function docker_logs() {
-	local docker_id="${1}"
+	local name="${1}"
 
-	run "docker logs ${docker_id}"
+	run "docker logs ${name}"
 }
 
 
@@ -142,13 +190,13 @@ function docker_logs() {
 ### Docker exec
 ###
 function docker_exec() {
-	local did="${1}"
+	local name="${1}"
 	local cmd="${2}"
 	shift
 	shift
 	local args="${*}"
 
-	run "docker exec ${args} $(tty -s && echo '-it' || echo) ${did} ${cmd}"
+	run "docker exec ${args} $(tty -s && echo '-it' || echo) ${name} ${cmd}"
 }
 
 
@@ -156,14 +204,14 @@ function docker_exec() {
 ### Get docker name
 ###
 function docker_name() {
-	local did="${1}"
-	local name=
-	name="$( docker ps | grep "${did}" | awk '{print $(NF)}' )"
-
-	if [ -z "${name}" ]; then
-		return 1
-	fi
+	local name="${1}"
 	echo "${name}"
+	#name="$( docker ps | grep "${did}" | awk '{print $(NF)}' )"
+
+	#if [ -z "${name}" ]; then
+	#	return 1
+	#fi
+	#echo "${name}"
 }
 
 
@@ -171,15 +219,9 @@ function docker_name() {
 ### Stop container
 ###
 function docker_stop() {
-	local did="${1}"
-	local name=
-	name="$( docker ps --no-trunc --format='{{.ID}} {{.Names}}' | grep "${did}" | head -1 | awk '{print $2}' )"
+	local name="${1}"
 	# Stop
-	run "docker stop ${did} >/dev/null"
-	if docker ps | grep -q "${did}"; then
-		run "docker kill ${did} >/dev/null" || true
-	fi
-
-	# Remove if still exist
-	run "docker rm ${name} >/dev/null 2>&1 || true"
+	run "docker stop  ${name}" || true
+	run "docker kill  ${name} || true" 2>/dev/null
+	run "docker rm -f ${name} || true" 2>/dev/null
 }
