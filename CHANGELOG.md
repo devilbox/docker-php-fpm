@@ -16,6 +16,7 @@
 - Removed homebrew due to arm64 issues
 - Removed postgres cmd client and apt repositories due to arm64 issues
 - Removed mongodb cmd client and apt repositories due to arm64 issues
+- Removed Ansible due to arm64 issues
 
 
 ## Release 0.136

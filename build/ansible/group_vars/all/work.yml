@@ -73,7 +73,7 @@ npm_enabled:
 # Python pip packages to install
 # -------------------------------------------------------------------------------------------------
 pip_enabled:
-  - ansible
+  #- ansible
   - yamllint
   - yq
 
