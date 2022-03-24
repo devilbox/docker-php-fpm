@@ -269,7 +269,7 @@ check-current-image-exists:
 		exit 1; \
 	else \
 		echo "OK: Image $(IMAGE):$(DOCKER_TAG) is of arch $${OS}/$${ARCH}"; \
-	fi;
+	fi
 
 ###
 ### Checks if parent image exists and is of correct architecture
@@ -300,7 +300,7 @@ check-parent-image-exists:
 			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
 			>&2 echo; \
 			exit 1; \
-		fi \
+		fi; \
 		OS="$$( docker image inspect $(IMAGE):$(MODS_TAG) --format '{{.Os}}' )"; \
 		ARCH="$$( docker image inspect $(IMAGE):$(MODS_TAG) --format '{{.Architecture}}' )"; \
 		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
@@ -316,7 +316,7 @@ check-parent-image-exists:
 			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
 			>&2 echo; \
 			exit 1; \
-		fi \
+		fi; \
 		OS="$$( docker image inspect $(IMAGE):$(BASE_TAG) --format '{{.Os}}' )"; \
 		ARCH="$$( docker image inspect $(IMAGE):$(BASE_TAG) --format '{{.Architecture}}' )"; \
 		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
