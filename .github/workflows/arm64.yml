@@ -290,7 +290,7 @@ jobs:
       # ------------------------------------------------------------
       - name: Diff README.md
         run: |
-          make gen-readme VERSION=${VERSION}
+          make gen-readme VERSION=${VERSION} ARCH=linux/arm64
           git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
         env:
           VERSION: ${{ matrix.version }}
