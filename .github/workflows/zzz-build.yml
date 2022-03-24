@@ -1,0 +1,33 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: build
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  push:
+
+
+jobs:
+
+  # (1/2) Determine repository params
+  params:
+    uses: ./.github/workflows/zzz-params.yml
+
+  # (2/2) Build
+  docker:
+    needs: [params]
+    uses: ./.github/workflows/zzz-build.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      matrix: ${{ needs.params.outputs.matrix }}
+      refs: ${{ needs.params.outputs.refs }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}

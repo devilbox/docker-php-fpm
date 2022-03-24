@@ -8,27 +8,18 @@ set -o pipefail
 # Get absolute directory of this script
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-ARCH="${1:-linux/amd64}"
+IMAGE="${1}"
+ARCH="${2}"
+TAG_BASE="${3}"
+TAG_MODS="${4}"
+VERSION="${5:-}"
 
 
 ###
 ### Show Usage
 ###
 print_usage() {
-	echo "Usage: gen-readme.sh [<ARCH>]"
-	echo "       gen-readme.sh <ARCH> 5.2"
-	echo "       gen-readme.sh <ARCH> 5.3"
-	echo "       gen-readme.sh <ARCH> 5.4"
-	echo "       gen-readme.sh <ARCH> 5.5"
-	echo "       gen-readme.sh <ARCH> 5.6"
-	echo "       gen-readme.sh <ARCH> 7.0"
-	echo "       gen-readme.sh <ARCH> 7.1"
-	echo "       gen-readme.sh <ARCH> 7.2"
-	echo "       gen-readme.sh <ARCH> 7.3"
-	echo "       gen-readme.sh <ARCH> 7.4"
-	echo "       gen-readme.sh <ARCH> 8.0"
-	echo "       gen-readme.sh <ARCH> 8.1"
-	echo "       gen-readme.sh <ARCH> 8.2"
+	echo "Usage: gen-readme.sh <IMAGE> <ARCH> <TAG_BASE> <TAG_MODS> [<VERSION>]"
 }
 
 
@@ -36,25 +27,24 @@ print_usage() {
 ### Extract PHP modules in alphabetical order and comma separated in one line
 ###
 get_modules() {
-	tag="${1}"
-
+	current_tag="${1}"
 	# Retrieve all modules
-	PHP_MODULES="$( docker run --rm --platform "${ARCH}" $(tty -s && echo '-it' || echo) --entrypoint=php devilbox/php-fpm:${tag} -m )"
+	PHP_MODULES="$( docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=php "${IMAGE}:${current_tag}" -m )"
 	ALL_MODULES=
 
-	if docker run --rm --platform "${ARCH}" $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
 		ALL_MODULES="${ALL_MODULES},ioncube";
 	fi
 
-	if docker run --rm --platform "${ARCH}" $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
 		ALL_MODULES="${ALL_MODULES},blackfire";
 	fi
 
-	if docker run --rm --platform "${ARCH}" $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
 		ALL_MODULES="${ALL_MODULES},psr";
 	fi
 
-	if docker run --rm --platform "${ARCH}" $(tty -s && echo '-it' || echo) --entrypoint=find devilbox/php-fpm:${tag} /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
 		ALL_MODULES="${ALL_MODULES},phalcon";
 	fi
 
@@ -85,15 +75,15 @@ get_modules() {
 update_readme() {
 	v="${1}"
 	# Those sections must exist in README.md, otherwise this script will exit with errors
-	sed -i'' "s|<td id=\"${v//.}-base\">.*<\/td>|<td id=\"${v//.}-base\">$( get_modules "${v}-base" )<\/td>|g" "${CWD}/../README.md"
-	sed -i'' "s|<td id=\"${v//.}-mods\">.*<\/td>|<td id=\"${v//.}-mods\">$( get_modules "${v}-mods" )<\/td>|g" "${CWD}/../README.md"
+	sed -i'' "s|<td id=\"${v//.}-base\">.*<\/td>|<td id=\"${v//.}-base\">$( get_modules "${TAG_BASE}" )<\/td>|g" "${CWD}/../README.md"
+	sed -i'' "s|<td id=\"${v//.}-mods\">.*<\/td>|<td id=\"${v//.}-mods\">$( get_modules "${TAG_MODS}" )<\/td>|g" "${CWD}/../README.md"
 }
 
 
 ###
 ### Entrypoint
 ###
-if [ "${#}" -eq "0" ] || [ "${#}" -eq "1" ]; then
+if [ "${VERSION}" = "" ]; then
 	# Update PHP modules for all versions at once
 	update_readme "5.2"
 	update_readme "5.3"
@@ -108,31 +98,26 @@ if [ "${#}" -eq "0" ] || [ "${#}" -eq "1" ]; then
 	update_readme "8.0"
 	update_readme "8.1"
 	update_readme "8.2"
-elif [ "${#}" -gt "2" ]; then
-	# Specifying more than 1 argument is wrong
-	echo "Error, invalid number of arguments."
-	print_usage
-	exit 1
 else
-	if [ "${2}" != "5.2" ] \
-	&& [ "${2}" != "5.3" ] \
-	&& [ "${2}" != "5.4" ] \
-	&& [ "${2}" != "5.5" ] \
-	&& [ "${2}" != "5.6" ] \
-	&& [ "${2}" != "7.0" ] \
-	&& [ "${2}" != "7.1" ] \
-	&& [ "${2}" != "7.2" ] \
-	&& [ "${2}" != "7.3" ] \
-	&& [ "${2}" != "7.4" ] \
-	&& [ "${2}" != "8.0" ] \
-	&& [ "${2}" != "8.1" ] \
-	&& [ "${2}" != "8.2" ]; then
+	if [ "${VERSION}" != "5.2" ] \
+	&& [ "${VERSION}" != "5.3" ] \
+	&& [ "${VERSION}" != "5.4" ] \
+	&& [ "${VERSION}" != "5.5" ] \
+	&& [ "${VERSION}" != "5.6" ] \
+	&& [ "${VERSION}" != "7.0" ] \
+	&& [ "${VERSION}" != "7.1" ] \
+	&& [ "${VERSION}" != "7.2" ] \
+	&& [ "${VERSION}" != "7.3" ] \
+	&& [ "${VERSION}" != "7.4" ] \
+	&& [ "${VERSION}" != "8.0" ] \
+	&& [ "${VERSION}" != "8.1" ] \
+	&& [ "${VERSION}" != "8.2" ]; then
 		# Argument does not match any of the PHP versions
 		echo "Error, invalid argument."
 		print_usage
 		exit 1
 	else
 		# Update PHP modules for one specific PHP version
-		update_readme "${2}"
+		update_readme "${VERSION}"
 	fi
 fi

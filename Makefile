@@ -2,109 +2,86 @@ ifneq (,)
 .error This Makefile requires GNU Make.
 endif
 
-
-# -------------------------------------------------------------------------------------------------
-# Docker configuration
-# -------------------------------------------------------------------------------------------------
-
-CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-
-DIR = Dockerfiles
-IMAGE = devilbox/php-fpm
-ARCH  = linux/amd64
-
-NO_CACHE =
-PHP_EXT_DIR =
-
-# Run checks after each module has been installed (slow, but yields errors faster)
-FAIL_FAST = False
-
-# File lint
-FL_VERSION = 0.3
-FL_IGNORES = .git/,.github/
-
-
-# -------------------------------------------------------------------------------------------------
-#  DEFAULT TARGET
-# -------------------------------------------------------------------------------------------------
-
-help:
-	@echo
-	@echo "             _         _ _ _            __   _           ___          "
-	@echo "           _| |___ _ _<_| | |_ _____   / ___| |_ ___ ___| | ___._ _ _ "
-	@echo "          / . / ._| | | | | . / . \ \// | . | . | . |___| || . | ' ' |"
-	@echo "          \___\___|__/|_|_|___\___/\_/_/|  _|_|_|  _/   |_||  _|_|_|_|"
-	@echo "                                        |_|     |_|        |_|        "
-	@echo
-	@echo
-	@echo "Targets"
-	@echo "--------------------------------------------------------------------------------"
-	@echo
-	@echo "lint                          Lint project files and repository"
-	@echo
-	@echo "gen-readme [VERSION=]         Update README with PHP modules from built images."
-	@echo "gen-dockerfiles [FAIL_FAST=]  Generate Dockerfiles from templates."
-	@echo
-	@echo "build-base VERSION= [ARGS=]   Build base image by specified version"
-	@echo "build-mods VERSION= [ARGS=]   Build mods image by specified version"
-	@echo "build-prod VERSION= [ARGS=]   Build prod image by specified version"
-	@echo "build-work VERSION= [ARGS=]   Build work image by specified version"
-	@echo
-	@echo "rebuild-base VERSION= [ARGS=] Rebuild base image by specified version"
-	@echo "rebuild-mods VERSION= [ARGS=] Rebuild mods image by specified version"
-	@echo "rebuild-prod VERSION= [ARGS=] Rebuild prod image by specified version"
-	@echo "rebuild-work VERSION= [ARGS=] Rebuild work image by specified version"
-	@echo
-	@echo "test-base VERSION=            Test base image by specified version"
-	@echo "test-mods VERSION=            Test mods image by specified version"
-	@echo "test-prod VERSION=            Test prod image by specified version"
-	@echo "test-work VERSION=            Test work image by specified version"
-	@echo
-	@echo
-	@echo "Variables"
-	@echo "--------------------------------------------------------------------------------"
-	@echo
-	@echo "VERSION                       One of '5.2', '5.3', '5.4', '5.5', '5.6', '7.0',"
-	@echo "                                      '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2'."
-	@echo "                              For gen-readme target it is optional and if not"
-	@echo "                              specified, it will generate for all versions."
-	@echo
-	@echo "FAIL_FAST                     Either 'True' or 'False' (defaults to 'False')."
-	@echo "                              If set to 'True', each module install has an"
-	@echo "                              immediate check, which is very slow for CI, but"
-	@echo "                              yields errors immediately."
-	@echo "                              If set to 'False', checks are done at the end."
-	@echo
-	@echo "ARGS                          Can be added to all build-* and rebuild-* targets"
-	@echo "                              to supply additional docker build options."
-
-
-# -------------------------------------------------------------------------------------------------
-#  Lint Targets
-# -------------------------------------------------------------------------------------------------
-
-lint: lint-files
-lint: lint-yaml
-lint: lint-changelog
-lint: lint-workflow
-
-lint-workflow:
-	@echo "################################################################################"
-	@echo "# Lint Workflow"
-	@echo "################################################################################"
-	@\
-	GIT_CURR_MAJOR="$$( git tag | sort -V | tail -1 | sed 's|\.[0-9]*$$||g' )"; \
-	GIT_CURR_MINOR="$$( git tag | sort -V | tail -1 | sed 's|^[0-9]*\.||g' )"; \
-	GIT_NEXT_TAG="$${GIT_CURR_MAJOR}.$$(( GIT_CURR_MINOR + 1 ))"; \
-		if ! grep 'refs:' -A 100 .github/workflows/nightly.yml \
-		| grep  "          - '$${GIT_NEXT_TAG}'" >/dev/null; then \
-		echo "[ERR] New Tag required in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
-			exit 1; \
-		else \
-		echo "[OK] Git Tag present in .github/workflows/nightly.yml: $${GIT_NEXT_TAG}"; \
+# Ensure additional Makefiles are present
+MAKEFILES = Makefile.docker Makefile.lint
+$(MAKEFILES): URL=https://raw.githubusercontent.com/devilbox/makefiles/master/$(@)
+$(MAKEFILES):
+	@if ! (curl --fail -sS -o $(@) $(URL) || wget -O $(@) $(URL)); then \
+		echo "Error, curl or wget required."; \
+		echo "Exiting."; \
+		false; \
 	fi
+include $(MAKEFILES)
+
+# Set default Target
+.DEFAULT_GOAL := help
+
+
+# -------------------------------------------------------------------------------------------------
+# Default configuration
+# -------------------------------------------------------------------------------------------------
+# Own vars
+TAG        = latest
+
+# Makefile.docker overwrites
+NAME       = PHP
+#VERSION    = 5.5
+IMAGE      = devilbox/php-fpm
+#FLAVOUR    = base
+FILE       = Dockerfile-$(VERSION)
+DIR        = Dockerfiles/$(FLAVOUR)
+
+ifeq ($(strip $(TAG)),latest)
+DOCKER_TAG = $(VERSION)-$(FLAVOUR)
+BASE_TAG   = $(VERSION)-base
+MODS_TAG   = $(VERSION)-mods
+PROD_TAG   = $(VERSION)-prod
+WORK_TAG   = $(VERSION)-work
+else
+DOCKER_TAG = $(VERSION)-$(FLAVOUR)-$(TAG)
+BASE_TAG   = $(VERSION)-base-$(TAG)
+MODS_TAG   = $(VERSION)-mods-$(TAG)
+PROD_TAG   = $(VERSION)-prod-$(TAG)
+WORK_TAG   = $(VERSION)-work-$(TAG)
+endif
+ARCH       = linux/amd64
+
+
+# Makefile.lint overwrites
+FL_IGNORES  = .git/,.github/,tests/
+SC_IGNORES  = .git/,.github/,tests/
+
+
+# -------------------------------------------------------------------------------------------------
+# Default Target
+# -------------------------------------------------------------------------------------------------
+.PHONY: help
+help:
+	@echo "lint                                     Lint project files and repository"
+	@echo
+	@echo "build [ARCH=...] [TAG=...]               Build Docker image"
+	@echo "rebuild [ARCH=...] [TAG=...]             Build Docker image without cache"
+	@echo "push [ARCH=...] [TAG=...]                Push Docker image to Docker hub"
+	@echo
+	@echo "manifest-create [ARCHES=...] [TAG=...]   Create multi-arch manifest"
+	@echo "manifest-push [TAG=...]                  Push multi-arch manifest"
+	@echo
+	@echo "test [ARCH=...]                          Test built Docker image"
 	@echo
 
+
+# -------------------------------------------------------------------------------------------------
+# Overwrite Targets
+# -------------------------------------------------------------------------------------------------
+
+# Append additional target to lint
+lint: lint-changelog
+lint: lint-ansible
+
+###
+### Ensures CHANGELOG has an entry
+###
+.PHONY: lint-changelog
 lint-changelog:
 	@echo "################################################################################"
 	@echo "# Lint Changelog"
@@ -121,46 +98,105 @@ lint-changelog:
 	fi
 	@echo
 
-lint-files:
-	@echo "################################################################################"
-	@echo "# Lint Files"
-	@echo "################################################################################"
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-cr --text --ignore '$(FL_IGNORES)' --path .
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-crlf --text --ignore '$(FL_IGNORES)' --path .
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-single-newline --text --ignore '$(FL_IGNORES)' --path .
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-trailing-space --text --ignore '$(FL_IGNORES)' --path .
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8 --text --ignore '$(FL_IGNORES)' --path .
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/file-lint:$(FL_VERSION) file-utf8-bom --text --ignore '$(FL_IGNORES)' --path .
-	@echo
-
-lint-yaml:
-	@# Lint all files
-	@echo "################################################################################"
-	@echo "# Lint Yaml"
-	@echo "################################################################################"
-	@docker run --rm $$(tty -s && echo "-it" || echo) -v $(CURRENT_DIR):/data cytopia/yamllint .
-	@echo
+###
+### Ensures Ansible Dockerfile generation is current
+###
+.PHONY: lint-ansible
+lint-ansible: gen-dockerfiles
+	@git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
 
 # -------------------------------------------------------------------------------------------------
-#  GENERATE TARGETS
+# Docker Targets
 # -------------------------------------------------------------------------------------------------
 
-gen-readme:
-ifeq ($(strip $(VERSION)),)
-	@echo "Generate README.md for all PHP versions"
-	cd build; ./gen-readme.sh $(ARCH)
-else
-	@echo "Generate README.md for PHP $(VERSION)"
-	@$(MAKE) --no-print-directory _check-version
-	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=base
-	@$(MAKE) --no-print-directory _check-image-exists _EXIST_IMAGE=mods
-	cd build; ./gen-readme.sh $(ARCH) $(VERSION)
+# ---- ONLY FOR "mods" images ----
+# When builds mods, we have a builder image and then copy everything to the final
+# target image. In order to do so, we pass a build-arg EXT_DIR, which contains
+# the variable directory of extensions to copy.
+# The only way to "LAZY" fetch it, is by doing a call to the base image and populate
+# a Makefile variable with its value upon call.
+ifeq ($(strip $(FLAVOUR)),mods)
+EXT_DIR=$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(BASE_TAG) -r \
+	'echo ini_get("extension_dir");'\
+)
 endif
 
+.PHONY: build
+build: check-flavour-is-set
+build: check-parent-image-exists
+build: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
+build: docker-arch-build
+
+.PHONY: rebuild
+rebuild: check-flavour-is-set
+rebuild: check-parent-image-exists
+rebuild: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
+rebuild: docker-arch-rebuild
+
+.PHONY: push
+push: docker-arch-push
+
+
+# -------------------------------------------------------------------------------------------------
+# Save / Load Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: save
+docker-save: check-flavour-is-set
+docker-save: check-version-is-set
+docker-save: check-current-image-exists
+
+.PHONY: load
+docker-load: check-flavour-is-set
+docker-load: check-version-is-set
+docker-load: check-current-image-exists
+
+
+# -------------------------------------------------------------------------------------------------
+# Manifest Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: manifest-create
+manifest-create: docker-manifest-create
+
+.PHONY: manifest-push
+manifest-push: docker-manifest-push
+
+
+# -------------------------------------------------------------------------------------------------
+# Test Targets
+# -------------------------------------------------------------------------------------------------
+.PHONY: test
+test: check-flavour-is-set
+test: check-current-image-exists
+test: test-integration
+
+.PHONY: test-integration
+test-integration:
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) $(FLAVOUR)
+
+
+# -------------------------------------------------------------------------------------------------
+# Generate Targets
+# -------------------------------------------------------------------------------------------------
+
+###
+### Generate README (requires images to be built)
+###
+.PHONY: gen-readme
+gen-readme: check-version-is-set
+gen-readme:
+	@echo "################################################################################"
+	@echo "# Generate README.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
+	@echo "################################################################################"
+	./build/gen-readme.sh $(IMAGE) $(ARCH) $(BASE_TAG) $(MODS_TAG) $(VERSION)
+	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+
+###
+### Generate Dockerfiles
+###
+.PHONY: gen-dockerfiles
 gen-dockerfiles:
 	docker run --rm \
-		--platform $(ARCH) \
 		$$(tty -s && echo "-it" || echo) \
 		-e USER=ansible \
 		-e MY_UID=$$(id -u) \
@@ -175,254 +211,118 @@ gen-dockerfiles:
 			--diff $(ARGS)
 
 
-# -------------------------------------------------------------------------------------------------
-#  BUILD TARGETS
-# -------------------------------------------------------------------------------------------------
-
-build-base: _check-version
-build-base:
-	docker build $(NO_CACHE) \
-		--platform $(ARCH) \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD))" \
-		$(ARGS) \
-		-t $(IMAGE):${VERSION}-base \
-		-f $(DIR)/base/Dockerfile-${VERSION} $(DIR)/base
-
-
-build-mods: _check-version
-build-mods: _EXIST_IMAGE=base
-build-mods: _check-image-exists
-build-mods:
-ifeq ($(strip $(TARGET)),)
-	docker build $(NO_CACHE) \
-		--platform $(ARCH) \
-		--target builder \
-		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
-	@# $(NO_CACHE) is removed, as it would otherwise rebuild the 'builder' image again.
-	docker build \
-		--platform $(ARCH) \
-		--target final \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		--build-arg EXT_DIR="$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(VERSION)-mods -i \
-			| grep ^extension_dir \
-			| awk -F '=>' '{print $$2}' \
-			| xargs \
-		)" \
-		$(ARGS) \
-		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods;
-else
-	docker build $(NO_CACHE) \
-		--platform $(ARCH) \
-		--target $(TARGET) \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		$(ARGS) \
-		-t $(IMAGE):$(VERSION)-mods \
-		-f $(DIR)/mods/Dockerfile-$(VERSION) $(DIR)/mods
-endif
-
-
-build-prod: _check-version
-build-prod: _EXIST_IMAGE=mods
-build-prod: _check-image-exists
-build-prod:
-	docker build $(NO_CACHE) \
-		--platform $(ARCH) \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		$(ARGS) \
-		-t $(IMAGE):${VERSION}-prod \
-		-f $(DIR)/prod/Dockerfile-${VERSION} $(DIR)/prod
-
-
-build-work: _check-version
-build-work: _EXIST_IMAGE=prod
-build-work: _check-image-exists
-build-work:
-	docker build $(NO_CACHE) \
-		--platform $(ARCH) \
-		--label "org.opencontainers.image.created"="$$(date --rfc-3339=s)" \
-		--label "org.opencontainers.image.version"="$$(git rev-parse --abbrev-ref HEAD)" \
-		--label "org.opencontainers.image.revision"="$$(git rev-parse HEAD)" \
-		--build-arg ARCH=$(ARCH) \
-		$(ARGS) \
-		-t $(IMAGE):${VERSION}-work \
-		-f $(DIR)/work/Dockerfile-${VERSION} $(DIR)/work
-
 
 # -------------------------------------------------------------------------------------------------
-#  REBUILD TARGETS
+# HELPER TARGETS
 # -------------------------------------------------------------------------------------------------
 
-rebuild-base: _pull-base-image
-rebuild-base: NO_CACHE=--no-cache
-rebuild-base: build-base
+###
+### Ensures the VERSION variable is set
+###
+.PHONY: check-version-is-set
+check-version-is-set:
+	@if [ "$(VERSION)" = "" ]; then \
+		echo "This make target requires the VERSION variable to be set."; \
+		echo "make <target> VERSION="; \
+		echo "Exiting."; \
+		exit 1; \
+	fi
 
+###
+### Ensures the FLAVOUR variable is set
+###
+.PHONY: check-flavour-is-set
+check-flavour-is-set:
+	@if [ "$(FLAVOUR)" = "" ]; then \
+		echo "This make target requires the FLAVOUR variable to be set."; \
+		echo "make <target> FLAVOUR="; \
+		echo "Exiting."; \
+		exit 1; \
+	fi
+	@if [ "$(FLAVOUR)" != "base" ] && [ "$(FLAVOUR)" != "mods" ] && [ "$(FLAVOUR)" != "prod" ] && [ "$(FLAVOUR)" != "work" ]; then \
+		echo "Error, Flavour can only be one of 'base', 'mods', 'prod', or 'work'."; \
+		echo "Exiting."; \
+		exit 1; \
+	fi
 
-rebuild-mods: NO_CACHE=--no-cache
-rebuild-mods: build-mods
-
-
-rebuild-prod: NO_CACHE=--no-cache
-rebuild-prod: build-prod
-
-
-rebuild-work: NO_CACHE=--no-cache
-rebuild-work: build-work
-
-
-# -------------------------------------------------------------------------------------------------
-#  TEST TARGETS
-# -------------------------------------------------------------------------------------------------
-
-test-base: _check-version
-test-base: _EXIST_IMAGE=base
-test-base: _check-image-exists
-test-base:
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) base
-
-
-test-mods: _check-version
-test-mods: _EXIST_IMAGE=mods
-test-mods: _check-image-exists
-test-mods: _check-version
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) mods
-
-
-test-prod: _check-version
-test-prod: _EXIST_IMAGE=prod
-test-prod: _check-image-exists
-test-prod: _check-version
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) prod
-
-
-test-work: _check-version
-test-work: _EXIST_IMAGE=work
-test-work: _check-image-exists
-test-work: _check-version
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) work
-
-
-# -------------------------------------------------------------------------------------------------
-#  DOCKERHUB TARGETS
-# -------------------------------------------------------------------------------------------------
-login:
-ifeq ($(strip $(USERNAME)),)
-	@$(info This make target requires the USERNAME variable to be set.)
-	@$(info make login USERNAME= PASSWORD=)
-	@$(info )
-	@$(error Exiting)
-endif
-ifeq ($(strip $(PASSWORD)),)
-	@$(info This make target requires the PASSWORD variable to be set.)
-	@$(info make login USERNAME= PASSWORD=)
-	@$(info )
-	@$(error Exiting)
-endif
-	@yes | docker login --username $(USERNAME) --password $(PASSWORD)
-
-
-push:
-ifeq ($(strip $(TAG)),)
-	@$(info This make target requires the TAG variable to be set.)
-	@$(info make push TAG=)
-	@$(info )
-	@$(error Exiting)
-endif
-	docker push $(IMAGE):$(TAG)
-
-
-tag:
-ifeq ($(strip $(OLD_TAG)),)
-	@$(info This make target requires the OLD_TAG variable to be set.)
-	@$(info make tag OLD_TAG= NEW_TAG=)
-	@$(info )
-	@$(error Exiting)
-endif
-ifeq ($(strip $(NEW_TAG)),)
-	@$(info This make target requires the NEW_TAG variable to be set.)
-	@$(info make tag OLD_TAG= NEW_TAG=)
-	@$(info )
-	@$(error Exiting)
-endif
-	docker tag $(IMAGE):$(OLD_TAG) $(IMAGE):$(NEW_TAG)
-
-
-
-# -------------------------------------------------------------------------------------------------
-#  HELPER TARGETS
-# -------------------------------------------------------------------------------------------------
-
-_check-version:
-ifeq ($(strip $(VERSION)),)
-	@$(info This make target requires the VERSION variable to be set.)
-	@$(info make build-<flavour> VERSION=7.3)
-	@$(info )
-	@$(error Exiting)
-endif
-ifeq ($(VERSION),5.2)
-else
-ifeq ($(VERSION),5.3)
-else
-ifeq ($(VERSION),5.4)
-else
-ifeq ($(VERSION),5.5)
-else
-ifeq ($(VERSION),5.6)
-else
-ifeq ($(VERSION),7.0)
-else
-ifeq ($(VERSION),7.1)
-else
-ifeq ($(VERSION),7.2)
-else
-ifeq ($(VERSION),7.3)
-else
-ifeq ($(VERSION),7.4)
-else
-ifeq ($(VERSION),8.0)
-else
-ifeq ($(VERSION),8.1)
-else
-ifeq ($(VERSION),8.2)
-else
-	@$(info VERSION can only be: '5.2', '5.3', '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' or '8.2')
-	@$(info )
-	@$(error Exiting)
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-endif
-	@echo "Version $(VERSION) is valid"
-
-
-_check-image-exists:
-	@if [ "$$(docker images -q $(IMAGE):$(VERSION)-$(_EXIST_IMAGE))" = "" ]; then \
-		>&2 echo "Docker image '$(IMAGE):$(VERSION)-$(_EXIST_IMAGE)' was not found locally."; \
+###
+### Checks if current image exists and is of correct architecture
+###
+.PHONY: check-current-image-exists
+check-current-image-exists: check-flavour-is-set
+check-current-image-exists:
+	@if [ "$$( docker images -q $(IMAGE):$(DOCKER_TAG) )" = "" ]; then \
+		>&2 echo "Docker image '$(IMAGE):$(DOCKER_TAG)' was not found locally."; \
 		>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
 		>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
 		>&2 echo; \
-		false; \
+		exit 1; \
+	else \
+		echo "OK: Image $(IMAGE):$(DOCKER_TAG) exists"; \
+	fi; \
+	OS="$$( docker image inspect $(IMAGE):$(DOCKER_TAG) --format '{{.Os}}' )"; \
+	ARCH="$$( docker image inspect $(IMAGE):$(DOCKER_TAG) --format '{{.Architecture}}' )"; \
+	if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
+		>&2 echo "Docker image '$(IMAGE):$(DOCKER_TAG)' has invalid architecture: $${OS}/$${ARCH}"; \
+		>&2 echo "Expected: $(ARCH)"; \
+		>&2 echo; \
+		exit 1; \
+	else \
+		echo "OK: Image $(IMAGE):$(DOCKER_TAG) is of arch $${OS}/$${ARCH}"; \
 	fi;
 
-
-_pull-base-image:
-	@echo "Pulling root image for PHP ${VERSION}"
-	docker pull --platform $(ARCH) $(shell grep FROM $(DIR)/base/Dockerfile-${VERSION} | sed 's/^FROM\s*//g';)
+###
+### Checks if parent image exists and is of correct architecture
+###
+.PHONY: check-parent-image-exists
+check-parent-image-exists: check-flavour-is-set
+check-parent-image-exists:
+	@if [ "$(FLAVOUR)" = "work" ]; then \
+		if [ "$$( docker images -q $(IMAGE):$(PROD_TAG) )" = "" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(PROD_TAG)' was not found locally."; \
+			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
+			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+		OS="$$( docker image inspect $(IMAGE):$(PROD_TAG) --format '{{.Os}}' )"; \
+		ARCH="$$( docker image inspect $(IMAGE):$(PROD_TAG) --format '{{.Architecture}}' )"; \
+		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(PROD_TAG)' has invalid architecture: $${OS}/$${ARCH}"; \
+			>&2 echo "Expected: $(ARCH)"; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+	elif [ "$(FLAVOUR)" = "prod" ]; then \
+		if [ "$$( docker images -q $(IMAGE):$(MODS_TAG) )" = "" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(MODS_TAG)' was not found locally."; \
+			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
+			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
+			>&2 echo; \
+			exit 1; \
+		fi \
+		OS="$$( docker image inspect $(IMAGE):$(MODS_TAG) --format '{{.Os}}' )"; \
+		ARCH="$$( docker image inspect $(IMAGE):$(MODS_TAG) --format '{{.Architecture}}' )"; \
+		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(MODS_TAG)' has invalid architecture: $${OS}/$${ARCH}"; \
+			>&2 echo "Expected: $(ARCH)"; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+	elif [ "$(FLAVOUR)" = "mods" ]; then \
+		if [ "$$( docker images -q $(IMAGE):$(BASE_TAG) )" = "" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(BASE_TAG)' was not found locally."; \
+			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
+			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
+			>&2 echo; \
+			exit 1; \
+		fi \
+		OS="$$( docker image inspect $(IMAGE):$(BASE_TAG) --format '{{.Os}}' )"; \
+		ARCH="$$( docker image inspect $(IMAGE):$(BASE_TAG) --format '{{.Architecture}}' )"; \
+		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(BASE_TAG)' has invalid architecture: $${OS}/$${ARCH}"; \
+			>&2 echo "Expected: $(ARCH)"; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+	fi;
