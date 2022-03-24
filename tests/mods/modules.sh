@@ -15,7 +15,8 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
-MODULE="${5}"
+TAG="${5}"
+MODULE="${6}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -55,7 +56,7 @@ docker run \
 	-v "${CWD}/modules/${MODULE}:${WORKDIR}" \
 	--entrypoint=sh \
 	--workdir="${WORKDIR}" \
-	"${IMAGE}:${VERSION}-${FLAVOUR}" \
+	"${IMAGE}:${TAG}" \
 	-c 'find . -name "*.php" -type f -print0 | xargs -0 -n1 sh -c "
 		set -e
 		set -u

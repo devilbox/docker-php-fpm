@@ -10,6 +10,7 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -24,7 +25,7 @@ FLAVOUR="${4}"
 ### uid: 1005 (new uid)
 ###
 print_h2 "DEBUG_ENTRYPOINT=2 NEW_UID=1005"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1005" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1005" )"; then
 	exit 1
 fi
 
@@ -58,7 +59,7 @@ docker_stop "${name}"
 ### uid: 1000 (same uid)
 ###
 print_h2 "DEBUG_ENTRYPOINT=2 NEW_UID=1000"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1000" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=1000" )"; then
 	exit 1
 fi
 
@@ -92,7 +93,7 @@ docker_stop "${name}"
 ### uid: 33 (existing uid)
 ###
 print_h2 "DEBUG_ENTRYPOINT=2 NEW_UID=33"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=33" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=33" )"; then
 	exit 1
 fi
 

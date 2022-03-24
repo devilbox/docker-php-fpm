@@ -10,6 +10,7 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -51,7 +52,7 @@ run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
 print_h2 "Starting PHP-FPM"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"; then
 	exit 1
 fi
 

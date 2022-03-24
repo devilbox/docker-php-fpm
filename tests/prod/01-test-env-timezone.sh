@@ -10,6 +10,7 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -24,7 +25,7 @@ FLAVOUR="${4}"
 ### Europe/Berlin
 ###
 print_h2 "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin" )"; then
 	exit 1
 fi
 

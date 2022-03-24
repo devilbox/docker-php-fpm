@@ -39,6 +39,7 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 
 ###
@@ -49,9 +50,9 @@ if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "p
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
@@ -60,9 +61,9 @@ if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "w
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
@@ -71,9 +72,9 @@ if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
@@ -82,8 +83,8 @@ if [ "${FLAVOUR}" = "work" ]; then
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi

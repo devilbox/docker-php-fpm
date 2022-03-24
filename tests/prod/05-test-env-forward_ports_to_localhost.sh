@@ -10,6 +10,7 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -39,7 +40,7 @@ run "sleep 60"
 
 # Start PHP-FPM
 print_h2 "Start PHP-FPM"
-if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${name_mysql}:3306 --link ${name_mysql}" )"; then
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e FORWARD_PORTS_TO_LOCALHOST=3306:${name_mysql}:3306 --link ${name_mysql}" )"; then
 	docker_stop "${name_mysql}"  || true
 	exit 1
 fi
