@@ -69,17 +69,29 @@ if [ ! -r "${MOUNTPOINT}/devilbox" ]; then
 fi
 
 # Send test email
+print_h2 "Send test email"
 docker_exec "${name}" "php -r \"mail('mailtest@devilbox.org', 'the subject', 'the message');\""
-run "sleep 5"
 
-if ! run "grep 'the subject' ${MOUNTPOINT}/devilbox"; then
-	docker_logs "${name}" || true
-	docker_stop "${name}" || true
-	run "cat ${MOUNTPOINT}/devilbox"
-	rm -rf "${MOUNTPOINT}"
-	echo "Failed"
-	exit 1
-fi
 
+# Probe if email has been received
+print_h2 "Probe for sent email"
+RETRIES=60
+INDEX=0
+while ! run "grep 'the subject' ${MOUNTPOINT}/devilbox"; do
+	if [ "${RETRIES}" = "${INDEX}" ]; then
+		docker_logs "${name}" || true
+		docker_stop "${name}" || true
+		run "cat ${MOUNTPOINT}/devilbox"
+		rm -rf "${MOUNTPOINT}"
+		echo "Failed"
+		exit 1
+	fi
+	INDEX="$(( INDEX + 1 ))"
+	sleep 1
+done
+
+
+# Cleanup
+print_h2 "Cleanup"
 docker_stop "${name}"
 rm -rf "${MOUNTPOINT}"
