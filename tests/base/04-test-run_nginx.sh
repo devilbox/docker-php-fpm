@@ -49,6 +49,16 @@ if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_EN
 	exit 1
 fi
 
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
+
+
 # Nginx.conf
 {
 	echo "server {"

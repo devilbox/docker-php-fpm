@@ -29,8 +29,18 @@ print_h2 "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABL
 if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -e ENABLE_MAIL=2 -v ${MOUNTPOINT}:/var/mail" )"; then
 	exit 1
 fi
-run "sleep 10"
 
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
+
+# Start Tests
+print_h2 "Testing..."
 if ! run "docker logs ${name} 2>&1 | grep -q 'ENABLE_MAIL'"; then
 	docker_logs "${name}" || true
 	docker_stop "${name}" || true

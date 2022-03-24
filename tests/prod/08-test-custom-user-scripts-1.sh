@@ -39,8 +39,14 @@ if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_EN
 	exit 1
 fi
 
-# Wait for both containers to be up and running
-run "sleep 10"
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
 
 # Check entrypoint for script run
 print_h2 "Check docker logs for script run"

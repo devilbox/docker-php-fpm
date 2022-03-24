@@ -43,8 +43,15 @@ if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_EN
 	docker_stop "${name_mysql}"  || true
 	exit 1
 fi
-run "sleep 15"
 
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
 
 print_h2 "Ensure forwarding info is present in docker logs"
 if ! run "docker logs ${name} 2>&1 | grep 'Forwarding ${name_mysql}:3306'"; then
@@ -56,11 +63,6 @@ if ! run "docker logs ${name} 2>&1 | grep 'Forwarding ${name_mysql}:3306'"; then
 	exit 1
 fi
 
-
-# Test connectivity
-#docker_exec "${did}" "ping -c 1 ${mname}"
-#docker_exec "${did}" "echo | nc -w 1 ${mname} 3306"
-#docker_exec "${did}" "echo | nc -w 1 127.0.0.1 3306"
 
 # Only work container has mysql binary installed
 if [ "${FLAVOUR}" = "work" ]; then

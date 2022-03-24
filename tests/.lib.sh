@@ -185,21 +185,6 @@ function docker_exec() {
 
 
 ###
-### Get docker name
-###
-function docker_name() {
-	local name="${1}"
-	echo "${name}"
-	#name="$( docker ps | grep "${did}" | awk '{print $(NF)}' )"
-
-	#if [ -z "${name}" ]; then
-	#	return 1
-	#fi
-	#echo "${name}"
-}
-
-
-###
 ### Stop container
 ###
 function docker_stop() {
@@ -208,4 +193,51 @@ function docker_stop() {
 	run "docker stop  ${name}" || true
 	run "docker kill  ${name} || true" 2>/dev/null
 	run "docker rm -f ${name} || true" 2>/dev/null
+}
+
+
+###
+### Check if PHP-FPM is up and running
+###
+function check_php_fpm_running() {
+	local name="${1}"
+	local retries="60"
+	local index="0"
+
+	>&2 echo
+
+	# PHP process
+	index=0
+	>&2 echo "Checking if PHP-FPM process is running..."
+	while ! run "docker exec ${name} ps auxwww | grep -E '(php-fpm|php-cgi)'"; do
+		>&2 printf "."
+		index="$(( index + 1 ))"
+		if [ "${index}" = "${retries}" ]; then
+			>&2 echo
+			run "docker exec ${name} ps auxwww"
+			>&2 echo "Failed to find PHP process after ${retries} seconds."
+			return 1
+		fi
+		sleep 1
+	done
+	>&2 echo
+
+	# Docker logs
+	index=0
+	>&2 echo "Checking if PHP-FPM shows success in docker logs..."
+	while ! run "docker logs ${name} 2>&1 | grep -E 'php-fpm entered RUNNING state|ready to handle connections|fpm is running'"; do
+		>&2 printf "."
+		index="$(( index + 1 ))"
+		if [ "${index}" = "${retries}" ]; then
+			>&2 echo
+			>&2 echo "Failed to find PHP success in docker logs after ${retries} seconds."
+			return 1
+		fi
+		sleep 1
+	done
+	>&2 echo
+
+
+	# Echo newline and return
+	return 0
 }

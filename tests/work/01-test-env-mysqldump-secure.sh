@@ -44,8 +44,15 @@ if ! name="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "${ARCH}" "-e DEBUG_EN
 	docker_stop "${name_mysql}"  || true
 	exit 1
 fi
-run "sleep 15"
 
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
 
 print_h2 "Run mysqldump-secure"
 if ! docker_exec "${name}" "mysqldump-secure -vv"; then
