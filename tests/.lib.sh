@@ -237,6 +237,9 @@ function check_php_fpm_running() {
 	done
 	>&2 echo
 
+	# Wait some more time for everyting else to settle
+	run "sleep 10"
+
 
 	# Echo newline and return
 	return 0
