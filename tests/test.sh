@@ -30,8 +30,8 @@ CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 ###
 ### Sanity check
 ###
-if [ "${#}" -ne "4" ]; then
-	echo "Usage: start.ci <image> <arch> <version> <flavour>"
+if [ "${#}" -ne "5" ]; then
+	echo "Usage: start.ci <image> <arch> <version> <flavour> <tag>"
 	exit 1
 fi
 

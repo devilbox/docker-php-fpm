@@ -174,7 +174,7 @@ test: test-integration
 
 .PHONY: test-integration
 test-integration:
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) $(FLAVOUR)
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) $(FLAVOUR) $(DOCKER_TAG)
 
 
 # -------------------------------------------------------------------------------------------------
