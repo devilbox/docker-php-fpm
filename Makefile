@@ -142,14 +142,16 @@ push: docker-arch-push
 # Save / Load Targets
 # -------------------------------------------------------------------------------------------------
 .PHONY: save
-docker-save: check-flavour-is-set
-docker-save: check-version-is-set
-docker-save: check-current-image-exists
+save: check-flavour-is-set
+save: check-version-is-set
+save: check-current-image-exists
+save: docker-sage
 
 .PHONY: load
-docker-load: check-flavour-is-set
-docker-load: check-version-is-set
-docker-load: check-current-image-exists
+load: check-flavour-is-set
+load: check-version-is-set
+load: check-current-image-exists
+load: docker-load
 
 
 # -------------------------------------------------------------------------------------------------
