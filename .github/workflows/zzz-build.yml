@@ -22,7 +22,7 @@ jobs:
   # (2/2) Build
   docker:
     needs: [params]
-    uses: ./.github/workflows/zzz-build.yml
+    uses: ./.github/workflows/zzz-reuse.yml
     with:
       enabled: true
       can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
