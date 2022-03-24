@@ -101,12 +101,16 @@ jobs:
         id: set-artifact
         shell: bash
         run: |
-          PRE_HASH="$( git rev-parse HEAD | head -c 10 )"
+          #PRE_HASH="$( git rev-parse HEAD | head -c 10 )"
           PRE_DATE="$( date +"%s" )"
-          BASE="${PRE_HASH}-${PRE_DATE}-base"
-          MODS="${PRE_HASH}-${PRE_DATE}-mods"
-          PROD="${PRE_HASH}-${PRE_DATE}-prod"
-          WORK="${PRE_HASH}-${PRE_DATE}-work"
+          #BASE="${PRE_HASH}-${PRE_DATE}-base"
+          #MODS="${PRE_HASH}-${PRE_DATE}-mods"
+          #PROD="${PRE_HASH}-${PRE_DATE}-prod"
+          #WORK="${PRE_HASH}-${PRE_DATE}-work"
+          BASE="${PRE_DATE}-base"
+          MODS="${PRE_DATE}-mods"
+          PROD="${PRE_DATE}-prod"
+          WORK="${PRE_DATE}-work"
 
           echo "::set-output name=base::${BASE}"
           echo "::set-output name=mods::${MODS}"
