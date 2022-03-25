@@ -103,9 +103,13 @@ jobs:
       ### Download and import base
       ###
       - name: "[Artifact Load] Download base"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.base }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.base }}
+          attempt_limit: 20
+          attempt_delay: 10000
         if: ${{ inputs.flavour == 'mods' }}
 
       - name: "[Artifact Load] Import base"
@@ -119,9 +123,13 @@ jobs:
       ### Download and import mods
       ###
       - name: "[Artifact Load] Download mods"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.mods }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.mods }}
+          attempt_limit: 20
+          attempt_delay: 10000
         if: ${{ inputs.flavour == 'prod' }}
 
       - name: "[Artifact Load] Import mods"
@@ -135,9 +143,13 @@ jobs:
       ### Download and import prod
       ###
       - name: "[Artifact Load] Download prod"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.prod }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.prod }}
+          attempt_limit: 20
+          attempt_delay: 10000
         if: ${{ inputs.flavour == 'work' }}
 
       - name: "[Artifact Load] Import prod"

@@ -99,9 +99,13 @@ jobs:
       ### Download and import base
       ###
       - name: "[Artifact Load] Download base"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.base }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.base }}
+          attempt_limit: 20
+          attempt_delay: 10000
 
       - name: "[Artifact Load] Import base"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -114,9 +118,13 @@ jobs:
       ### Download and import mods
       ###
       - name: "[Artifact Load] Download mods"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.mods }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.mods }}
+          attempt_limit: 20
+          attempt_delay: 10000
 
       - name: "[Artifact Load] Import mods"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -129,9 +137,13 @@ jobs:
       ### Download and import prod
       ###
       - name: "[Artifact Load] Download prod"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.prod }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.prod }}
+          attempt_limit: 20
+          attempt_delay: 10000
 
       - name: "[Artifact Load] Import prod"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -144,9 +156,13 @@ jobs:
       ### Download and import prod
       ###
       - name: "[Artifact Load] Download work"
-        uses: actions/download-artifact@v3
+        uses: Wandalen/wretry.action@v1.0.11
         with:
-          name: ${{ steps.set-artifact-name.outputs.work }}
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.work }}
+          attempt_limit: 20
+          attempt_delay: 10000
 
       - name: "[Artifact Load] Import work"
         uses: cytopia/shell-command-retry-action@v0.1.2
