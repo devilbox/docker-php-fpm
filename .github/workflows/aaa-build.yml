@@ -32,10 +32,16 @@ jobs:
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   debug:
-    needs: [configure]
+    needs: [params, configure]
     name: Debug
     runs-on: ubuntu-latest
     steps:
+      - name: "[DEBUG] Show params outputs"
+        shell: bash
+        run: |
+          echo 'matrix=${{ needs.params.outputs.matrix }}'
+          echo 'refs=${{ needs.params.outputs.refs }}'
+
       - name: "[DEBUG] Show configure outputs"
         shell: bash
         run: |
