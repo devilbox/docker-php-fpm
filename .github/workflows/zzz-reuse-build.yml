@@ -202,7 +202,7 @@ jobs:
             path: ${{ steps.set-artifact-name.outputs.base }}
           attempt_limit: 20
           attempt_delay: 10000
-        if: ${{ inputs.flavour == 'mods' }}
+        if: ${{ inputs.flavour == 'base' }}
 
       ###
       ### Export and Upload mods
