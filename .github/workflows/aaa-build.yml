@@ -33,6 +33,21 @@ jobs:
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   # (2/2) Build 'base'
+  deploy:
+    needs: [params, configure]
+    uses: ./.github/workflows/aaa-reuse-deploy.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      deploy_matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # (2/2) Build 'base'
   base:
     needs: [params, configure]
     uses: ./.github/workflows/aaa-reuse-build.yml
