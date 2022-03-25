@@ -135,7 +135,15 @@ rebuild: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
 rebuild: docker-arch-rebuild
 
 .PHONY: push
+push: check-flavour-is-set
+push: check-version-is-set
 push: docker-arch-push
+
+.PHONY: tag
+tag: check-flavour-is-set
+tag: check-version-is-set
+tag:
+	docker tag $(IMAGE):$(VERSION)-$(FLAVOUR) $(IMAGE):$(DOCKER_TAG)
 
 
 # -------------------------------------------------------------------------------------------------
