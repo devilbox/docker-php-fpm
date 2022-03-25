@@ -31,6 +31,18 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+  debug:
+    needs: [configure]
+    name: Debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: "[DEBUG] Show configure outputs"
+        shell: bash
+        run: |
+          echo 'matrix_build=${{ needs.configure.outputs.matrix_build }}'
+          echo 'has_refs=${{ needs.configure.outputs.has_refs }}'
+          echo 'artifact_prefix=${{ needs.configure.outputs.artifact_prefix }}'
+
   # (2/2) Build 'base'
   base:
     needs: [params, configure]

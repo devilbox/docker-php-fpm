@@ -1,3 +1,4 @@
+---
 name: Configure Pipeline for multi-arch image build
 
 on:
@@ -110,13 +111,13 @@ jobs:
           PRE_RAND="$( echo $RANDOM | md5sum | head -c 10 )"
           echo "::set-output name=prefix::${PRE_DATE}-${PRE_RAND}"
 
-      - name: "[DEBUG] SHow Workflow Inputs"
+      - name: "[DEBUG] Show Workflow Inputs"
         shell: bash
         run: |
-          echo 'enabled: ${{ inputs.enabled }} '
-          echo 'can_deploy: ${{ inputs.can_deploy }} '
-          echo 'matrix: ${{ inputs.matrix }} '
-          echo 'refs: ${{ inputs.refs }} '
+          echo 'enabled: ${{ inputs.enabled }}'
+          echo 'can_deploy: ${{ inputs.can_deploy }}'
+          echo 'matrix: ${{ inputs.matrix }}'
+          echo 'refs: ${{ inputs.refs }}'
 
       - name: "[DEBUG] Show Determined Settings"
         shell: bash
