@@ -39,7 +39,7 @@ on:
 
 jobs:
   deploy:
-    name: ${{ matrix.name }}-${{ matrix.version }}-${{ inputs.flavour }} (${{ matrix.arch }}) ${{ matrix.refs }}
+    name: ${{ matrix.name }}-${{ matrix.version }} (${{ matrix.arch }}) ${{ matrix.refs }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
