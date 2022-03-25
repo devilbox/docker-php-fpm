@@ -145,7 +145,7 @@ push: docker-arch-push
 save: check-flavour-is-set
 save: check-version-is-set
 save: check-current-image-exists
-save: docker-sage
+save: docker-save
 
 .PHONY: load
 load: check-flavour-is-set
