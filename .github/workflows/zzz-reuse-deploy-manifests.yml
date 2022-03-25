@@ -111,28 +111,24 @@ jobs:
       - name: "[Create Manifest] base (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=base ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Create Manifest] mods (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=mods ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Create Manifest] prod (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=prod ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Create Manifest] work (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=work ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
 
@@ -144,27 +140,23 @@ jobs:
       - name: "[Push Manifest] base: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Push Manifest] mods: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Push Manifest] prod: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
 
       - name: "[Push Manifest] work: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
-          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
