@@ -137,12 +137,13 @@ jobs:
           echo 'artifact_prod=${{ steps.set-artifact.outputs.prod }}'
           echo 'artifact_work=${{ steps.set-artifact.outputs.work }}'
 
+
   # -----------------------------------------------------------------------------------------------
-  # JOB (2/3): BUILD
+  # JOB (2/3): BUILD-BASE
   # -----------------------------------------------------------------------------------------------
   build-base:
     needs: [configure]
-    name: Build ${{ matrix.name }}-${{ matrix.version }} (${{ matrix.flavour }}) (${{ matrix.arch }}) ${{ matrix.refs }}
+    name: Build ${{ matrix.name }}-${{ matrix.version }} (${{ matrix.arch }}) ${{ matrix.refs }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -183,7 +184,7 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make build VERSION=${{ matrix.version }} FLAVOUR=${{ matrix.flavour }} ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
+            make build VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       # ------------------------------------------------------------
       # Test
@@ -192,7 +193,7 @@ jobs:
       #  uses: cytopia/shell-command-retry-action@v0.1.2
       #  with:
       #    command: |
-      #      make test VERSION=${{ matrix.version }} FLAVOUR=${{ matrix.flavour }} ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
+      #      make test VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       # ------------------------------------------------------------
       # Export
@@ -211,13 +212,122 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make save VERSION=${{ matrix.version }} FLAVOUR=${{ matrix.flavour }} ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }} OUTFILE=${{ steps.artifact.outputs.file }}
+            make save VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }} OUTFILE=${{ steps.artifact.outputs.file }}
 
       - name: "[Artifact] Upload"
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.artifact.outputs.file }}
           path: ${{ steps.artifact.outputs.file }}
+
+
+  # -----------------------------------------------------------------------------------------------
+  # JOB (2/3): BUILD-MODS
+  # -----------------------------------------------------------------------------------------------
+  build-mods:
+    needs: [configure, build-base]
+    name: Build ${{ matrix.name }}-${{ matrix.version }} (${{ matrix.arch }}) ${{ matrix.refs }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.configure.outputs.matrix_build) }}
+    if: inputs.enabled
+    steps:
+      # ------------------------------------------------------------
+      # Setup repository
+      # ------------------------------------------------------------
+      - name: "[SETUP] Checkout repository (current)"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+        if: needs.configure.outputs.has_refs == 0
+
+      - name: "[SETUP] Checkout repository (ref: ${{ matrix.refs }})"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ matrix.refs }}
+        if: needs.configure.outputs.has_refs != 0
+
+      - name: "[SETUP] Setup QEMU environment"
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+
+      - name: "[SETUP] Determine Docker tag"
+        id: tag
+        uses: cytopia/docker-tag-action@v0.4.15
+
+      # ------------------------------------------------------------
+      # Import
+      # ------------------------------------------------------------
+      - name: "[Import] Set name"
+        id: import
+        run: |
+            PREFIX="${{ needs.configure.outputs.artifact_base }}"
+            ARCH="${{ matrix.arch }}"
+            TAG="${{ steps.tag.outputs.docker-tag }}"
+            NAME="$( echo "${PREFIX}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
+            echo "::set-output name=file::${NAME}"
+            echo "file=${NAME}"
+
+      - name: "[Import] Download"
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.import.outputs.file }}
+          path: ${{ steps.import.outputs.file }}
+
+      - name: "[Import] load"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make load VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }} INFILE=${{ steps.import.outputs.file }}
+
+      # ------------------------------------------------------------
+      # Build
+      # ------------------------------------------------------------
+      - name: Build
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make build VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
+
+      # ------------------------------------------------------------
+      # Test
+      # ------------------------------------------------------------
+      #- name: Test
+      #  uses: cytopia/shell-command-retry-action@v0.1.2
+      #  with:
+      #    command: |
+      #      make test VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
+
+      # ------------------------------------------------------------
+      # Export
+      # ------------------------------------------------------------
+      - name: "[Artifact] Set name"
+        id: artifact
+        run: |
+            PREFIX="${{ needs.configure.outputs.artifact_mods }}"
+            ARCH="${{ matrix.arch }}"
+            TAG="${{ steps.tag.outputs.docker-tag }}"
+            NAME="$( echo "${PREFIX}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
+            echo "::set-output name=file::${NAME}"
+            echo "file=${NAME}"
+
+      - name: "[Artifact] Export"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make save VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }} OUTFILE=${{ steps.artifact.outputs.file }}
+
+      - name: "[Artifact] Upload"
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.artifact.outputs.file }}
+          path: ${{ steps.artifact.outputs.file }}
+
 
 #      # ------------------------------------------------------------
 #      # Deploy
