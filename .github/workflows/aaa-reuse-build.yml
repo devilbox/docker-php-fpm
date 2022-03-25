@@ -105,14 +105,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.base }}
-        if: inputs.flavour == "mods"
+        if: ${{ inputs.flavour == 'mods' }}
 
       - name: "[Artifact Load] Import base"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.base }}
-        if: inputs.flavour == "mods"
+        if: ${{ inputs.flavour == 'mods' }}
 
       ###
       ### Download and import mods
@@ -121,14 +121,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.mods }}
-        if: inputs.flavour == "prod"
+        if: ${{ inputs.flavour == 'prod' }}
 
       - name: "[Artifact Load] Import mods"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.mods }}
-        if: inputs.flavour == "prod"
+        if: ${{ inputs.flavour == 'prod' }}
 
       ###
       ### Download and import prod
@@ -137,14 +137,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.prod }}
-        if: inputs.flavour == "work"
+        if: ${{ inputs.flavour == 'work' }}
 
       - name: "[Artifact Load] Import prod"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.prod }}
-        if: inputs.flavour == "work"
+        if: ${{ inputs.flavour == 'work' }}
 
 
       # ------------------------------------------------------------
