@@ -45,6 +45,30 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # JOB: BUILD
   # -----------------------------------------------------------------------------------------------
+  debug:
+    name: debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Show inputs"
+        run: |
+          echo "enabled=${{ inputs.enabled }}"
+          echo
+
+          echo "can_deploy=${{ inputs.can_deploy }}"
+          echo
+
+          echo "build_matrix=${{ inputs.build_matrix }}"
+          echo
+
+          echo "has_refs=${{ inputs.has_refs }}"
+          echo
+
+          echo "artifact_prefix=${{ inputs.artifact_prefix }}"
+          echo
+
+          echo "flavour=${{ inputs.flavour }}"
+          echo
+
   build:
     name: Build ${{ matrix.name }}-${{ matrix.version }}-${{ inputs.flavour }} (${{ matrix.arch }}) ${{ matrix.refs }}
     runs-on: ubuntu-latest
