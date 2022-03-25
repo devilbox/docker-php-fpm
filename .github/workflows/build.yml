@@ -41,7 +41,7 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (3/8) Build & Test base
   # -----------------------------------------------------------------------------------------------
-  build-base:
+  base:
     needs:
       - params
       - configure
@@ -61,11 +61,11 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
   # -----------------------------------------------------------------------------------------------
-  build-mods:
+  mods:
     needs:
       - params
       - configure
-      - build-base
+      - base
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -82,12 +82,12 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (5/8) Build & Test prod
   # -----------------------------------------------------------------------------------------------
-  build-prod:
+  prod:
     needs:
       - params
       - configure
-      - build-base
-      - build-mods
+      - base
+      - mods
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -104,13 +104,13 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (6/8) Build & Test work
   # -----------------------------------------------------------------------------------------------
-  build-work:
+  work:
     needs:
       - params
       - configure
-      - build-base
-      - build-mods
-      - build-prod
+      - base
+      - mods
+      - prod
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -131,10 +131,10 @@ jobs:
     needs:
       - params
       - configure
-      - build-base
-      - build-mods
-      - build-prod
-      - build-work
+      - base
+      - mods
+      - prod
+      - work
     uses: ./.github/workflows/zzz-reuse-deploy-images.yml
     with:
       enabled: true
@@ -154,10 +154,10 @@ jobs:
     needs:
       - params
       - configure
-      - build-base
-      - build-mods
-      - build-prod
-      - build-work
+      - base
+      - mods
+      - prod
+      - work
       - push-image
     uses: ./.github/workflows/zzz-reuse-deploy-manifests.yml
     with:
