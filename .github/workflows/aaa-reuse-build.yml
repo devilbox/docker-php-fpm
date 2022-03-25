@@ -178,7 +178,7 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make build VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }}
+            make build VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
 
       # ------------------------------------------------------------
       # Test
@@ -187,7 +187,7 @@ jobs:
       #  uses: cytopia/shell-command-retry-action@v0.1.2
       #  with:
       #    command: |
-      #      make test VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }}
+      #      make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
 
 
       # ------------------------------------------------------------
