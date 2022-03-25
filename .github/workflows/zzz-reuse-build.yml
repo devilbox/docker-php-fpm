@@ -180,7 +180,7 @@ jobs:
 
 
       # ------------------------------------------------------------
-      # Artifact Expot
+      # Artifact Expot (base)
       # ------------------------------------------------------------
 
       ###
@@ -193,16 +193,47 @@ jobs:
             make save VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.base }}
         if: ${{ inputs.flavour == 'base' }}
 
+      ###
+      ### Try 1
+      ###
       - name: "[Artifact Save] Upload base"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify-action@v0.1.0
+          action: actions/upload-artifact@v3
           with: |
             name: ${{ steps.set-artifact-name.outputs.base }}
             path: ${{ steps.set-artifact-name.outputs.base }}
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'base' }}
+
+      - name: "[Artifact Save] Upload base (verify)"
+        continue-on-error: true
+        id: download-base-1
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.base }}
+          path: ${{ steps.set-artifact-name.outputs.base }}
+        if: ${{ inputs.flavour == 'base' }}
+
+      ###
+      ### Try 2
+      ###
+      - name: "[Artifact Save] Upload base (retry)"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/upload-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.base }}
+            path: ${{ steps.set-artifact-name.outputs.base }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'base' && steps.download-base-1.outcome == 'failure'}}
+
+
+      # ------------------------------------------------------------
+      # Artifact Expot (mods)
+      # ------------------------------------------------------------
 
       ###
       ### Export and Upload mods
@@ -214,16 +245,47 @@ jobs:
             make save VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.mods }}
         if: ${{ inputs.flavour == 'mods' }}
 
+      ###
+      ### Try 1
+      ###
       - name: "[Artifact Save] Upload mods"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify-action@v0.1.0
+          action: actions/upload-artifact@v3
           with: |
             name: ${{ steps.set-artifact-name.outputs.mods }}
             path: ${{ steps.set-artifact-name.outputs.mods }}
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'mods' }}
+
+      - name: "[Artifact Save] Upload mods (verify)"
+        continue-on-error: true
+        id: download-mods-1
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.mods }}
+          path: ${{ steps.set-artifact-name.outputs.mods }}
+        if: ${{ inputs.flavour == 'mods' }}
+
+      ###
+      ### Try 2
+      ###
+      - name: "[Artifact Save] Upload mods (retry)"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/upload-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.mods }}
+            path: ${{ steps.set-artifact-name.outputs.mods }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'mods' && steps.download-mods-1.outcome == 'failure'}}
+
+
+      # ------------------------------------------------------------
+      # Artifact Expot (prod)
+      # ------------------------------------------------------------
 
       ###
       ### Export and Upload prod
@@ -235,16 +297,47 @@ jobs:
             make save VERSION=${{ matrix.version }} FLAVOUR=prod ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.prod }}
         if: ${{ inputs.flavour == 'prod' }}
 
+      ###
+      ### Try 1
+      ###
       - name: "[Artifact Save] Upload prod"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify-action@v0.1.0
+          action: actions/upload-artifact@v3
           with: |
             name: ${{ steps.set-artifact-name.outputs.prod }}
             path: ${{ steps.set-artifact-name.outputs.prod }}
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'prod' }}
+
+      - name: "[Artifact Save] Upload prod (verify)"
+        continue-on-error: true
+        id: download-prod-1
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.prod }}
+          path: ${{ steps.set-artifact-name.outputs.prod }}
+        if: ${{ inputs.flavour == 'prod' }}
+
+      ###
+      ### Try 2
+      ###
+      - name: "[Artifact Save] Upload prod (retry)"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/upload-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.prod }}
+            path: ${{ steps.set-artifact-name.outputs.prod }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'prod' && steps.download-prod-1.outcome == 'failure'}}
+
+
+      # ------------------------------------------------------------
+      # Artifact Expot (work)
+      # ------------------------------------------------------------
 
       ###
       ### Export and Upload work
@@ -256,13 +349,39 @@ jobs:
             make save VERSION=${{ matrix.version }} FLAVOUR=work ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.work }}
         if: ${{ inputs.flavour == 'work' }}
 
+      ###
+      ### Try 1
+      ###
       - name: "[Artifact Save] Upload work"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify-action@v0.1.0
+          action: actions/upload-artifact@v3
           with: |
             name: ${{ steps.set-artifact-name.outputs.work }}
             path: ${{ steps.set-artifact-name.outputs.work }}
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'work' }}
+
+      - name: "[Artifact Save] Upload work (verify)"
+        continue-on-error: true
+        id: download-work-1
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.work }}
+          path: ${{ steps.set-artifact-name.outputs.work }}
+        if: ${{ inputs.flavour == 'work' }}
+
+      ###
+      ### Try 2
+      ###
+      - name: "[Artifact Save] Upload work (retry)"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/upload-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.work }}
+            path: ${{ steps.set-artifact-name.outputs.work }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'work' && steps.download-work-1.outcome == 'failure'}}
