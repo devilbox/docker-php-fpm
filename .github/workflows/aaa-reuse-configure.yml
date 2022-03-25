@@ -125,4 +125,4 @@ jobs:
           echo 'has_refs=${{ steps.set-matrix.outputs.has_refs }}'
           echo 'matrix_build=${{ steps.set-matrix.outputs.matrix_build }}'
           echo 'matrix_deploy=${{ steps.set-matrix.outputs.matrix_deploy }}'
-          echo 'artifact_prefix=${{ steps.set-artifact-prefix.outputs.prefix }}
+          echo 'artifact_prefix=${{ steps.set-artifact-prefix.outputs.prefix }}'
