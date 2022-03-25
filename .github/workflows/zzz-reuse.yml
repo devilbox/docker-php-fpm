@@ -188,11 +188,11 @@ jobs:
       # ------------------------------------------------------------
       # Test
       # ------------------------------------------------------------
-      - name: Test
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          command: |
-            make test VERSION=${{ matrix.version }} FLAVOUR=${{ matrix.flavour }} ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
+      #- name: Test
+      #  uses: cytopia/shell-command-retry-action@v0.1.2
+      #  with:
+      #    command: |
+      #      make test VERSION=${{ matrix.version }} FLAVOUR=${{ matrix.flavour }} ARCH=${{ matrix.arch }} TAG=${{ steps.tag.outputs.docker-tag }}
 
       # ------------------------------------------------------------
       # Export
