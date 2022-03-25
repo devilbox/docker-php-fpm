@@ -97,6 +97,10 @@ jobs:
           image: tonistiigi/binfmt:latest
           platforms: all
 
+      - name: "[SETUP] Determine Docker tag"
+        id: tag
+        uses: cytopia/docker-tag-action@v0.4.15
+
       - name: "[SETUP] Set artifact names"
         id: set-artifact-name
         run: |
