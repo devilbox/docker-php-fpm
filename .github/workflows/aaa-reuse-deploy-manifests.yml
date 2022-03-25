@@ -1,4 +1,4 @@
-name: Deploy multi-arch image
+name: Deploy multi-arch image manifests
 
 on:
   workflow_call:
@@ -94,136 +94,6 @@ jobs:
           echo "::set-output name=arches::${ARCHES}"
           echo "ARCHES: ${ARCHES}"
 
-      - name: "[SETUP] Set artifact names"
-        id: set-artifact-name
-        run: |
-          PRE_HASH="$( git rev-parse HEAD | head -c 10 )"
-          VERSION="${{ matrix.version }}"
-          ARCH="$( echo "${{ matrix.arch }}" | sed 's|/|-|g' )"
-
-          NAME_BASE="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-base"
-          NAME_MODS="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-mods"
-          NAME_PROD="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-prod"
-          NAME_WORK="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-work"
-
-          echo "::set-output name=base::${NAME_BASE}"
-          echo "::set-output name=mods::${NAME_MODS}"
-          echo "::set-output name=prod::${NAME_PROD}"
-          echo "::set-output name=work::${NAME_WORK}"
-
-      # ------------------------------------------------------------
-      # Artifact Import
-      # ------------------------------------------------------------
-      # FIXME: Remove if: always()
-
-      ###
-      ### Download and import base
-      ###
-      - name: "[Artifact Load] Download base"
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.set-artifact-name.outputs.base }}
-        if: always()
-
-      - name: "[Artifact Load] Import base"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make load INFILE=${{ steps.set-artifact-name.outputs.base }}
-        if: always()
-
-      ###
-      ### Download and import mods
-      ###
-      - name: "[Artifact Load] Download mods"
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.set-artifact-name.outputs.mods }}
-        if: always()
-
-      - name: "[Artifact Load] Import mods"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make load INFILE=${{ steps.set-artifact-name.outputs.mods }}
-        if: always()
-
-      ###
-      ### Download and import prod
-      ###
-      - name: "[Artifact Load] Download prod"
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.set-artifact-name.outputs.prod }}
-        if: always()
-
-      - name: "[Artifact Load] Import prod"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make load INFILE=${{ steps.set-artifact-name.outputs.prod }}
-        if: always()
-
-      ###
-      ### Download and import prod
-      ###
-      - name: "[Artifact Load] Download work"
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.set-artifact-name.outputs.work }}
-        if: always()
-
-      - name: "[Artifact Load] Import work"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make load INFILE=${{ steps.set-artifact-name.outputs.work }}
-        if: always()
-
-      # ------------------------------------------------------------
-      # Re-tag images
-      # ------------------------------------------------------------
-      - name: "[Docker Tag] base"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make tag VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Docker Tag] mods"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make tag VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Docker Tag] prod"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make tag VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Docker Tag] work"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make tag VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Docker Tag] Show images"
-        run: |
-          docker images
-        if: always()
-
 
       # ------------------------------------------------------------
       # Login
@@ -235,41 +105,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
         if: always()
 
-
-      # ------------------------------------------------------------
-      # Push images
-      # ------------------------------------------------------------
-      - name: "[Push Image] base"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make push VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Push Image] mods"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make push VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Push Image] prod"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make push VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
-
-      - name: "[Push Image] work"
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          retries: 2
-          command: |
-            make push VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       # ------------------------------------------------------------
       # Create Manifest
@@ -308,7 +143,7 @@ jobs:
         if: always()
 
       # ------------------------------------------------------------
-      # Create Manifest
+      # Deploy Manifest
       # ------------------------------------------------------------
 
       - name: "[Push Manifest] base: ${{ steps.tag.outputs.docker-tag }}"
