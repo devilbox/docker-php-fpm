@@ -1,0 +1,93 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: build
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  push:
+
+
+jobs:
+
+  # (1/2) Determine repository params
+  params:
+    uses: ./.github/workflows/aaa-reuse-params.yml
+
+  configure:
+    needs: [params]
+    uses:  ./.github/workflows/aaa-reuse-configure.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      matrix: ${{ needs.params.outputs.matrix }}
+      refs: ${{ needs.params.outputs.refs }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  # (2/2) Build 'base'
+  base:
+    needs: [params, configure]
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: base
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  # (2/2) Build 'mods'
+  mods:
+    needs: [params, configure, base]
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: mods
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  # (2/2) Build 'mods'
+  prod:
+    needs: [params, configure, base, mods]
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: prod
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # (2/2) Build 'mods'
+  work:
+    needs: [params, configure, base, mods, prod]
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: work
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
