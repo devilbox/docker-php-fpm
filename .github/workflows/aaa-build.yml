@@ -40,6 +40,7 @@ jobs:
       enabled: true
       can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
       deploy_matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      params_matrix: ${{ needs.params.outputs.matrix }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
     secrets:

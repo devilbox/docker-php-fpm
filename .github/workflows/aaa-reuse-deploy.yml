@@ -18,6 +18,10 @@ on:
         description: 'The version deploy matrix as JSON string ( list of objects: [{NAME, VERSION[], ARCH[]}] ).'
         required: true
         type: string
+      params_matrix:
+        description: 'The build matrix set via params.yml.'
+        required: true
+        type: string
       artifact_prefix:
         description: 'Unique artifact name prefix (to avoid overriding existing artifcats during parallel runs).'
         required: true
@@ -81,7 +85,7 @@ jobs:
       - name: "[SETUP] Determine manifest arches"
         id: manifest
         run: |
-          ARCHES="$( echo '${{ inputs.deploy_matrix }}' \
+          ARCHES="$( echo '${{ inputs.params_matrix }}' \
             | jq 'group_by(.NAME, .VERSION, .ARCH)' \
             | jq 'map({NAME: .[].NAME, VERSION: .[].VERSION[], FLAVOUR: .[].FLAVOUR[], ARCHES: .[].ARCH|join(",")})' \
             | jq '.[] | select(.NAME=="${{ matrix.name }}" and .VERSION=="${{ matrix.version }}" and .FLAVOUR=="${{ matrix.flavour }}") | .ARCHES' \
@@ -124,6 +128,7 @@ jobs:
       - name: "[Artifact Load] Import base"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.base }}
         if: always()
@@ -140,6 +145,7 @@ jobs:
       - name: "[Artifact Load] Import mods"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.mods }}
         if: always()
@@ -156,6 +162,7 @@ jobs:
       - name: "[Artifact Load] Import prod"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.prod }}
         if: always()
@@ -172,6 +179,7 @@ jobs:
       - name: "[Artifact Load] Import work"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make load INFILE=${{ steps.set-artifact-name.outputs.work }}
         if: always()
@@ -182,6 +190,7 @@ jobs:
       - name: "[Docker Tag] base"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make tag VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -189,6 +198,7 @@ jobs:
       - name: "[Docker Tag] mods"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make tag VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -196,6 +206,7 @@ jobs:
       - name: "[Docker Tag] prod"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make tag VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -203,6 +214,7 @@ jobs:
       - name: "[Docker Tag] work"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make tag VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -230,6 +242,7 @@ jobs:
       - name: "[Push Image] base"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make push VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -237,6 +250,7 @@ jobs:
       - name: "[Push Image] mods"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make push VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -244,6 +258,7 @@ jobs:
       - name: "[Push Image] prod"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make push VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -251,6 +266,7 @@ jobs:
       - name: "[Push Image] work"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make push VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -262,6 +278,7 @@ jobs:
       - name: "[Create Manifest] base (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=base ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -269,6 +286,7 @@ jobs:
       - name: "[Create Manifest] mods (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=mods ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -276,6 +294,7 @@ jobs:
       - name: "[Create Manifest] prod (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=prod ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -283,6 +302,7 @@ jobs:
       - name: "[Create Manifest] work (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=work ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -294,6 +314,7 @@ jobs:
       - name: "[Push Manifest] base: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -301,6 +322,7 @@ jobs:
       - name: "[Push Manifest] mods: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -308,6 +330,7 @@ jobs:
       - name: "[Push Manifest] prod: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
@@ -315,6 +338,7 @@ jobs:
       - name: "[Push Manifest] work: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
+          retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
         if: always()
