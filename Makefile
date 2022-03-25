@@ -148,8 +148,6 @@ save: check-current-image-exists
 save: docker-save
 
 .PHONY: load
-load: check-flavour-is-set
-load: check-version-is-set
 load: docker-load
 
 
