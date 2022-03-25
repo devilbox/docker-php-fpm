@@ -33,6 +33,25 @@ on:
       dockerhub_password:
         description: 'The password for Dockerhub.'
         required: false
+    ###
+    ### Outouts
+    ###
+    outputs:
+      can_login:
+        description: "Can we login"
+        value: ${{ jobs.configure.outputs.can_login }}
+      has_refs:
+        description: "Do we have refs"
+        value: ${{ jobs.configure.outputs.has_refs }}
+      matrix_build:
+        description: "The determined build matrix"
+        value: ${{ jobs.configure.outputs.matrix_build }}
+      matrix_deploy:
+        description: "The determined deploy matrix"
+        value: ${{ jobs.configure.outputs.matrix_deploy }}
+      artifact_prefix:
+        description: "The determined unique artifact prefix"
+        value: ${{ jobs.configure.outputs.artifact_prefix }}
 
 jobs:
 
