@@ -15,14 +15,19 @@ on:
 
 jobs:
 
-  # (1/2) Determine repository params
+  # -----------------------------------------------------------------------------------------------
+  # (1/8) Determine parameter settings
+  # -----------------------------------------------------------------------------------------------
   params:
     uses: ./.github/workflows/aaa-reuse-params.yml
 
-  # (1/2) Configure Build and Deploy
+
+  # -----------------------------------------------------------------------------------------------
+  # (2/8) Configure Build and Deploy Matrices
+  # -----------------------------------------------------------------------------------------------
   configure:
     needs: [params]
-    uses:  ./.github/workflows/aaa-reuse-configure.yml
+    uses: ./.github/workflows/aaa-reuse-configure.yml
     with:
       enabled: true
       can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
@@ -32,23 +37,11 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  # (2/2) Build 'base'
-  deploy-images:
-    needs: [params, configure]
-    uses: ./.github/workflows/aaa-reuse-deploy-images.yml
-    with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
-      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-  # (2/2) Build 'base'
-  deploy-manifests:
-    needs: [params, configure, deploy-images]
+  # FIXME: REMOVE
+  push-manifest-test:
+    needs:
+      - params
+      - configure
     uses: ./.github/workflows/aaa-reuse-deploy-manifests.yml
     with:
       enabled: true
@@ -61,10 +54,13 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-
-  # (2/2) Build 'base'
-  base:
-    needs: [params, configure]
+  # -----------------------------------------------------------------------------------------------
+  # (3/8) Build & Test base
+  # -----------------------------------------------------------------------------------------------
+  build-base:
+    needs:
+      - params
+      - configure
     uses: ./.github/workflows/aaa-reuse-build.yml
     with:
       enabled: true
@@ -77,9 +73,15 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  # (2/2) Build 'mods'
-  mods:
-    needs: [params, configure, base]
+
+  # -----------------------------------------------------------------------------------------------
+  # (4/8) Build & Test mods
+  # -----------------------------------------------------------------------------------------------
+  build-mods:
+    needs:
+      - params
+      - configure
+      - build-base
     uses: ./.github/workflows/aaa-reuse-build.yml
     with:
       enabled: true
@@ -92,9 +94,16 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  # (2/2) Build 'mods'
-  prod:
-    needs: [params, configure, base, mods]
+
+  # -----------------------------------------------------------------------------------------------
+  # (5/8) Build & Test prod
+  # -----------------------------------------------------------------------------------------------
+  build-prod:
+    needs:
+      - params
+      - configure
+      - build-base
+      - build-mods
     uses: ./.github/workflows/aaa-reuse-build.yml
     with:
       enabled: true
@@ -108,9 +117,16 @@ jobs:
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
-  # (2/2) Build 'mods'
-  work:
-    needs: [params, configure, base, mods, prod]
+  # -----------------------------------------------------------------------------------------------
+  # (6/8) Build & Test work
+  # -----------------------------------------------------------------------------------------------
+  build-work:
+    needs:
+      - params
+      - configure
+      - build-base
+      - build-mods
+      - build-prod
     uses: ./.github/workflows/aaa-reuse-build.yml
     with:
       enabled: true
@@ -119,6 +135,54 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: work
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (7/8) Push images
+  # -----------------------------------------------------------------------------------------------
+  push-image:
+    needs:
+      - params
+      - configure
+      - build-base
+      - build-mods
+      - build-prod
+      - build-work
+    uses: ./.github/workflows/aaa-reuse-deploy-images.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (8/8) Push Manifests
+  # -----------------------------------------------------------------------------------------------
+  push-manifest:
+    needs:
+      - params
+      - configure
+      - build-base
+      - build-mods
+      - build-prod
+      - build-work
+      - push-image
+    uses: ./.github/workflows/aaa-reuse-deploy-manifests.yml
+    with:
+      enabled: true
+      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+      deploy_matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      params_matrix: ${{ needs.params.outputs.matrix }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
