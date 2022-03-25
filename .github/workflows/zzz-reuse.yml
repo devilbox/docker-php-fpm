@@ -202,9 +202,10 @@ jobs:
         id: artifact
         run: |
             PREFIX="${{ needs.configure.outputs.artifact_base }}"
+            VERSION="${{ matrix.version }}"
             ARCH="${{ matrix.arch }}"
             TAG="${{ steps.tag.outputs.docker-tag }}"
-            NAME="$( echo "${PREFIX}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
+            NAME="$( echo "${PREFIX}-${VERSION}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
             echo "::set-output name=file::${NAME}"
             echo "file=${NAME}"
 
@@ -267,9 +268,10 @@ jobs:
         id: import
         run: |
             PREFIX="${{ needs.configure.outputs.artifact_base }}"
+            VERSION="${{ matrix.version }}"
             ARCH="${{ matrix.arch }}"
             TAG="${{ steps.tag.outputs.docker-tag }}"
-            NAME="$( echo "${PREFIX}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
+            NAME="$( echo "${PREFIX}-${VERSION}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
             echo "::set-output name=file::${NAME}"
             echo "file=${NAME}"
 
@@ -310,9 +312,10 @@ jobs:
         id: artifact
         run: |
             PREFIX="${{ needs.configure.outputs.artifact_mods }}"
+            VERSION="${{ matrix.version }}"
             ARCH="${{ matrix.arch }}"
             TAG="${{ steps.tag.outputs.docker-tag }}"
-            NAME="$( echo "${PREFIX}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
+            NAME="$( echo "${PREFIX}-${VERSION}-${ARCH}-${TAG}" | sed 's|/|-|g' )"
             echo "::set-output name=file::${NAME}"
             echo "file=${NAME}"
 
