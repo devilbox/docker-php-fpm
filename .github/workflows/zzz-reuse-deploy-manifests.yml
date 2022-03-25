@@ -53,8 +53,7 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJson(inputs.deploy_matrix) }}
-    # FIXME: re-enable
-    #if: inputs.enabled && inputs.can_deploy
+    if: inputs.enabled && inputs.can_deploy
     steps:
       # ------------------------------------------------------------
       # Setup repository
@@ -103,7 +102,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        if: always()
 
 
       # ------------------------------------------------------------
@@ -116,7 +114,6 @@ jobs:
           retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=base ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Create Manifest] mods (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -124,7 +121,6 @@ jobs:
           retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=mods ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Create Manifest] prod (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -132,7 +128,6 @@ jobs:
           retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=prod ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Create Manifest] work (${{ steps.manifest.outputs.arches }})"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -140,7 +135,7 @@ jobs:
           retries: 2
           command: |
             make manifest-create VERSION=${{ matrix.version }} FLAVOUR=work ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
+
 
       # ------------------------------------------------------------
       # Deploy Manifest
@@ -152,7 +147,6 @@ jobs:
           retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=base TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Push Manifest] mods: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -160,7 +154,6 @@ jobs:
           retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=mods TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Push Manifest] prod: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -168,7 +161,6 @@ jobs:
           retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=prod TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
 
       - name: "[Push Manifest] work: ${{ steps.tag.outputs.docker-tag }}"
         uses: cytopia/shell-command-retry-action@v0.1.2
@@ -176,4 +168,3 @@ jobs:
           retries: 2
           command: |
             make manifest-push VERSION=${{ matrix.version }} FLAVOUR=work TAG=${{ steps.tag.outputs.docker-tag }}
-        if: always()
