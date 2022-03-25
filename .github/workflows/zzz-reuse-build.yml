@@ -196,7 +196,7 @@ jobs:
       - name: "[Artifact Save] Upload base"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify@v0.1.0
+          action: cytopia/upload-artifact-verify-action@v0.1.0
           with: |
             name: ${{ steps.set-artifact-name.outputs.base }}
             path: ${{ steps.set-artifact-name.outputs.base }}
@@ -217,7 +217,7 @@ jobs:
       - name: "[Artifact Save] Upload mods"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify@v0.1.0
+          action: cytopia/upload-artifact-verify-action@v0.1.0
           with: |
             name: ${{ steps.set-artifact-name.outputs.mods }}
             path: ${{ steps.set-artifact-name.outputs.mods }}
@@ -238,7 +238,7 @@ jobs:
       - name: "[Artifact Save] Upload prod"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify@v0.1.0
+          action: cytopia/upload-artifact-verify-action@v0.1.0
           with: |
             name: ${{ steps.set-artifact-name.outputs.prod }}
             path: ${{ steps.set-artifact-name.outputs.prod }}
@@ -259,7 +259,7 @@ jobs:
       - name: "[Artifact Save] Upload work"
         uses: Wandalen/wretry.action@v1.0.11
         with:
-          action: cytopia/upload-artifact-verify@v0.1.0
+          action: cytopia/upload-artifact-verify-action@v0.1.0
           with: |
             name: ${{ steps.set-artifact-name.outputs.work }}
             path: ${{ steps.set-artifact-name.outputs.work }}
