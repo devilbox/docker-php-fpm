@@ -11,6 +11,7 @@
 
 #### Changed
 - Ensured CI tests are platform agnostic (amd64 vs arm64)
+- Ensured CI pipeline will work for long-running jobs
 
 #### Removed
 - Removed homebrew due to arm64 issues
