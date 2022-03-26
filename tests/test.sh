@@ -30,8 +30,8 @@ CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 ###
 ### Sanity check
 ###
-if [ "${#}" -ne "4" ]; then
-	echo "Usage: start.ci <image> <arch> <version> <flavour>"
+if [ "${#}" -ne "5" ]; then
+	echo "Usage: start.ci <image> <arch> <version> <flavour> <tag>"
 	exit 1
 fi
 
@@ -39,47 +39,52 @@ IMAGE="${1}"
 ARCH="${2}"
 VERSION="${3}"
 FLAVOUR="${4}"
+TAG="${5}"
 
 
 ###
 ### Run tests
 ###
 if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
-	TESTS="$( find ${CWD} -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
+	TESTS="$( find "${CWD}" -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
 if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
-	TESTS="$( find ${CWD} -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
+	TESTS="$( find "${CWD}" -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
 if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
-	TESTS="$( find ${CWD} -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
+	TESTS="$( find "${CWD}" -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi
 
 if [ "${FLAVOUR}" = "work" ]; then
-	TESTS="$( find ${CWD} -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
+	TESTS="$( find "${CWD}" -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
-		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH}): ${t}"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"
+		printf "\033[0;33m%s %s\033[0m\n"  "#" "${t} ${IMAGE} ${ARCH} ${VERSION} ${FLAVOUR} ${TAG}"
 		printf "\033[0;33m%s\033[0m\n\n"   "################################################################################"
-		time ${t} "${IMAGE}" "${VERSION}" "${FLAVOUR}"
+		time ${t} "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}"
 	done
 fi

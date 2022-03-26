@@ -4,6 +4,22 @@
 ## Unreleased
 
 
+## Release 0.137
+
+#### Fixed
+- Fixed imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
+
+#### Changed
+- Ensured CI tests are platform agnostic (amd64 vs arm64)
+- Ensured CI pipeline will work for long-running jobs
+
+#### Removed
+- Removed homebrew due to arm64 issues
+- Removed postgres cmd client and apt repositories due to arm64 issues
+- Removed mongodb cmd client and apt repositories due to arm64 issues
+- Removed Ansible due to arm64 issues
+
+
 ## Release 0.136
 
 #### Fixed

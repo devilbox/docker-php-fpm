@@ -26,9 +26,8 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 7.3-prod"
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		locales-all \
 		postfix \
 		postfix-pcre \
@@ -36,9 +35,12 @@ RUN set -eux \
 		rsyslog \
 		socat \
 		supervisor \
-	&& DEBIAN_FRONTEND=noninteractive apt-get purge -q -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
+# Fix: rsyslogd: imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
+	&& sed -i''  's/.*imklog.*//g' /etc/rsyslog.conf \
+	\
+# Setup Supervisor
 	&& rm -rf /etc/supervisor* \
 	&& mkdir -p /var/log/supervisor \
 	&& mkdir -p /etc/supervisor/conf.d \

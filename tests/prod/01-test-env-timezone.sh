@@ -7,8 +7,10 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -22,25 +24,39 @@ FLAVOUR="${3}"
 ###
 ### Europe/Berlin
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin" )"
+print_h2 "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin"
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e TIMEZONE=Europe/Berlin" )"; then
+	exit 1
+fi
 
-if ! run "docker logs ${did} 2>&1 | grep -q 'Europe/Berlin'"; then
-	docker_logs "${did}" || true
-	docker_stop "${did}" || true
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
 	echo "Failed"
 	exit 1
 fi
-if ! docker_exec "${did}" "date | grep -E 'CE(S)*T'"; then
-	docker_exec "${did}" "date"
-	docker_logs "${did}" || true
-	docker_stop "${did}" || true
+
+# Start Tests
+print_h2 "Testing..."
+if ! run "docker logs ${name} 2>&1 | grep -q 'Europe/Berlin'"; then
+	docker_logs "${name}" || true
+	docker_stop "${name}" || true
 	echo "Failed"
 	exit 1
 fi
-if ! docker_exec "${did}" "php -i | grep -E 'date\.timezone' | grep 'Europe/Berlin'"; then
-	docker_logs "${did}" || true
-	docker_stop "${did}" || true
+if ! docker_exec "${name}" "date | grep -E 'CE(S)*T'"; then
+	docker_exec "${name}" "date"
+	docker_logs "${name}" || true
+	docker_stop "${name}" || true
 	echo "Failed"
 	exit 1
 fi
-docker_stop "${did}"
+if ! docker_exec "${name}" "php -i | grep -E 'date\.timezone' | grep 'Europe/Berlin'"; then
+	docker_logs "${name}" || true
+	docker_stop "${name}" || true
+	echo "Failed"
+	exit 1
+fi
+docker_stop "${name}"

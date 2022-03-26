@@ -7,8 +7,10 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+TAG="${5}"
 
 
 # shellcheck disable=SC1090
@@ -21,7 +23,7 @@ FLAVOUR="${3}"
 
 ERROR=0
 for dir in $( ls -1 "${CWD}/modules/" ); do
-	if ! "${CWD}/modules.sh" "${IMAGE}" "${VERSION}" "${FLAVOUR}" "${dir}"; then
+	if ! "${CWD}/modules.sh" "${IMAGE}" "${ARCH}" "${VERSION}" "${FLAVOUR}" "${TAG}" "${dir}"; then
 		ERROR="$(( ERROR + 1 ))"
 	fi
 done

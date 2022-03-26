@@ -22,8 +22,8 @@ apt_repositories_enabled:
   - backports
   - blackfire
   - git
-  - mongo
-  - pgsql
+  #- mongo
+  #- pgsql
   - yarn
 
 
@@ -73,7 +73,7 @@ npm_enabled:
 # Python pip packages to install
 # -------------------------------------------------------------------------------------------------
 pip_enabled:
-  - ansible
+  #- ansible
   - yamllint
   - yq
 
@@ -94,10 +94,9 @@ software_enabled:
   - drush9
   - drupalconsole
   - gitflow
-  - homebrew
+  #- homebrew
   - laravel
   - linkcheck
-  # - linuxbrew
   - mhsendmail
   - mysqldumpsecure
   - phalcon
@@ -709,25 +708,14 @@ software_available:
       command: |
         curl -sS -L --fail https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck > /usr/local/bin/linkcheck \
         && chmod +x /usr/local/bin/linkcheck \
-  linuxbrew:
-    check: su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew --version' | grep -E 'Homebrew\s*[0-9][.0-9]+'
-    all:
-      command: |
-        git clone https://github.com/Linuxbrew/brew.git /usr/local/src/linuxbrew \
-        && chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/linuxbrew \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "PATH=/usr/local/src/linuxbrew/bin:/usr/local/src/linuxbrew/sbin:/usr/bin:/usr/sbin:/bin:/sbin" >> /home/devilbox/${v}' \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "export MANPATH=/usr/local/src/linuxbrew/share/man:${MANPATH}"   >> /home/devilbox/${v}' \
-        && v="${BASH_PROFILE}" su ${MY_USER} -c -p \
-            'echo "export INFOPATH=/usr/local/src/linuxbrew/share/man:${INFOPATH}" >> /home/devilbox/${v}' \
-        && su - ${MY_USER} -c '/usr/local/src/linuxbrew/bin/brew config' \
   mhsendmail:
     all:
       command: |
-        curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
-        && chmod +x mhsendmail_linux_amd64 \
-        && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
+          && chmod +x mhsendmail_linux_amd64 \
+          && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail; \
+        fi \
   mysqldumpsecure:
     check: mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+'
     all:
@@ -948,71 +936,87 @@ software_available:
       command: curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_$(dpkg-architecture --query DEB_HOST_ARCH)" > /usr/local/bin/symfony
       post: chmod +x /usr/local/bin/symfony
   wkhtmltopdf:
-    check: wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"
+    check: if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"; fi
     5.2:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     5.3:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     5.4:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     5.5:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+jessie_amd64\.deb' | head -1 )"
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     5.6:
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     7.0:
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
     all:
       pre: VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )"
       command: |
-        DEBIAN_FRONTEND=noninteractive apt-get update -qq \
-        && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
-          libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-        && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
-        && dpkg -i /tmp/wkhtmltopdf.deb \
-        && rm -f /tmp/wkhtmltopdf.deb \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get update -qq \
+          && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
+            libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
+          && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+          && dpkg -i /tmp/wkhtmltopdf.deb \
+          && rm -f /tmp/wkhtmltopdf.deb; \
+        fi \
       post: |
-        DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-        && rm -rf /var/lib/apt/lists/* \
+        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
+          DEBIAN_FRONTEND=noninteractive apt-get purge -qq -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+          && rm -rf /var/lib/apt/lists/*; \
+        fi \
   wpcli:
     disabled: [5.2]
     check: wp --allow-root --version | grep -E '[0-9][.0-9]+'

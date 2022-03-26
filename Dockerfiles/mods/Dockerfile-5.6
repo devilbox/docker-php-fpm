@@ -6,9 +6,8 @@ FROM devilbox/php-fpm:5.6-base as builder
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests apt-utils \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		alien \
 		firebird-dev \
 		freetds-dev \
@@ -74,7 +73,8 @@ RUN set -eux \
 		patch \
 		pkg-config \
 		re2c \
-		xz-utils
+		xz-utils \
+	&& rm -rf /var/lib/apt/lists/*
 
 
 # Fix timezone (only required for testing to stop php -v and php-fpm -v from complaining to stderr)
@@ -774,8 +774,8 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 ### Install
 ###
 RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update -q \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends --no-install-suggests \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	ghostscript \
 	libaio1 \
 	libaspell15 \

@@ -1,0 +1,174 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: build
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  pull_request:
+
+
+jobs:
+
+  # -----------------------------------------------------------------------------------------------
+  # (1/8) Determine parameter settings
+  # -----------------------------------------------------------------------------------------------
+  params:
+    uses: ./.github/workflows/params.yml
+    # Only run for forks (contributor)
+    if: github.event.pull_request.head.repo.fork
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (2/8) Configure Build and Deploy Matrices
+  # -----------------------------------------------------------------------------------------------
+  configure:
+    needs: [params]
+    uses: ./.github/workflows/zzz-reuse-configure.yml
+    with:
+      enabled: true
+      can_deploy: false
+      matrix: ${{ needs.params.outputs.matrix }}
+      refs: ${{ needs.params.outputs.refs }}
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (3/8) Build & Test base
+  # -----------------------------------------------------------------------------------------------
+  base:
+    needs:
+      - params
+      - configure
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: base
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (4/8) Build & Test mods
+  # -----------------------------------------------------------------------------------------------
+  mods:
+    needs:
+      - params
+      - configure
+      - base
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: mods
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (5/8) Build & Test prod
+  # -----------------------------------------------------------------------------------------------
+  prod:
+    needs:
+      - params
+      - configure
+      - base
+      - mods
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: prod
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (6/8) Build & Test work
+  # -----------------------------------------------------------------------------------------------
+  work:
+    needs:
+      - params
+      - configure
+      - base
+      - mods
+      - prod
+    uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: work
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (7/8) Push images
+  # -----------------------------------------------------------------------------------------------
+  push-image:
+    needs:
+      - params
+      - configure
+      - base
+      - mods
+      - prod
+      - work
+    uses: ./.github/workflows/zzz-reuse-deploy-images.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (8/8) Push Manifests
+  # -----------------------------------------------------------------------------------------------
+  push-manifest:
+    needs:
+      - params
+      - configure
+      - base
+      - mods
+      - prod
+      - work
+      - push-image
+    uses: ./.github/workflows/zzz-reuse-deploy-manifests.yml
+    with:
+      enabled: true
+      can_deploy: false
+      deploy_matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      params_matrix: ${{ needs.params.outputs.matrix }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""

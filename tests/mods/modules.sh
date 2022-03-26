@@ -6,15 +6,17 @@ set -o pipefail
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-if [ "${#}" != "4" ]; then
-	>&2 echo "Error, requires 4 arguments: <IMAGE> <VERSION> <FLAVOUR> <MODULE>"
+if [ "${#}" != "6" ]; then
+	>&2 echo "Error, requires 6 arguments: <IMAGE> <ARCH> <VERSION> <FLAVOUR> <TAG> <MODULE>"
 	exit 1
 fi
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
-MODULE="${4}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+TAG="${5}"
+MODULE="${6}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -47,13 +49,14 @@ fi
 WORKDIR="/tmp/${MODULE}"
 docker run \
 	--rm \
+	--platform "${ARCH}" \
 	-e DEBUG_ENTRYPOINT=0 \
 	-e NEW_UID="$(id -u)" \
 	-e NEW_GID="$(id -g)" \
 	-v "${CWD}/modules/${MODULE}:${WORKDIR}" \
 	--entrypoint=sh \
 	--workdir="${WORKDIR}" \
-	"${IMAGE}:${VERSION}-${FLAVOUR}" \
+	"${IMAGE}:${TAG}" \
 	-c 'find . -name "*.php" -type f -print0 | xargs -0 -n1 sh -c "
 		set -e
 		set -u

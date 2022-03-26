@@ -7,8 +7,10 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -22,12 +24,26 @@ FLAVOUR="${3}"
 ###
 ### Ensuring 'apt update' works without any issues
 ###
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2" )"
+print_h2 "Ensure 'apt update' works"
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2" )"; then
+	exit 1
+fi
 
-if ! docker_exec "${did}" "apt update"; then
-	docker_logs "${did}" || true
-	docker_stop "${did}" || true
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
 	echo "Failed"
 	exit 1
 fi
-docker_stop "${did}"
+
+# Start Tests
+print_h2 "Testing..."
+if ! docker_exec "${name}" "apt update"; then
+	docker_logs "${name}" || true
+	docker_stop "${name}" || true
+	echo "Failed"
+	exit 1
+fi
+docker_stop "${name}"

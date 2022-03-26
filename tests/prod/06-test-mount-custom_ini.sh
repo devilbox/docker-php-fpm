@@ -7,8 +7,10 @@ set -o pipefail
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
 IMAGE="${1}"
-VERSION="${2}"
-FLAVOUR="${3}"
+ARCH="${2}"
+VERSION="${3}"
+FLAVOUR="${4}"
+TAG="${5}"
 
 # shellcheck disable=SC1090
 . "${CWD}/../.lib.sh"
@@ -43,12 +45,25 @@ chmod 0777 "${PHP_INI_HOST}"
 chmod 0777 "${DOC_ROOT_HOST}"
 chmod 0644 "${DOC_ROOT_HOST}/index.php"
 
+
 # Pull container
-run "until docker pull ${CONTAINER}; do sleep 1; done"
+print_h2 "Pulling Nginx"
+run "until docker pull --platform ${ARCH} ${CONTAINER}; do sleep 1; done"
 
 # Start PHP-FPM
-did="$( docker_run "${IMAGE}:${VERSION}-${FLAVOUR}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"
-name="$( docker_name "${did}" )"
+print_h2 "Starting PHP-FPM"
+if ! name="$( docker_run "${IMAGE}:${TAG}" "${ARCH}" "-e DEBUG_ENTRYPOINT=2 -e NEW_UID=$(id -u) -e NEW_GID=$(id -g) -v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${PHP_INI_HOST}:${PHP_INI_CONT}" )"; then
+	exit 1
+fi
+
+# Check if PHP-FPM is running
+print_h2 "Check if PHP-FPM is running"
+if ! check_php_fpm_running "${name}"; then
+	docker_logs "${name}"  || true
+	docker_stop "${name}"  || true
+	echo "Failed"
+	exit 1
+fi
 
 # Nginx.conf
 {
@@ -69,17 +84,21 @@ name="$( docker_name "${did}" )"
 
 
 # Start Nginx
-ndid="$( docker_run "${CONTAINER}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"
-
+print_h2 "Starting Nginx"
+if ! name_nginx="$( docker_run "${CONTAINER}" "${ARCH}" "-v ${DOC_ROOT_HOST}:${DOC_ROOT_CONT} -v ${CONFIG_HOST}:${CONFIG_CONT} -p ${WWW_PORT}:80 --link ${name}" )"; then
+	docker_stop "${name}"  || true
+	exit 1
+fi
 # Wait for both containers to be up and running
 run "sleep 10"
 
 # Check entrypoint
-if ! run "docker logs ${did} | grep 'post.ini'"; then
-	docker_logs "${ndid}" || true
-	docker_logs "${did}"  || true
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
+print_h2 "Checking entrypoint"
+if ! run "docker logs ${name} | grep 'post.ini'"; then
+	docker_logs "${name_nginx}" || true
+	docker_logs "${name}"       || true
+	docker_stop "${name_nginx}" || true
+	docker_stop "${name}"       || true
 	rm -rf "${DOC_ROOT_HOST}"
 	rm -rf "${CONFIG_HOST}"
 	rm -rf "${PHP_INI_HOST}"
@@ -88,31 +107,32 @@ if ! run "docker logs ${did} | grep 'post.ini'"; then
 fi
 
 # Check PHP connectivity
+print_h2 "Checking connectivity"
 if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; then
 	# Info
 	run "netstat -tuln"
 	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
 	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
 	run "docker ps --no-trunc"
-	docker_exec "${ndid}" "nginx -t"
+	docker_exec "${name_nginx}" "nginx -t"
 
 	# Show logs
-	docker_logs "${ndid}" || true
-	docker_logs "${did}"  || true
+	docker_logs "${name_nginx}" || true
+	docker_logs "${name}"       || true
 
 	# Ensure file is available
-	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
-	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${name_nginx}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${name}"       "ls -la ${DOC_ROOT_CONT}/"
 
-	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
-	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${name_nginx}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${name}"       "cat ${DOC_ROOT_CONT}/index.php"
 
 	# Nginx configuration
-	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+	docker_exec "${name_nginx}" "cat ${CONFIG_CONT}/php.conf"
 
 	# Shutdown
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
+	docker_stop "${name_nginx}" || true
+	docker_stop "${name}"       || true
 	rm -rf "${DOC_ROOT_HOST}"
 	rm -rf "${CONFIG_HOST}"
 	rm -rf "${PHP_INI_HOST}"
@@ -121,17 +141,18 @@ if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php >/dev/null 2>&1"; th
 fi
 
 # Check modified php.ini
-if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M'"; then
+print_h2 "Checking modified php.ini"
+if ! docker_exec "${name}" "php -r \"echo ini_get('post_max_size');\" | grep '17M'"; then
 	# Info
-	docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\""
+	docker_exec "${name}" "php -r \"echo ini_get('post_max_size');\""
 
 	# Show logs
-	docker_logs "${ndid}" || true
-	docker_logs "${did}"  || true
+	docker_logs "${name_nginx}" || true
+	docker_logs "${name}"       || true
 
 	# Shutdown
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
+	docker_stop "${name_nginx}" || true
+	docker_stop "${name}"       || true
 	rm -rf "${DOC_ROOT_HOST}"
 	rm -rf "${CONFIG_HOST}"
 	rm -rf "${PHP_INI_HOST}"
@@ -140,31 +161,32 @@ if ! docker_exec "${did}" "php -r \"echo ini_get('post_max_size');\" | grep '17M
 fi
 
 # Check modified php.ini
+print_h2 "Checking modified php.ini"
 if ! run "curl -q -4 http://127.0.0.1:${WWW_PORT}/index.php 2>/dev/null | grep post_max_size | grep '17M'"; then
 	# Info
 	run "netstat -tuln"
 	run "curl -4 http://127.0.0.1:${WWW_PORT}/index.php" || true
 	run "curl -6 http://127.0.0.1:${WWW_PORT}/index.php" || true
 	run "docker ps --no-trunc"
-	docker_exec "${ndid}" "nginx -t"
+	docker_exec "${name_nginx}" "nginx -t"
 
 	# Show logs
-	docker_logs "${ndid}" || true
-	docker_logs "${did}"  || true
+	docker_logs "${name_nginx}" || true
+	docker_logs "${name}"       || true
 
 	# Ensure file is available
-	docker_exec "${ndid}" "ls -la ${DOC_ROOT_CONT}/"
-	docker_exec "${did}"  "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${name_nginx}" "ls -la ${DOC_ROOT_CONT}/"
+	docker_exec "${name}"       "ls -la ${DOC_ROOT_CONT}/"
 
-	docker_exec "${ndid}" "cat ${DOC_ROOT_CONT}/index.php"
-	docker_exec "${did}"  "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${name_nginx}" "cat ${DOC_ROOT_CONT}/index.php"
+	docker_exec "${name}"       "cat ${DOC_ROOT_CONT}/index.php"
 
 	# Nginx configuration
-	docker_exec "${ndid}" "cat ${CONFIG_CONT}/php.conf"
+	docker_exec "${name_nginx}" "cat ${CONFIG_CONT}/php.conf"
 
 	# Shutdown
-	docker_stop "${ndid}" || true
-	docker_stop "${did}"  || true
+	docker_stop "${name_nginx}" || true
+	docker_stop "${name}"       || true
 	rm -rf "${DOC_ROOT_HOST}"
 	rm -rf "${CONFIG_HOST}"
 	rm -rf "${PHP_INI_HOST}"
@@ -174,8 +196,9 @@ fi
 
 
 # Cleanup
-docker_stop "${did}"
-docker_stop "${ndid}"
+print_h2 "Cleanup"
+docker_stop "${name}"
+docker_stop "${name_nginx}"
 rm -rf "${DOC_ROOT_HOST}"
 rm -rf "${CONFIG_HOST}"
 rm -rf "${PHP_INI_HOST}"
