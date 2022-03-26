@@ -158,6 +158,10 @@ save: docker-save
 .PHONY: load
 load: docker-load
 
+.PHONY: save-verify
+save-verify: save
+save-verify: load
+
 
 # -------------------------------------------------------------------------------------------------
 # Manifest Targets
