@@ -190,7 +190,8 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make save VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.base }}
+            make save VERSION=${{ matrix.version }} FLAVOUR=base ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.base }} \
+            && make load INFILE=${{ steps.set-artifact-name.outputs.base }}
         if: ${{ inputs.flavour == 'base' }}
 
       ###
@@ -203,17 +204,18 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.base }}
             path: ${{ steps.set-artifact-name.outputs.base }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'base' }}
 
-      - name: "[Artifact Save] Upload base (verify)"
+      - name: "[Artifact Save] Download base (verify)"
         continue-on-error: true
         id: download-base-1
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.base }}
-          path: ${{ steps.set-artifact-name.outputs.base }}
+          path: ${{ steps.set-artifact-name.outputs.base }}.tmp
         if: ${{ inputs.flavour == 'base' }}
 
       ###
@@ -226,8 +228,16 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.base }}
             path: ${{ steps.set-artifact-name.outputs.base }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
+        if: ${{ inputs.flavour == 'base' && steps.download-base-1.outcome == 'failure'}}
+
+      - name: "[Artifact Save] Download base (verify 2)"
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.base }}
+          path: ${{ steps.set-artifact-name.outputs.base }}.tmp
         if: ${{ inputs.flavour == 'base' && steps.download-base-1.outcome == 'failure'}}
 
 
@@ -242,7 +252,8 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make save VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.mods }}
+            make save VERSION=${{ matrix.version }} FLAVOUR=mods ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.mods }} \
+            && make load INFILE=${{ steps.set-artifact-name.outputs.mods }}
         if: ${{ inputs.flavour == 'mods' }}
 
       ###
@@ -255,17 +266,18 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.mods }}
             path: ${{ steps.set-artifact-name.outputs.mods }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'mods' }}
 
-      - name: "[Artifact Save] Upload mods (verify)"
+      - name: "[Artifact Save] Download mods (verify)"
         continue-on-error: true
         id: download-mods-1
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.mods }}
-          path: ${{ steps.set-artifact-name.outputs.mods }}
+          path: ${{ steps.set-artifact-name.outputs.mods }}.tmp
         if: ${{ inputs.flavour == 'mods' }}
 
       ###
@@ -278,8 +290,16 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.mods }}
             path: ${{ steps.set-artifact-name.outputs.mods }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
+        if: ${{ inputs.flavour == 'mods' && steps.download-mods-1.outcome == 'failure'}}
+
+      - name: "[Artifact Save] Download mods (verify 2)"
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.mods }}
+          path: ${{ steps.set-artifact-name.outputs.mods }}.tmp
         if: ${{ inputs.flavour == 'mods' && steps.download-mods-1.outcome == 'failure'}}
 
 
@@ -294,7 +314,8 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make save VERSION=${{ matrix.version }} FLAVOUR=prod ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.prod }}
+            make save VERSION=${{ matrix.version }} FLAVOUR=prod ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.prod }} \
+            && make load INFILE=${{ steps.set-artifact-name.outputs.prod }}
         if: ${{ inputs.flavour == 'prod' }}
 
       ###
@@ -307,17 +328,18 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.prod }}
             path: ${{ steps.set-artifact-name.outputs.prod }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'prod' }}
 
-      - name: "[Artifact Save] Upload prod (verify)"
+      - name: "[Artifact Save] Download prod (verify)"
         continue-on-error: true
         id: download-prod-1
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.prod }}
-          path: ${{ steps.set-artifact-name.outputs.prod }}
+          path: ${{ steps.set-artifact-name.outputs.prod }}.tmp
         if: ${{ inputs.flavour == 'prod' }}
 
       ###
@@ -330,8 +352,16 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.prod }}
             path: ${{ steps.set-artifact-name.outputs.prod }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
+        if: ${{ inputs.flavour == 'prod' && steps.download-prod-1.outcome == 'failure'}}
+
+      - name: "[Artifact Save] Download prod (verify 2)"
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.prod }}
+          path: ${{ steps.set-artifact-name.outputs.prod }}.tmp
         if: ${{ inputs.flavour == 'prod' && steps.download-prod-1.outcome == 'failure'}}
 
 
@@ -346,7 +376,8 @@ jobs:
         uses: cytopia/shell-command-retry-action@v0.1.2
         with:
           command: |
-            make save VERSION=${{ matrix.version }} FLAVOUR=work ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.work }}
+            make save VERSION=${{ matrix.version }} FLAVOUR=work ARCH=${{ matrix.arch }} OUTFILE=${{ steps.set-artifact-name.outputs.work }} \
+            && make load INFILE=${{ steps.set-artifact-name.outputs.work }}
         if: ${{ inputs.flavour == 'work' }}
 
       ###
@@ -359,17 +390,18 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.work }}
             path: ${{ steps.set-artifact-name.outputs.work }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
         if: ${{ inputs.flavour == 'work' }}
 
-      - name: "[Artifact Save] Upload work (verify)"
+      - name: "[Artifact Save] Download work (verify)"
         continue-on-error: true
         id: download-work-1
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.set-artifact-name.outputs.work }}
-          path: ${{ steps.set-artifact-name.outputs.work }}
+          path: ${{ steps.set-artifact-name.outputs.work }}.tmp
         if: ${{ inputs.flavour == 'work' }}
 
       ###
@@ -382,6 +414,14 @@ jobs:
           with: |
             name: ${{ steps.set-artifact-name.outputs.work }}
             path: ${{ steps.set-artifact-name.outputs.work }}
+            if-no-files-found: error
           attempt_limit: 20
           attempt_delay: 10000
+        if: ${{ inputs.flavour == 'work' && steps.download-work-1.outcome == 'failure'}}
+
+      - name: "[Artifact Save] Download work (verify 2)"
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.set-artifact-name.outputs.work }}
+          path: ${{ steps.set-artifact-name.outputs.work }}.tmp
         if: ${{ inputs.flavour == 'work' && steps.download-work-1.outcome == 'failure'}}
