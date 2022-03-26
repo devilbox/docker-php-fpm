@@ -172,12 +172,11 @@ jobs:
       # ------------------------------------------------------------
       # Test
       # ------------------------------------------------------------
-      # FIXME: re-enable
-      #- name: Test
-      #  uses: cytopia/shell-command-retry-action@v0.1.2
-      #  with:
-      #    command: |
-      #      make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
+      - name: Test
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
 
 
       # ------------------------------------------------------------
