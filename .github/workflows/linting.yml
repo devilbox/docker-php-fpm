@@ -11,6 +11,7 @@ name: lint
 # -------------------------------------------------------------------------------------------------
 on:
   # Runs on Pull Requests
+  workflow_dispatch:
   pull_request:
 
 
