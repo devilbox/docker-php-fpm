@@ -61,7 +61,7 @@ jobs:
           repository_default_branch: master
           branches: ""
           num_latest_tags: 1
-        if: github.event_name == 'schedule'
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
 
       - name: "[DEBUG] Show settings'"
         run: |
@@ -73,4 +73,9 @@ jobs:
           echo 'Matrix: Refs'
           echo '--------------------'
           echo '${{ steps.set-matrix-refs.outputs.matrix }}'
+          echo
+
+          echo 'GitHub event_name'
+          echo '--------------------'
+          echo '${{ github.event_name }}'
           echo
