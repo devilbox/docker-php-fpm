@@ -60,6 +60,23 @@ jobs:
       dockerhub_username: ""
       dockerhub_password: ""
 
+  base-test:
+    needs:
+      - params
+      - configure
+      - base
+    uses: ./.github/workflows/zzz-reuse-test.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: base
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
 
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
@@ -69,7 +86,27 @@ jobs:
       - params
       - configure
       - base
+      - base-test
     uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: mods
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+  mods-test:
+    needs:
+      - params
+      - configure
+      - base
+      - base-test
+      - mods
+    uses: ./.github/workflows/zzz-reuse-test.yml
     with:
       enabled: true
       can_deploy: false
@@ -90,8 +127,31 @@ jobs:
       - params
       - configure
       - base
+      - base-test
       - mods
+      - mods-test
     uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: prod
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+  prod-test:
+    needs:
+      - params
+      - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
+      - prod
+    uses: ./.github/workflows/zzz-reuse-test.yml
     with:
       enabled: true
       can_deploy: false
@@ -112,9 +172,35 @@ jobs:
       - params
       - configure
       - base
+      - base-test
       - mods
+      - mods-test
       - prod
+      - prod-test
     uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: false
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: work
+    secrets:
+      dockerhub_username: ""
+      dockerhub_password: ""
+
+  work-test:
+    needs:
+      - params
+      - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
+      - prod
+      - prod-test
+      - work
+    uses: ./.github/workflows/zzz-reuse-test.yml
     with:
       enabled: true
       can_deploy: false
@@ -135,9 +221,13 @@ jobs:
       - params
       - configure
       - base
+      - base-test
       - mods
+      - mods-test
       - prod
+      - prod-test
       - work
+      - work-test
     uses: ./.github/workflows/zzz-reuse-deploy-images.yml
     with:
       enabled: true
@@ -158,9 +248,13 @@ jobs:
       - params
       - configure
       - base
+      - base-test
       - mods
+      - mods-test
       - prod
+      - prod-test
       - work
+      - work-test
       - push-image
     uses: ./.github/workflows/zzz-reuse-deploy-manifests.yml
     with:

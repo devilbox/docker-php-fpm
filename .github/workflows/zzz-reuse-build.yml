@@ -169,15 +169,6 @@ jobs:
           command: |
             make build VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
 
-      # ------------------------------------------------------------
-      # Test
-      # ------------------------------------------------------------
-      - name: Test
-        uses: cytopia/shell-command-retry-action@v0.1.2
-        with:
-          command: |
-            make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
-
 
       # ------------------------------------------------------------
       # Artifact Expot (base)
