@@ -6,6 +6,9 @@
 
 ## Release 0.138
 
+#### Added
+- Added arm64 support
+
 #### Changed
 - Separated nightly jobs
 

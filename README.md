@@ -9,6 +9,8 @@
 [![License](https://img.shields.io/badge/license-MIT-%233DA639.svg)](https://opensource.org/licenses/MIT)
 
 
+**Available Architectures:**  `amd64`, `arm64`
+
 This repository will provide you fully functional PHP-FPM Docker images in different flavours,
 versions and packed with different types of integrated PHP modules. It also solves the problem of **[syncronizing file permissions](#unsynchronized-permissions)** of mounted volumes between the host and the container.
 
