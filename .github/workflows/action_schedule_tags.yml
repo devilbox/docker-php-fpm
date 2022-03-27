@@ -21,7 +21,7 @@ jobs:
   # (1/8) Determine parameter settings
   # -----------------------------------------------------------------------------------------------
   params:
-    uses: ./.github/workflows/params.yml
+    uses: ./.github/workflows/params-nightly_tags.yml
 
 
   # -----------------------------------------------------------------------------------------------
