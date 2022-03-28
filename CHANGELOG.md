@@ -8,6 +8,8 @@
 
 #### Added
 - Added arm64 support
+- Added `vips` module for PHP 8.0
+- Added `vips` module for PHP 8.1
 
 #### Changed
 - Separated nightly jobs

@@ -42,6 +42,8 @@ RUN set -eux \
 		libsodium-dev \
 		libssl-dev \
 		libtidy-dev \
+		libvips-dev \
+		libvips42 \
 		libvpx-dev \
 		libwebp-dev \
 		libxml2-dev \
@@ -307,21 +309,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcached --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/php-memcached-dev/php-memcached /tmp/memcached \
-	&& cd /tmp/memcached \
-	# Custom:       Branch
-	&& git checkout master \
-	# Custom:       Install command
-	&& true \
-# FIXME: This is a work-around to mitigate compile error with PHP 8.0
-&& sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
-&& phpize \
-&& ./configure --enable-memcached \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
- \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached \
 	# Enabling
 	&& docker-php-ext-enable memcached \
 	&& true
@@ -693,6 +684,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: vips --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install vips \
+	# Enabling
+	&& docker-php-ext-enable vips \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -807,6 +809,7 @@ RUN set -eux \
 	libaspell15 \
 	libc-client2007e \
 	libenchant-2-2 \
+	libevent-2.1-7 \
 	libfbclient2 \
 	libffi7 \
 	libfreetype6 \
@@ -823,6 +826,7 @@ RUN set -eux \
 	librdkafka1 \
 	libsybdb5 \
 	libtidy5deb1 \
+	libvips42 \
 	libvpx6 \
 	libwebp6 \
 	libxpm4 \
@@ -1032,6 +1036,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
 	&& php -m | grep -oiE '^uuid$' \
 	&& php-fpm -m | grep -oiE '^uuid$' \
+	&& php -m | grep -oiE '^vips$' \
+	&& php-fpm -m | grep -oiE '^vips$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \

@@ -12,7 +12,7 @@
 # Extensions to enable (in defined order)
 # -------------------------------------------------------------------------------------------------
 extensions_enabled:
-  #  # ioncube must be loaded first
+  # ioncube must be loaded first
   - ioncube
   - amqp
   - apcu
@@ -147,7 +147,6 @@ extensions_enabled:
 #   command:     [required] Custom command to install and enable a module
 extensions_available:
   amqp:
-    disabled: []
     5.2:
       type: pecl
       version: 1.6.1
@@ -367,7 +366,6 @@ extensions_available:
   iconv:
     already_avail: "{{ php_all_versions }}"
   igbinary:
-    disabled: []
     5.2:
       type: pecl
       version: 2.0.7
@@ -549,47 +547,35 @@ extensions_available:
     5.2:
       type: pecl
       version: 2.1.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
     5.3:
       type: pecl
       version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
     5.4:
       type: pecl
       version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
     5.5:
       type: pecl
       version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
     5.6:
       type: pecl
       version: 2.2.0
-    7.4:
-      type: git
-      git_url: https://github.com/php-memcached-dev/php-memcached
-      git_ref: master
-      command: phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install
-    8.0:
-      type: git
-      git_url: https://github.com/php-memcached-dev/php-memcached
-      git_ref: master
-      command: |
-        true \
-        # FIXME: This is a work-around to mitigate compile error with PHP 8.0
-        && sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
-        && phpize \
-        && ./configure --enable-memcached \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-    8.1:
-      type: git
-      git_url: https://github.com/php-memcached-dev/php-memcached
-      git_ref: master
-      command: |
-        true \
-        # FIXME: This is a work-around to mitigate compile error with PHP 8.1
-        && sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
-        && phpize \
-        && ./configure --enable-memcached \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    7.0:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    7.1:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.1-6]
+    7.2:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.1-6]
     8.2:
       type: git
       git_url: https://github.com/php-memcached-dev/php-memcached
@@ -604,8 +590,9 @@ extensions_available:
         && make install \
     all:
       type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
       build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
-      run_dep: [libmemcachedutil2]
+      run_dep: [libmemcachedutil2, libevent-2.1-7]
   mhash:
     disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] # Deprecated
     already_avail: [5.2, 5.3, 5.4, 5.5, 5.6]
@@ -1263,96 +1250,18 @@ extensions_available:
       run_dep: [uuid]
       build_dep: [uuid-dev]
   vips:
-    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1, 8.2]
-    7.0:
-      build_dep:
-        - fftw-dev
-        - gobject-introspection
-        - gtk-doc-tools
-        - libexif-dev
-        - libexpat1-dev
-        - libfftw3-dev
-        - libgif-dev
-        - libglib2.0-dev
-        - libmagick++-dev
-        - libmagickcore-6.q16-dev
-        - libmagickwand-dev
-        - libpoppler-glib-dev
-        - librsvg2-dev
-        - libtool
-        - libwebp-dev
-        - libwebpdemux2
-        - libwebpmux2
-      run_dep:
-        - fftw2
-        - gir1.2-poppler-0.18
-        - imagemagick-6.q16
-        - libexif12
-        - libexpat1
-        - libfftw3-3
-        - libgif7
-        - libglib2.0-0
-        - libmagick++-6.q16-7
-        - libmagick++-6.q16hdri-7
-        - libmagickcore-6.q16-3
-        - libmagickcore-6.q16-3-extra
-        - libmagickwand-6.q16-3
-        - libmagickwand-6.q16hdri-3
-        - libpoppler-glib8
-        - librsvg2-2
-        - libwebp6
-        - libwebpdemux2
-        - libwebpmux2
+    # vips requires PHP > 5.6
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.2]
+    5.6:
+      type: pecl
+      version: 1.0.0
     all:
       type: pecl
-      pre: |
-        git clone https://github.com/libvips/libvips /tmp/libvips \
-        && cd /tmp/libvips \
-        && ./autogen.sh \
-        && make -j$(getconf _NPROCESSORS_ONLN) \
-        && make install \
-        && cd /tmp \
-        && rm -rf /tmp/libvips \
       build_dep:
-        - fftw-dev
-        - gobject-introspection
-        - gtk-doc-tools
-        - libexif-dev
-        - libexpat1-dev
-        - libfftw3-dev
-        - libgif-dev
-        - libglib2.0-dev
-        - libimagequant-dev
-        - libmagick++-dev
-        - libmagickcore-6.q16-dev
-        - libmagickwand-dev
-        - libpoppler-glib-dev
-        - librsvg2-dev
-        - libtool
-        - libwebp-dev
-        - libwebpdemux2
-        - libwebpmux3
+        - libvips-dev
+        - libvips42
       run_dep:
-        - fftw2
-        - gir1.2-poppler-0.18
-        - imagemagick-6.q16
-        - libexif12
-        - libexpat1
-        - libfftw3-3
-        - libgif7
-        - libglib2.0-0
-        - libimagequant0
-        - libmagick++-6.q16-8
-        - libmagick++-6.q16hdri-8
-        - libmagickcore-6.q16-6
-        - libmagickcore-6.q16-6-extra
-        - libmagickwand-6.q16-6
-        - libmagickwand-6.q16hdri-6
-        - libpoppler-glib8
-        - librsvg2-2
-        - libwebp6
-        - libwebpdemux2
-        - libwebpmux3
+        - libvips42
   wddx:
     # https://wiki.php.net/rfc/deprecate-and-remove-ext-wddx
     disabled: [7.4, 8.0, 8.1, 8.2]

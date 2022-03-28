@@ -9,34 +9,23 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		alien \
-		fftw-dev \
 		firebird-dev \
 		freetds-dev \
 		ghostscript \
-		gobject-introspection \
-		gtk-doc-tools \
 		libaio-dev \
 		libbz2-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-dev \
 		libevent-dev \
-		libexif-dev \
-		libexpat1-dev \
 		libfbclient2 \
-		libfftw3-dev \
 		libfreetype6-dev \
-		libgif-dev \
-		libglib2.0-dev \
 		libgmp-dev \
 		libib-util \
 		libicu-dev \
-		libimagequant-dev \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
-		libmagick++-dev \
-		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
 		libmariadb-dev \
 		libmcrypt-dev \
@@ -44,23 +33,20 @@ RUN set -eux \
 		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
-		libpoppler-glib-dev \
 		libpq-dev \
 		libpspell-dev \
 		librabbitmq-dev \
 		librdkafka-dev \
 		librecode-dev \
-		librsvg2-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libssh2-1-dev \
 		libssl-dev \
 		libtidy-dev \
-		libtool \
+		libvips-dev \
+		libvips42 \
 		libvpx-dev \
 		libwebp-dev \
-		libwebpdemux2 \
-		libwebpmux3 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -350,10 +336,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcached --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install memcached \
+	# Custom:       Pecl command
+	&& printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached \
 	# Enabling
 	&& docker-php-ext-enable memcached \
 	&& true
@@ -749,15 +735,6 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: vips --------------------
 RUN set -eux \
-	# Generic pre-command
-	&& git clone https://github.com/libvips/libvips /tmp/libvips \
-&& cd /tmp/libvips \
-&& ./autogen.sh \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
-&& cd /tmp \
-&& rm -rf /tmp/libvips \
- \
 	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
@@ -896,48 +873,32 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
-	fftw2 \
 	ghostscript \
-	gir1.2-poppler-0.18 \
-	imagemagick-6.q16 \
 	libaio1 \
 	libaspell15 \
 	libc-client2007e \
 	libenchant1c2a \
-	libexif12 \
-	libexpat1 \
+	libevent-2.1-6 \
 	libfbclient2 \
-	libfftw3-3 \
 	libfreetype6 \
-	libgif7 \
-	libglib2.0-0 \
 	libicu63 \
-	libimagequant0 \
 	libjpeg62-turbo \
-	libmagick++-6.q16-8 \
-	libmagick++-6.q16hdri-8 \
-	libmagickcore-6.q16-6 \
-	libmagickcore-6.q16-6-extra \
 	libmagickwand-6.q16-6 \
-	libmagickwand-6.q16hdri-6 \
 	libmariadbd19 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
 	libpng16-16 \
-	libpoppler-glib8 \
 	libpq5 \
 	librabbitmq4 \
 	librdkafka1 \
 	librecode0 \
-	librsvg2-2 \
 	libssh2-1 \
 	libsybdb5 \
 	libtidy5deb1 \
+	libvips42 \
 	libvpx5 \
 	libwebp6 \
-	libwebpdemux2 \
-	libwebpmux3 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
