@@ -31,6 +31,11 @@ on:
         description: 'The flavour to build (base, mods, prod or work).'
         required: true
         type: string
+      run_tests:
+        description: 'Dertermines weather we run integration tests or not.'
+        required: true
+        type: boolean
+
     ###
     ### Secrets
     ###
@@ -168,6 +173,17 @@ jobs:
         with:
           command: |
             make build VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
+
+
+      # ------------------------------------------------------------
+      # Test
+      # ------------------------------------------------------------
+      - name: Test
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
+        if: ${{ inputs.run_tests }}
 
 
       # ------------------------------------------------------------
