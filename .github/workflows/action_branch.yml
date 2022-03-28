@@ -44,6 +44,7 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   base:
     needs:
+      - params
       - configure
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
@@ -59,6 +60,7 @@ jobs:
 
   base-test:
     needs:
+      - params
       - configure
       - base
     uses: ./.github/workflows/zzz-reuse-test.yml
@@ -79,8 +81,10 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   mods:
     needs:
+      - params
       - configure
       - base
+      - base-test
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -95,7 +99,10 @@ jobs:
 
   mods-test:
     needs:
+      - params
       - configure
+      - base
+      - base-test
       - mods
     uses: ./.github/workflows/zzz-reuse-test.yml
     with:
@@ -115,8 +122,12 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   prod:
     needs:
+      - params
       - configure
+      - base
+      - base-test
       - mods
+      - mods-test
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -131,7 +142,12 @@ jobs:
 
   prod-test:
     needs:
+      - params
       - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
       - prod
     uses: ./.github/workflows/zzz-reuse-test.yml
     with:
@@ -151,8 +167,14 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   work:
     needs:
+      - params
       - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
       - prod
+      - prod-test
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -167,7 +189,14 @@ jobs:
 
   work-test:
     needs:
+      - params
       - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
+      - prod
+      - prod-test
       - work
     uses: ./.github/workflows/zzz-reuse-test.yml
     with:
@@ -187,10 +216,15 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   push-image:
     needs:
+      - params
       - configure
+      - base
       - base-test
+      - mods
       - mods-test
+      - prod
       - prod-test
+      - work
       - work-test
     uses: ./.github/workflows/zzz-reuse-deploy-images.yml
     with:
@@ -211,6 +245,14 @@ jobs:
     needs:
       - params
       - configure
+      - base
+      - base-test
+      - mods
+      - mods-test
+      - prod
+      - prod-test
+      - work
+      - work-test
       - push-image
     uses: ./.github/workflows/zzz-reuse-deploy-manifests.yml
     with:
