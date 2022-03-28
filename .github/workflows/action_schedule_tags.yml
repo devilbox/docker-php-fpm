@@ -56,9 +56,27 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: base
+      run_tests: true
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    #base-test:
+    #  needs:
+    #    - params
+    #    - configure
+    #    - base
+    #  uses: ./.github/workflows/zzz-reuse-test.yml
+    #  with:
+    #    enabled: true
+    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
+    #    has_refs: ${{ needs.configure.outputs.has_refs }}
+    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    #    flavour: base
+    #  secrets:
+    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
   # -----------------------------------------------------------------------------------------------
@@ -70,6 +88,25 @@ jobs:
       - configure
       - base
     uses: ./.github/workflows/zzz-reuse-build.yml
+    with:
+      enabled: true
+      can_deploy: true
+      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: mods
+      run_tests: false
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  mods-test:
+    needs:
+      - params
+      - configure
+      - base
+      - mods
+    uses: ./.github/workflows/zzz-reuse-test.yml
     with:
       enabled: true
       can_deploy: true
@@ -91,6 +128,7 @@ jobs:
       - configure
       - base
       - mods
+      - mods-test
     uses: ./.github/workflows/zzz-reuse-build.yml
     with:
       enabled: true
@@ -99,9 +137,31 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: prod
+      run_tests: true
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    #prod-test:
+    #  needs:
+    #    - params
+    #    - configure
+    #    - base
+    #    - base-test
+    #    - mods
+    #    - mods-test
+    #    - prod
+    #  uses: ./.github/workflows/zzz-reuse-test.yml
+    #  with:
+    #    enabled: true
+    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
+    #    has_refs: ${{ needs.configure.outputs.has_refs }}
+    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    #    flavour: prod
+    #  secrets:
+    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
   # -----------------------------------------------------------------------------------------------
@@ -122,9 +182,33 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: work
+      run_tests: true
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    #work-test:
+    #  needs:
+    #    - params
+    #    - configure
+    #    - base
+    #    - base-test
+    #    - mods
+    #    - mods-test
+    #    - prod
+    #    - prod-test
+    #    - work
+    #  uses: ./.github/workflows/zzz-reuse-test.yml
+    #  with:
+    #    enabled: true
+    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
+    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
+    #    has_refs: ${{ needs.configure.outputs.has_refs }}
+    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+    #    flavour: work
+    #  secrets:
+    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
   # -----------------------------------------------------------------------------------------------

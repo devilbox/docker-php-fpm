@@ -1,0 +1,190 @@
+---
+name: Test multi-arch images
+
+on:
+  workflow_call:
+    ###
+    ### Variables
+    ###
+    inputs:
+      enabled:
+        description: 'Determines wheather this workflow is enabled at all (will run or skip).'
+        required: true
+        type: boolean
+      can_deploy:
+        description: 'Determines wheather this workflow will also deploy (login and push).'
+        required: true
+        type: boolean
+      build_matrix:
+        description: 'The build matrix'
+        required: true
+        type: string
+      has_refs:
+        description: 'The ref build matrix as JSON string (list of git refs to build/deploy).'
+        required: true
+        type: string
+      artifact_prefix:
+        description: 'Unique artifact name prefix (to avoid overriding existing artifcats during parallel runs).'
+        required: true
+        type: string
+      flavour:
+        description: 'The flavour to build (base, mods, prod or work).'
+        required: true
+        type: string
+    ###
+    ### Secrets
+    ###
+    secrets:
+      dockerhub_username:
+        description: 'The username for Dockerhub.'
+        required: false
+      dockerhub_password:
+        description: 'The password for Dockerhub.'
+        required: false
+
+jobs:
+  # -----------------------------------------------------------------------------------------------
+  # JOB: BUILD
+  # -----------------------------------------------------------------------------------------------
+  test:
+    name: ${{ matrix.name }}-${{ matrix.version }}-${{ inputs.flavour }} (${{ matrix.arch }}) ${{ matrix.refs }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.build_matrix) }}
+    if: inputs.enabled
+    steps:
+
+      # ------------------------------------------------------------
+      # Setup repository
+      # ------------------------------------------------------------
+      - name: "[SETUP] Checkout repository (current)"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+        if: inputs.has_refs == 0
+
+      - name: "[SETUP] Checkout repository (ref: ${{ matrix.refs }})"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ matrix.refs }}
+        if: inputs.has_refs != 0
+
+      - name: "[SETUP] Setup QEMU environment"
+        uses: docker/setup-qemu-action@v1
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+
+      - name: "[SETUP] Set artifact names"
+        id: set-artifact-name
+        run: |
+          PRE_HASH="$( git rev-parse HEAD | head -c 10 )"
+          VERSION="${{ matrix.version }}"
+          ARCH="$( echo "${{ matrix.arch }}" | sed 's|/|-|g' )"
+
+          NAME_BASE="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-base"
+          NAME_MODS="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-mods"
+          NAME_PROD="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-prod"
+          NAME_WORK="${{ inputs.artifact_prefix }}-${PRE_HASH}-${VERSION}-${ARCH}-work"
+
+          echo "::set-output name=base::${NAME_BASE}"
+          echo "::set-output name=mods::${NAME_MODS}"
+          echo "::set-output name=prod::${NAME_PROD}"
+          echo "::set-output name=work::${NAME_WORK}"
+
+      # ------------------------------------------------------------
+      # Artifact Import
+      # ------------------------------------------------------------
+
+      ###
+      ### Download and import base
+      ###
+      - name: "[Artifact Load] Download base"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.base }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'base' }}
+
+      - name: "[Artifact Load] Import base"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make load INFILE=${{ steps.set-artifact-name.outputs.base }}
+        if: ${{ inputs.flavour == 'base' }}
+
+      ###
+      ### Download and import mods
+      ###
+      - name: "[Artifact Load] Download mods"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.mods }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'mods' }}
+
+      - name: "[Artifact Load] Import mods"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make load INFILE=${{ steps.set-artifact-name.outputs.mods }}
+        if: ${{ inputs.flavour == 'mods' }}
+
+      ###
+      ### Download and import prod
+      ###
+      - name: "[Artifact Load] Download prod"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.prod }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'prod' }}
+
+      - name: "[Artifact Load] Import prod"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make load INFILE=${{ steps.set-artifact-name.outputs.prod }}
+        if: ${{ inputs.flavour == 'prod' }}
+
+      ###
+      ### Download and import work
+      ###
+      - name: "[Artifact Load] Download work"
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: actions/download-artifact@v3
+          with: |
+            name: ${{ steps.set-artifact-name.outputs.work }}
+          attempt_limit: 20
+          attempt_delay: 10000
+        if: ${{ inputs.flavour == 'work' }}
+
+      - name: "[Artifact Load] Import work"
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make load INFILE=${{ steps.set-artifact-name.outputs.work }}
+        if: ${{ inputs.flavour == 'work' }}
+
+
+      # ------------------------------------------------------------
+      # Test
+      # ------------------------------------------------------------
+      - name: Test
+        uses: cytopia/shell-command-retry-action@v0.1.2
+        with:
+          command: |
+            make test VERSION=${{ matrix.version }} FLAVOUR=${{ inputs.flavour }} ARCH=${{ matrix.arch }}
