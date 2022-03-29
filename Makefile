@@ -27,18 +27,19 @@ TAG        = latest
 NAME       = PHP
 #VERSION    = 5.5
 IMAGE      = devilbox/php-fpm
-#FLAVOUR    = base
+#FLAVOUR    = debian
+#STAGE      = base
 FILE       = Dockerfile-$(VERSION)
-DIR        = Dockerfiles/$(FLAVOUR)
+DIR        = Dockerfiles/$(STAGE)
 
 ifeq ($(strip $(TAG)),latest)
-DOCKER_TAG = $(VERSION)-$(FLAVOUR)
+DOCKER_TAG = $(VERSION)-$(STAGE)
 BASE_TAG   = $(VERSION)-base
 MODS_TAG   = $(VERSION)-mods
 PROD_TAG   = $(VERSION)-prod
 WORK_TAG   = $(VERSION)-work
 else
-DOCKER_TAG = $(VERSION)-$(FLAVOUR)-$(TAG)
+DOCKER_TAG = $(VERSION)-$(STAGE)-$(TAG)
 BASE_TAG   = $(VERSION)-base-$(TAG)
 MODS_TAG   = $(VERSION)-mods-$(TAG)
 PROD_TAG   = $(VERSION)-prod-$(TAG)
@@ -116,41 +117,41 @@ lint-ansible: gen-dockerfiles
 # the variable directory of extensions to copy.
 # The only way to "LAZY" fetch it, is by doing a call to the base image and populate
 # a Makefile variable with its value upon call.
-ifeq ($(strip $(FLAVOUR)),mods)
+ifeq ($(strip $(STAGE)),mods)
 EXT_DIR=$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(BASE_TAG) -r \
 	'echo ini_get("extension_dir");'\
 )
 endif
 
 .PHONY: build
-build: check-flavour-is-set
+build: check-stage-is-set
 build: check-parent-image-exists
 build: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
 build: docker-arch-build
 
 .PHONY: rebuild
-rebuild: check-flavour-is-set
+rebuild: check-stage-is-set
 rebuild: check-parent-image-exists
 rebuild: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
 rebuild: docker-arch-rebuild
 
 .PHONY: push
-push: check-flavour-is-set
+push: check-stage-is-set
 push: check-version-is-set
 push: docker-arch-push
 
 .PHONY: tag
-tag: check-flavour-is-set
+tag: check-stage-is-set
 tag: check-version-is-set
 tag:
-	docker tag $(IMAGE):$(VERSION)-$(FLAVOUR) $(IMAGE):$(DOCKER_TAG)
+	docker tag $(IMAGE):$(VERSION)-$(STAGE) $(IMAGE):$(DOCKER_TAG)
 
 
 # -------------------------------------------------------------------------------------------------
 # Save / Load Targets
 # -------------------------------------------------------------------------------------------------
 .PHONY: save
-save: check-flavour-is-set
+save: check-stage-is-set
 save: check-version-is-set
 save: check-current-image-exists
 save: docker-save
@@ -177,13 +178,13 @@ manifest-push: docker-manifest-push
 # Test Targets
 # -------------------------------------------------------------------------------------------------
 .PHONY: test
-test: check-flavour-is-set
+test: check-stage-is-set
 test: check-current-image-exists
 test: test-integration
 
 .PHONY: test-integration
 test-integration:
-	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) $(FLAVOUR) $(DOCKER_TAG)
+	./tests/test.sh $(IMAGE) $(ARCH) $(VERSION) $(STAGE) $(DOCKER_TAG)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -240,17 +241,17 @@ check-version-is-set:
 	fi
 
 ###
-### Ensures the FLAVOUR variable is set
+### Ensures the STAGE variable is set
 ###
-.PHONY: check-flavour-is-set
-check-flavour-is-set:
-	@if [ "$(FLAVOUR)" = "" ]; then \
-		echo "This make target requires the FLAVOUR variable to be set."; \
-		echo "make <target> FLAVOUR="; \
+.PHONY: check-stage-is-set
+check-stage-is-set:
+	@if [ "$(STAGE)" = "" ]; then \
+		echo "This make target requires the STAGE variable to be set."; \
+		echo "make <target> STAGE="; \
 		echo "Exiting."; \
 		exit 1; \
 	fi
-	@if [ "$(FLAVOUR)" != "base" ] && [ "$(FLAVOUR)" != "mods" ] && [ "$(FLAVOUR)" != "prod" ] && [ "$(FLAVOUR)" != "work" ]; then \
+	@if [ "$(STAGE)" != "base" ] && [ "$(STAGE)" != "mods" ] && [ "$(STAGE)" != "prod" ] && [ "$(STAGE)" != "work" ]; then \
 		echo "Error, Flavour can only be one of 'base', 'mods', 'prod', or 'work'."; \
 		echo "Exiting."; \
 		exit 1; \
@@ -260,7 +261,7 @@ check-flavour-is-set:
 ### Checks if current image exists and is of correct architecture
 ###
 .PHONY: check-current-image-exists
-check-current-image-exists: check-flavour-is-set
+check-current-image-exists: check-stage-is-set
 check-current-image-exists:
 	@if [ "$$( docker images -q $(IMAGE):$(DOCKER_TAG) )" = "" ]; then \
 		>&2 echo "Docker image '$(IMAGE):$(DOCKER_TAG)' was not found locally."; \
@@ -286,9 +287,9 @@ check-current-image-exists:
 ### Checks if parent image exists and is of correct architecture
 ###
 .PHONY: check-parent-image-exists
-check-parent-image-exists: check-flavour-is-set
+check-parent-image-exists: check-stage-is-set
 check-parent-image-exists:
-	@if [ "$(FLAVOUR)" = "work" ]; then \
+	@if [ "$(STAGE)" = "work" ]; then \
 		if [ "$$( docker images -q $(IMAGE):$(PROD_TAG) )" = "" ]; then \
 			>&2 echo "Docker image '$(IMAGE):$(PROD_TAG)' was not found locally."; \
 			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
@@ -304,7 +305,7 @@ check-parent-image-exists:
 			>&2 echo; \
 			exit 1; \
 		fi; \
-	elif [ "$(FLAVOUR)" = "prod" ]; then \
+	elif [ "$(STAGE)" = "prod" ]; then \
 		if [ "$$( docker images -q $(IMAGE):$(MODS_TAG) )" = "" ]; then \
 			>&2 echo "Docker image '$(IMAGE):$(MODS_TAG)' was not found locally."; \
 			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
@@ -320,7 +321,7 @@ check-parent-image-exists:
 			>&2 echo; \
 			exit 1; \
 		fi; \
-	elif [ "$(FLAVOUR)" = "mods" ]; then \
+	elif [ "$(STAGE)" = "mods" ]; then \
 		if [ "$$( docker images -q $(IMAGE):$(BASE_TAG) )" = "" ]; then \
 			>&2 echo "Docker image '$(IMAGE):$(BASE_TAG)' was not found locally."; \
 			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
