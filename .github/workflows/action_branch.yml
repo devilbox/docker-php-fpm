@@ -94,6 +94,7 @@ jobs:
       - configure
       - base
       - mods
+      - mods-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       matrix: ${{ needs.configure.outputs.matrix_build }}
@@ -128,24 +129,78 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (7/8) Push images
   # -----------------------------------------------------------------------------------------------
-  push-image:
+  push-base:
     needs:
-      - params
       - configure
       - base
       - mods
       - prod
       - work
-    uses: ./.github/workflows/zzz-reuse-deploy-images.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: base
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-mods:
+    needs:
+      - configure
+      - base
+      - mods
+      - prod
+      - work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: mods
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-prod:
+    needs:
+      - configure
+      - base
+      - mods
+      - prod
+      - work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: prod
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-work:
+    needs:
+      - configure
+      - base
+      - mods
+      - prod
+      - work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      has_refs: ${{ needs.configure.outputs.has_refs }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      flavour: work
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
 
 
   # -----------------------------------------------------------------------------------------------
@@ -154,11 +209,10 @@ jobs:
   push-manifest:
     needs:
       - configure
-      - base
-      - mods
-      - prod
-      - work
-      - push-image
+      - push-base
+      - push-mods
+      - push-prod
+      - push-work
     uses: ./.github/workflows/zzz-reuse-deploy-manifests.yml
     with:
       enabled: true
