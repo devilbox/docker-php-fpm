@@ -28,11 +28,12 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   configure:
     needs: [params]
-    uses: ./.github/workflows/zzz-reuse-configure.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-configure.yml@master
     with:
       enabled: true
       can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      matrix: ${{ needs.params.outputs.matrix }}
+      is_scheduled: false
+      versions: ${{ needs.params.outputs.versions }}
       refs: ${{ needs.params.outputs.refs }}
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -44,77 +45,45 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   base:
     needs:
-      - params
       - configure
-    uses: ./.github/workflows/zzz-reuse-build.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: base
+      flavour_prev: ''
       run_tests: true
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-    #base-test:
-    #  needs:
-    #    - params
-    #    - configure
-    #    - base
-    #  uses: ./.github/workflows/zzz-reuse-test.yml
-    #  with:
-    #    enabled: true
-    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
-    #    has_refs: ${{ needs.configure.outputs.has_refs }}
-    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-    #    flavour: base
-    #  secrets:
-    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
+      upload_artifact: true
 
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
   # -----------------------------------------------------------------------------------------------
   mods:
     needs:
-      - params
       - configure
       - base
-    uses: ./.github/workflows/zzz-reuse-build.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: mods
+      flavour_prev: base
       run_tests: false
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      upload_artifact: true
 
   mods-test:
     needs:
-      - params
       - configure
       - base
       - mods
-    uses: ./.github/workflows/zzz-reuse-test.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: mods
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 
   # -----------------------------------------------------------------------------------------------
@@ -122,44 +91,18 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   prod:
     needs:
-      - params
       - configure
       - base
       - mods
-      - mods-test
-    uses: ./.github/workflows/zzz-reuse-build.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: prod
+      flavour_prev: mods
       run_tests: true
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-    #prod-test:
-    #  needs:
-    #    - params
-    #    - configure
-    #    - base
-    #    - base-test
-    #    - mods
-    #    - mods-test
-    #    - prod
-    #  uses: ./.github/workflows/zzz-reuse-test.yml
-    #  with:
-    #    enabled: true
-    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
-    #    has_refs: ${{ needs.configure.outputs.has_refs }}
-    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-    #    flavour: prod
-    #  secrets:
-    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      upload_artifact: true
 
 
   # -----------------------------------------------------------------------------------------------
@@ -167,46 +110,19 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   work:
     needs:
-      - params
       - configure
       - base
       - mods
       - prod
-    uses: ./.github/workflows/zzz-reuse-build.yml
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
-      enabled: true
-      can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-      build_matrix: ${{ needs.configure.outputs.matrix_build }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: work
+      flavour_prev: prod
       run_tests: true
-    secrets:
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-    #work-test:
-    #  needs:
-    #    - params
-    #    - configure
-    #    - base
-    #    - base-test
-    #    - mods
-    #    - mods-test
-    #    - prod
-    #    - prod-test
-    #    - work
-    #  uses: ./.github/workflows/zzz-reuse-test.yml
-    #  with:
-    #    enabled: true
-    #    can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
-    #    build_matrix: ${{ needs.configure.outputs.matrix_build }}
-    #    has_refs: ${{ needs.configure.outputs.has_refs }}
-    #    artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-    #    flavour: work
-    #  secrets:
-    #    dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-    #    dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      upload_artifact: true
 
 
   # -----------------------------------------------------------------------------------------------
@@ -237,7 +153,6 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   push-manifest:
     needs:
-      - params
       - configure
       - base
       - mods
@@ -249,7 +164,7 @@ jobs:
       enabled: true
       can_deploy: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-') }}
       deploy_matrix: ${{ needs.configure.outputs.matrix_deploy }}
-      params_matrix: ${{ needs.params.outputs.matrix }}
+      params_matrix: ${{ needs.configure.outputs.versions }}
       has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
     secrets:
