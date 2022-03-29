@@ -162,9 +162,6 @@ jobs:
     needs:
       - configure
       - base-test
-      - mods-test
-      - prod-test
-      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -179,10 +176,7 @@ jobs:
   push-mods:
     needs:
       - configure
-      - base-test
       - mods-test
-      - prod-test
-      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -197,10 +191,7 @@ jobs:
   push-prod:
     needs:
       - configure
-      - base-test
-      - mods-test
       - prod-test
-      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -215,9 +206,6 @@ jobs:
   push-work:
     needs:
       - configure
-      - base-test
-      - mods-test
-      - prod-test
       - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
