@@ -48,13 +48,13 @@ jobs:
       - configure
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: true
+      upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: base
       flavour_prev: ''
-      run_tests: true
-      upload_artifact: true
 
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
@@ -65,23 +65,22 @@ jobs:
       - base
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: false
+      upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: mods
       flavour_prev: base
-      run_tests: false
-      upload_artifact: true
 
   mods-test:
     needs:
       - configure
-      - base
       - mods
     uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: mods
 
@@ -92,17 +91,16 @@ jobs:
   prod:
     needs:
       - configure
-      - base
       - mods
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: true
+      upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: prod
       flavour_prev: mods
-      run_tests: true
-      upload_artifact: true
 
 
   # -----------------------------------------------------------------------------------------------
@@ -111,18 +109,16 @@ jobs:
   work:
     needs:
       - configure
-      - base
-      - mods
       - prod
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: true
+      upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: work
       flavour_prev: prod
-      run_tests: true
-      upload_artifact: true
 
 
   # -----------------------------------------------------------------------------------------------
@@ -137,9 +133,9 @@ jobs:
       - work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: base
     secrets:
@@ -155,9 +151,9 @@ jobs:
       - work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: mods
     secrets:
@@ -173,9 +169,9 @@ jobs:
       - work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: prod
     secrets:
@@ -191,9 +187,9 @@ jobs:
       - work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       flavour: work
     secrets:
@@ -210,10 +206,10 @@ jobs:
       - push-base
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       flavour: base
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -225,10 +221,10 @@ jobs:
       - push-mods
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       flavour: mods
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -240,10 +236,10 @@ jobs:
       - push-prod
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       flavour: prod
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -255,10 +251,10 @@ jobs:
       - push-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
     with:
-      can_deploy: ${{ needs.configure.outputs.can_login && needs.configure.outputs.can_push }}
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      has_refs: ${{ needs.configure.outputs.has_refs }}
       flavour: work
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
