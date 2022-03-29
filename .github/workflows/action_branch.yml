@@ -49,12 +49,24 @@ jobs:
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
-      run_tests: true
+      run_tests: false
       upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: base
-      flavour_prev: ''
+      stage: base
+      stage_prev: ''
+
+  base-test:
+    needs:
+      - configure
+      - base
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: base
+
 
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
@@ -70,8 +82,8 @@ jobs:
       upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: mods
-      flavour_prev: base
+      stage: mods
+      stage_prev: base
 
   mods-test:
     needs:
@@ -82,7 +94,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: mods
+      stage: mods
 
 
   # -----------------------------------------------------------------------------------------------
@@ -95,12 +107,23 @@ jobs:
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
-      run_tests: true
+      run_tests: false
       upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: prod
-      flavour_prev: mods
+      stage: prod
+      stage_prev: mods
+
+  prod-test:
+    needs:
+      - configure
+      - prod
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: prod
 
 
   # -----------------------------------------------------------------------------------------------
@@ -117,8 +140,19 @@ jobs:
       upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: work
-      flavour_prev: prod
+      stage: work
+      stage_prev: prod
+
+  work-test:
+    needs:
+      - configure
+      - work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: work
 
 
   # -----------------------------------------------------------------------------------------------
@@ -127,17 +161,17 @@ jobs:
   push-base:
     needs:
       - configure
-      - base
+      - base-test
       - mods-test
-      - prod
-      - work
+      - prod-test
+      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: base
+      stage: base
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -145,17 +179,17 @@ jobs:
   push-mods:
     needs:
       - configure
-      - base
+      - base-test
       - mods-test
-      - prod
-      - work
+      - prod-test
+      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: mods
+      stage: mods
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -163,17 +197,17 @@ jobs:
   push-prod:
     needs:
       - configure
-      - base
+      - base-test
       - mods-test
-      - prod
-      - work
+      - prod-test
+      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: prod
+      stage: prod
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -181,17 +215,17 @@ jobs:
   push-work:
     needs:
       - configure
-      - base
+      - base-test
       - mods-test
-      - prod
-      - work
+      - prod-test
+      - work-test
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      flavour: work
+      stage: work
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -210,7 +244,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      flavour: base
+      stage: base
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -225,7 +259,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      flavour: mods
+      stage: mods
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -240,7 +274,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      flavour: prod
+      stage: prod
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -255,7 +289,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
-      flavour: work
+      stage: work
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
