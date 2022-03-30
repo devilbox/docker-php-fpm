@@ -12,7 +12,8 @@
 # Global variables
 # -------------------------------------------------------------------------------------------------
 composer_home: /usr/local/src/composer
-nvm_home: /usr/local/src/nvm
+nvm_home: /opt/nvm
+node_version: --lts
 
 
 # -------------------------------------------------------------------------------------------------
@@ -24,7 +25,6 @@ apt_repositories_enabled:
   - git
   #- mongo
   #- pgsql
-  - yarn
 
 
 # -------------------------------------------------------------------------------------------------
@@ -206,10 +206,6 @@ apt_repositories_available:
     all:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main
       pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
-  yarn:
-    all:
-      deb: deb http://dl.yarnpkg.com/debian/ stable main
-      pre: curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
 
 
 # -------------------------------------------------------------------------------------------------
@@ -512,25 +508,35 @@ software_available:
         && curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python3 \
   # nvm is a dependency for others
   nvm:
-    check: su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+'
+    check: |
+      su  -c '. {{ nvm_home }}/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+      && su  -c '. {{ nvm_home }}/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
     all:
       pre: |
-        git clone https://github.com/creationix/nvm /opt/nvm \
-        && cd /opt/nvm \
-        && git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
+        NVM_VERSION="$( \
+          curl -sS 'https://github.com/nvm-sh/nvm/releases' \
+          | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
+          | grep -Eo 'v?[.0-9]+' \
+          | sort -V \
+          | tail -1 \
+        )" \
+        && mkdir -p {{ nvm_home }} \
+      command: |
+        curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+          | NVM_DIR="{{ nvm_home }}" bash \
         \
         && { \
-          echo 'export NVM_DIR="/opt/nvm"'; \
+          echo 'export NVM_DIR="{{ nvm_home }}"'; \
           echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
           echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
         } >> /home/devilbox/.bashrc \
         \
-        && chown -R devilbox:devilbox /opt/nvm \
-      # Install latest and LTS version
-      command: |
-        su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
-        && su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
-        && su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
+        && chown -R devilbox:devilbox "{{ nvm_home }}" \
+      # Install latest and LTS version and yarn
+      post: |
+        su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
+        && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
+        && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
   awesomeci:
     check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:

@@ -60,8 +60,6 @@ RUN set -eux \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
-	&& curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
@@ -174,9 +172,17 @@ RUN set -eux \
  \
 	\
 # -------------------- nvm --------------------
-	&& git clone https://github.com/creationix/nvm /opt/nvm \
-&& cd /opt/nvm \
-&& git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
+	&& NVM_VERSION="$( \
+  curl -sS 'https://github.com/nvm-sh/nvm/releases' \
+  | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
+  | grep -Eo 'v?[.0-9]+' \
+  | sort -V \
+  | tail -1 \
+)" \
+&& mkdir -p /opt/nvm \
+ \
+	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+  | NVM_DIR="/opt/nvm" bash \
 \
 && { \
   echo 'export NVM_DIR="/opt/nvm"'; \
@@ -184,11 +190,11 @@ RUN set -eux \
   echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
 } >> /home/devilbox/.bashrc \
 \
-&& chown -R devilbox:devilbox /opt/nvm \
+&& chown -R devilbox:devilbox "/opt/nvm" \
  \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
  \
 	\
 # -------------------- awesomeci --------------------
@@ -522,7 +528,9 @@ RUN set -eux \
 RUN set -eux \
 # -------------------- Software --------------------
 	&& composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+' \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+' \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+&& su  -c '. /opt/nvm/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+ \
 	&& regex-grep --version | grep -E '[0-9][.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
 	&& git-flow version | grep -E '[0-9][.0-9]+' \
