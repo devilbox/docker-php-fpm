@@ -229,24 +229,17 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& (rm -rf /root/.cache    || true) \
-	&& (rm -rf /root/.composer || true) \
-	&& (rm -rf /root/.config   || true) \
-	&& (rm -rf /root/.gem      || true) \
-	&& (rm -rf /root/.local    || true) \
-	&& (rm -rf /root/.node     || true) \
-	&& (rm -rf /root/.npm      || true) \
 	\
-	&& (rm -rf /home/devilbox/.cache    || true) \
-	&& (rm -rf /home/devilbox/.composer || true) \
-	&& (rm -rf /home/devilbox/.config   || true) \
-	&& (rm -rf /home/devilbox/.gem      || true) \
-	&& (rm -rf /home/devilbox/.local    || true) \
-	&& (rm -rf /home/devilbox/.node     || true) \
-	&& (rm -rf /home/devilbox/.npm      || true) \
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
 	\
 	&& (rm -rf /usr/local/src/composer/cache/* || true) \
-	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true)
 
 
@@ -295,7 +288,16 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& rm -rf /tmp/* \
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
+	\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -348,11 +350,16 @@ RUN set -eux \
 	\
 	&& su -c '. {{ nvm_home }}/nvm.sh; npm cache clear --force' devilbox \
 	&& su -c '. {{ nvm_home }}/nvm.sh; nvm cache clear --force' devilbox \
-	&& rm -rf /home/devilbox/.npm \
-	&& rm -rf /home/devilbox/.node \
-	&& rm -rf /home/devilbox/.cache \
-	&& rm -rf /home/devilbox/.config \
-	&& rm -rf /tmp/* \
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
+	\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find {{ nvm_home }} -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
@@ -399,8 +406,16 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& rm -rf /root/.gem \
-	&& rm -rf /tmp/* \
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
+	\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -449,8 +464,16 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
+	\
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
+	\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -549,25 +572,13 @@ RUN set -eux \
 {% endfor %}{{ "\n\t" }}\
 # -------------------- Cleanup --------------------
 	\
-	&& (rm -rf /root/.ansible  || true) \
-	&& (rm -rf /root/.cache    || true) \
-	&& (rm -rf /root/.composer || true) \
-	&& (rm -rf /root/.config   || true) \
-	&& (rm -rf /root/.console  || true) \
-	&& (rm -rf /root/.drush    || true) \
-	&& (rm -rf /root/.gem      || true) \
-	&& (rm -rf /root/.local    || true) \
-	&& (rm -rf /root/.node     || true) \
-	&& (rm -rf /root/.npm      || true) \
-	&& (rm -rf /root/.pm2      || true) \
+	{% for f in directory_to_clean %}
+	&& (rm -rf /home/devilbox/{{ f }} || true) \
+	{% endfor %}
 	\
-	&& (rm -rf /home/devilbox/.cache    || true) \
-	&& (rm -rf /home/devilbox/.composer || true) \
-	&& (rm -rf /home/devilbox/.config   || true) \
-	&& (rm -rf /home/devilbox/.gem      || true) \
-	&& (rm -rf /home/devilbox/.local    || true) \
-	&& (rm -rf /home/devilbox/.node     || true) \
-	&& (rm -rf /home/devilbox/.npm      || true) \
+	{% for f in directory_to_clean %}
+	&& (rm -rf /root/{{ f }} || true) \
+	{% endfor %}
 	\
 	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true)

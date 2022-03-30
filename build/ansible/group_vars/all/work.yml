@@ -15,6 +15,24 @@ composer_home: /usr/local/src/composer
 nvm_home: /opt/nvm
 node_version: --lts
 
+directory_to_clean:
+  - .*json
+  - .ansible
+  - .cache
+  - .composer
+  - .config
+  - .console
+  - .drush
+  - .gem
+  - .local
+  - .node
+  - .npm
+  - .pm2
+  - .subversion
+  - .v8*
+  - node_modules
+  - yarn.lock
+
 
 # -------------------------------------------------------------------------------------------------
 # Apt repositories to enable (in defined order)
@@ -541,16 +559,13 @@ software_available:
         su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
-        && (rm -rf /home/devilbox/.cache       || true) \
-        && (rm -rf /home/devilbox/.node        || true) \
-        && (rm -rf /home/devilbox/.npm         || true) \
-        && (rm -rf /home/devilbox/node_modules || true) \
-        && (rm -rf /home/devilbox/yarn.lock    || true) \
-        && (rm -rf /root/.cache       || true) \
-        && (rm -rf /root/.node        || true) \
-        && (rm -rf /root/.npm         || true) \
-        && (rm -rf /root/node_modules || true) \
-        && (rm -rf /root/yarn.lock    || true) \
+        {% for f in directory_to_clean %}
+        && (rm -rf /home/devilbox/{{ f }} || true) \
+        {% endfor %}
+        \
+        {% for f in directory_to_clean %}
+        && (rm -rf /root/{{ f }} || true) \
+        {% endfor %}
   awesomeci:
     check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:
@@ -1055,21 +1070,14 @@ software_available:
   cleanup:
     all:
       command: |
-        rm -rf /home/${MY_USER}/.*json \
-        && rm -rf /home/${MY_USER}/.cache \
-        && rm -rf /home/${MY_USER}/.composer \
-        && rm -rf /home/${MY_USER}/.config \
-        && rm -rf /home/${MY_USER}/.drush \
-        && rm -rf /home/${MY_USER}/.subversion \
-        && rm -rf /home/${MY_USER}/.v8* \
+        true \
+        {% for f in directory_to_clean %}
+        && (rm -rf /home/devilbox/{{ f }} || true) \
+        {% endfor %}
         \
-        && rm -rf /root/.*json \
-        && rm -rf /root/.cache \
-        && rm -rf /root/.composer \
-        && rm -rf /root/.config \
-        && rm -rf /root/.drush \
-        && rm -rf /root/.subversion \
-        && rm -rf /root/.v8* \
+        {% for f in directory_to_clean %}
+        && (rm -rf /root/{{ f }} || true) \
+        {% endfor %}
         \
         && rm -rf /tmp/* \
         && (rm -rf /tmp/.* || true) \
