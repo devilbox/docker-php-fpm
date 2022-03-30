@@ -537,6 +537,16 @@ software_available:
         su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
+        && (rm -rf /home/devilbox/.cache       || true) \
+        && (rm -rf /home/devilbox/.node        || true) \
+        && (rm -rf /home/devilbox/.npm         || true) \
+        && (rm -rf /home/devilbox/node_modules || true) \
+        && (rm -rf /home/devilbox/yarn.lock    || true) \
+        && (rm -rf /root/.cache       || true) \
+        && (rm -rf /root/.node        || true) \
+        && (rm -rf /root/.npm         || true) \
+        && (rm -rf /root/node_modules || true) \
+        && (rm -rf /root/yarn.lock    || true) \
   awesomeci:
     check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:

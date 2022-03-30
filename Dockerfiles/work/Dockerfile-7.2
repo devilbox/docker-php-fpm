@@ -195,6 +195,16 @@ RUN set -eux \
 	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
 && su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
 && su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
+&& (rm -rf /home/devilbox/.cache       || true) \
+&& (rm -rf /home/devilbox/.node        || true) \
+&& (rm -rf /home/devilbox/.npm         || true) \
+&& (rm -rf /home/devilbox/node_modules || true) \
+&& (rm -rf /home/devilbox/yarn.lock    || true) \
+&& (rm -rf /root/.cache       || true) \
+&& (rm -rf /root/.node        || true) \
+&& (rm -rf /root/.npm         || true) \
+&& (rm -rf /root/node_modules || true) \
+&& (rm -rf /root/yarn.lock    || true) \
  \
 	\
 # -------------------- awesomeci --------------------
@@ -400,16 +410,21 @@ fi \
  \
 	\
 	\
-	&& (rm -rf /root/.gem || true ) \
-	&& (rm -rf /root/.cache || true) \
+	&& (rm -rf /root/.cache    || true) \
 	&& (rm -rf /root/.composer || true) \
-	&& (rm -rf /root/.config || true) \
-	&& (rm -rf /root/.npm || true) \
+	&& (rm -rf /root/.config   || true) \
+	&& (rm -rf /root/.gem      || true ) \
+	&& (rm -rf /root/.local    || true) \
+	&& (rm -rf /root/.node     || true) \
+	&& (rm -rf /root/.npm      || true) \
 	\
-	&& (rm -rf /home/devilbox/.cache || true) \
+	&& (rm -rf /home/devilbox/.cache    || true) \
 	&& (rm -rf /home/devilbox/.composer || true) \
-	&& (rm -rf /home/devilbox/.config || true) \
-	&& (rm -rf /home/devilbox/.npm || true) \
+	&& (rm -rf /home/devilbox/.config   || true) \
+	&& (rm -rf /home/devilbox/.gem      || true ) \
+	&& (rm -rf /home/devilbox/.local    || true) \
+	&& (rm -rf /home/devilbox/.node     || true) \
+	&& (rm -rf /home/devilbox/.npm      || true) \
 	\
 	&& (rm -rf /usr/local/src/composer/cache/* || true) \
 	&& rm -rf /tmp/* \
@@ -496,6 +511,7 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
 	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
 	&& rm -rf /home/devilbox/.npm \
+	&& rm -rf /home/devilbox/.node \
 	&& rm -rf /home/devilbox/.cache \
 	&& rm -rf /home/devilbox/.config \
 	&& rm -rf /tmp/* \
