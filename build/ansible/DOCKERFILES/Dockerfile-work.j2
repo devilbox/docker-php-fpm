@@ -313,18 +313,18 @@ RUN set -eux \
 		{%- endif -%}
 		{#- Version specific gem version available? -#}
 		{%- if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
 		{#- Generic gem version  available? -#}
 		{%- elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
 		{#- No version info available -#}
 		{%- else -%}
-			{{ "\n\t" }}&& su -c '. /opt/nvm/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }}' devilbox \
+			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }}' devilbox \
 		{%- endif -%}
 		{#- Fail fast version -#}
 		{%- if build_fail_fast -%}
 			{%- if 'check' in npm_available[tool] -%}
-				{{ "\n\t" }}&& PATH=$PATH:/opt/nvm/versions/node/$(/bin/ls -1 /opt/nvm/versions/node/ | sort -V | tail -1)/bin /opt/nvm/versions/node/$(/bin/ls -1 /opt/nvm/versions/node/ | sort -V | tail -1)/bin/{{ npm_available[tool]['check'] }}{{ "\n\n" }}
+				{{ "\n\t" }}&& PATH=$PATH:{{ nvm_home }}/versions/node/$(/bin/ls -1 {{ nvm_home }}/versions/node/ | sort -V | tail -1)/bin {{ nvm_home }}/versions/node/$(/bin/ls -1 {{ nvm_home }}/versions/node/ | sort -V | tail -1)/bin/{{ npm_available[tool]['check'] }}{{ "\n\n" }}
 			{%- else -%}
 			{{ "\n\t" }}&& true{{ "\n\n" }}
 			{%- endif -%}
@@ -339,17 +339,17 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+	&& ln -sf $(dirname $(su -c '. {{ nvm_home }}/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
-	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
-	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& su -c '. {{ nvm_home }}/nvm.sh; npm cache clear --force' devilbox \
+	&& su -c '. {{ nvm_home }}/nvm.sh; nvm cache clear --force' devilbox \
 	&& rm -rf /home/devilbox/.npm \
 	&& rm -rf /home/devilbox/.cache \
 	&& rm -rf /home/devilbox/.config \
 	&& rm -rf /tmp/* \
 	&& (rm -rf /tmp/.* || true) \
 	\
-	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+	&& (find {{ nvm_home }} -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
 
 
 ###
@@ -460,7 +460,7 @@ RUN \
 		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
 		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
 		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
-		echo 'PATH="/opt/nvm/versions/node/$(nvm version default)/bin:${PATH}"'; \
+		echo 'PATH="{{ nvm_home }}/versions/node/$(nvm version default)/bin:${PATH}"'; \
 		echo "export PATH"; \
 		echo ". /etc/bash-devilbox"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
