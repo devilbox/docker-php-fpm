@@ -158,7 +158,8 @@ RUN set -eux \
 && curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
 && chmod +x /usr/local/bin/composer-1 \
 && chmod +x /usr/local/bin/composer-2 \
-&& ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+ \
+	&& ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
  \
 	\
 # -------------------- pip --------------------

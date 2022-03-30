@@ -415,13 +415,17 @@ software_available:
   composer:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -Ei '(composer|version)\s*[0-9][.0-9]+'
+    5.3:
+      post: |
+        ln -sf /usr/local/bin/composer-1 /usr/local/bin/composer \
     all:
       command: |
         curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
         && curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
         && chmod +x /usr/local/bin/composer-1 \
         && chmod +x /usr/local/bin/composer-2 \
-        && ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+      post: |
+        ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
   # pip is a dependency for others
   pip:
     5.2:
