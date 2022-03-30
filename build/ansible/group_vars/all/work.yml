@@ -414,7 +414,7 @@ software_available:
   # Composer is a dependency for others
   composer:
     disabled: [5.2]
-    check: composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+'
+    check: composer --version 2>/dev/null | grep -Ei '(composer|version)\s*[0-9][.0-9]+'
     all:
       command: |
         curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
