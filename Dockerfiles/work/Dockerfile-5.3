@@ -358,7 +358,7 @@ fi \
 	&& (rm -rf /root/.cache    || true) \
 	&& (rm -rf /root/.composer || true) \
 	&& (rm -rf /root/.config   || true) \
-	&& (rm -rf /root/.gem      || true ) \
+	&& (rm -rf /root/.gem      || true) \
 	&& (rm -rf /root/.local    || true) \
 	&& (rm -rf /root/.node     || true) \
 	&& (rm -rf /root/.npm      || true) \
@@ -366,7 +366,7 @@ fi \
 	&& (rm -rf /home/devilbox/.cache    || true) \
 	&& (rm -rf /home/devilbox/.composer || true) \
 	&& (rm -rf /home/devilbox/.config   || true) \
-	&& (rm -rf /home/devilbox/.gem      || true ) \
+	&& (rm -rf /home/devilbox/.gem      || true) \
 	&& (rm -rf /home/devilbox/.local    || true) \
 	&& (rm -rf /home/devilbox/.node     || true) \
 	&& (rm -rf /home/devilbox/.npm      || true) \
@@ -584,14 +584,28 @@ RUN set -eux \
 	&& mdl --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Cleanup --------------------
-	&& rm -rf /home/devilbox/.cache/ \
-	&& rm -rf /home/devilbox/.config/ \
-	&& rm -rf /root/.ansible \
-	&& rm -rf /root/.console \
-	&& rm -rf /root/.composer \
-	&& rm -rf /root/.drush \
-	&& rm -rf /root/.pm2 \
-	&& rm -rf /tmp/* \
+	\
+	&& (rm -rf /root/.ansible  || true) \
+	&& (rm -rf /root/.cache    || true) \
+	&& (rm -rf /root/.composer || true) \
+	&& (rm -rf /root/.config   || true) \
+	&& (rm -rf /root/.console  || true) \
+	&& (rm -rf /root/.drush    || true) \
+	&& (rm -rf /root/.gem      || true) \
+	&& (rm -rf /root/.local    || true) \
+	&& (rm -rf /root/.node     || true) \
+	&& (rm -rf /root/.npm      || true) \
+	&& (rm -rf /root/.pm2      || true) \
+	\
+	&& (rm -rf /home/devilbox/.cache    || true) \
+	&& (rm -rf /home/devilbox/.composer || true) \
+	&& (rm -rf /home/devilbox/.config   || true) \
+	&& (rm -rf /home/devilbox/.gem      || true) \
+	&& (rm -rf /home/devilbox/.local    || true) \
+	&& (rm -rf /home/devilbox/.node     || true) \
+	&& (rm -rf /home/devilbox/.npm      || true) \
+	\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true)
 
 
