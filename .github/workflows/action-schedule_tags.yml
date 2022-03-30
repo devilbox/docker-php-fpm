@@ -1,0 +1,296 @@
+---
+
+# -------------------------------------------------------------------------------------------------
+# Job Name
+# -------------------------------------------------------------------------------------------------
+name: nightly
+
+
+# -------------------------------------------------------------------------------------------------
+# When to run
+# -------------------------------------------------------------------------------------------------
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+
+jobs:
+
+  # -----------------------------------------------------------------------------------------------
+  # (1/8) Determine parameter settings
+  # -----------------------------------------------------------------------------------------------
+  params:
+    uses: ./.github/workflows/params-nightly_tags.yml
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (2/8) Configure Build and Deploy Matrices
+  # -----------------------------------------------------------------------------------------------
+  configure:
+    needs: [params]
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-configure.yml@master
+    with:
+      enabled: true
+      can_deploy: true
+      is_scheduled: true
+      versions: ${{ needs.params.outputs.versions }}
+      refs: ${{ needs.params.outputs.refs }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (3/8) Build & Test base
+  # -----------------------------------------------------------------------------------------------
+  base:
+    needs:
+      - configure
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: false
+      upload_artifact: true
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: base
+      stage_prev: ''
+
+  base-test:
+    needs:
+      - configure
+      - base
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: base
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (4/8) Build & Test mods
+  # -----------------------------------------------------------------------------------------------
+  mods:
+    needs:
+      - configure
+      - base
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: false
+      upload_artifact: true
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: mods
+      stage_prev: base
+
+  mods-test:
+    needs:
+      - configure
+      - mods
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: mods
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (5/8) Build & Test prod
+  # -----------------------------------------------------------------------------------------------
+  prod:
+    needs:
+      - configure
+      - mods
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: false
+      upload_artifact: true
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: prod
+      stage_prev: mods
+
+  prod-test:
+    needs:
+      - configure
+      - prod
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: prod
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (6/8) Build & Test work
+  # -----------------------------------------------------------------------------------------------
+  work:
+    needs:
+      - configure
+      - prod
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: true
+      upload_artifact: true
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: work
+      stage_prev: prod
+
+  work-test:
+    needs:
+      - configure
+      - work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: work
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (7/8) Push images
+  # -----------------------------------------------------------------------------------------------
+  push-base:
+    needs:
+      - configure
+      - base-test
+      - prod-test
+      - mods-test
+      - work-test
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: base
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-mods:
+    needs:
+      - configure
+      - base-test
+      - prod-test
+      - mods-test
+      - work-test
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: mods
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-prod:
+    needs:
+      - configure
+      - base-test
+      - prod-test
+      - mods-test
+      - work-test
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: prod
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  push-work:
+    needs:
+      - configure
+      - base-test
+      - prod-test
+      - mods-test
+      - work-test
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: work
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (8/8) Push Manifests
+  # -----------------------------------------------------------------------------------------------
+  manifest-base:
+    needs:
+      - configure
+      - push-base
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      versions: ${{ needs.configure.outputs.versions }}
+      stage: base
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  manifest-mods:
+    needs:
+      - configure
+      - push-mods
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      versions: ${{ needs.configure.outputs.versions }}
+      stage: mods
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  manifest-prod:
+    needs:
+      - configure
+      - push-prod
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      versions: ${{ needs.configure.outputs.versions }}
+      stage: prod
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  manifest-work:
+    needs:
+      - configure
+      - push-work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      versions: ${{ needs.configure.outputs.versions }}
+      stage: work
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}

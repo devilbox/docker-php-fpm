@@ -36,8 +36,8 @@ env:
   REFS: >-
     {
         "DEFAULT_BRANCH": "master",
-        "BRANCHES": "master",
-        "NUM_LATEST_TAGS": 1
+        "BRANCHES": "",
+        "NUM_LATEST_TAGS": 0
     }
 
 
