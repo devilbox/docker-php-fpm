@@ -463,7 +463,6 @@ software_available:
       pre: |
         COMPOSER_1_VERSION="latest-1.x" \
         && COMPOSER_2_VERSION="latest-2.x" \
-        && COMPOSER_2_VERSION="" \
       command: |
         curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_1_VERSION}/composer.phar" > /usr/local/bin/composer-1 \
         && curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_2_VERSION}/composer.phar" > /usr/local/bin/composer-2 \
