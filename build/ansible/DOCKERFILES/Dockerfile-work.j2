@@ -346,10 +346,13 @@ RUN set -eux \
 {%- else -%}
 	{{ "\n\t" }}\{{ "\n" }}
 {%- endif %}
-	&& ln -sf $(dirname $(su -c '. {{ nvm_home }}/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
-	&& su -c '. {{ nvm_home }}/nvm.sh; npm cache clear --force' devilbox \
-	&& su -c '. {{ nvm_home }}/nvm.sh; nvm cache clear --force' devilbox \
+	&& if [ -f "{{ nvm_home }}/nvm.sh" ]; then \
+		ln -sf $(dirname $(su -c '. {{ nvm_home }}/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+		\
+		&& su -c '. {{ nvm_home }}/nvm.sh; npm cache clear --force' devilbox \
+		&& su -c '. {{ nvm_home }}/nvm.sh; nvm cache clear --force' devilbox; \
+	fi \
 	\
 	{% for f in directory_to_clean %}
 	&& (rm -rf /home/devilbox/{{ f }} || true) \

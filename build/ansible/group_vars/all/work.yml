@@ -434,12 +434,39 @@ software_available:
     disabled: [5.2]
     check: composer --version 2>/dev/null | grep -Ei '(composer|version)\s*[0-9][.0-9]+'
     5.3:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
       post: |
         ln -sf /usr/local/bin/composer-1 /usr/local/bin/composer \
+    5.4:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.5:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.6:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    7.0:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    7.1:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
     all:
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.x" \
+        && COMPOSER_2_VERSION="" \
       command: |
-        curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
-        && curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+        curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_1_VERSION}/composer.phar" > /usr/local/bin/composer-1 \
+        && curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_2_VERSION}/composer.phar" > /usr/local/bin/composer-2 \
         && chmod +x /usr/local/bin/composer-1 \
         && chmod +x /usr/local/bin/composer-2 \
       post: |

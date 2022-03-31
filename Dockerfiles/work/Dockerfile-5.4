@@ -153,8 +153,11 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- composer --------------------
-	&& curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
-&& curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+	&& COMPOSER_1_VERSION="latest-1.x" \
+&& COMPOSER_2_VERSION="latest-2.2.x" \
+ \
+	&& curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_1_VERSION}/composer.phar" > /usr/local/bin/composer-1 \
+&& curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_2_VERSION}/composer.phar" > /usr/local/bin/composer-2 \
 && chmod +x /usr/local/bin/composer-1 \
 && chmod +x /usr/local/bin/composer-2 \
  \
@@ -573,10 +576,13 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
 	\
 	\
-	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
-	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
-	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& if [ -f "/opt/nvm/nvm.sh" ]; then \
+		ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+		\
+		&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+		&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox; \
+	fi \
 	\
 		&& (rm -rf /home/devilbox/.*json || true) \
 		&& (rm -rf /home/devilbox/.ansible || true) \

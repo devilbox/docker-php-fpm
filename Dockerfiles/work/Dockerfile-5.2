@@ -477,10 +477,13 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
 	\
 	\
-	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
-	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
-	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
+	&& if [ -f "/opt/nvm/nvm.sh" ]; then \
+		ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+		\
+		&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+		&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox; \
+	fi \
 	\
 		&& (rm -rf /home/devilbox/.*json || true) \
 		&& (rm -rf /home/devilbox/.ansible || true) \
