@@ -44,7 +44,7 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (3/8) Build & Test base
   # -----------------------------------------------------------------------------------------------
-  base:
+  build-base:
     needs:
       - configure
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
@@ -57,10 +57,10 @@ jobs:
       stage: base
       stage_prev: ''
 
-  base-test:
+  test-base:
     needs:
       - configure
-      - base
+      - build-base
     uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -72,10 +72,10 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (4/8) Build & Test mods
   # -----------------------------------------------------------------------------------------------
-  mods:
+  build-mods:
     needs:
       - configure
-      - base
+      - build-base
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -86,10 +86,10 @@ jobs:
       stage: mods
       stage_prev: base
 
-  mods-test:
+  test-mods:
     needs:
       - configure
-      - mods
+      - build-mods
     uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -101,10 +101,10 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (5/8) Build & Test prod
   # -----------------------------------------------------------------------------------------------
-  prod:
+  build-prod:
     needs:
       - configure
-      - mods
+      - build-mods
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -115,10 +115,10 @@ jobs:
       stage: prod
       stage_prev: mods
 
-  prod-test:
+  test-prod:
     needs:
       - configure
-      - prod
+      - build-prod
     uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -130,10 +130,10 @@ jobs:
   # -----------------------------------------------------------------------------------------------
   # (6/8) Build & Test work
   # -----------------------------------------------------------------------------------------------
-  work:
+  build-work:
     needs:
       - configure
-      - prod
+      - build-prod
     uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -144,10 +144,10 @@ jobs:
       stage: work
       stage_prev: prod
 
-  work-test:
+  test-work:
     needs:
       - configure
-      - work
+      - build-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
     with:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
@@ -162,10 +162,10 @@ jobs:
   push-base:
     needs:
       - configure
-      - base-test
-      - prod-test
-      - mods-test
-      - work-test
+      - test-base
+      - test-prod
+      - test-mods
+      - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -180,10 +180,10 @@ jobs:
   push-mods:
     needs:
       - configure
-      - base-test
-      - prod-test
-      - mods-test
-      - work-test
+      - test-base
+      - test-prod
+      - test-mods
+      - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -198,10 +198,10 @@ jobs:
   push-prod:
     needs:
       - configure
-      - base-test
-      - prod-test
-      - mods-test
-      - work-test
+      - test-base
+      - test-prod
+      - test-mods
+      - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
@@ -216,10 +216,10 @@ jobs:
   push-work:
     needs:
       - configure
-      - base-test
-      - prod-test
-      - mods-test
-      - work-test
+      - test-base
+      - test-prod
+      - test-mods
+      - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
       can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
