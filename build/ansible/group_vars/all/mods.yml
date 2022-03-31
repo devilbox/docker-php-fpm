@@ -94,8 +94,6 @@ extensions_enabled:
   - spl
   - sqlsrv
   - ssh2
-  # requires sockets to be installed
-  - swoole
   - sysvmsg
   - sysvsem
   - sysvshm
@@ -114,6 +112,9 @@ extensions_enabled:
   - xlswriter
   - yaml
   - zip
+  # Swoole requires php-json, php-sockets, php-curl, php-mysql (and others) to be installed
+  # https://openswoole.com/docs/get-started/prerequisites#php-extensions
+  - swoole
 
 
 # -------------------------------------------------------------------------------------------------
@@ -1146,19 +1147,19 @@ extensions_available:
       build_dep: [libssh2-1-dev]
       run_dep: [libssh2-1]
   swoole:
-    disabled: [5.2, 8.1, 8.2]
+    disabled: [5.2, 8.2]
     5.3:
       type: pecl
       version: 1.9.23
-      run_dep: [libnghttp2-5]
+      run_dep: [libc-ares2, libnghttp2-5, libssl1.0.0]
     5.4:
       type: pecl
       version: 1.9.23
-      run_dep: [libnghttp2-5]
+      run_dep: [libc-ares2, libnghttp2-5, libssl1.0.0]
     5.5:
       type: pecl
       version: 1.9.23
-      run_dep: [libnghttp2-5]
+      run_dep: [libc-ares2, libnghttp2-5, libssl1.0.0]
     5.6:
       type: pecl
       version: 1.9.23
@@ -1170,9 +1171,9 @@ extensions_available:
       version: 4.4.26
     all:
       type: pecl
-      command: yes yes | pecl install swoole
-      build_dep: [libnghttp2-dev, libssl-dev]
-      run_dep: [libnghttp2-14]
+      command: pecl install -D 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="no" enable-swoole-curl="yes" enable-cares="yes" with-postgres="yes"' swoole
+      build_dep: [libc-ares-dev, libnghttp2-dev, libssl-dev, libcurl4-openssl-dev]
+      run_dep: [libc-ares2, libnghttp2-14]
   sysvmsg:
     all:
       type: builtin

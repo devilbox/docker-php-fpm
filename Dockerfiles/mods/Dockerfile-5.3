@@ -13,6 +13,7 @@ RUN set -eux \
 		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
+		libc-ares-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-dev \
@@ -523,17 +524,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: swoole --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install swoole-1.9.23 \
-	# Enabling
-	&& docker-php-ext-enable swoole \
-	&& true
-
-
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -650,6 +640,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install swoole-1.9.23 \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -699,6 +700,7 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
+	libc-ares2 \
 	libc-client2007e \
 	libenchant1c2a \
 	libevent-2.0-5 \
@@ -715,6 +717,7 @@ RUN set -eux \
 	librabbitmq1 \
 	librdkafka1 \
 	librecode0 \
+	libssl1.0.0 \
 	libsybdb5 \
 	libtidy-0.99-0 \
 	libvpx1 \
@@ -905,8 +908,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
-	&& php -m | grep -oiE '^swoole$' \
-	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
@@ -939,6 +940,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& true
 
 

@@ -14,6 +14,7 @@ RUN set -eux \
 		ghostscript \
 		libaio-dev \
 		libbz2-dev \
+		libc-ares-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-2-dev \
@@ -619,17 +620,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: swoole --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         PECL extension
-	# Custom:       Pecl command
-	&& yes yes | pecl install swoole \
-	# Enabling
-	&& docker-php-ext-enable swoole \
-	&& true
-
-
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -746,6 +736,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& pecl install -D 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="no" enable-swoole-curl="yes" enable-cares="yes" with-postgres="yes"' swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -796,6 +797,7 @@ RUN set -eux \
 	ghostscript \
 	libaio1 \
 	libaspell15 \
+	libc-ares2 \
 	libc-client2007e \
 	libenchant-2-2 \
 	libevent-2.1-7 \
@@ -1020,8 +1022,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^spl$' \
 	&& php -m | grep -oiE '^sqlsrv$' \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
-	&& php -m | grep -oiE '^swoole$' \
-	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
@@ -1054,6 +1054,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& true
 
 
