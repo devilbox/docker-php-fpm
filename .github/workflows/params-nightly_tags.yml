@@ -10,7 +10,7 @@ name: params
 # Custom Variables
 # -------------------------------------------------------------------------------------------------
 env:
-  VERSIONS: >-
+  VERSIONS: >
     [
       {
         "NAME":    "PHP",
@@ -25,7 +25,7 @@ env:
         "ARCH":    ["linux/amd64", "linux/arm64"]
       }
     ]
-  REFS: >-
+  REFS: >
     {
         "DEFAULT_BRANCH": "master",
         "BRANCHES": "",
