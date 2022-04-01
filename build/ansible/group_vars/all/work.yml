@@ -126,8 +126,6 @@ software_enabled:
   - symfony
   - wkhtmltopdf
   - wpcli
-  # Cleanup needs to be last
-  - cleanup
 
 
 # -------------------------------------------------------------------------------------------------
@@ -585,13 +583,6 @@ software_available:
         su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
-        {% for f in directory_to_clean %}
-        && (rm -rf /home/devilbox/{{ f }} || true) \
-        {% endfor %}
-        \
-        {% for f in directory_to_clean %}
-        && (rm -rf /root/{{ f }} || true) \
-        {% endfor %}
   awesomeci:
     check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:
@@ -1093,17 +1084,3 @@ software_available:
     all:
       command: curl -sS -L --fail https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -L -o /usr/local/bin/wp
       post: chmod +x /usr/local/bin/wp
-  cleanup:
-    all:
-      command: |
-        true \
-        {% for f in directory_to_clean %}
-        && (rm -rf /home/devilbox/{{ f }} || true) \
-        {% endfor %}
-        \
-        {% for f in directory_to_clean %}
-        && (rm -rf /root/{{ f }} || true) \
-        {% endfor %}
-        \
-        && rm -rf /tmp/* \
-        && (rm -rf /tmp/.* || true) \

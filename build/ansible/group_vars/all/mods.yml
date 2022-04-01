@@ -1171,6 +1171,7 @@ extensions_available:
       version: 4.4.26
     all:
       type: pecl
+      # Note: -D is only supported from PHP 7.2+
       command: pecl install -D 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="no" enable-swoole-curl="yes" enable-cares="yes" with-postgres="yes"' swoole
       build_dep: [libc-ares-dev, libnghttp2-dev, libssl-dev, libcurl4-openssl-dev]
       run_dep: [libc-ares2, libnghttp2-14]
