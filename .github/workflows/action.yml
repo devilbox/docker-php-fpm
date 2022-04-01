@@ -10,8 +10,10 @@ name: build
 # When to run
 # -------------------------------------------------------------------------------------------------
 on:
+  # Push or pull_request will be determined in jobs.configure.enabled
   push:
   pull_request:
+  # Dispatch: allows for manual trigger via GH UI
   workflow_dispatch:
 
 
