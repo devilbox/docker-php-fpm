@@ -11,7 +11,8 @@ name: nightly
 # -------------------------------------------------------------------------------------------------
 on:
   schedule:
-    - cron: '0 0 * * *'
+    # At 00:00 on Sunday, Tuesday, and Thursday
+    - cron: '0 0 * * 0,2,4'
   workflow_dispatch:
 
 
