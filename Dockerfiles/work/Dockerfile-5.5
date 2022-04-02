@@ -60,8 +60,6 @@ RUN set -eux \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu wily main" > /etc/apt/sources.list.d/git.list \
-	&& curl -sS -k -L --fail https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-	&& echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
@@ -126,7 +124,6 @@ RUN set -eux \
 		wget \
 		whois \
 		xz-utils \
-		yarn \
 		zip \
 		zlib1g-dev \
 		zsh \
@@ -156,11 +153,15 @@ RUN set -eux \
 ###
 RUN set -eux \
 # -------------------- composer --------------------
-	&& curl -sS -L --fail https://getcomposer.org/composer-1.phar > /usr/local/bin/composer-1 \
-&& curl -sS -L --fail https://getcomposer.org/composer-2.phar > /usr/local/bin/composer-2 \
+	&& COMPOSER_1_VERSION="latest-1.x" \
+&& COMPOSER_2_VERSION="latest-2.2.x" \
+ \
+	&& curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_1_VERSION}/composer.phar" > /usr/local/bin/composer-1 \
+&& curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_2_VERSION}/composer.phar" > /usr/local/bin/composer-2 \
 && chmod +x /usr/local/bin/composer-1 \
 && chmod +x /usr/local/bin/composer-2 \
-&& ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+ \
+	&& ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
  \
 	\
 # -------------------- pip --------------------
@@ -174,9 +175,17 @@ RUN set -eux \
  \
 	\
 # -------------------- nvm --------------------
-	&& git clone https://github.com/creationix/nvm /opt/nvm \
-&& cd /opt/nvm \
-&& git checkout "$(git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))" \
+	&& NVM_VERSION="$( \
+  curl -sS 'https://github.com/nvm-sh/nvm/releases' \
+  | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
+  | grep -Eo 'v?[.0-9]+' \
+  | sort -V \
+  | tail -1 \
+)" \
+&& mkdir -p /opt/nvm \
+ \
+	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+  | NVM_DIR="/opt/nvm" bash \
 \
 && { \
   echo 'export NVM_DIR="/opt/nvm"'; \
@@ -184,11 +193,11 @@ RUN set -eux \
   echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
 } >> /home/devilbox/.bashrc \
 \
-&& chown -R devilbox:devilbox /opt/nvm \
+&& chown -R devilbox:devilbox "/opt/nvm" \
  \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm install node' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm use node' devilbox \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
+&& su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
  \
 	\
 # -------------------- awesomeci --------------------
@@ -357,41 +366,44 @@ fi \
 	&& curl -sS -L --fail https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar -L -o /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp \
 	\
-# -------------------- cleanup --------------------
-	&& rm -rf /home/${MY_USER}/.*json \
-&& rm -rf /home/${MY_USER}/.cache \
-&& rm -rf /home/${MY_USER}/.composer \
-&& rm -rf /home/${MY_USER}/.config \
-&& rm -rf /home/${MY_USER}/.drush \
-&& rm -rf /home/${MY_USER}/.subversion \
-&& rm -rf /home/${MY_USER}/.v8* \
-\
-&& rm -rf /root/.*json \
-&& rm -rf /root/.cache \
-&& rm -rf /root/.composer \
-&& rm -rf /root/.config \
-&& rm -rf /root/.drush \
-&& rm -rf /root/.subversion \
-&& rm -rf /root/.v8* \
-\
-&& rm -rf /tmp/* \
-&& (rm -rf /tmp/.* || true) \
- \
 	\
 	\
-	&& (rm -rf /root/.gem || true ) \
-	&& (rm -rf /root/.cache || true) \
-	&& (rm -rf /root/.composer || true) \
-	&& (rm -rf /root/.config || true) \
-	&& (rm -rf /root/.npm || true) \
-	\
-	&& (rm -rf /home/devilbox/.cache || true) \
-	&& (rm -rf /home/devilbox/.composer || true) \
-	&& (rm -rf /home/devilbox/.config || true) \
-	&& (rm -rf /home/devilbox/.npm || true) \
-	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
 	&& (rm -rf /usr/local/src/composer/cache/* || true) \
-	&& rm -rf /tmp/* \
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true)
 
 
@@ -415,7 +427,42 @@ RUN set -eux \
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require  hirak/prestissimo \
 	\
 	\
-	&& rm -rf /tmp/* \
+	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -470,14 +517,49 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
 	\
 	\
-	&& ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
 	\
-	&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
-	&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox \
-	&& rm -rf /home/devilbox/.npm \
-	&& rm -rf /home/devilbox/.cache \
-	&& rm -rf /home/devilbox/.config \
-	&& rm -rf /tmp/* \
+	&& if [ -f "/opt/nvm/nvm.sh" ]; then \
+		ln -sf $(dirname $(su -c '. /opt/nvm/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
+		\
+		&& su -c '. /opt/nvm/nvm.sh; npm cache clear --force' devilbox \
+		&& su -c '. /opt/nvm/nvm.sh; nvm cache clear --force' devilbox; \
+	fi \
+	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /opt/nvm -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
@@ -500,8 +582,42 @@ RUN set -eux \
 	&& gem install mdl -v 0.5.0 \
 	\
 	\
-	&& rm -rf /root/.gem \
-	&& rm -rf /tmp/* \
+	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -520,8 +636,42 @@ RUN set -eux \
 	&& pip install --no-cache-dir --force-reinstall yq || true \
 	\
 	\
-	&& rm -rf /root/.cache/pip \
-	&& rm -rf /tmp/* \
+	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true) \
 	\
 	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
@@ -573,8 +723,10 @@ RUN set -eux \
 
 RUN set -eux \
 # -------------------- Software --------------------
-	&& composer --version 2>/dev/null | grep -E 'version\s*[0-9][.0-9]+' \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^[0-9][.0-9]+' \
+	&& composer --version 2>/dev/null | grep -Ei '(composer|version)\s*[0-9][.0-9]+' \
+	&& su  -c '. /opt/nvm/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+&& su  -c '. /opt/nvm/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+ \
 	&& regex-grep --version | grep -E '[0-9][.0-9]+' \
 	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' \
 	&& drush7 --version | grep -E '7[.0-9]+\s*$' \
@@ -620,14 +772,42 @@ RUN set -eux \
 	&& mdl --version | grep -E '[0-9][.0-9]+' \
 	\
 # -------------------- Cleanup --------------------
-	&& rm -rf /home/devilbox/.cache/ \
-	&& rm -rf /home/devilbox/.config/ \
-	&& rm -rf /root/.ansible \
-	&& rm -rf /root/.console \
-	&& rm -rf /root/.composer \
-	&& rm -rf /root/.drush \
-	&& rm -rf /root/.pm2 \
-	&& rm -rf /tmp/* \
+	\
+		&& (rm -rf /home/devilbox/.*json || true) \
+		&& (rm -rf /home/devilbox/.ansible || true) \
+		&& (rm -rf /home/devilbox/.cache || true) \
+		&& (rm -rf /home/devilbox/.composer || true) \
+		&& (rm -rf /home/devilbox/.config || true) \
+		&& (rm -rf /home/devilbox/.console || true) \
+		&& (rm -rf /home/devilbox/.drush || true) \
+		&& (rm -rf /home/devilbox/.gem || true) \
+		&& (rm -rf /home/devilbox/.local || true) \
+		&& (rm -rf /home/devilbox/.node || true) \
+		&& (rm -rf /home/devilbox/.npm || true) \
+		&& (rm -rf /home/devilbox/.pm2 || true) \
+		&& (rm -rf /home/devilbox/.subversion || true) \
+		&& (rm -rf /home/devilbox/.v8* || true) \
+		&& (rm -rf /home/devilbox/node_modules || true) \
+		&& (rm -rf /home/devilbox/yarn.lock || true) \
+		\
+		&& (rm -rf /root/.*json || true) \
+		&& (rm -rf /root/.ansible || true) \
+		&& (rm -rf /root/.cache || true) \
+		&& (rm -rf /root/.composer || true) \
+		&& (rm -rf /root/.config || true) \
+		&& (rm -rf /root/.console || true) \
+		&& (rm -rf /root/.drush || true) \
+		&& (rm -rf /root/.gem || true) \
+		&& (rm -rf /root/.local || true) \
+		&& (rm -rf /root/.node || true) \
+		&& (rm -rf /root/.npm || true) \
+		&& (rm -rf /root/.pm2 || true) \
+		&& (rm -rf /root/.subversion || true) \
+		&& (rm -rf /root/.v8* || true) \
+		&& (rm -rf /root/node_modules || true) \
+		&& (rm -rf /root/yarn.lock || true) \
+		\
+	&& (rm -rf /tmp/*  || true) \
 	&& (rm -rf /tmp/.* || true)
 
 

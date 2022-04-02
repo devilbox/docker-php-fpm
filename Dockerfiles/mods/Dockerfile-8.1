@@ -15,6 +15,7 @@ RUN set -eux \
 		libaio-dev \
 		libavif-dev \
 		libbz2-dev \
+		libc-ares-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-2-dev \
@@ -30,6 +31,7 @@ RUN set -eux \
 		libmagickwand-dev \
 		libmariadb-dev \
 		libmemcached-dev \
+		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
@@ -41,6 +43,8 @@ RUN set -eux \
 		libsodium-dev \
 		libssl-dev \
 		libtidy-dev \
+		libvips-dev \
+		libvips42 \
 		libvpx-dev \
 		libwebp-dev \
 		libxml2-dev \
@@ -281,21 +285,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcached --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/php-memcached-dev/php-memcached /tmp/memcached \
-	&& cd /tmp/memcached \
-	# Custom:       Branch
-	&& git checkout master \
-	# Custom:       Install command
-	&& true \
-# FIXME: This is a work-around to mitigate compile error with PHP 8.1
-&& sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
-&& phpize \
-&& ./configure --enable-memcached \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
- \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached \
 	# Enabling
 	&& docker-php-ext-enable memcached \
 	&& true
@@ -661,6 +654,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: vips --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install vips \
+	# Enabling
+	&& docker-php-ext-enable vips \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -719,6 +723,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& pecl install -D 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="no" enable-swoole-curl="yes" enable-cares="yes" with-postgres="yes"' swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -761,18 +776,7 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 8.1-mods"
 
 
 ###
-### Copy artifacts from builder
-###
-ARG EXT_DIR
-COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY --from=builder /usr/local/lib/ /usr/local/lib/
-COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
-
-
-###
-### Install
+### Install runtime libraries
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -781,8 +785,10 @@ RUN set -eux \
 	libaio1 \
 	libaspell15 \
 	libavif9 \
+	libc-ares2 \
 	libc-client2007e \
 	libenchant-2-2 \
+	libevent-2.1-7 \
 	libfbclient2 \
 	libffi7 \
 	libfreetype6 \
@@ -791,12 +797,14 @@ RUN set -eux \
 	libmagickwand-6.q16-6 \
 	libmariadbd19 \
 	libmemcachedutil2 \
+	libnghttp2-14 \
 	libpng16-16 \
 	libpq5 \
 	librabbitmq4 \
 	librdkafka1 \
 	libsybdb5 \
 	libtidy5deb1 \
+	libvips42 \
 	libvpx6 \
 	libwebp6 \
 	libxpm4 \
@@ -813,7 +821,18 @@ RUN set -eux \
 
 
 ###
-### Post Install
+### Copy artifacts from builder
+###
+ARG EXT_DIR
+COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
+COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
+COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
+
+
+###
+### Post Install executions
 ###
 RUN set -eux \
 	# ---------- imagick ----------
@@ -1002,6 +1021,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^uploadprogress$' \
 	&& php -m | grep -oiE '^uuid$' \
 	&& php-fpm -m | grep -oiE '^uuid$' \
+	&& php -m | grep -oiE '^vips$' \
+	&& php-fpm -m | grep -oiE '^vips$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
 	&& php -m | grep -oiE '^xml$' \
@@ -1018,6 +1039,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& true
 
 

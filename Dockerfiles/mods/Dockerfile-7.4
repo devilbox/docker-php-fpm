@@ -9,34 +9,24 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		alien \
-		fftw-dev \
 		firebird-dev \
 		freetds-dev \
 		ghostscript \
-		gobject-introspection \
-		gtk-doc-tools \
 		libaio-dev \
 		libbz2-dev \
+		libc-ares-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libevent-dev \
-		libexif-dev \
-		libexpat1-dev \
 		libfbclient2 \
 		libffi-dev \
-		libfftw3-dev \
 		libfreetype6-dev \
-		libgif-dev \
-		libglib2.0-dev \
 		libgmp-dev \
 		libib-util \
 		libicu-dev \
-		libimagequant-dev \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
-		libmagick++-dev \
-		libmagickcore-6.q16-dev \
 		libmagickwand-dev \
 		libmariadb-dev \
 		libmcrypt-dev \
@@ -44,22 +34,19 @@ RUN set -eux \
 		libnghttp2-dev \
 		libpcre3-dev \
 		libpng-dev \
-		libpoppler-glib-dev \
 		libpq-dev \
 		libpspell-dev \
 		librabbitmq-dev \
 		librdkafka-dev \
-		librsvg2-dev \
 		libsasl2-dev \
 		libsnmp-dev \
 		libssh2-1-dev \
 		libssl-dev \
 		libtidy-dev \
-		libtool \
+		libvips-dev \
+		libvips42 \
 		libvpx-dev \
 		libwebp-dev \
-		libwebpdemux2 \
-		libwebpmux3 \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
@@ -340,14 +327,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: memcached --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/php-memcached-dev/php-memcached /tmp/memcached \
-	&& cd /tmp/memcached \
-	# Custom:       Branch
-	&& git checkout master \
-	# Custom:       Install command
-	&& phpize && ./configure --enable-memcached && make -j$(getconf _NPROCESSORS_ONLN) && make install \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached \
 	# Enabling
 	&& docker-php-ext-enable memcached \
 	&& true
@@ -670,17 +653,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: swoole --------------------
-RUN set -eux \
-	# Installation: Generic
-	# Type:         PECL extension
-	# Custom:       Pecl command
-	&& yes yes | pecl install swoole \
-	# Enabling
-	&& docker-php-ext-enable swoole \
-	&& true
-
-
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -737,15 +709,6 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: vips --------------------
 RUN set -eux \
-	# Generic pre-command
-	&& git clone https://github.com/libvips/libvips /tmp/libvips \
-&& cd /tmp/libvips \
-&& ./autogen.sh \
-&& make -j$(getconf _NPROCESSORS_ONLN) \
-&& make install \
-&& cd /tmp \
-&& rm -rf /tmp/libvips \
- \
 	# Installation: Generic
 	# Type:         PECL extension
 	# Default:      Pecl command
@@ -818,6 +781,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& pecl install -D 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="no" enable-swoole-curl="yes" enable-cares="yes" with-postgres="yes"' swoole \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -860,63 +834,37 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 7.4-mods"
 
 
 ###
-### Copy artifacts from builder
-###
-ARG EXT_DIR
-COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY --from=builder /usr/local/lib/ /usr/local/lib/
-COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
-
-
-###
-### Install
+### Install runtime libraries
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
-	fftw2 \
 	ghostscript \
-	gir1.2-poppler-0.18 \
-	imagemagick-6.q16 \
 	libaio1 \
 	libaspell15 \
+	libc-ares2 \
 	libc-client2007e \
-	libexif12 \
-	libexpat1 \
+	libevent-2.1-7 \
 	libfbclient2 \
 	libffi7 \
-	libfftw3-3 \
 	libfreetype6 \
-	libgif7 \
-	libglib2.0-0 \
 	libicu67 \
-	libimagequant0 \
 	libjpeg62-turbo \
-	libmagick++-6.q16-8 \
-	libmagick++-6.q16hdri-8 \
-	libmagickcore-6.q16-6 \
-	libmagickcore-6.q16-6-extra \
 	libmagickwand-6.q16-6 \
-	libmagickwand-6.q16hdri-6 \
 	libmariadbd19 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libnghttp2-14 \
 	libpng16-16 \
-	libpoppler-glib8 \
 	libpq5 \
 	librabbitmq4 \
 	librdkafka1 \
-	librsvg2-2 \
 	libssh2-1 \
 	libsybdb5 \
 	libtidy5deb1 \
+	libvips42 \
 	libvpx6 \
 	libwebp6 \
-	libwebpdemux2 \
-	libwebpmux3 \
 	libxpm4 \
 	libxslt1.1 \
 	libyaml-0-2 \
@@ -931,7 +879,18 @@ RUN set -eux \
 
 
 ###
-### Post Install
+### Copy artifacts from builder
+###
+ARG EXT_DIR
+COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
+COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
+COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
+
+
+###
+### Post Install executions
 ###
 RUN set -eux \
 	# ---------- imagick ----------
@@ -1110,8 +1069,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sqlsrv$' \
 	&& php -m | grep -oiE '^ssh2$' \
 	&& php-fpm -m | grep -oiE '^ssh2$' \
-	&& php -m | grep -oiE '^swoole$' \
-	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
@@ -1146,6 +1103,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& true
 
 

@@ -13,6 +13,7 @@ RUN set -eux \
 		freetds-dev \
 		libaio-dev \
 		libbz2-dev \
+		libc-ares-dev \
 		libc-client-dev \
 		libcurl4-openssl-dev \
 		libenchant-dev \
@@ -523,17 +524,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: swoole --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install swoole-1.9.23 \
-	# Enabling
-	&& docker-php-ext-enable swoole \
-	&& true
-
-
 # -------------------- Installing PHP Extension: sysvmsg --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -650,6 +640,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: swoole --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install swoole-1.9.23 \
+	# Enabling
+	&& docker-php-ext-enable swoole \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -692,26 +693,17 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.3-mods"
 
 
 ###
-### Copy artifacts from builder
-###
-ARG EXT_DIR
-COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY --from=builder /usr/local/lib/ /usr/local/lib/
-COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
-
-
-###
-### Install
+### Install runtime libraries
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	libaio1 \
 	libaspell15 \
+	libc-ares2 \
 	libc-client2007e \
 	libenchant1c2a \
+	libevent-2.0-5 \
 	libfbclient2 \
 	libfreetype6 \
 	libicu52 \
@@ -725,6 +717,7 @@ RUN set -eux \
 	librabbitmq1 \
 	librdkafka1 \
 	librecode0 \
+	libssl1.0.0 \
 	libsybdb5 \
 	libtidy-0.99-0 \
 	libvpx1 \
@@ -742,7 +735,18 @@ RUN set -eux \
 
 
 ###
-### Post Install
+### Copy artifacts from builder
+###
+ARG EXT_DIR
+COPY --from=builder ${EXT_DIR}/ ${EXT_DIR}/
+COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
+COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
+
+
+###
+### Post Install executions
 ###
 RUN set -eux \
 	# ---------- oci8 ----------
@@ -904,8 +908,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
-	&& php -m | grep -oiE '^swoole$' \
-	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
@@ -938,6 +940,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^yaml$' \
 	&& php -m | grep -oiE '^zip$' \
 	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^swoole$' \
+	&& php-fpm -m | grep -oiE '^swoole$' \
 	&& true
 
 

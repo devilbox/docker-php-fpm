@@ -10,7 +10,7 @@ name: params
 # Custom Variables
 # -------------------------------------------------------------------------------------------------
 env:
-  MATRIX: >-
+  VERSIONS: >
     [
       {
         "NAME":    "PHP",
@@ -22,9 +22,15 @@ env:
         "NAME":    "PHP",
         "VERSION": ["5.3", "5.4", "5.5", "5.6", "7.0", "7.1", "7.2", "7.3", "7.4", "8.0", "8.1", "8.2"],
         "FLAVOUR": ["default"],
-        "ARCH":    ["linux/amd64"]
+        "ARCH":    ["linux/amd64", "linux/arm64"]
       }
     ]
+  REFS: >
+    {
+        "DEFAULT_BRANCH": "master",
+        "BRANCHES": "",
+        "NUM_LATEST_TAGS": 0
+    }
 
 
 # -------------------------------------------------------------------------------------------------
@@ -32,12 +38,15 @@ env:
 # -------------------------------------------------------------------------------------------------
 on:
   workflow_call:
+    ###
+    ### OUTPUTS
+    ###
     outputs:
-      matrix:
-        description: "The determined version matrix"
-        value: ${{ jobs.params.outputs.matrix }}
+      versions:
+        description: "JSON string for versions. Use via: fromJson(needs.params.versions)"
+        value: ${{ jobs.params.outputs.versions }}
       refs:
-        description: "The determined git ref matrix (only during scheduled run)"
+        description: "JSON string for refs. Use via: fromJson(needs.params.refs)"
         value: ${{ jobs.params.outputs.refs }}
 
 jobs:
@@ -45,37 +54,16 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      refs: ${{ steps.set-refs.outputs.matrix }}
+      versions: ${{ steps.set-versions.outputs.versions }}
+      refs: ${{ steps.set-refs.outputs.refs }}
 
     steps:
-      - name: "[Set-Output] Matrix"
-        id: set-matrix
+      - name: "[Set-Output] jsonify VERSIONS"
+        id: set-versions
         run: |
-          echo "::set-output name=matrix::$( echo '${{ env.MATRIX }}' | jq -M -c )"
+          echo "::set-output name=versions::$( echo '${{ env.VERSIONS }}' | jq -M -c )"
 
-      - name: "[Set-Output] Matrix 'Refs' (master branch and latest tag)"
+      - name: "[Set-Output] jsonify REFS"
         id: set-refs
-        uses: cytopia/git-ref-matrix-action@v0.1.4
-        with:
-          repository_default_branch: master
-          branches: master
-          num_latest_tags: 1
-        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-
-      - name: "[DEBUG] Show settings'"
         run: |
-          echo 'Matrix'
-          echo '--------------------'
-          echo '${{ steps.set-matrix.outputs.matrix }}'
-          echo
-
-          echo 'Matrix: Refs'
-          echo '--------------------'
-          echo '${{ steps.set-matrix-refs.outputs.matrix }}'
-          echo
-
-          echo 'GitHub event_name'
-          echo '--------------------'
-          echo '${{ github.event_name }}'
-          echo
+          echo "::set-output name=refs::$( echo '${{ env.REFS }}' | jq -M -c )"
