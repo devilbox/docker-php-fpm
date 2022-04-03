@@ -119,11 +119,13 @@ RUN set -eux \
 		locales \
 		make \
 		moreutils \
+		\
 {% if php_version in [7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] %}
 		mariadb-client \
 {% else %}
 		mysql-client \
 {% endif %}
+		\
 {% if php_version in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] %}
 		mongodb-clients \
 {% elif php_version in [7.1, 7.2] %}
@@ -140,7 +142,11 @@ RUN set -eux \
 		openssh-client \
 		patch \
 		patchelf \
-#		postgresql-client \
+		\
+{% if php_version not in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] %}
+		postgresql-client \
+{% endif %}
+		\
 		redis-tools \
 		rsync \
 		rubygems \

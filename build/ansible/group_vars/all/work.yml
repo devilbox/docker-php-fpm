@@ -197,20 +197,7 @@ apt_repositories_available:
   mongo:
     # 5.2 - 7.0: mongodb-clients / 7.1 - 7.2: mongo-tools / 7.3+: no mongo tools avail
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2]
-    #5.2:
-    #  # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
-    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    #5.3:
-    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    #5.4:
-    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    #5.5:
-    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    # 4.4 buster is the first one with arm64 support
+    # mongodb-org/4.4 buster is the first one with arm64 support
     all:
       # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-4.4.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
       deb: deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main
