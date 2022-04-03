@@ -4,6 +4,16 @@
 ## Unreleased
 
 
+## Release 0.139
+
+#### Added
+- Added mongodb cmd client
+
+### Changed
+- Speed up `xargs` commands by using multi-CPU
+- Use buildkit for building
+
+
 ## Release 0.138
 
 #### Added
