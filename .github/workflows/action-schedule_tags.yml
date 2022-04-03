@@ -10,9 +10,9 @@ name: nightly
 # When to run
 # -------------------------------------------------------------------------------------------------
 on:
-  # Nightly: At 00:00 on Sunday, Tuesday, and Thursday
+  # Nightly: At 18:00 on Sunday, Tuesday, and Thursday
   schedule:
-    - cron: '0 0 * * 0,2,4'
+    - cron: '0 18 * * 0,2,4'
   # Dispatch: allows for manual trigger via GH UI
   workflow_dispatch:
 
