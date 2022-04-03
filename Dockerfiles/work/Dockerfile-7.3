@@ -60,6 +60,8 @@ RUN set -eux \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv A1715D88E1DF1F24 \
 	&& echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu artful main" > /etc/apt/sources.list.d/git.list \
+	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 20691EEC35216C63CAF66CE1656408E390CFB1F5 \
+	&& echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" > /etc/apt/sources.list.d/mongo.list \
 	\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
@@ -99,6 +101,8 @@ RUN set -eux \
 		make \
 		moreutils \
 		mariadb-client \
+		mongodb-org-tools \
+		mongodb-org-shell \
 		mupdf \
 		mupdf-tools \
 		nano \
@@ -133,20 +137,6 @@ RUN set -eux \
 	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Instal Architecture Dependent software
-###
-#RUN set -eux \
-#	&& if [ "${ARCH}" = "linux/amd64" ]; then \
-#		DEBIAN_FRONTEND=noninteractive apt-get update \
-#		&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
-#			mongodb-org-shell \
-#			mongodb-org-tools; \
-#	fi \
-#	&& DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils \
-#	&& rm -rf /var/lib/apt/lists/*
 
 
 ###

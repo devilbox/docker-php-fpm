@@ -7,6 +7,20 @@
 # This file holds definition for all devibox/php-fpm:x.y-work images
 #
 
+# PHP-5.2: Jessie
+# PHP-5.3: Jessie
+# PHP-5.4: Jessie
+# PHP-5.5: Jessie
+# PHP-5.6: Strech
+# PHP-7.0: Stretch
+# PHP-7.1: Buster
+# PHP-7.2: Buster
+# PHP-7.3: Bullseye
+# PHP-7.4: Bullseye
+# PHP-8.0: Bullseye
+# PHP-8.1: Bullseye
+# PHP-8.2: Bullseye
+
 
 # -------------------------------------------------------------------------------------------------
 # Global variables
@@ -41,7 +55,7 @@ apt_repositories_enabled:
   - backports
   - blackfire
   - git
-  #- mongo
+  - mongo
   #- pgsql
 
 
@@ -181,23 +195,26 @@ apt_repositories_available:
   # Get keys
   # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
   mongo:
-    5.2:
-      # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    5.3:
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    5.4:
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-    5.5:
-      deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
-      key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    # 5.2 - 7.0: mongodb-clients / 7.1 - 7.2: mongo-tools / 7.3+: no mongo tools avail
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2]
+    #5.2:
+    #  # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-3.6.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
+    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    #5.3:
+    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    #5.4:
+    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    #5.5:
+    #  deb: deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.6 main
+    #  key: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+    # 4.4 buster is the first one with arm64 support
     all:
-      # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-4.0.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
-      deb: deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main
-      key: 9DA31620334BD75D9DCB49F368818C72E52529D4
+      # gpg --dry-run --with-fingerprint < <(curl https://www.mongodb.org/static/pgp/server-4.4.asc) | grep fingerprint | sed 's/.*=//g' | sed 's/ //g'
+      deb: deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main
+      key: 20691EEC35216C63CAF66CE1656408E390CFB1F5
   pgsql:
     5.2:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main
