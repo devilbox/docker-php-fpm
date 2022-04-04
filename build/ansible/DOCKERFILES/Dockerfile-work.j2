@@ -126,9 +126,23 @@ RUN set -eux \
 		mysql-client \
 {% endif %}
 		\
-{% if php_version in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] %}
+# 5.2: mongodb-clients (amd64)
+# 5.3: mongodb-clients (amd64)
+# 5.4: mongodb-clients (amd64)
+# 5.5: mongodb-clients (amd64)
+# 5.6: mongodb-clients (amd64, arm64)
+# 7.0: mongodb-clients (amd64, arm64)
+# 7.1: mongo-tools OR mongodb-org-(tools|shell) (amd64, arm64)
+# 7.2: mongo-tools OR mongodb-org-(tools|shell) (amd64, arm64)
+# 7.3: mongodb-org-(tools|shell) (amd64, arm64)
+# 7.4: mongodb-org-(tools|shell) (amd64, arm64)
+# 8.0: mongodb-org-(tools|shell) (amd64, arm64)
+# 8.1: mongodb-org-(tools|shell) (amd64, arm64)
+# 8.2: mongodb-org-(tools|shell) (amd64, arm64)
+{% if php_version in [5.2, 5.3, 5.4, 5.5] %}
+		$( if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then echo 'mongodb-clients'; fi ) \
+{% elif php_version in [5.6, 7.0] %}
 		mongodb-clients \
-{% elif php_version in [7.1, 7.2] %}
 		mongo-tools \
 {% else %}
 		mongodb-org-tools \
@@ -143,9 +157,9 @@ RUN set -eux \
 		patch \
 		patchelf \
 		\
-{% if php_version not in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] %}
+{# if php_version not in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] #}
 		postgresql-client \
-{% endif %}
+{# endif #}
 		\
 		redis-tools \
 		rsync \
@@ -174,7 +188,26 @@ RUN set -eux \
 	\
 	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
 	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
+	\
+# Check version: mongofiles
+{% if php_version in [5.2, 5.3, 5.4, 5.5] %}
+	&& if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+		mongofiles --version; \
+	fi \
+{% else %}
+	&& mongofiles --version \
+{% endif %}
+	\
+# Check version: pg_isready
+{# if php_version not in [5.2, 5.3, 5.4, 5.5, 5.6, 7.0] #}
+	&& pg_isready --version \
+{# endif #}
+	\
+# Check version: mysql
+	&& mysql --version \
+	\
+	&& true
 
 
 ###
