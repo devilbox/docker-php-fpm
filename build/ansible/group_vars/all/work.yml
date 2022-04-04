@@ -93,8 +93,8 @@ apt_repositories_enabled:
   - backports
   - blackfire
   #- git
-  - mongo
-  - pgsql
+  #- mongo
+  #- pgsql
 
 
 # -------------------------------------------------------------------------------------------------
@@ -156,6 +156,9 @@ software_enabled:
   - composer
   - pip
   - nvm
+  # Required for internal Devilbox connection
+  - pgsql_client
+  - mongo_client
   # Normal packages start here
   - awesomeci
   - deployer
@@ -242,7 +245,7 @@ apt_repositories_available:
       deb: deb http://packages.blackfire.io/debian any main
       pre: curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
   ###
-  ### Git
+  ### Git (currently obsolete)
   ###
   git:
     5.2:
@@ -274,7 +277,7 @@ apt_repositories_available:
     all:
       key: A1715D88E1DF1F24
   ###
-  ### MongoDB
+  ### MongoDB (currently obsolete)
   ###
   mongo:
     # 5.2: mongodb-clients (amd64)
@@ -307,7 +310,7 @@ apt_repositories_available:
       deb: deb http://repo.mongodb.org/apt/ubuntu {{ os_release['all'].ubuntu }}/mongodb-org/4.4 multiverse
       key: 20691EEC35216C63CAF66CE1656408E390CFB1F5
   ###
-  ### PostgrSQL
+  ### PostgrSQL (currently obsolete)
   ###
   pgsql:
     # [Jessie]
@@ -703,6 +706,191 @@ software_available:
         su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
+  ###
+  ### PostgrSQL Command line client
+  ###
+  # 5.2: (amd64)
+  # 5.3: (amd64)
+  # 5.4: (amd64)
+  # 5.5: (amd64)
+  # 5.6: (amd64)
+  # 7.0: (amd64)
+  # 7.1: (amd64, arm64)
+  # 7.2: (amd64, arm64)
+  # 7.3: (amd64, arm64)
+  # 7.4: (amd64, arm64)
+  # 8.0: (amd64, arm64)
+  # 8.1: (amd64, arm64)
+  # 8.2: (amd64, arm64)
+  pgsql_client:
+    check: |
+      if echo '{{ php_version }}' | grep -E '^(5.2|5.3|5.4|5.5|5.6|7.0)$' >/dev/null; then \
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+        pg_isready --version; \
+        fi \
+      else \
+        pg_isready --version; \
+      fi \
+    5.2:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    5.3:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    5.4:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    5.5:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    5.6:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    7.0:
+      pre: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+          && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && apt-get update; \
+        fi \
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            postgresql-client; \
+        fi \
+    all:
+      pre: |
+        curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+        && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+        && apt-get update \
+      command: |
+        apt-get install -y --no-install-recommends --no-install-suggests \
+          postgresql-client \
+      post: rm -rf /var/lib/apt/lists/*
+  ###
+  ### MongoDB Command line client
+  ###
+  # 5.2: mongodb-clients (amd64)
+  # 5.3: mongodb-clients (amd64)
+  # 5.4: mongodb-clients (amd64)
+  # 5.5: mongodb-clients (amd64)
+  # 5.6: mongodb-clients & mongo-tools (amd64, arm64)
+  # 7.0: mongodb-clients & mongo-tools (amd64, arm64)
+  # 7.1: mongodb-org-(tools|shell) (amd64, arm64)
+  # 7.2: mongodb-org-(tools|shell) (amd64, arm64)
+  # 7.3: mongodb-org-(tools|shell) (amd64, arm64)
+  # 7.4: mongodb-org-(tools|shell) (amd64, arm64)
+  # 8.0: mongodb-org-(tools|shell) (amd64, arm64)
+  # 8.1: mongodb-org-(tools|shell) (amd64, arm64)
+  # 8.2: mongodb-org-(tools|shell) (amd64, arm64)
+  mongo_client:
+    check: |
+      if echo '{{ php_version }}' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          mongofiles --version; \
+        fi \
+      else \
+        mongofiles --version; \
+      fi \
+    5.2:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients; \
+        fi \
+    5.3:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients; \
+        fi \
+    5.4:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients; \
+        fi \
+    5.5:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients; \
+        fi \
+    5.6:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients \
+            mongo-tools; \
+        fi \
+    7.0:
+      pre: apt-get update
+      command: |
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          apt-get install -y --no-install-recommends --no-install-suggests \
+            mongodb-clients \
+            mongo-tools; \
+        fi \
+    all:
+      pre: |
+        APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 20691EEC35216C63CAF66CE1656408E390CFB1F5 \
+        && echo "deb http://repo.mongodb.org/apt/ubuntu {{ os_release[php_version].ubuntu }}/mongodb-org/4.4 multiverse" > /etc/apt/sources.list.d/mongo.list \
+        && apt-get update \
+      command: |
+        apt-get install -y --no-install-recommends --no-install-suggests \
+          mongodb-org-tools \
+          mongodb-org-shell \
+      post: rm -rf /var/lib/apt/lists/*
   awesomeci:
     check: regex-grep --version | grep -E '[0-9][.0-9]+'
     all:

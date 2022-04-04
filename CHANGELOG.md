@@ -7,8 +7,8 @@
 ## Release 0.139
 
 #### Added
-- Added mongodb command line client
-- Added postgresql command line client for PHP 7.1+
+- (Re-)added mongodb command line client
+- (Re-)added postgresql command line client
 
 ### Changed
 - Speed up `xargs` commands by using multi-CPU
