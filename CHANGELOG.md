@@ -4,6 +4,17 @@
 ## Unreleased
 
 
+## Release 0.139
+
+#### Added
+- (Re-)added mongodb command line client
+- (Re-)added postgresql command line client
+
+### Changed
+- Speed up `xargs` commands by using multi-CPU
+- Use buildkit for building
+
+
 ## Release 0.138
 
 #### Added

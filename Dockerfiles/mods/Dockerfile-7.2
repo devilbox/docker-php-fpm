@@ -828,9 +828,9 @@ RUN set -eux \
 
 # Shrink everything down
 RUN set -eux \
-	&& (find /usr/local/bin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 strip --strip-all -p 2>/dev/null || true)
+	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
+	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
 
 
 

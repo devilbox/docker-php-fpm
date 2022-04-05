@@ -123,6 +123,9 @@ EXT_DIR=$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(BASE_
 )
 endif
 
+# Use Buldkit for building
+export DOCKER_BUILDKIT=1
+
 .PHONY: build
 build: check-stage-is-set
 build: check-parent-image-exists
