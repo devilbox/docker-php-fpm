@@ -55,7 +55,7 @@ RUN set -eux \
 		gnupg \
 		\
 	&& echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until \
-	&& echo "deb http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& echo "deb [trusted=yes] http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
 	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
 	\

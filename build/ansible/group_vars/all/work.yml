@@ -204,19 +204,19 @@ apt_repositories_available:
     # [Jessie]
     5.2:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian {{ os_release[5.2].debian }}-backports main
+      deb: deb [trusted=yes] http://archive.debian.org/debian {{ os_release[5.2].debian }}-backports main
     # [Jessie]
     5.3:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian {{ os_release[5.3].debian }}-backports main
+      deb: deb [trusted=yes] http://archive.debian.org/debian {{ os_release[5.3].debian }}-backports main
     # [Jessie]
     5.4:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian {{ os_release[5.4].debian }}-backports main
+      deb: deb [trusted=yes] http://archive.debian.org/debian {{ os_release[5.4].debian }}-backports main
     # [Jessie]
     5.5:
       pre: echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until
-      deb: deb http://archive.debian.org/debian {{ os_release[5.5].debian }}-backports main
+      deb: deb [trusted=yes] http://archive.debian.org/debian {{ os_release[5.5].debian }}-backports main
     # [Stretch]
     5.6:
       pre: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
