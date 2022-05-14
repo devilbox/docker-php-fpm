@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.140
+
+### Changed
+- Ensure apt Jessie repositories are trusted beyond EOL
+
+
 ## Release 0.139
 
 #### Added
