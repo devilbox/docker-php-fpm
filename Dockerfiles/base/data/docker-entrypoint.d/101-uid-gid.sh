@@ -72,6 +72,9 @@ set_uid() {
 			if [ -d "/etc/supervisor/custom.d" ]; then
 				run "chown -R ${username} /etc/supervisor/custom.d" "${debug}"
 			fi
+			if [ -d "/opt/nvm" ]; then
+				run "chown -R ${username} /opt/nvm" "${debug}"
+			fi
 		fi
 	fi
 }
@@ -121,6 +124,9 @@ set_gid() {
 			fi
 			if [ -d "/etc/supervisor/custom.d" ]; then
 				run "chown -R :${groupname} /etc/supervisor/custom.d" "${debug}"
+			fi
+			if [ -d "/opt/nvm" ]; then
+				run "chown -R :${groupname} /opt/nvm" "${debug}"
 			fi
 		fi
 	fi

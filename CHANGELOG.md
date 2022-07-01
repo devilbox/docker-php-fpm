@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.141
+
+### Fixed
+- Fixed correct permission for `/opt/nvm` during startup
+
+
 ## Release 0.140
 
 ### Changed
