@@ -706,6 +706,10 @@ software_available:
         su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
         && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
+        \
+        && chmod 0777 {{ nvm_home }} \
+        && find {{ nvm_home }} -type f -print0 | xargs -n1 -0 chmod go+w \
+        && find {{ nvm_home }} -type d -print0 | xargs -n1 -0 chmod 0777 \
   ###
   ### PostgrSQL Command line client
   ###

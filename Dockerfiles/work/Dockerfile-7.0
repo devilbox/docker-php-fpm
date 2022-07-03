@@ -185,6 +185,10 @@ RUN set -eux \
 	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
 && su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
 && su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
+\
+&& chmod 0777 /opt/nvm \
+&& find /opt/nvm -type f -print0 | xargs -n1 -0 chmod go+w \
+&& find /opt/nvm -type d -print0 | xargs -n1 -0 chmod 0777 \
  \
 	\
 # -------------------- pgsql_client --------------------
