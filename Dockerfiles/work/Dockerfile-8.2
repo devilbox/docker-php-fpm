@@ -291,12 +291,12 @@ fi \
 	&& chmod +x /usr/local/bin/symfony \
 	\
 # -------------------- wkhtmltopdf --------------------
-	&& VERSION="$( curl -sSL -L --fail https://github.com/wkhtmltopdf/wkhtmltopdf/releases | grep -Eo '/wkhtmltopdf/.+stretch_amd64\.deb' | head -1 )" \
+	&& VERSION="$(curl -sSL -L --fail https://api.github.com/repos/wkhtmltopdf/packaging/releases | awk -F\" '/wkhtmltopdf.*.stretch_amd64\.deb/{print $(NF-1)}' | head -1 )" \
 	&& if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
   DEBIAN_FRONTEND=noninteractive apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends --no-install-suggests \
     libfontenc1 libxfont2 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils \
-  && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  https://github.com/${VERSION} \
+  && curl -sS -L --fail -o /tmp/wkhtmltopdf.deb  ${VERSION} \
   && dpkg -i /tmp/wkhtmltopdf.deb \
   && rm -f /tmp/wkhtmltopdf.deb; \
 fi \
