@@ -993,7 +993,7 @@ software_available:
     7.1:
       pre: DURL="https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.9.4/drupal.phar"
     all:
-      pre: DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')"
+      pre: DURL="$(curl -s https://api.github.com/repos/hechoendrupal/drupal-console-launcher/releases/latest | awk -F\" '/download.*.phar/{print $(NF-1)}' | head -1)"
       command: curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal
       post: chmod +x /usr/local/bin/drupal
   gitflow:
