@@ -1111,7 +1111,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 8.0, 8.1, 8.2]
+    disabled: [5.2, 7.4, 8.0, 8.1, 8.2] # TODO: currently disabled for 7.4 as it breaks (from mods.yml)
     check: phalcon commands | grep -E '[0-9][.0-9]+'
     5.3:
       pre: |
