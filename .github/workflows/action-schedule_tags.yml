@@ -35,7 +35,6 @@ jobs:
     with:
       enabled: true
       can_deploy: true
-      is_scheduled: true
       versions: ${{ needs.params.outputs.versions }}
       refs: ${{ needs.params.outputs.refs }}
     secrets:
