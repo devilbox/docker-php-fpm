@@ -1300,11 +1300,13 @@ software_available:
         && chmod +x /usr/local/bin/phpunit \
   symfony:
     disabled: [5.2, 5.3]
-    check: symfony -V | grep -Ei 'version\s*.*v[0-9][.0-9]+'
+    check: symfony -V | grep -Ei 'version\s[0-9][.0-9]+'
     all:
-      pre: SYMFONY_VERSION="$( curl -sS -L --fail https://get.symfony.com/cli/LATEST )"
-      command: curl -sS -L --fail "https://github.com/symfony/cli/releases/download/v${SYMFONY_VERSION}/symfony_linux_$(dpkg-architecture --query DEB_HOST_ARCH)" > /usr/local/bin/symfony
-      post: chmod +x /usr/local/bin/symfony
+      pre: VERSION="$(curl -s https://api.github.com/repos/symfony-cli/symfony-cli/releases/latest | awk -F\" '/symfony-cli_.*._amd64\.deb/{print $(NF-1)}' | head -1 | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/')"
+      command: |
+        curl -sS -L --fail -o /tmp/symfonycli.deb  https://github.com/symfony-cli/symfony-cli/releases/download/v${VERSION}/symfony-cli_${VERSION}_$(dpkg-architecture --query DEB_HOST_ARCH).deb \
+        && dpkg -i /tmp/symfonycli.deb \
+        && rm -f /tmp/symfonycli.deb \
   wkhtmltopdf:
     check: if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then wkhtmltopdf --version | grep -E "^wkhtmltopdf [0-9][.0-9]+\s+\(.+patched.+\)"; fi
     5.2:
