@@ -268,7 +268,7 @@ RUN set -eux \
  \
 	\
 # -------------------- drupalconsole --------------------
-	&& DURL="https://github.com$(curl -sS 'https://github.com/hechoendrupal/drupal-console-launcher/releases' | grep -Eo 'href="/.+drupal.phar"' | head -1 | sed 's/^href="//g' | sed 's/"$//g')" \
+	&& DURL="$(curl -s https://api.github.com/repos/hechoendrupal/drupal-console-launcher/releases/latest | awk -F\" '/download.*.phar/{print $(NF-1)}' | head -1)" \
 	&& curl -sS -L --fail "${DURL}" -L -o /usr/local/bin/drupal \
 	&& chmod +x /usr/local/bin/drupal \
 	\
