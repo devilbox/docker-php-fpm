@@ -946,6 +946,16 @@ extensions_available:
       git_url: https://github.com/phalcon/cphalcon
       git_ref: v3.4.4
       command: cd build && ./install
+    7.2:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v4.1.1
+      command: cd build && ./install
+    7.3:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v4.1.2
+      command: cd build && ./install
     all:
       type: git
       git_url: https://github.com/phalcon/cphalcon
