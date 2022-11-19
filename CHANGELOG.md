@@ -4,6 +4,16 @@
 ## Unreleased
 
 
+## Release 0.142
+
+### Fixed
+- Fixed `phalcon` module
+- Fixed `swoole` module
+- Fixed installation of wkhtmltopdf [#245](https://github.com/devilbox/docker-php-fpm/pull/245)
+- FIxed installation of drupalconsole [#246](https://github.com/devilbox/docker-php-fpm/pull/246)
+- Fixed installation of symfoni cli [#247](https://github.com/devilbox/docker-php-fpm/pull/247)
+
+
 ## Release 0.141
 
 ### Fixed
