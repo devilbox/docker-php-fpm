@@ -53,6 +53,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       run_tests: false
       upload_artifact: true
+      pull_base_image: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       stage: base
