@@ -328,20 +328,6 @@ fi \
 && rm -rf /usr/local/src/mysqldump-secure \
  \
 	\
-# -------------------- phalcon --------------------
-	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
-&& cd /usr/local/src/phalcon-devtools \
-&& git checkout $(git describe --abbrev=0 --tags) \
-&& COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
-&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-&& ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
-&& chmod +x phalcon \
-&& cd / \
-&& rm -rf /usr/local/src/phalcon-devtools/.git \
- \
-	\
 # -------------------- phpcs --------------------
 	&& curl -sS -L --fail https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar > /usr/local/bin/phpcs \
 && chmod +x /usr/local/bin/phpcs \
@@ -780,7 +766,6 @@ fi \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
-	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
 	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \
 	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \

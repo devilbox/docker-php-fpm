@@ -15,6 +15,7 @@
 - Fixed installation of NodeJS
 - Fixed installation of PostgreSQL client for PHP 5.6
 - Fixed installation of PostgreSQL client for PHP 7.0
+- Disabled Phalcon Devtools for PHP 7.4 as it breaks
 
 
 ## Release 0.141
