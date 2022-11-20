@@ -327,8 +327,7 @@ apt_repositories_available:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[5.5].debian }}-pgdg main
     # [Stretch]
     5.6:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[5.6].debian }}-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[5.6].debian }}-pgdg main
     # [Stretch]
     7.0:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[7.0].debian }}-pgdg main
@@ -806,7 +805,7 @@ software_available:
       pre: |
         if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
           curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-          && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
           && apt-get update; \
         fi \
       command: |

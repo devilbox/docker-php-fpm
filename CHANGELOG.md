@@ -13,6 +13,7 @@
 - FIxed installation of drupalconsole [#246](https://github.com/devilbox/docker-php-fpm/pull/246)
 - Fixed installation of symfoni cli [#247](https://github.com/devilbox/docker-php-fpm/pull/247)
 - Fixed installation of NodeJS
+- Fixed PostgreSQL client for PHP 5.6
 
 
 ## Release 0.141
