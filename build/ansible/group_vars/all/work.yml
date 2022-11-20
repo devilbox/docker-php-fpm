@@ -680,8 +680,28 @@ software_available:
     check: |
       su  -c '. {{ nvm_home }}/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
       && su  -c '. {{ nvm_home }}/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+    5.2:
+      pre: |
+        NODE_VERSION="17" \
+    5.3:
+      pre: |
+        NODE_VERSION="17" \
+    5.4:
+      pre: |
+        NODE_VERSION="17" \
+    5.5:
+      pre: |
+        NODE_VERSION="17" \
+    5.6:
+      pre: |
+        NODE_VERSION="17" \
+    7.0:
+      pre: |
+        NODE_VERSION="17" \
     all:
       pre: |
+        NODE_VERSION="{{ node_version }}" \
+      command: |
         NVM_VERSION="$( \
           curl -sS 'https://github.com/nvm-sh/nvm/releases' \
           | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
@@ -690,8 +710,7 @@ software_available:
           | tail -1 \
         )" \
         && mkdir -p {{ nvm_home }} \
-      command: |
-        curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+        && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
           | NVM_DIR="{{ nvm_home }}" bash \
         \
         && { \
@@ -703,9 +722,9 @@ software_available:
         && chown -R devilbox:devilbox "{{ nvm_home }}" \
       # Install latest and LTS version and yarn
       post: |
-        su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
-        && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
-        && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
+        su  -c ". {{ nvm_home }}/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; nvm use ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; corepack enable" devilbox \
         \
         && chmod 0777 {{ nvm_home }} \
         && find {{ nvm_home }} -type f -print0 | xargs -n1 -0 chmod go+w \
