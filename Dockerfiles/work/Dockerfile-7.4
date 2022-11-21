@@ -162,6 +162,8 @@ RUN set -eux \
  \
 	\
 # -------------------- nvm --------------------
+	&& NODE_VERSION="--lts" \
+ \
 	&& NVM_VERSION="$( \
   curl -sS 'https://github.com/nvm-sh/nvm/releases' \
   | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
@@ -170,8 +172,7 @@ RUN set -eux \
   | tail -1 \
 )" \
 && mkdir -p /opt/nvm \
- \
-	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
   | NVM_DIR="/opt/nvm" bash \
 \
 && { \
@@ -182,9 +183,9 @@ RUN set -eux \
 \
 && chown -R devilbox:devilbox "/opt/nvm" \
  \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
+	&& su  -c ". /opt/nvm/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
+&& su  -c ". /opt/nvm/nvm.sh; nvm use ${NODE_VERSION}" devilbox \
+&& su  -c ". /opt/nvm/nvm.sh; corepack enable" devilbox \
 \
 && chmod 0777 /opt/nvm \
 && find /opt/nvm -type f -print0 | xargs -n1 -0 chmod go+w \
@@ -325,20 +326,6 @@ fi \
 && sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
 && cd / \
 && rm -rf /usr/local/src/mysqldump-secure \
- \
-	\
-# -------------------- phalcon --------------------
-	&& git clone https://github.com/phalcon/phalcon-devtools /usr/local/src/phalcon-devtools \
-&& cd /usr/local/src/phalcon-devtools \
-&& git checkout $(git describe --abbrev=0 --tags) \
-&& COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer install \
- \
-	&& chown -R ${MY_USER}:${MY_GROUP} /usr/local/src/phalcon-devtools \
-&& su - ${MY_USER} -c 'cd /usr/local/src/phalcon-devtools && ./phalcon.sh' \
-&& ln -sf /usr/local/src/phalcon-devtools/phalcon /usr/local/bin/phalcon \
-&& chmod +x phalcon \
-&& cd / \
-&& rm -rf /usr/local/src/phalcon-devtools/.git \
  \
 	\
 # -------------------- phpcs --------------------
@@ -779,7 +766,6 @@ fi \
 	&& laravel --version | grep -E '(Installer|version)\s*[0-9][.0-9]+' \
 	&& linkcheck --version | grep -E '^linkcheck\sv[0-9][.0-9]+' \
 	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+' \
-	&& phalcon commands | grep -E '[0-9][.0-9]+' \
 	&& phpcs --version | grep -E 'version [0-9][.0-9]+' \
 	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' \
 	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' \

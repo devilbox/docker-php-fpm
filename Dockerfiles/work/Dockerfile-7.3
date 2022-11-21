@@ -162,6 +162,8 @@ RUN set -eux \
  \
 	\
 # -------------------- nvm --------------------
+	&& NODE_VERSION="--lts" \
+ \
 	&& NVM_VERSION="$( \
   curl -sS 'https://github.com/nvm-sh/nvm/releases' \
   | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
@@ -170,8 +172,7 @@ RUN set -eux \
   | tail -1 \
 )" \
 && mkdir -p /opt/nvm \
- \
-	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
   | NVM_DIR="/opt/nvm" bash \
 \
 && { \
@@ -182,9 +183,9 @@ RUN set -eux \
 \
 && chown -R devilbox:devilbox "/opt/nvm" \
  \
-	&& su  -c '. /opt/nvm/nvm.sh; nvm install --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; nvm use --lts' devilbox \
-&& su  -c '. /opt/nvm/nvm.sh; corepack enable' devilbox \
+	&& su  -c ". /opt/nvm/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
+&& su  -c ". /opt/nvm/nvm.sh; nvm use ${NODE_VERSION}" devilbox \
+&& su  -c ". /opt/nvm/nvm.sh; corepack enable" devilbox \
 \
 && chmod 0777 /opt/nvm \
 && find /opt/nvm -type f -print0 | xargs -n1 -0 chmod go+w \

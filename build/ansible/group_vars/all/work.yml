@@ -327,12 +327,10 @@ apt_repositories_available:
       deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[5.5].debian }}-pgdg main
     # [Stretch]
     5.6:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[5.6].debian }}-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[5.6].debian }}-pgdg main
     # [Stretch]
     7.0:
-      deb: deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[7.0].debian }}-pgdg main
-      pre: curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+      deb: deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[7.0].debian }}-pgdg main
     # [Buster]
     7.1:
       deb: deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[7.1].debian }}-pgdg main
@@ -680,8 +678,28 @@ software_available:
     check: |
       su  -c '. {{ nvm_home }}/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
       && su  -c '. {{ nvm_home }}/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+    5.2:
+      pre: |
+        NODE_VERSION="17" \
+    5.3:
+      pre: |
+        NODE_VERSION="17" \
+    5.4:
+      pre: |
+        NODE_VERSION="17" \
+    5.5:
+      pre: |
+        NODE_VERSION="17" \
+    5.6:
+      pre: |
+        NODE_VERSION="17" \
+    7.0:
+      pre: |
+        NODE_VERSION="17" \
     all:
       pre: |
+        NODE_VERSION="{{ node_version }}" \
+      command: |
         NVM_VERSION="$( \
           curl -sS 'https://github.com/nvm-sh/nvm/releases' \
           | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
@@ -690,8 +708,7 @@ software_available:
           | tail -1 \
         )" \
         && mkdir -p {{ nvm_home }} \
-      command: |
-        curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+        && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
           | NVM_DIR="{{ nvm_home }}" bash \
         \
         && { \
@@ -703,9 +720,9 @@ software_available:
         && chown -R devilbox:devilbox "{{ nvm_home }}" \
       # Install latest and LTS version and yarn
       post: |
-        su  -c '. {{ nvm_home }}/nvm.sh; nvm install {{ node_version }}' devilbox \
-        && su  -c '. {{ nvm_home }}/nvm.sh; nvm use {{ node_version }}' devilbox \
-        && su  -c '. {{ nvm_home }}/nvm.sh; corepack enable' devilbox \
+        su  -c ". {{ nvm_home }}/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; nvm use ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; corepack enable" devilbox \
         \
         && chmod 0777 {{ nvm_home }} \
         && find {{ nvm_home }} -type f -print0 | xargs -n1 -0 chmod go+w \
@@ -787,7 +804,7 @@ software_available:
       pre: |
         if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
           curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-          && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
           && apt-get update; \
         fi \
       command: |
@@ -799,7 +816,7 @@ software_available:
       pre: |
         if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
           curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
-          && echo "deb http://apt.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+          && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ {{ os_release[php_version].debian }}-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
           && apt-get update; \
         fi \
       command: |
@@ -1111,7 +1128,7 @@ software_available:
         && cd / \
         && rm -rf /usr/local/src/mysqldump-secure \
   phalcon:
-    disabled: [5.2, 8.0, 8.1, 8.2]
+    disabled: [5.2, 7.4, 8.0, 8.1, 8.2]
     check: phalcon commands | grep -E '[0-9][.0-9]+'
     5.3:
       pre: |

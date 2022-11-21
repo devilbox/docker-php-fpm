@@ -4,6 +4,20 @@
 ## Unreleased
 
 
+## Release 0.142
+
+### Fixed
+- Fixed `phalcon` module
+- Fixed `swoole` module
+- Fixed installation of wkhtmltopdf [#245](https://github.com/devilbox/docker-php-fpm/pull/245)
+- FIxed installation of drupalconsole [#246](https://github.com/devilbox/docker-php-fpm/pull/246)
+- Fixed installation of symfoni cli [#247](https://github.com/devilbox/docker-php-fpm/pull/247)
+- Fixed installation of NodeJS
+- Fixed installation of PostgreSQL client for PHP 5.6
+- Fixed installation of PostgreSQL client for PHP 7.0
+- Disabled Phalcon Devtools for PHP 7.4 as it breaks
+
+
 ## Release 0.141
 
 ### Fixed

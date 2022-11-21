@@ -61,9 +61,11 @@ jobs:
       - name: "[Set-Output] jsonify VERSIONS"
         id: set-versions
         run: |
-          echo "::set-output name=versions::$( echo '${{ env.VERSIONS }}' | jq -M -c )"
+          VERSIONS="$( echo '${{ env.VERSIONS }}' | jq -M -c )"
+          echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
 
       - name: "[Set-Output] jsonify REFS"
         id: set-refs
         run: |
-          echo "::set-output name=refs::$( echo '${{ env.REFS }}' | jq -M -c )"
+          REFS="$( echo '${{ env.REFS }}' | jq -M -c )"
+          echo "refs=${REFS}" >> $GITHUB_OUTPUT

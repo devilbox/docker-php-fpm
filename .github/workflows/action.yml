@@ -35,7 +35,6 @@ jobs:
     with:
       enabled: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.event.pull_request.user.login != 'cytopia')) }}
       can_deploy: ${{ (github.repository == 'devilbox/docker-php-fpm') && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/release-')) }}
-      is_scheduled: false
       versions: ${{ needs.params.outputs.versions }}
       refs: ${{ needs.params.outputs.refs }}
     secrets:
@@ -54,6 +53,7 @@ jobs:
       has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
       run_tests: false
       upload_artifact: true
+      pull_base_image: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
       stage: base
