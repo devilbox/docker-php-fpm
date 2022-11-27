@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.143
+
+### Changed
+- Added `phalcon` 5.x to PHP 8.0 and PHP 8.1
+
+
 ## Release 0.142
 
 ### Fixed

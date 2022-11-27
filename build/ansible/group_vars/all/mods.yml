@@ -915,7 +915,7 @@ extensions_available:
     all:
       type: pecl
   phalcon:
-    disabled: [5.2, 8.0, 8.1, 8.2] # TODO: currently disabled for 7.4 as it breaks
+    disabled: [5.2, 8.2] # TODO: currently disabled for 7.4 as it breaks
     5.3:
       type: git
       git_url: https://github.com/phalcon/cphalcon
