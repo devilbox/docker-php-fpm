@@ -23,5 +23,7 @@ PYLINT_DIR      = get-modules.py
 PYLINT_PIP_PKGS = yamllint
 PYLINT_ARGS     = --disable=invalid-name get-modules.py
 
+PYCODE_ARGS     = --max-line-length=100
+
 BLACK_LINT_ARGS = -l 100 --check --diff
 BLACK_FIX_ARGS  = -l 100

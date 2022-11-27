@@ -32,6 +32,13 @@ def get_el_by_name(items: List[Dict[str, Any]], name: str) -> Dict[str, Any]:
     sys.exit(1)
 
 
+def load_yaml(path: str) -> Dict[str, Any]:
+    """Load yaml file and return its dict()."""
+    with open(path, encoding="utf8") as fp:
+        data = yaml.safe_load(fp)
+        return data
+
+
 # --------------------------------------------------------------------------------------------------
 # MODULE FUNCTIONS
 # --------------------------------------------------------------------------------------------------
@@ -39,23 +46,17 @@ def get_el_by_name(items: List[Dict[str, Any]], name: str) -> Dict[str, Any]:
 
 def get_module_options(module_dirname: str) -> Dict[str, Any]:
     """Returns yaml dict options of a PHP module given by its absolute file path."""
-    with open(os.path.join(PHP_MODULE_PATH, module_dirname, "options.yml"), encoding="utf8") as fp:
-        data = yaml.safe_load(fp)
-        return data
+    return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "options.yml"))
 
 
 def get_module_build(module_dirname: str) -> Dict[str, Any]:
     """Returns yaml dict build configuration of a PHP module given by its absolute file path."""
-    with open(os.path.join(PHP_MODULE_PATH, module_dirname, "build.yml"), encoding="utf8") as fp:
-        data = yaml.safe_load(fp)
-        return data
+    return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "build.yml"))
 
 
 def get_module_test(module_dirname: str) -> Dict[str, Any]:
     """Returns yaml dict test configuration of a PHP module given by its absolute file path."""
-    with open(os.path.join(PHP_MODULE_PATH, module_dirname, "test.yml"), encoding="utf8") as fp:
-        data = yaml.safe_load(fp)
-        return data
+    return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "test.yml"))
 
 
 def get_modules() -> List[Dict[str, Any]]:
@@ -159,10 +160,8 @@ def write_group_vars(module_names: List[str]) -> None:
 
 def main() -> None:
     """Main entrypoint."""
-    # Module directory names
-    modules = get_modules()
-
     # Get modules in order of dependencies
+    modules = get_modules()
     module_tree = get_module_dependency_tree(modules)
     names = resolve_module_dependency_tree(module_tree)
 
