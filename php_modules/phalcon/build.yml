@@ -16,7 +16,7 @@ all:
       | tail -1 \
     ) \
   command: cd build && ./install
-  build_dep: [libpcre-dev, re2c]
+  build_dep: [libpcre3-dev, re2c]
   run_dep: []
 
 7.3:
