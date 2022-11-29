@@ -1,1 +1,0 @@
-../bin/modules-generate.py
