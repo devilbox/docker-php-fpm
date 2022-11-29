@@ -1380,7 +1380,8 @@ extensions_available:
     8.2:
       type: git
       git_url: https://github.com/xdebug/xdebug
-      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      # FIXME: revert to latest tag once PHP 8.2 support is out of alpha/beta
+      git_ref: 3.2.0RC2
       configure: --enable-xdebug
     8.1:
       type: git

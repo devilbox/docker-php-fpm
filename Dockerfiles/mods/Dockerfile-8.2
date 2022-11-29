@@ -682,7 +682,7 @@ RUN set -eux \
 	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
 	&& cd /tmp/xdebug \
 	# Custom:       Branch
-	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	&& git checkout 3.2.0RC2 \
 	# Default:      Install command
 	&& phpize \
 	&& ./configure  --enable-xdebug \
