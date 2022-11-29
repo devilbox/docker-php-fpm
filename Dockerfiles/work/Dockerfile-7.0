@@ -1,4 +1,4 @@
-# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead.
+# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-work.j2 instead.
 FROM devilbox/php-fpm:7.0-prod
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
