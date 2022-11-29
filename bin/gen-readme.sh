@@ -6,98 +6,243 @@ set -u
 set -o pipefail
 
 # Get absolute directory of this script
-CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+SCRIPT_PATH="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+SCRIPT_NAME="$(basename "${SCRIPT_PATH}")"
+REPO_PATH="${SCRIPT_PATH}/.."
+README="${REPO_PATH}/doc/php-modules.md"
 
-IMAGE="${1}"
-ARCH="${2}"
-TAG_BASE="${3}"
-TAG_MODS="${4}"
-VERSION="${5:-}"
 
+#--------------------------------------------------------------------------------------------------
+# Evaluate given cli arguments
+#--------------------------------------------------------------------------------------------------
 
 ###
 ### Show Usage
 ###
 print_usage() {
-	echo "Usage: gen-readme.sh <IMAGE> <ARCH> <TAG_BASE> <TAG_MODS> [<VERSION>]"
+	echo "Usage: ${SCRIPT_NAME} <IMAGE> <ARCH> <STAGE> [<VERSION>]"
+}
+
+if [ "${#}" -lt "3" ]; then
+	print_usage
+	exit 1
+fi
+
+IMAGE="${1}"
+ARCH="${2}"
+STAGE="${3}"
+VERSION="${4:-}"
+
+if [ "${STAGE}" != "base" ] && [ "${STAGE}" != "mods" ]; then
+	echo "[SKIP]: Skipping for STAGE: ${STAGE} (only 'base' and 'mods' supported"
+	exit 0
+fi
+
+
+#--------------------------------------------------------------------------------------------------
+# Module functions
+#--------------------------------------------------------------------------------------------------
+
+###
+### Get all modules defined in README
+###
+get_modules_from_readme() {
+	local php_version="${1}"  # PHP version
+	local modules
+	modules="$( \
+		grep -Eo "ext_${STAGE}_.+_${php_version}" "${README}" \
+		| sed "s/^ext_${STAGE}_//g" \
+		| sed "s/_${php_version}//g" \
+	)"
+	echo "${modules}" | sort -fu
 }
 
 
 ###
-### Extract PHP modules in alphabetical order and comma separated in one line
+### Get modules available in PHP image
 ###
-get_modules() {
-	current_tag="${1}"
-	# Retrieve all modules
-	PHP_MODULES="$( docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=php "${IMAGE}:${current_tag}" -m )"
-	ALL_MODULES=
+get_modules_from_image() {
+	local php_version="${1}"
+	local img_tag="${2}"
+	local modules
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
-		ALL_MODULES="${ALL_MODULES},ioncube";
+	modules="$( \
+		docker run --rm "$(tty -s && echo '-it' || echo)" --platform "${ARCH}" --entrypoint=php "${IMAGE}:${img_tag}" -m \
+		| sed 's/Zend //g' \
+		| sed 's/xdebug/Xdebug/g' \
+		| sed 's/Core//g' \
+		| sed 's/standard//g' \
+		| grep -E '^[a-zA-Z]' \
+		| sort -fu \
+	)"
+
+	# Get modules which might be disabled
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
+		modules="$( printf "%s\n%s\n" "${modules}" "ioncube" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
-		ALL_MODULES="${ALL_MODULES},blackfire";
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
+		modules="$( printf "%s\n%s\n" "${modules}" "blackfire" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
-		ALL_MODULES="${ALL_MODULES},psr";
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
+		modules="$( printf "%s\n%s\n" "${modules}" "psr" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${current_tag}" /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
-		ALL_MODULES="${ALL_MODULES},phalcon";
+	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
+		modules="$( printf "%s\n%s\n" "${modules}" "phalcon" )";
 	fi
 
-	# Process module string into correct format for README.md
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/^\[.*//g' )" # Remove PHP Modules headlines
-	PHP_MODULES="${ALL_MODULES}${PHP_MODULES}"                  # Append all available modules
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sort -fu )"         # Unique
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed '/^\s*$/d' )"   # Remove empty lines
-	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\r\n' ',' )"    # Newlines to commas
-	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\n' ',' )"      # Newlines to commas
-	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\r' ',' )"      # Newlines to commas
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed	's/^M/,/g' )"   # Newlines to commas
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,,/,/g' )"   # Remove PHP Modules headlines
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,/\n/g' )"   # Back to newlines
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sort -fu )"         # Unique
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed '/^\s*$/d' )"   # Remove empty lines
-	PHP_MODULES="$( echo "${PHP_MODULES}" | tr '\n' ',' )"      # Newlines to commas
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,$//g' )"    # Remove trailing comma
-	PHP_MODULES="$( echo "${PHP_MODULES}" | sed 's/,/, /g' )"   # Add space to comma
+	# Sort alphabetically
+	modules="$( echo "${modules}" | sort -fu )"
 
-	echo "${PHP_MODULES}"
+	# Remove weired line endings
+	while read -r line; do
+		echo "${line}" | tr -d '\r' | tr -d '\n'
+		echo
+	done < <(echo "${modules}")
 }
 
 
 ###
-### Replace modules in Readme for specified PHP version
+### Validate that README.md has all modules defined that are found in the PHP docker image
+###
+validate_readme() {
+	local php_version="${1}"
+	local modules_img="${2}"  # Modules found in the PHP docker image
+	local stage="${3}"        # base or mods
+
+	# Check if README.md contains all modules we have retrieved from the PHP image
+	while read -r line; do
+		module="$( echo "${line}" | tr '[:upper:]' '[:lower:]' )"
+		search="ext_${stage}_${module}_${php_version}"
+		if ! grep -q "${search}" "${README}"; then
+			echo "[ERROR] Module: '${module}' not present in ${README} for PHP ${php_version}, STAGE: ${stage}"
+			echo "grep -q \"${search}\" \"${README}\""
+			exit 1
+		fi
+	done < <(echo "${modules_img}")
+}
+
+
+###
+### Update README.md for a specific PHP version
 ###
 update_readme() {
-	v="${1}"
-	# Those sections must exist in README.md, otherwise this script will exit with errors
-	sed -i'' "s|<td id=\"${v//.}-base\">.*<\/td>|<td id=\"${v//.}-base\">$( get_modules "${TAG_BASE}" )<\/td>|g" "${CWD}/../README.md"
-	sed -i'' "s|<td id=\"${v//.}-mods\">.*<\/td>|<td id=\"${v//.}-mods\">$( get_modules "${TAG_MODS}" )<\/td>|g" "${CWD}/../README.md"
+	local php_version="${1}"
+	local modules_image="${2}"
+	local modules_avail="${3}"
+	local stage="${4}"         # base or mods
+
+	while read -r line_avail; do
+		module_avail="$( echo "${line_avail}" | tr '[:upper:]' '[:lower:]' )"
+
+		avail=0
+		while read -r line_image; do
+			module_image="$( echo "${line_image}" | tr '[:upper:]' '[:lower:]' )"
+			if [ "${module_image}" = "${module_avail}" ]; then
+				avail=1
+				break
+			fi
+		done < <(echo "${modules_image}")
+
+		if [ "${avail}" = "1" ]; then
+			sed -i "s|\(<td class=\"ext_${stage}_${module_avail}_${php_version}\"><sup>\)\(.*\)\(<\/sup><\/td>\)|\1🗸\3|g" "${README}"
+			echo "[YES] [${stage}] PHP ${php_version}, mod: '${module_avail}'"
+		else
+			sed -i "s|\(<td class=\"ext_${stage}_${module_avail}_${php_version}\"><sup>\)\(.*\)\(<\/sup><\/td>\)|\1\3|g" "${README}"
+			echo "[NO]  [${stage}] PHP ${php_version}, mod: '${module_avail}'"
+		fi
+	done < <(echo "${modules_avail}")
 }
 
+
+# The following commented code is used to generate the README initially
+#echo "<table>"
+#echo " <tr>"
+#echo "   <th><sup>Ext</sup></th>"
+#echo "   <th><sup>PHP 5.2</sup></th>"
+#echo "   <th><sup>PHP 5.3</sup></th>"
+#echo "   <th><sup>PHP 5.4</sup></th>"
+#echo "   <th><sup>PHP 5.5</sup></th>"
+#echo "   <th><sup>PHP 5.6</sup></th>"
+#echo "   <th><sup>PHP 7.0</sup></th>"
+#echo "   <th><sup>PHP 7.1</sup></th>"
+#echo "   <th><sup>PHP 7.2</sup></th>"
+#echo "   <th><sup>PHP 7.3</sup></th>"
+#echo "   <th><sup>PHP 7.4</sup></th>"
+#echo "   <th><sup>PHP 8.0</sup></th>"
+#echo "   <th><sup>PHP 8.1</sup></th>"
+#echo "   <th><sup>PHP 8.2</sup></th>"
+#echo " </tr>"
+#
+#while read -r line; do
+#	MOD_NAME="$( echo "${line}" )"
+#	MOD_LOWER="$( echo "${MOD_NAME}" | tr '[:upper:]' '[:lower:]' )"
+#	echo " <tr>"
+#	echo "  <td><sup><a href=\"php_modules/${MOD_LOWER}\">${MOD_NAME}</a></sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_5.2\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_5.3\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_5.4\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_5.5\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_5.6\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_7.0\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_7.1\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_7.2\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_7.3\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_7.4\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_8.0\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_8.1\"><sup>🗸</sup></td>"
+#	echo "  <td class=\"ext_mods_${MOD_LOWER}_8.2\"><sup>🗸</sup></td>"
+#	echo " </tr>"
+#done < <(echo "${MODS_IMAGE}")
+#echo "<table>"
+#exit
+
+
+#--------------------------------------------------------------------------------------------------
+# Main functions
+#--------------------------------------------------------------------------------------------------
+
+###
+### Replace module available in README for a specific PHP version
+###
+update() {
+	local php_version="${1}"
+	local mods_in_readme
+	local mods_in_image
+
+	mods_in_readme="$( get_modules_from_readme "${php_version}" )"
+
+	mods_in_image="$( get_modules_from_image "${php_version}" "${php_version}-${STAGE}" )"
+
+	validate_readme "${php_version}" "${mods_in_image}" "${STAGE}"
+	update_readme "${php_version}" "${mods_in_image}" "${mods_in_readme}" "${STAGE}"
+}
+
+
+#--------------------------------------------------------------------------------------------------
+# Entrypoint
+#--------------------------------------------------------------------------------------------------
 
 ###
 ### Entrypoint
 ###
 if [ "${VERSION}" = "" ]; then
 	# Update PHP modules for all versions at once
-	update_readme "5.2"
-	update_readme "5.3"
-	update_readme "5.4"
-	update_readme "5.5"
-	update_readme "5.6"
-	update_readme "7.0"
-	update_readme "7.1"
-	update_readme "7.2"
-	update_readme "7.3"
-	update_readme "7.4"
-	update_readme "8.0"
-	update_readme "8.1"
-	update_readme "8.2"
+	update "5.2"
+	update "5.3"
+	update "5.4"
+	update "5.5"
+	update "5.6"
+	update "7.0"
+	update "7.1"
+	update "7.2"
+	update "7.3"
+	update "7.4"
+	update "8.0"
+	update "8.1"
+	update "8.2"
 else
 	if [ "${VERSION}" != "5.2" ] \
 	&& [ "${VERSION}" != "5.3" ] \
@@ -118,6 +263,6 @@ else
 		exit 1
 	else
 		# Update PHP modules for one specific PHP version
-		update_readme "${VERSION}"
+		update "${VERSION}"
 	fi
 fi
