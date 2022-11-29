@@ -124,7 +124,7 @@ EXT_DIR=$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(BASE_
 endif
 
 # Use Buldkit for building
-export DOCKER_BUILDKIT=1
+#export DOCKER_BUILDKIT=1
 
 .PHONY: build
 build: check-stage-is-set
@@ -203,7 +203,7 @@ gen-readme:
 	@echo "################################################################################"
 	@echo "# Generate README.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
 	@echo "################################################################################"
-	./build/gen-readme.sh $(IMAGE) $(ARCH) $(BASE_TAG) $(MODS_TAG) $(VERSION)
+	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(BASE_TAG) $(MODS_TAG) $(VERSION)
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
 ###
@@ -217,7 +217,7 @@ gen-dockerfiles:
 		-e MY_UID=$$(id -u) \
 		-e MY_GID=$$(id -g) \
 		-v ${PWD}:/data \
-		-w /data/build/ansible \
+		-w /data/.ansible \
 		cytopia/ansible:2.8-tools ansible-playbook generate.yml \
 			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.8/site-packages/ansible_mitogen/plugins/strategy \
 			-e ANSIBLE_STRATEGY=mitogen_linear \
