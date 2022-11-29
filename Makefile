@@ -208,6 +208,13 @@ gen-readme:
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
 ###
+### Generate Modules
+###
+.PHONY: gen-modules
+gen-modules:
+	./bin/modules-generate.py
+
+###
 ### Generate Dockerfiles
 ###
 .PHONY: gen-dockerfiles
