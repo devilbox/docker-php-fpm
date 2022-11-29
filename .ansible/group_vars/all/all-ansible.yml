@@ -3,10 +3,10 @@
 # Ansible specific definitions
 ###################################################################################################
 
-edit_comment_base: "# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-base.j2 instead."
-edit_comment_mods: "# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead."
-edit_comment_prod: "# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-prod.j2 instead."
-edit_comment_work: "# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-work.j2 instead."
+edit_comment_base: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-base.j2 instead."
+edit_comment_mods: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-mods.j2 instead."
+edit_comment_prod: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-prod.j2 instead."
+edit_comment_work: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-work.j2 instead."
 
 
 # -------------------------------------------------------------------------------------------------
