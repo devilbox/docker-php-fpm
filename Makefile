@@ -49,8 +49,9 @@ ARCH       = linux/amd64
 
 
 # Makefile.lint overwrites
-FL_IGNORES  = .git/,.github/,tests/
+FL_IGNORES  = .git/,.github/,tests/,*.mypy_cache/
 SC_IGNORES  = .git/,.github/,tests/
+JL_IGNORES  = .git/,.github/,*.mypy_cache*
 
 
 # -------------------------------------------------------------------------------------------------
