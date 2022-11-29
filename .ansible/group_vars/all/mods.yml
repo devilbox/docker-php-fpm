@@ -993,7 +993,7 @@ extensions_available:
       type: pecl
       version: 2.2.7
   sqlite3:
-    disabled: []
+    disabled: [5.2]
     already_avail: "{{ php_all_versions }}"
   sqlsrv:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6]

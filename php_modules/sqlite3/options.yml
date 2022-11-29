@@ -4,7 +4,7 @@
 name: sqlite3
 
 # Exclude module build/installation for the following PHP versions
-exclude: []
+exclude: [5.2]
 
 # In order for this module to built correctly against all dependencies,
 # the following modules must have been built first.
