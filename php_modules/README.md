@@ -17,7 +17,7 @@ All PHP modules/extensions (for all PHP versions and both for `amd64` and `arm64
     2. Run `make gen-dockerfiles` to generate Dockerfiles via Ansible
     3. Run `make build STAGE=mods VERSION=8.1 ARCH=linux/amd64` to build the `mods` Docker image with version `8.1` for platform `linux/amd64`
 
-**Note:** If you want to test if your new module builds correctly, you can generate Dockerfiles which only contain your module and all others removed. This allows for much faster Docker builds and you don't have to wait for all other modules to be built. To do so you generate group_vars for your module only via:
+**Note:** If you want to test if your new module builds correctly, you can generate Dockerfiles which only contain this one module and all others removed. This allows for much faster Docker builds and you don't have to wait for all other modules to be built. To do so, you generate group_vars for your one module only via:
 
 ```bash
 # Commands shown here are executed from root of this repository
