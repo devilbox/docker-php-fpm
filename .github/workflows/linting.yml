@@ -46,6 +46,11 @@ jobs:
         run: |
           make lint-changelog
 
+      - name: Diff generated PHP modules
+        run: |
+          make gen-modules
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+
       - name: Diff generated Docker files
         run: |
           make gen-dockerfiles
