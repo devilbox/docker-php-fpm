@@ -1,0 +1,40 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  run_dep: [libmcrypt4]
+  build_dep: [libmcrypt-dev]
+
+7.3:
+  type: pecl
+  version: 1.0.2
+
+7.2:
+  type: pecl
+  version: 1.0.1
+
+7.1:
+  type: builtin
+
+7.0:
+  type: builtin
+
+5.6:
+  type: builtin
+
+5.5:
+  type: builtin
+
+5.4:
+  type: builtin
+
+5.3:
+  type: builtin
+
+5.2:
+  type: builtin

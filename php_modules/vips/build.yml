@@ -1,0 +1,18 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  build_dep:
+    - libvips-dev
+    - libvips42
+  run_dep:
+    - libvips42
+
+5.6:
+  type: pecl
+  version: 1.0.0

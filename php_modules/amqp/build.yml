@@ -1,0 +1,32 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  command: echo "/usr" | pecl install amqp
+  build_dep: [librabbitmq-dev]
+  run_dep: [librabbitmq4]
+
+5.5:
+  type: pecl
+  version: 1.9.3
+  run_dep: [librabbitmq1]
+
+5.4:
+  type: pecl
+  version: 1.9.3
+  run_dep: [librabbitmq1]
+
+5.3:
+  type: pecl
+  version: 1.9.3
+  run_dep: [librabbitmq1]
+
+5.2:
+  type: pecl
+  version: 1.6.1
+  run_dep: [librabbitmq1]

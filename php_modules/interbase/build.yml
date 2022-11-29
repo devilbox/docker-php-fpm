@@ -1,0 +1,11 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  build_dep: [libfbclient2, libib-util, firebird-dev]
+  run_dep: [libfbclient2]

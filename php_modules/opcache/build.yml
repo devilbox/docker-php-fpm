@@ -1,0 +1,29 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+
+8.2:
+  type: builtin
+  pre: curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h
+
+8.1:
+  type: builtin
+  pre: curl -sS https://raw.githubusercontent.com/php/php-src/php-8.0.6/ext/opcache/Optimizer/zend_dfg.h > /usr/local/include/php/Zend/Optimizer/zend_dfg.h
+
+5.4:
+  type: pecl
+  command: pecl install zendopcache
+
+5.3:
+  type: pecl
+  command: pecl install zendopcache
+
+5.2:
+  type: pecl
+  command: pecl install zendopcache

@@ -1,0 +1,12 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libldap* /usr/lib/
+  configure: --with-ldap --with-ldap-sasl
+  build_dep: [libldap2-dev, libsasl2-dev]

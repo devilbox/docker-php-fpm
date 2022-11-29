@@ -1,0 +1,17 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  configure: --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"
+  run_dep: [libmysqlclient18]
+  build_dep: [libmysqlclient-dev]
+
+5.6:
+  type: builtin
+  run_dep: [libmariadbclient18]
+  build_dep: [libmariadbclient-dev]

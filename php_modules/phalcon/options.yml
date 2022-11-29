@@ -1,0 +1,92 @@
+---
+
+# The name of the module
+name: phalcon
+
+# Exclude module build/installation for the following PHP versions
+exclude:
+  - 5.2
+  - 8.2
+
+# In order for this module to built correctly against all dependencies,
+# the following modules must have been built first.
+# https://docs.phalcon.io/5.0/en/installation#software
+depends_build:
+  - curl
+  - fileinfo
+  - gd
+  - gettext
+  - imagick
+  - interbase
+  - json
+  - mbstring
+  - memcache
+  - memcached
+  - mongo
+  - mongodb
+  - mysql
+  - mysqli
+  - mysqlnd
+  - oci8
+  - odbc
+  - openssl
+  - pdo
+  - pdo_dblib
+  - pdo_firebird
+  - pdo_mysql
+  - pdo_oci
+  - pdo_odbc
+  - pdo_pgsql
+  - pdo_sqlite
+  - pdo_sqlsrv
+  - pgsql
+  - psr
+  - redis
+  - sqlite3
+  - sqlsrv
+
+# In order for this module to function correctly,
+# the following modules must be loaded before.
+# https://docs.phalcon.io/5.0/en/installation#load-order
+depends_load:
+  - curl
+  - fileinfo
+  - gd
+  - gettext
+  - imagick
+  - interbase
+  - json
+  - mbstring
+  - memcache
+  - memcached
+  - mongo
+  - mongodb
+  - mysql
+  - mysqli
+  - mysqlnd
+  - oci8
+  - odbc
+  - openssl
+  - pdo
+  - pdo_dblib
+  - pdo_firebird
+  - pdo_mysql
+  - pdo_oci
+  - pdo_odbc
+  - pdo_pgsql
+  - pdo_sqlite
+  - pdo_sqlsrv
+  - pgsql
+  - psr
+  - redis
+  - sqlite3
+  - sqlsrv
+
+# If the following PHP modules are loaded, this module will not behave as expected.
+conflicts_load: []
+
+# Enable this module by default via php.ini for PHP cli command?
+enabled_php_cli: false
+
+# Enable this module by default via php.ini for PHP-FPM?
+enabled_php_fpm: false

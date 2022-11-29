@@ -1,0 +1,12 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  version: 1.2
+  build_dep: [libssh2-1-dev]
+  run_dep: [libssh2-1]

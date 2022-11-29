@@ -1,0 +1,12 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  pre: ln /usr/include/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/gmp.h /usr/include/
+  build_dep: [libgmp-dev]
+  run_dep: []  # TODO: Ensure to add libgmp10 to each of the versions

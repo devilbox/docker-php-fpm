@@ -1,0 +1,12 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+already_avail: [7.2, 7.3, 7.4]
+
+all:
+  type: builtin
+  build_dep: [libsodium-dev]

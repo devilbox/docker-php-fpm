@@ -1,0 +1,9 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+already_avail: "{{ php_all_versions }}"
+# TODO: requires run_dep libreadline

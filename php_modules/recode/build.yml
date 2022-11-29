@@ -1,0 +1,13 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+already_avail: [5.2, 5.3, 5.4, 5.5]
+
+all:
+  type: builtin
+  build_dep: [librecode-dev]
+  run_dep: [librecode0]

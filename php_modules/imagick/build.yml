@@ -1,0 +1,35 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  build_dep: [libmagickwand-dev, libwebp-dev, ghostscript]
+  run_dep: [libmagickwand-6.q16-6, libwebp6, ghostscript]
+  # https://bugs.php.net/bug.php?id=77683
+  # https://github.com/Imagick/imagick/issues/262 (policy prevents PDF from being read)
+  post: |
+    sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+    && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+
+7.0:
+  type: pecl
+  run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
+
+5.6:
+  type: pecl
+  run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
+
+5.5:
+  type: pecl
+  run_dep: [libmagickwand-6.q16-2, libwebp5, ghostscript]

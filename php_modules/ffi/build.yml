@@ -1,0 +1,13 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+already_avail: [8.0, 8.1, 8.2]
+
+all:
+  type: builtin
+  build_dep: [libffi-dev]
+  run_dep: [libffi7]

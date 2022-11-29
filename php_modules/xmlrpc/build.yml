@@ -1,0 +1,16 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  configure: --with-libxml-dir=/usr --with-iconv-dir=/usr
+  build_dep: [libxml2-dev]
+  # TODO: requires run_dep libxml
+
+7.4:
+  type: builtin
+  configure: --with-iconv-dir=/usr
