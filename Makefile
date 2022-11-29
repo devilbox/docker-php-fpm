@@ -226,8 +226,8 @@ gen-dockerfiles:
 		-e MY_GID=$$(id -g) \
 		-v ${PWD}:/data \
 		-w /data/.ansible \
-		cytopia/ansible:2.8-tools ansible-playbook generate.yml \
-			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.8/site-packages/ansible_mitogen/plugins/strategy \
+		cytopia/ansible:2.13-tools ansible-playbook generate.yml \
+			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.10/site-packages/ansible_mitogen/plugins/strategy \
 			-e ANSIBLE_STRATEGY=mitogen_linear \
 			-e ansible_python_interpreter=/usr/bin/python3 \
 			-e \"{build_fail_fast: $(FAIL_FAST)}\" \
