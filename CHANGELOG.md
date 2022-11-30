@@ -6,8 +6,12 @@
 
 ## Release 0.144
 
+### Added
+- Added tons of documentation
+
 ### Changed
 - Split out PHP extensions int separate directories
+- Restructured Documentation
 
 
 ## Release 0.143
