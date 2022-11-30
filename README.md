@@ -84,11 +84,8 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 <h2><img id="php-extensions" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Available PHP extensions</h2>
 
 > Click below listed extensions for details:
-<!--
-Generate via:
-cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs -n1 sh -c 'echo "[\`$1\`](php_modules/$(echo "${1}" | tr "[:upper:]" "[:lower:]")/)"' -- | xclip
--->
 
+<!-- modules -->
 [`amqp`](php_modules/amqp/)
 [`apc`](php_modules/apc/)
 [`apcu`](php_modules/apcu/)
@@ -180,8 +177,8 @@ cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs 
 [`tokenizer`](php_modules/tokenizer/)
 [`uploadprogress`](php_modules/uploadprogress/)
 [`uuid`](php_modules/uuid/)
-[`wddx`](php_modules/wddx/)
 [`vips`](php_modules/vips/)
+[`wddx`](php_modules/wddx/)
 [`Xdebug`](php_modules/xdebug/)
 [`xlswriter`](php_modules/xlswriter/)
 [`xml`](php_modules/xml/)
@@ -192,6 +189,7 @@ cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs 
 [`yaml`](php_modules/yaml/)
 [`zip`](php_modules/zip/)
 [`zlib`](php_modules/zlib/)
+<!-- /modules -->
 
 :information_source: For details see **[Documentation: PHP Modules](doc/php-modules.md)**<br/>
 :information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**

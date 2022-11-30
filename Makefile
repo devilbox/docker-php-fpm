@@ -202,12 +202,34 @@ test-integration:
 .PHONY: gen-readme
 gen-readme: check-version-is-set
 gen-readme: check-stage-is-set
-gen-readme:
+gen-readme: _gen-readme-docs
+gen-readme: _gen-readme-main
+
+.PHONY: _gen-readme-docs
+_gen-readme-docs:
 	@echo "################################################################################"
-	@echo "# Generate README.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
+	@echo "# Generate doc/php-modules.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
 	@echo "################################################################################"
 	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION) || bash -x ./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+	@echo
+
+.PHONY: _gen-readme-main
+_gen-readme-main:
+	@echo "################################################################################"
+	@echo "# Generate README.md"
+	@echo "################################################################################"
+	MODULES="$$( cat doc/php-modules.md \
+		| grep href \
+		| sed -e 's|</a.*||g' -e 's|.*">||g' \
+		| sort -fu \
+		| xargs -n1 sh -c 'echo "[\`$$1\`](php_modules/$$(echo "$${1}" | tr "[:upper:]" "[:lower:]")/)"' -- )"; \
+	cat "README.md" \
+		| perl -0 -pe "s#<!-- modules -->.*<!-- /modules -->#<!-- modules -->\n$${MODULES}\n<!-- /modules -->#s" \
+		> "README.md.tmp"
+	yes | mv -f "README.md.tmp" "README.md"
+	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+	@echo
 
 ###
 ### Generate Modules
