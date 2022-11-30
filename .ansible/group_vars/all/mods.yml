@@ -5,6 +5,7 @@
 # The following specifies the order in which modules are being built.
 extensions_enabled:
   - amqp
+  - apc
   - apcu
   - bcmath
   - blackfire
@@ -12,10 +13,12 @@ extensions_enabled:
   - calendar
   - ctype
   - curl
+  - date
   - dba
   - libxml
   - dom
   - enchant
+  - ereg
   - mbstring
   - exif
   - ffi
@@ -70,6 +73,7 @@ extensions_enabled:
   - phar
   - posix
   - pspell
+  - random
   - rdkafka
   - readline
   - recode
@@ -83,6 +87,7 @@ extensions_enabled:
   - sodium
   - solr
   - spl
+  - sqlite
   - ssh2
   - xml
   - zip
@@ -103,6 +108,7 @@ extensions_enabled:
   - xmlwriter
   - xsl
   - yaml
+  - zlib
 
 
 # The following specifies how modules are being built.
@@ -130,6 +136,9 @@ extensions_available:
       type: pecl
       version: 1.6.1
       run_dep: [librabbitmq1]
+  apc:
+    disabled: [5.2, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    already_avail: "{{ php_all_versions }}"
   apcu:
     disabled: [5.2]
     all:
@@ -176,6 +185,9 @@ extensions_available:
   curl:
     disabled: []
     already_avail: "{{ php_all_versions }}"
+  date:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
   dba:
     disabled: []
     all:
@@ -218,6 +230,9 @@ extensions_available:
       command: echo "/usr" | pecl install enchant
       build_dep: [libenchant-dev]
       run_dep: [libenchant1c2a]
+  ereg:
+    disabled: [5.2, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    already_avail: "{{ php_all_versions }}"
   mbstring:
     disabled: []
     already_avail: "{{ php_all_versions }}"  # Available by default
@@ -1083,6 +1098,9 @@ extensions_available:
       type: builtin
       build_dep: [libpspell-dev]
       run_dep: [libaspell15]
+  random:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    already_avail: "{{ php_all_versions }}"
   rdkafka:
     disabled: [5.2]
     all:
@@ -1171,6 +1189,9 @@ extensions_available:
       build_dep: [libxml2-dev, libcurl4-openssl-dev]
   spl:
     disabled: []
+    already_avail: "{{ php_all_versions }}"
+  sqlite:
+    disabled: [5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
     already_avail: "{{ php_all_versions }}"
   ssh2:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 8.0, 8.1, 8.2]
@@ -1458,3 +1479,6 @@ extensions_available:
     5.3:
       type: pecl
       version: 1.3.2
+  zlib:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"

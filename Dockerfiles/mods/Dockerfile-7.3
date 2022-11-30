@@ -985,6 +985,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^ctype$' \
 	&& php -m | grep -oiE '^curl$' \
 	&& php-fpm -m | grep -oiE '^curl$' \
+	&& php -m | grep -oiE '^date$' \
+	&& php-fpm -m | grep -oiE '^date$' \
 	&& php -m | grep -oiE '^dba$' \
 	&& php-fpm -m | grep -oiE '^dba$' \
 	&& php -m | grep -oiE '^libxml$' \
@@ -1150,6 +1152,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xsl$' \
 	&& php -m | grep -oiE '^yaml$' \
 	&& php-fpm -m | grep -oiE '^yaml$' \
+	&& php -m | grep -oiE '^zlib$' \
+	&& php-fpm -m | grep -oiE '^zlib$' \
 	&& true
 
 
