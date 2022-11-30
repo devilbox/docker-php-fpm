@@ -674,7 +674,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_amqp_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_amqp_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_amqp_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_amqp_8.2"><sup></sup></td>
+  <td class="ext_mods_amqp_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/apc">apc</a></sup></td>
@@ -706,7 +706,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_apcu_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_apcu_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_apcu_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_apcu_8.2"><sup></sup></td>
+  <td class="ext_mods_apcu_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/bcmath">bcmath</a></sup></td>
@@ -722,7 +722,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_bcmath_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_bcmath_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_bcmath_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_bcmath_8.2"><sup></sup></td>
+  <td class="ext_mods_bcmath_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/blackfire">blackfire</a></sup></td>
@@ -754,7 +754,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_bz2_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_bz2_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_bz2_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_bz2_8.2"><sup></sup></td>
+  <td class="ext_mods_bz2_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/calendar">calendar</a></sup></td>
@@ -770,7 +770,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_calendar_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_calendar_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_calendar_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_calendar_8.2"><sup></sup></td>
+  <td class="ext_mods_calendar_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/ctype">ctype</a></sup></td>
@@ -834,7 +834,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_dba_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_dba_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_dba_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_dba_8.2"><sup></sup></td>
+  <td class="ext_mods_dba_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/dom">dom</a></sup></td>
@@ -866,7 +866,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_enchant_7.4"><sup></sup></td>
   <td class="ext_mods_enchant_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_enchant_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_enchant_8.2"><sup></sup></td>
+  <td class="ext_mods_enchant_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/ereg">ereg</a></sup></td>
@@ -898,7 +898,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_exif_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_exif_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_exif_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_exif_8.2"><sup></sup></td>
+  <td class="ext_mods_exif_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/ffi">FFI</a></sup></td>
@@ -978,7 +978,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_gd_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_gd_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_gd_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_gd_8.2"><sup></sup></td>
+  <td class="ext_mods_gd_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/gettext">gettext</a></sup></td>
@@ -994,7 +994,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_gettext_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_gettext_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_gettext_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_gettext_8.2"><sup></sup></td>
+  <td class="ext_mods_gettext_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/gmp">gmp</a></sup></td>
@@ -1010,7 +1010,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_gmp_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_gmp_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_gmp_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_gmp_8.2"><sup></sup></td>
+  <td class="ext_mods_gmp_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/hash">hash</a></sup></td>
@@ -1058,7 +1058,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_igbinary_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_igbinary_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_igbinary_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_igbinary_8.2"><sup></sup></td>
+  <td class="ext_mods_igbinary_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/imagick">imagick</a></sup></td>
@@ -1074,7 +1074,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_imagick_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_imagick_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_imagick_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_imagick_8.2"><sup></sup></td>
+  <td class="ext_mods_imagick_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/imap">imap</a></sup></td>
@@ -1090,7 +1090,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_imap_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_imap_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_imap_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_imap_8.2"><sup></sup></td>
+  <td class="ext_mods_imap_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/interbase">interbase</a></sup></td>
@@ -1122,7 +1122,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_intl_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_intl_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_intl_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_intl_8.2"><sup></sup></td>
+  <td class="ext_mods_intl_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/ioncube">ioncube</a></sup></td>
@@ -1170,7 +1170,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_ldap_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_ldap_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_ldap_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_ldap_8.2"><sup></sup></td>
+  <td class="ext_mods_ldap_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/libxml">libxml</a></sup></td>
@@ -1234,7 +1234,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_memcache_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_memcache_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_memcache_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_memcache_8.2"><sup></sup></td>
+  <td class="ext_mods_memcache_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/memcached">memcached</a></sup></td>
@@ -1250,7 +1250,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_memcached_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_memcached_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_memcached_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_memcached_8.2"><sup></sup></td>
+  <td class="ext_mods_memcached_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/mhash">mhash</a></sup></td>
@@ -1298,7 +1298,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_mongodb_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_mongodb_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_mongodb_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_mongodb_8.2"><sup></sup></td>
+  <td class="ext_mods_mongodb_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/msgpack">msgpack</a></sup></td>
@@ -1314,7 +1314,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_msgpack_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_msgpack_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_msgpack_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_msgpack_8.2"><sup></sup></td>
+  <td class="ext_mods_msgpack_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/mysql">mysql</a></sup></td>
@@ -1346,7 +1346,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_mysqli_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_mysqli_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_mysqli_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_mysqli_8.2"><sup></sup></td>
+  <td class="ext_mods_mysqli_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/mysqlnd">mysqlnd</a></sup></td>
@@ -1378,7 +1378,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_oauth_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_oauth_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_oauth_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_oauth_8.2"><sup></sup></td>
+  <td class="ext_mods_oauth_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/oci8">oci8</a></sup></td>
@@ -1394,7 +1394,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_oci8_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_oci8_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_oci8_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_oci8_8.2"><sup></sup></td>
+  <td class="ext_mods_oci8_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/opcache">OPcache</a></sup></td>
@@ -1410,7 +1410,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_opcache_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_opcache_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_opcache_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_opcache_8.2"><sup></sup></td>
+  <td class="ext_mods_opcache_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/openssl">openssl</a></sup></td>
@@ -1442,7 +1442,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pcntl_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pcntl_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pcntl_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pcntl_8.2"><sup></sup></td>
+  <td class="ext_mods_pcntl_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pcre">pcre</a></sup></td>
@@ -1490,7 +1490,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_dblib_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_dblib_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_dblib_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_dblib_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_dblib_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pdo_firebird">PDO_Firebird</a></sup></td>
@@ -1506,7 +1506,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_firebird_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_firebird_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_firebird_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_firebird_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_firebird_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pdo_mysql">pdo_mysql</a></sup></td>
@@ -1522,7 +1522,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_mysql_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_mysql_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_mysql_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_mysql_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_mysql_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pdo_oci">PDO_OCI</a></sup></td>
@@ -1538,7 +1538,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_oci_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_oci_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_oci_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_oci_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_oci_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pdo_pgsql">pdo_pgsql</a></sup></td>
@@ -1554,7 +1554,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_pgsql_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_pgsql_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_pgsql_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_pgsql_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_pgsql_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pdo_sqlite">pdo_sqlite</a></sup></td>
@@ -1586,7 +1586,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pdo_sqlsrv_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_sqlsrv_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pdo_sqlsrv_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pdo_sqlsrv_8.2"><sup></sup></td>
+  <td class="ext_mods_pdo_sqlsrv_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/pgsql">pgsql</a></sup></td>
@@ -1602,7 +1602,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pgsql_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pgsql_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pgsql_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pgsql_8.2"><sup></sup></td>
+  <td class="ext_mods_pgsql_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/phalcon">phalcon</a></sup></td>
@@ -1666,7 +1666,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_pspell_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_pspell_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_pspell_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_pspell_8.2"><sup></sup></td>
+  <td class="ext_mods_pspell_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/psr">psr</a></sup></td>
@@ -1682,7 +1682,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_psr_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_psr_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_psr_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_psr_8.2"><sup></sup></td>
+  <td class="ext_mods_psr_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/random">random</a></sup></td>
@@ -1714,7 +1714,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_rdkafka_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_rdkafka_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_rdkafka_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_rdkafka_8.2"><sup></sup></td>
+  <td class="ext_mods_rdkafka_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/readline">readline</a></sup></td>
@@ -1762,7 +1762,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_redis_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_redis_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_redis_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_redis_8.2"><sup></sup></td>
+  <td class="ext_mods_redis_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/reflection">Reflection</a></sup></td>
@@ -1810,7 +1810,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_shmop_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_shmop_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_shmop_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_shmop_8.2"><sup></sup></td>
+  <td class="ext_mods_shmop_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/simplexml">SimpleXML</a></sup></td>
@@ -1842,7 +1842,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_snmp_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_snmp_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_snmp_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_snmp_8.2"><sup></sup></td>
+  <td class="ext_mods_snmp_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/soap">soap</a></sup></td>
@@ -1858,7 +1858,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_soap_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_soap_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_soap_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_soap_8.2"><sup></sup></td>
+  <td class="ext_mods_soap_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/sockets">sockets</a></sup></td>
@@ -1874,7 +1874,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_sockets_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_sockets_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_sockets_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_sockets_8.2"><sup></sup></td>
+  <td class="ext_mods_sockets_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/sodium">sodium</a></sup></td>
@@ -1970,7 +1970,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_sqlsrv_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_sqlsrv_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_sqlsrv_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_sqlsrv_8.2"><sup></sup></td>
+  <td class="ext_mods_sqlsrv_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/ssh2">ssh2</a></sup></td>
@@ -2018,7 +2018,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_sysvmsg_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_sysvmsg_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_sysvmsg_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_sysvmsg_8.2"><sup></sup></td>
+  <td class="ext_mods_sysvmsg_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/sysvsem">sysvsem</a></sup></td>
@@ -2034,7 +2034,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_sysvsem_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_sysvsem_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_sysvsem_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_sysvsem_8.2"><sup></sup></td>
+  <td class="ext_mods_sysvsem_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/sysvshm">sysvshm</a></sup></td>
@@ -2050,7 +2050,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_sysvshm_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_sysvshm_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_sysvshm_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_sysvshm_8.2"><sup></sup></td>
+  <td class="ext_mods_sysvshm_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/tidy">tidy</a></sup></td>
@@ -2066,7 +2066,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_tidy_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_tidy_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_tidy_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_tidy_8.2"><sup></sup></td>
+  <td class="ext_mods_tidy_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/tokenizer">tokenizer</a></sup></td>
@@ -2098,7 +2098,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_uploadprogress_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_uploadprogress_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_uploadprogress_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_uploadprogress_8.2"><sup></sup></td>
+  <td class="ext_mods_uploadprogress_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/uuid">uuid</a></sup></td>
@@ -2114,7 +2114,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_uuid_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_uuid_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_uuid_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_uuid_8.2"><sup></sup></td>
+  <td class="ext_mods_uuid_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/wddx">wddx</a></sup></td>
@@ -2178,7 +2178,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_xlswriter_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_xlswriter_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_xlswriter_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_xlswriter_8.2"><sup></sup></td>
+  <td class="ext_mods_xlswriter_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/xml">xml</a></sup></td>
@@ -2258,7 +2258,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_xsl_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_xsl_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_xsl_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_xsl_8.2"><sup></sup></td>
+  <td class="ext_mods_xsl_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/yaml">yaml</a></sup></td>
@@ -2274,7 +2274,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_yaml_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_yaml_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_yaml_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_yaml_8.2"><sup></sup></td>
+  <td class="ext_mods_yaml_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/zip">zip</a></sup></td>
@@ -2290,7 +2290,7 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_zip_7.4"><sup>🗸</sup></td>
   <td class="ext_mods_zip_8.0"><sup>🗸</sup></td>
   <td class="ext_mods_zip_8.1"><sup>🗸</sup></td>
-  <td class="ext_mods_zip_8.2"><sup></sup></td>
+  <td class="ext_mods_zip_8.2"><sup>🗸</sup></td>
  </tr>
  <tr>
   <td><sup><a href="../php_modules/zlib">zlib</a></sup></td>
