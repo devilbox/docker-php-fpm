@@ -6,11 +6,16 @@
 
 ## Release 0.144
 
+This is a massive restructuring release, which adds another layer on top of Ansible to easily manage/edit/add PHP extensions and to configure their respective order of building and loading.
+
 ### Added
 - Added tons of documentation
+- Added mechanism to easily build custom images with custom set of PHP extensions
+- Added automated PHP extension dependency resolver (order of built is always correct)
+- Added Credit to contributors
 
 ### Changed
-- Split out PHP extensions int separate directories
+- Split out PHP extensions into separate directories
 - Restructured Documentation
 
 
