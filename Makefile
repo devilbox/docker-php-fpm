@@ -214,7 +214,7 @@ gen-readme:
 ###
 .PHONY: gen-modules
 gen-modules:
-	./bin/modules-generate.py
+	./bin/modules-generate.py $(ARGS)
 
 ###
 ### Generate Dockerfiles
