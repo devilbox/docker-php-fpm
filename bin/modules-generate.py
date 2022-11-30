@@ -4,7 +4,7 @@
 import os
 import sys
 from collections import OrderedDict
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 import yaml
 
 
@@ -74,11 +74,12 @@ def get_module_test(module_dirname: str) -> Dict[str, Any]:
     return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "test.yml"))
 
 
-def get_modules(mod_name: Optional[str] = None) -> List[Dict[str, Any]]:
+def get_modules(selected_modules: List[str], ignore_dependencies: bool) -> List[Dict[str, Any]]:
     """Returns a list of PHP module directory names.
 
     Args:
-        mod_name: If specified, only get this module (and its dependencies).
+        selected_modules: If not empty, only gather specified modules (and its dependencies).
+        ignore_dependencies: If true, all dependent extensions will be ignored.
     """
     modules = []
     with os.scandir(PHP_MODULE_PATH) as it:
@@ -91,17 +92,18 @@ def get_modules(mod_name: Optional[str] = None) -> List[Dict[str, Any]]:
     # Convert list of deps into dict(dir, name, deps)
     items = []
     for module in modules:
-        if module["deps"]:
+        if module["deps"] and not ignore_dependencies:
             deps = []
             for dep in module["deps"]:
                 deps.append(get_el_by_name(modules, dep))
             module["deps"] = deps
             items.append(module)
         else:
+            module["deps"] = []
             items.append(module)
     # Check if we only want to read a single module
-    if mod_name:
-        return [get_el_by_name(items, mod_name)]
+    if selected_modules:
+        return [get_el_by_name(items, mod_name) for mod_name in selected_modules]
     return sorted(items, key=lambda item: item["dir"])
 
 
@@ -196,38 +198,53 @@ def write_group_vars(modules: List[str]) -> None:
 # --------------------------------------------------------------------------------------------------
 def print_help() -> None:
     """Show help screen."""
-    print("Usage:", os.path.basename(__file__), "[php-module]")
+    print("Usage:", os.path.basename(__file__), "[options] [PHP-EXT]...")
     print("      ", os.path.basename(__file__), "-h, --help")
     print()
     print("This script will generate the Ansible group_vars file: .ansible/group_vars/all/mods.yml")
     print("based on all the modules found in php_modules/ directory.")
     print()
-    print("Optional arguments:")
-    print("    [php-module]    When specifying a name of a php-module, the group_vars file will")
+    print("Positional arguments:")
+    print("    [PHP-EXT]   Specify None, one or more PHP extensions to generate group_vars for.")
+    print("                When no PHP extension is specified (argument is omitted), group_vars")
+    print("                for all extensions will be genrated.")
+    print("                When one or more PHP extension are specified, only group_vars for")
+    print("                these extensions will be created.")
     print("                    only be generated for this single module (and its dependencies).")
     print("                    This is useful if you want to test new modules and not build all")
     print("                    previous modules in the Dockerfile.")
     print()
     print("                    Note: You still need to generate the Dockerfiles via Ansible for")
     print("                          the changes to take effect, before building the image.")
+    print("Optional arguments:")
+    print("    -i          Ignore dependent modules.")
+    print("                By default each exentions is checked for build dependencies of other")
+    print("                extensions. For example many extensions build against libxml ext.")
+    print("                By specifying -i, those dependencies are not beeing added to")
+    print("                ansible group_vars. Use at your own risk.")
 
 
 def main(argv: List[str]) -> None:
     """Main entrypoint."""
-    if not (len(argv) == 0 or len(argv) == 1):
-        print_help()
-        sys.exit(1)
-    if len(argv) == 1:
-        if argv[0] == "--help" or argv[0] == "-h":
-            print_help()
-            sys.exit(0)
-
-    single_module = None
-    if len(argv) == 1:
-        single_module = argv[0]
+    ignore_dependencies = False
+    selected_modules = []
+    if len(argv):
+        for arg in argv:
+            if arg in ("-h", "--help"):
+                print_help()
+                sys.exit(0)
+        for arg in argv:
+            if arg.startswith("-") and arg != "-i":
+                print("Invalid argument:", arg)
+                print("Use -h or --help for help")
+                sys.exit(1)
+            if arg == "-i":
+                ignore_dependencies = True
+            else:
+                selected_modules.append(arg)
 
     # Get modules in order of dependencies
-    modules = get_modules(single_module)
+    modules = get_modules(selected_modules, ignore_dependencies)
     module_tree = get_module_dependency_tree(modules)
     names = resolve_module_dependency_tree(module_tree)
 
