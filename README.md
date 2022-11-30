@@ -68,7 +68,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
           |              #
         [prod]           # Devilbox flavour for production
           ^              # (locales, postifx, socat and injectables)
-          |              # (custom modules and *.ini files)
+          |              # (custom *.ini files)
           |              #
         [work]           # Devilbox flavour for local development
                          # (includes backup and development tools)
@@ -344,27 +344,6 @@ $ docker run -d \
     -t devilbox/php-fpm:7.2-prod
 ```
 
-#### Load custom PHP modules
-
-`modules/` is a local directory that will hold the PHP modules you want to mount into the Docker container. `config/` is a local directory that will hold the PHP *.ini files you want to load into the Docker container.
-
-```shell
-# Create module directory and place module into it
-$ mkdir modules
-$ cp /my/module/phalcon.so modules/
-
-# Custom php config to load this module
-$ mkdir config
-$ echo "extension=/etc/php-modules.d/phalcon.so" > config/phalcon.ini
-
-# Run container and mount it
-$ docker run -d \
-    -p 127.0.0.1:9000:9000 \
-    -v config:/etc/php-custom.d \
-    -v modules:/etc/php-modules.d \
-    -t devilbox/php-fpm:7.2-prod
-```
-
 #### MySQL connect via 127.0.0.1 (via port-forward)
 
 Forward MySQL Port from `172.168.0.30` (or any other IP address/hostname) and Port `3306` to the PHP docker on `127.0.0.1:3306`. By this, your PHP files inside the docker can use `127.0.0.1` to connect to a MySQL database.
@@ -449,6 +428,26 @@ Docker images are built and tested every night by **[GitHub Actions](https://git
 Contributors are welcome. Feel free to star and clone this repository and submit issues and pull-requests. Add examples and show what you have created with the provided images. If you see any errors or ways to improve this repository in any way, please do so.
 
 :information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**
+
+
+<h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Related Project</h2>
+
+If you want to add custom modules, tools or apply any other changes, but don't think it fits in here, you can do so over at the **[PHP-FPM Community Images](https://github.com/devilbox/docker-php-fpm-community)**.
+
+See the reference implementation below:
+
+<!-- PROJECTS_START -->
+| Project                               | Author                                          | build                                         | Architecture                          | Docker Tag                   |
+|---------------------------------------|-------------------------------------------------|-----------------------------------------------|---------------------------------------|------------------------------|
+| :file_folder: [devilbox/]             | :octocat: [cytopia] (cytopia)                   | [![devilbox_build]](https://github.com/devilbox/docker-php-fpm-community/actions/workflows/devilbox_action.yml)<br/>[![devilbox_nightly]](https://github.com/devilbox/docker-php-fpm-community/actions/workflows/devilbox_action_schedule.yml)| :computer: amd64<br/>:computer: arm64 | `<V>-devilbox`               |
+
+
+[devilbox/]: https://github.com/devilbox/docker-php-fpm-community/tree/master/Dockerfiles/devilbox
+[cytopia]: https://github.com/cytopia
+[devilbox_build]: https://github.com/devilbox/docker-php-fpm-community/workflows/devilbox_build/badge.svg
+[devilbox_nightly]: https://github.com/devilbox/docker-php-fpm-community/workflows/devilbox_nightly/badge.svg
+> <sup> :information_source: `<V>` in the Docker tag above stands for the PHP version. E.g.: `5.4` or `8.1`, etc</sup>
+<!-- PROJECTS_END -->
 
 
 <h2><img id="community" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Community</h2>
