@@ -184,8 +184,8 @@ manifest-push: docker-manifest-push
 .PHONY: test
 test: check-stage-is-set
 test: check-current-image-exists
-test: test-integration
 test: gen-readme
+test: test-integration
 
 .PHONY: test-integration
 test-integration:
@@ -206,7 +206,7 @@ gen-readme:
 	@echo "################################################################################"
 	@echo "# Generate README.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
 	@echo "################################################################################"
-	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
+	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION) || bash -x ./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
 ###
