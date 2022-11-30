@@ -81,7 +81,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 
 <h2><img id="php-extensions" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Available PHP extensions</h2>
 
-<!-- 
+<!--
 Generate via:
 cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs -n1 sh -c 'echo "[\`$1\`](php_modules/$(echo "${1}" | tr "[:upper:]" "[:lower:]")/)"' -- | xclip
 -->
