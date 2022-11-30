@@ -17,6 +17,8 @@ Tags |
 
 ### Docker Tags
 
+[![](https://img.shields.io/docker/pulls/devilbox/php-fpm.svg)](https://hub.docker.com/r/devilbox/php-fpm)
+
 #### Tagging Idea
 
 This repository uses Docker tags to refer to different flavours and types of the PHP-FPM Docker image. Therefore `:latest` and `:<git-branch-name>` as well as `:<git-tag-name>` must be presented differently. Refer to the following table to see how tagged Docker images are produced at Docker hub:

@@ -79,5 +79,3 @@ Have a look at the following table to see all offered volumes for each Docker im
   </tr>
  </tbody>
 </table>
-
-

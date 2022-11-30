@@ -112,5 +112,3 @@ Have a look at the following table to see all supported environment variables fo
   </tr>
  </tbody>
 </table>
-
-
