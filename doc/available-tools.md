@@ -17,6 +17,8 @@ Tools |
 
 ### Available Tools
 
+> **Disclaimer:** It is currently not clear what tools are available in which PHP image (version-dependent). This documentation was done by hand and work has currently started to automate this and keep exact tools up-to-date for each of the provided PHP version.
+
 <table>
  <thead>
   <tr>

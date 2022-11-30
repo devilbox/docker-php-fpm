@@ -37,9 +37,11 @@ All PHP modules/extensions (for all PHP versions and both for `amd64` and `arm64
 
 # Only generate group_vars for curl
 # Note: if curl has other modules as requirements to be built beforehand, those will also be added
-python3 ./bin/module-generate.py curl
+make gen-modules ARGS="curl"
 make gen-dockerfiles
 ```
+
+:information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**
 
 
 ## Extension definition: `build.yml`

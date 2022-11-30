@@ -14,11 +14,15 @@ Extensions |
 <h2><img name="Documentation" title="Documentation" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Documentation</h2>
 
 
+:information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**<br/>
 :information_source: For details on how to add/edit modules see **[Contributor Documentation: PHP Modules](../php_modules/README.md)**
+
 
 #### PHP Modules (`base`)
 
 The following PHP modules are available on the `base` flavour:
+
+> :information_source: Click on any extension name to find out what they are
 
 <table>
  <tr>
@@ -636,6 +640,8 @@ The following PHP modules are available on the `base` flavour:
 #### PHP Modules (`mods`, `prod` and `work`)
 
 The following PHP modules are available on the `mods`, `prod` and `work` flavour:
+
+> :information_source: Click on any extension name to find out what they are
 
 <table>
  <tr>
