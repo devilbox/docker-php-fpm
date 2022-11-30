@@ -23,6 +23,8 @@ versions and packed with different types of integrated PHP modules. It also solv
 
 :information_source: For details see **[Documentation: Syncronize File Permissions](doc/syncronize-file-permissions.md)**
 
+This repository also allows you to quickly generate and **build your own custom PHP-FPM Docker image** with whatever PHP extension your desire for whatever PHP version you want and for any platform you're on (`amd64` or `arm64`). Jump to **[#Build your own image](#build-your-own-image)**.
+
 
 <h2><img id="docker-tags" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Docker Tags</h2>
 
@@ -81,6 +83,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 
 <h2><img id="php-extensions" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Available PHP extensions</h2>
 
+> Click below listed extensions for details:
 <!--
 Generate via:
 cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs -n1 sh -c 'echo "[\`$1\`](php_modules/$(echo "${1}" | tr "[:upper:]" "[:lower:]")/)"' -- | xclip
@@ -423,6 +426,27 @@ $ docker exec -it php mysqldump-secure
 Docker images are built and tested every night by **[GitHub Actions](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)** and pushed to **[Docker hub](https://hub.docker.com/r/devilbox/php-fpm/)** on success. This is all done automatically to ensure that sources as well as base images are always fresh and in case of security updates always have the latest patches.
 
 
+<h2><img id="build-your-own-image" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Build your own image</h2>
+
+You are not interested in the provided Docker images and want to (ab)use this repository purely to generate your own custom images?
+You can do so with four easy commands:
+```bash
+# Generate Ansible group_vars for the following PHP extensions
+make gen-modules ARGS="msgpack memcached pdo_mysql rdkafka"
+
+# Generate Dockerfiles
+make gen-dockerfiles
+
+# Pull base image for PHP 8.1 (if you don't have it locally already)
+make docker-pull-base-image STAGE=mods VERSION=8.1 ARCH=linux/arm64
+
+# Build PHP 8.1 for arm64 with above specified extensions
+make build STAGE=mods VERSION=8.1 ARCH=linux/arm64
+```
+
+:information_source: For details see **[Abuser Documentation: Build your own image](doc/abuser/README.md)**
+
+
 <h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributing</h2>
 
 Contributors are welcome. Feel free to star and clone this repository and submit issues and pull-requests. Add examples and show what you have created with the provided images. If you see any errors or ways to improve this repository in any way, please do so.
@@ -440,7 +464,6 @@ See the reference implementation below:
 | Project                               | Author                                          | build                                         | Architecture                          | Docker Tag                   |
 |---------------------------------------|-------------------------------------------------|-----------------------------------------------|---------------------------------------|------------------------------|
 | :file_folder: [devilbox/]             | :octocat: [cytopia] (cytopia)                   | [![devilbox_build]](https://github.com/devilbox/docker-php-fpm-community/actions/workflows/devilbox_action.yml)<br/>[![devilbox_nightly]](https://github.com/devilbox/docker-php-fpm-community/actions/workflows/devilbox_action_schedule.yml)| :computer: amd64<br/>:computer: arm64 | `<V>-devilbox`               |
-
 
 [devilbox/]: https://github.com/devilbox/docker-php-fpm-community/tree/master/Dockerfiles/devilbox
 [cytopia]: https://github.com/cytopia
