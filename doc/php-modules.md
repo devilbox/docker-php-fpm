@@ -14,6 +14,7 @@ Extensions |
 <h2><img name="Documentation" title="Documentation" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Documentation</h2>
 
 
+:information_source: For details on how to add/edit modules see **[Contributor Documentation: PHP Modules](../php_modules/README.md)**
 
 #### PHP Modules (`base`)
 

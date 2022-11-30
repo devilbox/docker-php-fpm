@@ -21,7 +21,7 @@
 This repository will provide you fully functional PHP-FPM Docker images in different flavours,
 versions and packed with different types of integrated PHP modules. It also solves the problem of **[syncronizing file permissions](doc/syncronize-file-permissions.md)** of mounted volumes between the host and the container.
 
-:information_source: For detauls see **[Documentation: Syncronize File Permissions](doc/syncronize-file-permissions.md)**
+:information_source: For details see **[Documentation: Syncronize File Permissions](doc/syncronize-file-permissions.md)**
 
 
 <h2><img id="docker-tags" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Docker Tags</h2>
@@ -190,7 +190,8 @@ cat doc/php_modules.md | grep href | sed 's|</a.*||g' | sed 's|.*">||g' | xargs 
 [`zip`](php_modules/zip/)
 [`zlib`](php_modules/zlib/)
 
-:information_source: For detauls see **[Documentation: PHP Modules](doc/php-modules.md)**
+:information_source: For details see **[Documentation: PHP Modules](doc/php-modules.md)**<br/>
+:information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**
 
 
 
@@ -446,6 +447,8 @@ Docker images are built and tested every night by **[GitHub Actions](https://git
 <h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributing</h2>
 
 Contributors are welcome. Feel free to star and clone this repository and submit issues and pull-requests. Add examples and show what you have created with the provided images. If you see any errors or ways to improve this repository in any way, please do so.
+
+:information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**
 
 
 <h2><img id="community" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Community</h2>

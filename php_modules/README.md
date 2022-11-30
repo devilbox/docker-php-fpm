@@ -1,3 +1,14 @@
+PHP Mods: Overview |
+[PHP Mods: `options.yml`](../doc/contributor/PHP-EXT-options.yml.md) |
+[PHP Mods: `build.yml`](../doc/contributor/PHP-EXT-build.yml.md) |
+[PHP Mods: `test.yml`](../doc/contributor/PHP-EXT-test.yml.md)
+
+---
+
+<h2><img name="Documentation" title="Documentation" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributor Documentation: PHP Modules</h2>
+
+
+
 # PHP Module definitions
 
 This document describes how to create new or alter existing PHP module definitions.

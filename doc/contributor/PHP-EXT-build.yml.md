@@ -1,3 +1,14 @@
+[PHP Mods: Overview](../../php_modules/README.md) |
+[PHP Mods: `options.yml`](PHP-EXT-options.yml.md) |
+PHP Mods: `build.yml` |
+[PHP Mods: `test.yml`](PHP-EXT-test.yml.md)
+
+---
+
+<h2><img name="Documentation" title="Documentation" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Contributor Documentation: PHP Modules</h2>
+
+
+
 # Extension definition: `build.yml`
 
 
