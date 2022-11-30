@@ -419,6 +419,16 @@ $ docker run -d \
 $ docker exec -it php mysqldump-secure
 ```
 
+#### Docker Compose reference implementation
+
+If you want a fully functional Docker Compose setup, which allows to switch PHP versions easily, comes with web servers, database servers and much more, then head over to the rerefence implementation:
+
+| Reference Implementation |
+|--------------------------|
+| <a title="Devilbox" href="https://github.com/cytopia/devilbox" ><img title="Devilbox" height="82px" src="https://raw.githubusercontent.com/devilbox/artwork/master/submissions_banner/cytopia/01/png/banner_256_trans.png" /></a> |
+
+
+
 <h2><img id="automated-builds" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Automated builds</h2>
 
 [![nightly](https://github.com/devilbox/docker-php-fpm/workflows/nightly/badge.svg)](https://github.com/devilbox/docker-php-fpm/actions?workflow=nightly)
