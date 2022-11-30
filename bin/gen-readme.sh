@@ -67,7 +67,7 @@ get_modules_from_image() {
 	local modules
 
 	modules="$( \
-		docker run --rm "$(tty -s && echo '-it' || echo)" --platform "${ARCH}" --entrypoint=php "${IMAGE}:${img_tag}" -m \
+		docker run --rm --platform "${ARCH}" --entrypoint=php "${IMAGE}:${img_tag}" -m \
 		| sed 's/Zend //g' \
 		| sed 's/xdebug/Xdebug/g' \
 		| sed 's/Core//g' \
@@ -77,19 +77,19 @@ get_modules_from_image() {
 	)"
 
 	# Get modules which might be disabled
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
+	if docker run --rm --platform "${ARCH}" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'ioncube.so' | grep -q ioncube.so; then
 		modules="$( printf "%s\n%s\n" "${modules}" "ioncube" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
+	if docker run --rm --platform "${ARCH}" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'blackfire.so' | grep -q blackfire.so; then
 		modules="$( printf "%s\n%s\n" "${modules}" "blackfire" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
+	if docker run --rm --platform "${ARCH}" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'psr.so' | grep -q psr.so; then
 		modules="$( printf "%s\n%s\n" "${modules}" "psr" )";
 	fi
 
-	if docker run --rm --platform "${ARCH}" "$(tty -s && echo '-it' || echo)" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
+	if docker run --rm --platform "${ARCH}" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'phalcon.so' | grep -q phalcon.so; then
 		modules="$( printf "%s\n%s\n" "${modules}" "phalcon" )";
 	fi
 
