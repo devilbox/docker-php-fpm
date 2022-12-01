@@ -27,6 +27,7 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		liblz4-dev \
 		libmagickwand-dev \
 		libmariadb-dev \
 		libmcrypt-dev \
@@ -53,6 +54,7 @@ RUN set -eux \
 		libxslt-dev \
 		libyaml-dev \
 		libzip-dev \
+		libzstd-dev \
 		re2c \
 		snmp \
 		unixodbc-dev \
@@ -303,6 +305,35 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: lz4 --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/kjdev/php-ext-lz4 /tmp/lz4 \
+	&& cd /tmp/lz4 \
+	# Custom:       Branch
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-lz4 --with-lz4-includedir=/usr \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+	# Enabling
+	&& docker-php-ext-enable lz4 \
+	&& true
+
+
+# -------------------- Installing PHP Extension: lzf --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install lzf \
+	# Enabling
+	&& docker-php-ext-enable lzf \
+	&& true
+
+
 # -------------------- Installing PHP Extension: mcrypt --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -550,21 +581,50 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: redis --------------------
+# -------------------- Installing PHP Extension: zstd --------------------
 RUN set -eux \
 	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/kjdev/php-ext-zstd /tmp/zstd \
+	&& cd /tmp/zstd \
+	# Custom:       Branch
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-zstd --with-libzstd \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+	# Enabling
+	&& docker-php-ext-enable zstd \
+	&& true
+
+
+# -------------------- Installing PHP Extension: redis --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& if [ -f /usr/include/liblzf/lzf.h ]; then \
+  ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+fi \
+ \
+	# Installation: Version specific
 	# Type:         GIT extension
 	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
 	&& cd /tmp/redis \
 	# Custom:       Branch
-	&& git checkout $(git for-each-ref --format='%(refname)' refs/tags | grep -E 'tags/[.0-9]+$' | sed 's|.*tags/||g' | sort -V | tail -1) \
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
 	# Custom:       Install command
 	&& REDIS_ARGS=""; \
-if [ -d "/usr/local/include/php/ext/igbinary" ]; then \
+if php -m | grep -q "igbinary"; then \
   REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
 fi; \
-if [ -d "/usr/local/include/php/ext/msgpack" ]; then \
+if php -m | grep -q "lz4"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+fi; \
+if php -m | grep -q "msgpack"; then \
   REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+fi; \
+if php -m | grep -q "zstd"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
 fi; \
 phpize \
 && ./configure --enable-redis ${REDIS_ARGS} \
@@ -891,6 +951,7 @@ RUN set -eux \
 	libfreetype6 \
 	libicu63 \
 	libjpeg62-turbo \
+	liblz4-1 \
 	libmagickwand-6.q16-6 \
 	libmariadbd19 \
 	libmcrypt4 \
@@ -911,6 +972,7 @@ RUN set -eux \
 	libxslt1.1 \
 	libyaml-0-2 \
 	libzip4 \
+	libzstd1 \
 	snmp \
 	unixodbc \
 	uuid \
@@ -1040,6 +1102,10 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^json$' \
 	&& php -m | grep -oiE '^ldap$' \
 	&& php-fpm -m | grep -oiE '^ldap$' \
+	&& php -m | grep -oiE '^lz4$' \
+	&& php-fpm -m | grep -oiE '^lz4$' \
+	&& php -m | grep -oiE '^lzf$' \
+	&& php-fpm -m | grep -oiE '^lzf$' \
 	&& php -m | grep -oiE '^mcrypt$' \
 	&& php-fpm -m | grep -oiE '^mcrypt$' \
 	&& php -m | grep -oiE '^memcache$' \
@@ -1086,6 +1152,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
 	&& php -m | grep -oiE '^psr$' \
 	&& php-fpm -m | grep -oiE '^psr$' \
+	&& php -m | grep -oiE '^zstd$' \
+	&& php-fpm -m | grep -oiE '^zstd$' \
 	&& php -m | grep -oiE '^redis$' \
 	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^sqlite3$' \

@@ -119,6 +119,8 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 [`json`](php_modules/json/)
 [`ldap`](php_modules/ldap/)
 [`libxml`](php_modules/libxml/)
+[`lz4`](php_modules/lz4/)
+[`lzf`](php_modules/lzf/)
 [`mbstring`](php_modules/mbstring/)
 [`mcrypt`](php_modules/mcrypt/)
 [`memcache`](php_modules/memcache/)
@@ -189,6 +191,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 [`yaml`](php_modules/yaml/)
 [`zip`](php_modules/zip/)
 [`zlib`](php_modules/zlib/)
+[`zstd`](php_modules/zstd/)
 <!-- /modules -->
 
 :information_source: For details see **[Documentation: PHP Modules](doc/php-modules.md)**<br/>

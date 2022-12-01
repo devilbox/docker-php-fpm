@@ -1189,6 +1189,38 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_libxml_8.2">🗸</td>
  </tr>
  <tr>
+  <td><a href="../php_modules/lz4">lz4</a></td>
+  <td class="ext_mods_lz4_5.2"></td>
+  <td class="ext_mods_lz4_5.3"></td>
+  <td class="ext_mods_lz4_5.4"></td>
+  <td class="ext_mods_lz4_5.5"></td>
+  <td class="ext_mods_lz4_5.6"></td>
+  <td class="ext_mods_lz4_7.0">🗸</td>
+  <td class="ext_mods_lz4_7.1">🗸</td>
+  <td class="ext_mods_lz4_7.2">🗸</td>
+  <td class="ext_mods_lz4_7.3">🗸</td>
+  <td class="ext_mods_lz4_7.4">🗸</td>
+  <td class="ext_mods_lz4_8.0">🗸</td>
+  <td class="ext_mods_lz4_8.1">🗸</td>
+  <td class="ext_mods_lz4_8.2">🗸</td>
+ </tr>
+ <tr>
+  <td><a href="../php_modules/lzf">lzf</a></td>
+  <td class="ext_mods_lzf_5.2"></td>
+  <td class="ext_mods_lzf_5.3"></td>
+  <td class="ext_mods_lzf_5.4"></td>
+  <td class="ext_mods_lzf_5.5"></td>
+  <td class="ext_mods_lzf_5.6"></td>
+  <td class="ext_mods_lzf_7.0">🗸</td>
+  <td class="ext_mods_lzf_7.1">🗸</td>
+  <td class="ext_mods_lzf_7.2">🗸</td>
+  <td class="ext_mods_lzf_7.3">🗸</td>
+  <td class="ext_mods_lzf_7.4">🗸</td>
+  <td class="ext_mods_lzf_8.0">🗸</td>
+  <td class="ext_mods_lzf_8.1">🗸</td>
+  <td class="ext_mods_lzf_8.2">🗸</td>
+ </tr>
+ <tr>
   <td><a href="../php_modules/mbstring">mbstring</a></td>
   <td class="ext_mods_mbstring_5.2">🗸</td>
   <td class="ext_mods_mbstring_5.3">🗸</td>
@@ -2307,5 +2339,21 @@ The following PHP modules are available on the `mods`, `prod` and `work` flavour
   <td class="ext_mods_zlib_8.0">🗸</td>
   <td class="ext_mods_zlib_8.1">🗸</td>
   <td class="ext_mods_zlib_8.2">🗸</td>
+ </tr>
+ <tr>
+  <td><a href="../php_modules/zstd">zstd</a></td>
+  <td class="ext_mods_zstd_5.2"></td>
+  <td class="ext_mods_zstd_5.3"></td>
+  <td class="ext_mods_zstd_5.4"></td>
+  <td class="ext_mods_zstd_5.5"></td>
+  <td class="ext_mods_zstd_5.6"></td>
+  <td class="ext_mods_zstd_7.0">🗸</td>
+  <td class="ext_mods_zstd_7.1">🗸</td>
+  <td class="ext_mods_zstd_7.2">🗸</td>
+  <td class="ext_mods_zstd_7.3">🗸</td>
+  <td class="ext_mods_zstd_7.4">🗸</td>
+  <td class="ext_mods_zstd_8.0">🗸</td>
+  <td class="ext_mods_zstd_8.1">🗸</td>
+  <td class="ext_mods_zstd_8.2">🗸</td>
  </tr>
 <table>

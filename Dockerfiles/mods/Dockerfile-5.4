@@ -26,6 +26,8 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
+		liblz4-dev \
+		liblzf-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
 		libmysqlclient-dev \
@@ -47,6 +49,7 @@ RUN set -eux \
 		libxslt-dev \
 		libyaml-dev \
 		libzip-dev \
+		libzstd-dev \
 		re2c \
 		snmp \
 		uuid-dev \
@@ -470,6 +473,11 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: redis --------------------
 RUN set -eux \
+	# Generic pre-command
+	&& if [ -f /usr/include/liblzf/lzf.h ]; then \
+  ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+fi \
+ \
 	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
@@ -731,6 +739,8 @@ RUN set -eux \
 	libfreetype6 \
 	libicu52 \
 	libjpeg62-turbo \
+	liblz4-1 \
+	liblzf1 \
 	libmcrypt4 \
 	libmemcachedutil2 \
 	libmysqlclient18 \
@@ -749,6 +759,7 @@ RUN set -eux \
 	libxslt1.1 \
 	libyaml-0-2 \
 	libzip2 \
+	libzstd1 \
 	snmp \
 	uuid \
 	zlib1g \
