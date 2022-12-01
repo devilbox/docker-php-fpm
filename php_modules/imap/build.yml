@@ -1,0 +1,13 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libkrb5* /usr/lib/
+  configure: --with-kerberos --with-imap-ssl --with-imap
+  build_dep: [libc-client-dev, libkrb5-dev, libcurl4-openssl-dev]
+  run_dep: [libc-client2007e]

@@ -1,0 +1,31 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  build_dep: [librdkafka-dev]
+  run_dep: [librdkafka1]
+
+7.0:
+  type: pecl
+  version: 3.1.2
+
+5.6:
+  type: pecl
+  version: 3.1.2
+
+5.5:
+  type: pecl
+  version: 3.0.5
+
+5.4:
+  type: pecl
+  version: 3.0.5
+
+5.3:
+  type: pecl
+  version: 3.0.5

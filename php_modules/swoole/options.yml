@@ -1,0 +1,36 @@
+---
+
+# The name of the module
+name: swoole
+
+# Exclude module build/installation for the following PHP versions
+exclude: [5.2, 8.2]
+
+# In order for this module to built correctly against all dependencies,
+# the following modules must have been built first.
+# https://openswoole.com/docs/get-started/prerequisites#php-extensions
+depends_build:
+  - bcmath
+  - curl
+  - gd
+  - intl
+  - json
+  - mbstring
+  - mysqlnd
+  - opcache
+  - sockets
+  - xml
+  - zip
+
+# In order for this module to function correctly,
+# the following modules must be loaded before.
+depends_load: []
+
+# If the following PHP modules are loaded, this module will not behave as expected.
+conflicts_load: []
+
+# Enable this module by default via php.ini for PHP cli command?
+enabled_php_cli: true
+
+# Enable this module by default via php.ini for PHP-FPM?
+enabled_php_fpm: true

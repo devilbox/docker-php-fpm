@@ -1,0 +1,11 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  build_dep: [libxslt-dev]
+  run_dep: [libxslt1.1]

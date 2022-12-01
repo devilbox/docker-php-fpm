@@ -1,0 +1,43 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  build_dep: [libicu-dev]
+  run_dep: [libicu67]
+
+7.2:
+  type: builtin
+  run_dep: [libicu63]
+
+7.1:
+  type: builtin
+  run_dep: [libicu63]
+
+7.0:
+  type: builtin
+  run_dep: [libicu57]
+
+5.6:
+  type: builtin
+  run_dep: [libicu57]
+
+5.5:
+  type: builtin
+  run_dep: [libicu52]
+
+5.4:
+  type: builtin
+  run_dep: [libicu52]
+
+5.3:
+  type: builtin
+  run_dep: [libicu52]
+
+5.2:
+  type: pecl
+  run_dep: [libicu52]

@@ -1,0 +1,19 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: custom
+  command: |
+    EXTENSION_DIR="$( php -i | grep ^extension_dir | awk -F '=>' '{print $2}' | xargs )" \
+    && if [ ! -d "${EXTENSION_DIR}" ]; then mkdir -p "${EXTENSION_DIR}"; fi \
+    && curl -sS --fail -k https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_$(dpkg-architecture --query DEB_HOST_GNU_CPU | sed 's/_/-/g').tar.gz -L -o ioncube.tar.gz \
+    && tar xvfz ioncube.tar.gz \
+    && cd ioncube \
+    && cp "ioncube_loader_lin_{{ php_version }}.so" "${EXTENSION_DIR}/ioncube.so" \
+    && cd ../ \
+    && rm -rf ioncube \
+    && rm -rf ioncube.tar.gz \

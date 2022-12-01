@@ -1,0 +1,35 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  build_dep: [libtidy-dev]
+  run_dep: [libtidy5deb1]
+
+7.0:
+  type: builtin
+  run_dep: [libtidy5]
+
+5.6:
+  type: builtin
+  run_dep: [libtidy5]
+
+5.5:
+  type: builtin
+  run_dep: [libtidy-0.99-0]
+
+5.4:
+  type: builtin
+  run_dep: [libtidy-0.99-0]
+
+5.3:
+  type: builtin
+  run_dep: [libtidy-0.99-0]
+
+5.2:
+  type: builtin
+  run_dep: [libtidy-0.99-0]

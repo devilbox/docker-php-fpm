@@ -1,0 +1,29 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+
+5.6:
+  type: pecl
+  version: 0.5.7
+
+5.5:
+  type: pecl
+  version: 0.5.7
+
+5.4:
+  type: pecl
+  version: 0.5.7
+
+5.3:
+  type: pecl
+  version: 0.5.7
+
+5.2:
+  type: pecl
+  version: 0.5.7

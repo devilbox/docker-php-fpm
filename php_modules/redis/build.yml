@@ -1,0 +1,163 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: git
+  git_url: https://github.com/phpredis/phpredis
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  pre: |
+    if [ -f /usr/include/liblzf/lzf.h ]; then \
+      ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+    fi \
+  command: |
+    REDIS_ARGS=""; \
+    if php -m | grep -q "igbinary"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+    fi; \
+    if php -m | grep -q "lz4"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+    fi; \
+    if php -m | grep -q "lzf"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-lzf --with-liblzf=/usr"; \
+    fi; \
+    if php -m | grep -q "msgpack"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+    fi; \
+    if php -m | grep -q "zstd"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+    fi; \
+    phpize \
+    && ./configure --enable-redis ${REDIS_ARGS} \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+  build_dep:
+    - liblz4-dev
+    - liblzf-dev
+    - libzstd-dev
+  run_dep:
+    - liblz4-1
+    - liblzf1
+    - libzstd1
+
+# system liblzf not available
+# lzf.h: No such file or directory
+7.2:
+  type: git
+  git_url: https://github.com/phpredis/phpredis
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  command: |
+    REDIS_ARGS=""; \
+    if php -m | grep -q "igbinary"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+    fi; \
+    if php -m | grep -q "lz4"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+    fi; \
+    if php -m | grep -q "msgpack"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+    fi; \
+    if php -m | grep -q "zstd"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+    fi; \
+    phpize \
+    && ./configure --enable-redis ${REDIS_ARGS} \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+  build_dep:
+    - liblz4-dev
+    - libzstd-dev
+  run_dep:
+    - liblz4-1
+    - libzstd1
+
+# system liblzf not available
+# lzf.h: No such file or directory
+7.1:
+  type: git
+  git_url: https://github.com/phpredis/phpredis
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  command: |
+    REDIS_ARGS=""; \
+    if php -m | grep -q "igbinary"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+    fi; \
+    if php -m | grep -q "lz4"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+    fi; \
+    if php -m | grep -q "msgpack"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+    fi; \
+    if php -m | grep -q "zstd"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+    fi; \
+    phpize \
+    && ./configure --enable-redis ${REDIS_ARGS} \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+  build_dep:
+    - liblz4-dev
+    - libzstd-dev
+  run_dep:
+    - liblz4-1
+    - libzstd1
+
+# system liblzf not available
+# libzstd is 1.1.2, but >=1.3.0 is required
+# lzf.h: No such file or directory
+7.0:
+  type: git
+  git_url: https://github.com/phpredis/phpredis
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  command: |
+    REDIS_ARGS=""; \
+    if php -m | grep -q "igbinary"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+    fi; \
+    if php -m | grep -q "lz4"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+    fi; \
+    if php -m | grep -q "msgpack"; then \
+      REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+    fi; \
+    phpize \
+    && ./configure --enable-redis ${REDIS_ARGS} \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+  build_dep:
+    - liblz4-dev
+  run_dep:
+    - liblz4-1
+
+5.6:
+  type: pecl
+  version: 4.3.0
+  build_dep: []
+  run_dep: []
+
+5.5:
+  type: pecl
+  version: 4.3.0
+  build_dep: []
+  run_dep: []
+
+5.4:
+  type: pecl
+  version: 4.3.0
+  build_dep: []
+  run_dep: []
+
+5.3:
+  type: pecl
+  version: 4.3.0
+  build_dep: []
+  run_dep: []
+
+5.2:
+  type: pecl
+  version: 2.2.7
+  build_dep: []
+  run_dep: []

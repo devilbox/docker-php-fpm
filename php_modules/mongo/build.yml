@@ -1,0 +1,15 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: pecl
+  command: yes yes | pecl install mongo
+  build_dep: [libssl-dev, libsasl2-dev]
+
+5.2:
+  type: pecl
+  command: yes yes | pecl install mongo-1.5.8

@@ -49,8 +49,9 @@ ARCH       = linux/amd64
 
 
 # Makefile.lint overwrites
-FL_IGNORES  = .git/,.github/,tests/
+FL_IGNORES  = .git/,.github/,tests/,*.mypy_cache/
 SC_IGNORES  = .git/,.github/,tests/
+JL_IGNORES  = .git/,.github/,*.mypy_cache*
 
 
 # -------------------------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ EXT_DIR=$$( docker run --rm --platform $(ARCH) --entrypoint=php $(IMAGE):$(BASE_
 endif
 
 # Use Buldkit for building
-export DOCKER_BUILDKIT=1
+#export DOCKER_BUILDKIT=1
 
 .PHONY: build
 build: check-stage-is-set
@@ -183,6 +184,7 @@ manifest-push: docker-manifest-push
 .PHONY: test
 test: check-stage-is-set
 test: check-current-image-exists
+test: gen-readme
 test: test-integration
 
 .PHONY: test-integration
@@ -199,12 +201,42 @@ test-integration:
 ###
 .PHONY: gen-readme
 gen-readme: check-version-is-set
-gen-readme:
+gen-readme: check-stage-is-set
+gen-readme: _gen-readme-docs
+gen-readme: _gen-readme-main
+
+.PHONY: _gen-readme-docs
+_gen-readme-docs:
 	@echo "################################################################################"
-	@echo "# Generate README.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
+	@echo "# Generate doc/php-modules.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
 	@echo "################################################################################"
-	./build/gen-readme.sh $(IMAGE) $(ARCH) $(BASE_TAG) $(MODS_TAG) $(VERSION)
+	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION) || bash -x ./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+	@echo
+
+.PHONY: _gen-readme-main
+_gen-readme-main:
+	@echo "################################################################################"
+	@echo "# Generate README.md"
+	@echo "################################################################################"
+	MODULES="$$( cat doc/php-modules.md \
+		| grep href \
+		| sed -e 's|</a.*||g' -e 's|.*">||g' \
+		| sort -fu \
+		| xargs -n1 sh -c 'echo "[\`$$1\`](php_modules/$$(echo "$${1}" | tr "[:upper:]" "[:lower:]")/)"' -- )"; \
+	cat "README.md" \
+		| perl -0 -pe "s#<!-- modules -->.*<!-- /modules -->#<!-- modules -->\n$${MODULES}\n<!-- /modules -->#s" \
+		> "README.md.tmp"
+	yes | mv -f "README.md.tmp" "README.md"
+	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
+	@echo
+
+###
+### Generate Modules
+###
+.PHONY: gen-modules
+gen-modules:
+	./bin/modules-generate.py $(ARGS)
 
 ###
 ### Generate Dockerfiles
@@ -217,9 +249,9 @@ gen-dockerfiles:
 		-e MY_UID=$$(id -u) \
 		-e MY_GID=$$(id -g) \
 		-v ${PWD}:/data \
-		-w /data/build/ansible \
-		cytopia/ansible:2.8-tools ansible-playbook generate.yml \
-			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.8/site-packages/ansible_mitogen/plugins/strategy \
+		-w /data/.ansible \
+		cytopia/ansible:2.13-tools ansible-playbook generate.yml \
+			-e ANSIBLE_STRATEGY_PLUGINS=/usr/lib/python3.10/site-packages/ansible_mitogen/plugins/strategy \
 			-e ANSIBLE_STRATEGY=mitogen_linear \
 			-e ansible_python_interpreter=/usr/bin/python3 \
 			-e \"{build_fail_fast: $(FAIL_FAST)}\" \

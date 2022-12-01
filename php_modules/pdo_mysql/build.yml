@@ -1,0 +1,42 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: builtin
+  configure: --with-zlib-dir=/usr
+  run_dep: [libmariadbd19]
+  build_dep: [zlib1g-dev, libmariadb-dev]
+
+7.0:
+  type: builtin
+  run_dep: [libmariadbclient18]
+  build_dep: [zlib1g-dev, libmariadbclient-dev]
+
+5.6:
+  type: builtin
+  run_dep: [libmariadbclient18]
+  build_dep: [zlib1g-dev, libmariadbclient-dev]
+
+5.5:
+  type: builtin
+  run_dep: [libmysqlclient18]
+  build_dep: [zlib1g-dev, libmysqlclient-dev]
+
+5.4:
+  type: builtin
+  run_dep: [libmysqlclient18]
+  build_dep: [zlib1g-dev, libmysqlclient-dev]
+
+5.3:
+  type: builtin
+  run_dep: [libmysqlclient18]
+  build_dep: [zlib1g-dev, libmysqlclient-dev]
+
+5.2:
+  type: builtin
+  run_dep: [libmysqlclient18]
+  build_dep: [zlib1g-dev, libmysqlclient-dev]

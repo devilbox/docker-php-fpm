@@ -1,0 +1,24 @@
+---
+
+# The name of the module
+name: posix
+
+# Exclude module build/installation for the following PHP versions
+exclude: []
+
+# In order for this module to built correctly against all dependencies,
+# the following modules must have been built first.
+depends_build: []
+
+# In order for this module to function correctly,
+# the following modules must be loaded before.
+depends_load: []
+
+# If the following PHP modules are loaded, this module will not behave as expected.
+conflicts_load: []
+
+# Enable this module by default via php.ini for PHP cli command?
+enabled_php_cli: true
+
+# Enable this module by default via php.ini for PHP-FPM?
+enabled_php_fpm: true

@@ -1,0 +1,14 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: git
+  git_url: https://github.com/kjdev/php-ext-lz4
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  configure: --enable-lz4 --with-lz4-includedir=/usr
+  build_dep: [liblz4-dev]
+  run_dep: [liblz4-1]

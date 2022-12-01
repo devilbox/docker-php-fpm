@@ -1,4 +1,4 @@
-# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
+# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
 FROM devilbox/php-fpm:5.2-base as builder
 
 
@@ -40,6 +40,7 @@ RUN set -eux \
 		libxml2-dev \
 		libxpm-dev \
 		libxslt-dev \
+		libzip-dev \
 		snmp \
 		zlib1g-dev \
 # Build tools
@@ -243,17 +244,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: msgpack --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install msgpack-0.5.7 \
-	# Enabling
-	&& docker-php-ext-enable msgpack \
-	&& true
-
-
 # -------------------- Installing PHP Extension: memcache --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -262,6 +252,17 @@ RUN set -eux \
 	&& pecl install memcache-2.2.7 \
 	# Enabling
 	&& docker-php-ext-enable memcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack-0.5.7 \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
 	&& true
 
 
@@ -381,6 +382,22 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: redis --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& if [ -f /usr/include/liblzf/lzf.h ]; then \
+  ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+fi \
+ \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install redis-2.2.7 \
+	# Enabling
+	&& docker-php-ext-enable redis \
+	&& true
+
+
 # -------------------- Installing PHP Extension: phar --------------------
 RUN set -eux \
 	# Installation: Version specific
@@ -400,17 +417,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: redis --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         PECL extension
-	# Default:      Pecl command
-	&& pecl install redis-2.2.7 \
-	# Enabling
-	&& docker-php-ext-enable redis \
-	&& true
-
-
 # -------------------- Installing PHP Extension: shmop --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -424,7 +430,7 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	# Custom:       configure command
-	&& docker-php-ext-configure snmp --with-openssl-dir \
+	&& docker-php-ext-configure snmp --with-snmp \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) snmp \
 	&& true
 
@@ -433,8 +439,6 @@ RUN set -eux \
 RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
-	# Custom:       configure command
-	&& docker-php-ext-configure soap --with-libxml-dir=/usr \
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) soap \
 	&& true
 
@@ -444,6 +448,17 @@ RUN set -eux \
 	# Installation: Generic
 	# Type:         Built-in extension
 	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) sockets \
+	&& true
+
+
+# -------------------- Installing PHP Extension: zip --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure zip --enable-zip \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
 	&& true
 
 
@@ -530,17 +545,6 @@ RUN set -eux \
 	&& true
 
 
-# -------------------- Installing PHP Extension: zip --------------------
-RUN set -eux \
-	# Installation: Version specific
-	# Type:         Built-in extension
-	# Custom:       configure command
-	&& docker-php-ext-configure zip --with-zlib-dir=/usr --with-pcre-dir=/usr \
-	# Installation
-	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) zip \
-	&& true
-
-
 
 
 # Fix php.ini settings for enabled extensions
@@ -559,7 +563,7 @@ RUN set -eux \
 
 
 
-# Auto-generated via Ansible: edit build/ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
+# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
 FROM devilbox/php-fpm:5.2-base as final
 MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
@@ -610,8 +614,8 @@ RUN set -eux \
 	libwebp5 \
 	libxpm4 \
 	libxslt1.1 \
+	libzip2 \
 	snmp \
-	zlib1g \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -663,12 +667,18 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^ctype$' \
 	&& php -m | grep -oiE '^curl$' \
 	&& php-fpm -m | grep -oiE '^curl$' \
+	&& php -m | grep -oiE '^date$' \
+	&& php-fpm -m | grep -oiE '^date$' \
 	&& php -m | grep -oiE '^dba$' \
 	&& php-fpm -m | grep -oiE '^dba$' \
+	&& php -m | grep -oiE '^libxml$' \
+	&& php-fpm -m | grep -oiE '^libxml$' \
 	&& php -m | grep -oiE '^dom$' \
 	&& php-fpm -m | grep -oiE '^dom$' \
 	&& php -m | grep -oiE '^enchant$' \
 	&& php-fpm -m | grep -oiE '^enchant$' \
+	&& php -m | grep -oiE '^mbstring$' \
+	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^exif$' \
 	&& php-fpm -m | grep -oiE '^exif$' \
 	&& php -m | grep -oiE '^fileinfo$' \
@@ -697,16 +707,12 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^json$' \
 	&& php -m | grep -oiE '^ldap$' \
 	&& php-fpm -m | grep -oiE '^ldap$' \
-	&& php -m | grep -oiE '^libxml$' \
-	&& php-fpm -m | grep -oiE '^libxml$' \
-	&& php -m | grep -oiE '^mbstring$' \
-	&& php-fpm -m | grep -oiE '^mbstring$' \
 	&& php -m | grep -oiE '^mcrypt$' \
 	&& php-fpm -m | grep -oiE '^mcrypt$' \
-	&& php -m | grep -oiE '^msgpack$' \
-	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcache$' \
 	&& php-fpm -m | grep -oiE '^memcache$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
 	&& php -m | grep -oiE '^memcached$' \
 	&& php-fpm -m | grep -oiE '^memcached$' \
 	&& php -m | grep -oiE '^mhash$' \
@@ -717,6 +723,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^mysql$' \
 	&& php -m | grep -oiE '^mysqli$' \
 	&& php-fpm -m | grep -oiE '^mysqli$' \
+	&& php -m | grep -oiE '^pcre$' \
+	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^oauth$' \
 	&& php-fpm -m | grep -oiE '^oauth$' \
 	&& php -m | grep -oiE '^Zend Opcache$' \
@@ -725,8 +733,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^openssl$' \
 	&& php -m | grep -oiE '^pcntl$' \
 	&& php-fpm -m | grep -oiE '^pcntl$' \
-	&& php -m | grep -oiE '^pcre$' \
-	&& php-fpm -m | grep -oiE '^pcre$' \
 	&& php -m | grep -oiE '^pdo$' \
 	&& php-fpm -m | grep -oiE '^pdo$' \
 	&& php -m | grep -oiE '^pdo_dblib$' \
@@ -741,6 +747,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& php -m | grep -oiE '^pgsql$' \
 	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^redis$' \
+	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
 	&& php -m | grep -oiE '^posix$' \
@@ -750,8 +758,6 @@ RUN set -eux \
 	&& php -m | grep -oiE '^readline$' \
 	&& php -m | grep -oiE '^recode$' \
 	&& php-fpm -m | grep -oiE '^recode$' \
-	&& php -m | grep -oiE '^redis$' \
-	&& php-fpm -m | grep -oiE '^redis$' \
 	&& php -m | grep -oiE '^reflection$' \
 	&& php-fpm -m | grep -oiE '^reflection$' \
 	&& php -m | grep -oiE '^session$' \
@@ -768,6 +774,12 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^sockets$' \
 	&& php -m | grep -oiE '^spl$' \
 	&& php-fpm -m | grep -oiE '^spl$' \
+	&& php -m | grep -oiE '^sqlite$' \
+	&& php-fpm -m | grep -oiE '^sqlite$' \
+	&& php -m | grep -oiE '^xml$' \
+	&& php-fpm -m | grep -oiE '^xml$' \
+	&& php -m | grep -oiE '^zip$' \
+	&& php-fpm -m | grep -oiE '^zip$' \
 	&& php -m | grep -oiE '^sysvmsg$' \
 	&& php-fpm -m | grep -oiE '^sysvmsg$' \
 	&& php -m | grep -oiE '^sysvsem$' \
@@ -784,8 +796,6 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^wddx$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
-	&& php -m | grep -oiE '^xml$' \
-	&& php-fpm -m | grep -oiE '^xml$' \
 	&& php -m | grep -oiE '^xmlreader$' \
 	&& php-fpm -m | grep -oiE '^xmlreader$' \
 	&& php -m | grep -oiE '^xmlrpc$' \
@@ -794,8 +804,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^xmlwriter$' \
 	&& php -m | grep -oiE '^xsl$' \
 	&& php-fpm -m | grep -oiE '^xsl$' \
-	&& php -m | grep -oiE '^zip$' \
-	&& php-fpm -m | grep -oiE '^zip$' \
+	&& php -m | grep -oiE '^zlib$' \
+	&& php-fpm -m | grep -oiE '^zlib$' \
 	&& true
 
 

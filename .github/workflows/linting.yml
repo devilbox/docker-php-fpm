@@ -31,6 +31,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install required Python packages
+        run: |
+          pip install yamllib
+          pip install typing
+
       # ------------------------------------------------------------
       # Lint repository
       # ------------------------------------------------------------
@@ -45,6 +55,11 @@ jobs:
       - name: Lint Changelog
         run: |
           make lint-changelog
+
+      - name: Diff generated PHP modules
+        run: |
+          make gen-modules
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 
       - name: Diff generated Docker files
         run: |

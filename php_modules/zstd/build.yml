@@ -1,0 +1,20 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+
+all:
+  type: git
+  git_url: https://github.com/kjdev/php-ext-zstd
+  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+  configure: --enable-zstd --with-libzstd
+  build_dep: [libzstd-dev]
+  run_dep: [libzstd1]
+
+# compiling from git breaks somehow (Pecl has the same version which works)
+7.0:
+  type: pecl
+  build_dep: [libzstd-dev]
+  run_dep: [libzstd1]

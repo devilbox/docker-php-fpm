@@ -1,0 +1,26 @@
+---
+
+# Available Jinja2 variables:
+# ---------------------------
+# * {{ php_all_versions }}:  Array of all PHP versions
+
+all:
+  type: builtin
+
+8.2:
+  # Remove ucred (currently breaks build)
+  pre: |
+    docker-php-ext-configure sockets \
+    && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
+
+8.1:
+  # Remove ucred (currently breaks build)
+  pre: |
+    docker-php-ext-configure sockets \
+    && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
+
+8.0:
+  # Remove ucred (currently breaks build)
+  pre: |
+    docker-php-ext-configure sockets \
+    && sed -i'' 's/.*ucred.*//g' /usr/src/php/ext/sockets/sendrecvmsg.c \
