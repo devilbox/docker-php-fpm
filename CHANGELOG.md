@@ -9,14 +9,18 @@
 This is a massive restructuring release, which adds another layer on top of Ansible to easily manage/edit/add PHP extensions and to configure their respective order of building and loading.
 
 ### Added
-- Added tons of documentation
+- Added PHP extension: `lz4`
+- Added PHP extension: `lzf`
+- Added PHP extension: `zstd`
 - Added mechanism to easily build custom images with custom set of PHP extensions
 - Added automated PHP extension dependency resolver (order of built is always correct)
+- Added tons of documentation
 - Added Credit to contributors
 
 ### Changed
-- Split out PHP extensions into separate directories
+- Added serializer for Redis extension: `lz4`, `lzf` and `zstd`
 - Restructured Documentation
+- Split out PHP extensions into separate directories
 
 
 ## Release 0.143
