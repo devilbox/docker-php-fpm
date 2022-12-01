@@ -1104,18 +1104,28 @@ extensions_available:
     5.6:
       type: pecl
       version: 4.3.0
+      build_dep: []
+      run_dep: []
     5.5:
       type: pecl
       version: 4.3.0
+      build_dep: []
+      run_dep: []
     5.4:
       type: pecl
       version: 4.3.0
+      build_dep: []
+      run_dep: []
     5.3:
       type: pecl
       version: 4.3.0
+      build_dep: []
+      run_dep: []
     5.2:
       type: pecl
       version: 2.2.7
+      build_dep: []
+      run_dep: []
   sqlite3:
     disabled: [5.2]
     already_avail: "{{ php_all_versions }}"

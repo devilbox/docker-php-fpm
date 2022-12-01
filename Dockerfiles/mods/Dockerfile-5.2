@@ -22,8 +22,6 @@ RUN set -eux \
 		libjpeg-dev \
 		libkrb5-dev \
 		libldap2-dev \
-		liblz4-dev \
-		liblzf-dev \
 		libmagic-dev \
 		libmcrypt-dev \
 		libmemcached-dev \
@@ -43,7 +41,6 @@ RUN set -eux \
 		libxpm-dev \
 		libxslt-dev \
 		libzip-dev \
-		libzstd-dev \
 		snmp \
 		zlib1g-dev \
 # Build tools
@@ -603,8 +600,6 @@ RUN set -eux \
 	libfreetype6 \
 	libicu52 \
 	libjpeg62-turbo \
-	liblz4-1 \
-	liblzf1 \
 	libmagic1 \
 	libmcrypt4 \
 	libmemcachedutil2 \
@@ -620,7 +615,6 @@ RUN set -eux \
 	libxpm4 \
 	libxslt1.1 \
 	libzip2 \
-	libzstd1 \
 	snmp \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
