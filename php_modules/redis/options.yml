@@ -10,8 +10,10 @@ exclude: []
 # the following modules must have been built first.
 depends_build:
   - igbinary
+  - lz4
+  - lzf
   - msgpack
-# - lzf  # TODO: add lzf module to redis
+  - zstd
 
 # In order for this module to function correctly,
 # the following modules must be loaded before.
