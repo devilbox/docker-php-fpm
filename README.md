@@ -440,13 +440,10 @@ Docker images are built and tested every night by **[GitHub Actions](https://git
 <h2><img id="build-your-own-image" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Build your own image</h2>
 
 You are not interested in the provided Docker images and want to (ab)use this repository purely to generate your own custom images?
-You can do so with four easy commands:
+You can do so with three easy commands:
 ```bash
-# Generate Ansible group_vars for the following PHP extensions
-make gen-modules ARGS="msgpack memcached pdo_mysql rdkafka"
-
-# Generate Dockerfiles
-make gen-dockerfiles
+# Generate Dockerfiles with only the following PHP extensions present
+make gen-dockerfiles MODS="msgpack memcached pdo_mysql rdkafka"
 
 # Pull base image for PHP 8.1 (if you don't have it locally already)
 make docker-pull-base-image STAGE=mods VERSION=8.1 ARCH=linux/arm64

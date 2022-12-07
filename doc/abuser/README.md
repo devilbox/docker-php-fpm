@@ -50,28 +50,20 @@ In case you plan to use your custom image for the **[Devilbox](https://github.co
 
 > **Note:** All commands are executed in the root of this repository
 
-1. Generate PHP extensions in Ansible group_vars
+1. Generate Dockerfiles with desired PHP extensions
     ```bash
-    # Generate Ansible group_vars for all available extensions
-    make gen-modules
-    ```
-    ```bash
-    # Generate Ansible group_vars for selected extensions
-    # Note: that also all dependent extensions will be added
-    make gen-modules ARGS="msgpack xsl"
-    ```
-    ```bash
-    # Generate Ansible group_vars for selected extensions
-    # and ignore dependencies
-    make gen-modules ARGS="-i msgpack xsl"
-    ```
-    ```bash
-    # Show help
-    make gen-modules ARGS="--help"
-    ```
-2. Generate Dockerfiles from Ansible group_vars
-    ```bash
+    # Generate Dockerfiles with all available PHP extensions
     make gen-dockerfiles
+    ```
+    ```bash
+    # Generate Dockerfiles for selected PHP extensions only
+    # Note: that also all dependent extensions will be added
+    make gen-dockerfiles MODS="msgpack xsl"
+    ```
+    ```bash
+    # Generate Dockerfiles for selected PHP extensions
+    # and ignore dependencies
+    make gen-dockerfiles MODS="-i msgpack xsl"
     ```
 
 

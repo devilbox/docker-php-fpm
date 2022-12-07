@@ -232,17 +232,23 @@ _gen-readme-main:
 	@echo
 
 ###
-### Generate Modules
-###
-.PHONY: gen-modules
-gen-modules:
-	./bin/modules-generate.py $(ARGS)
-
-###
 ### Generate Dockerfiles
 ###
 .PHONY: gen-dockerfiles
 gen-dockerfiles:
+	@echo "################################################################################"
+	@echo "# Generating PHP modules"
+	@echo "################################################################################"
+	./bin/modules-generate.py $(MODS)
+	@echo
+	@echo "################################################################################"
+	@echo "# Generating Tools"
+	@echo "################################################################################"
+	./bin/tools-generate.py $(TOOLS)
+	@echo
+	@echo "################################################################################"
+	@echo "# Generating Dockerfiles"
+	@echo "################################################################################"
 	docker run --rm \
 		$$(tty -s && echo "-it" || echo) \
 		-e USER=ansible \

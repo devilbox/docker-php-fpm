@@ -26,19 +26,17 @@ All PHP modules/extensions (for all PHP versions and both for `amd64` and `arm64
     3. Alter `build.yml`, `options.yml` and `test.yml` according to documentation below
 
 2. **Inside the root of this git repository:**
-    1. Run `make gen-modules` to create Ansible group_vars
-    2. Run `make gen-dockerfiles` to generate Dockerfiles via Ansible
-    3. Run `make build STAGE=mods VERSION=8.1 ARCH=linux/amd64` to build the `mods` Docker image with version `8.1` for platform `linux/amd64`
+    1. Run `make gen-dockerfiles` to generate Dockerfiles via Ansible
+    2. Run `make build STAGE=mods VERSION=8.1 ARCH=linux/amd64` to build the `mods` Docker image with version `8.1` for platform `linux/amd64`
 
 **Note:** If you want to test if your new module builds correctly, you can generate Dockerfiles which only contain this one module and all others removed. This allows for much faster Docker builds and you don't have to wait for all other modules to be built. To do so, generate only group_vars for your one module via:
 
 ```bash
 # Commands shown here are executed from root of this repository
 
-# Only generate group_vars for curl
+# Only generate Dockerfiles with PHP extension curl
 # Note: if curl has other modules as requirements to be built beforehand, those will also be added
-make gen-modules ARGS="curl"
-make gen-dockerfiles
+make gen-dockerfiles MODS="curl"
 ```
 
 :information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**
