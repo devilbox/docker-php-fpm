@@ -12,7 +12,6 @@ tools_enabled:
   - lumen
   - mdl
   - phpunit
-  - prestissimo
   - pwncat
   - wpcli
   - yamllint
@@ -42,6 +41,7 @@ tools_available:
       package: asgardcms/asgardcms-installer
       # https://github.com/AsgardCms/asgardcms-installer/issues/1
       version: dev-master
+      flags:
       binary: asgardcms
       build_dep: []
       run_dep: []
@@ -55,6 +55,7 @@ tools_available:
       composer: 2
       package: codeception/codeception
       # version:
+      flags:
       binary: codecept
       build_dep: []
       run_dep: []
@@ -86,6 +87,7 @@ tools_available:
       composer: 2
       package: laravel/lumen-installer
       # version:
+      flags:
       binary: lumen
       build_dep: []
       run_dep: []
@@ -173,18 +175,6 @@ tools_available:
     5.3:
       type: custom
       pre: PHP_UNIT_VERSION="4"
-  prestissimo:
-    disabled: [5.2]
-    all:
-      type: composer
-      composer: 1
-      package: hirak/prestissimo
-      # version:
-      # binary:
-      build_dep: []
-      run_dep: []
-      # pre:
-      # post:
   pwncat:
     disabled: []
     check: pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)

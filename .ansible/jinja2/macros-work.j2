@@ -193,6 +193,16 @@
 
 {#-
 ###
+### Get 'flags'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_flags(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'flags', 'composer', '') -}}
+{%- endmacro -%}
+
+{#-
+###
 ### Get 'binary'
 ### type: composer
 ###

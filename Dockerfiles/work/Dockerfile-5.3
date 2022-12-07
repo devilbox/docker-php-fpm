@@ -293,11 +293,6 @@ RUN set -eux \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
 	&& true
 
-# -------------------- (composer) prestissimo --------------------
-RUN set -eux \
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require hirak/prestissimo \
-	&& true
-
 # -------------------- (pip) pwncat --------------------
 RUN set -eux \
 	&& pip install --no-cache-dir --no-compile --force-reinstall pwncat \
@@ -429,10 +424,6 @@ RUN set -eux \
 # -------------------- (custom) phpunit --------------------
 RUN set -eux \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
-	&& true
-
-# -------------------- (composer) prestissimo --------------------
-RUN set -eux \
 	&& true
 
 # -------------------- (pip) pwncat --------------------

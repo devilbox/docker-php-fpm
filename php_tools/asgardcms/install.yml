@@ -8,6 +8,7 @@ all:
   package: asgardcms/asgardcms-installer
   # https://github.com/AsgardCms/asgardcms-installer/issues/1
   version: dev-master
+  flags:
   binary: asgardcms
   build_dep: []
   run_dep: []

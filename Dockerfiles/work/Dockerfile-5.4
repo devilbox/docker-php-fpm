@@ -267,8 +267,9 @@ RUN set -eux \
 
 # -------------------- (composer) codeception --------------------
 RUN set -eux \
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require codeception/codeception \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  codeception/codeception \
 	&& ln -s /usr/local/src/composer/vendor/codeception/codeception/codecept /usr/local/bin/ \
+	&& rm -rf /usr/local/src/composer/cache/* \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)	\
 	&& true
 
@@ -298,11 +299,6 @@ RUN set -eux \
 	&& curl -sS -L --fail "https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar" -L -o /usr/local/bin/phpunit	\
 	&& chmod +x /usr/local/bin/phpunit	\
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
-	&& true
-
-# -------------------- (composer) prestissimo --------------------
-RUN set -eux \
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-1 global require hirak/prestissimo \
 	&& true
 
 # -------------------- (pip) pwncat --------------------
@@ -441,10 +437,6 @@ RUN set -eux \
 # -------------------- (custom) phpunit --------------------
 RUN set -eux \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
-	&& true
-
-# -------------------- (composer) prestissimo --------------------
-RUN set -eux \
 	&& true
 
 # -------------------- (pip) pwncat --------------------

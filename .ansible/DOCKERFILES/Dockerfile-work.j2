@@ -324,12 +324,14 @@ RUN set -eux \
 			{%- set comp_composer = fn.tool_composer_get_composer(php_version, tool, tools_available) -%}
 			{%- set comp_package = fn.tool_composer_get_package(php_version, tool, tools_available) -%}
 			{%- set comp_version = fn.tool_composer_get_version(php_version, tool, tools_available) -%}
-			{%- set comp_binary = fn.tool_composer_get_binary(php_version, tool, tools_available) -%}
+			{%- set comp_flags   = fn.tool_composer_get_flags(php_version, tool, tools_available) -%}
+			{%- set comp_binary  = fn.tool_composer_get_binary(php_version, tool, tools_available) -%}
 			{#- FIXME: use su -c ' devilbox -#}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ comp_composer }} global require {{ comp_package }}{{ comp_version }} \
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ comp_composer }} global require --no-interaction --no-cache {{ comp_flags }} {{ comp_package }}{{ comp_version }} \
 			{%- if comp_binary | length -%}
 				{{ "\n\t" }}&& ln -s {{ composer_home }}/vendor/{{ comp_package }}/{{ comp_binary }} /usr/local/bin/ \
 			{%- endif -%}
+			{{ "\n\t" }}&& rm -rf {{ composer_home }}/cache/* \
 		{%- endif -%}
 		{#- -#}
 		{#- [RUBYGEM] -#}

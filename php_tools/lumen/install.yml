@@ -7,6 +7,7 @@ all:
   composer: 2
   package: laravel/lumen-installer
   # version:
+  flags:
   binary: lumen
   build_dep: []
   run_dep: []

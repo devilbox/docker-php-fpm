@@ -15,24 +15,6 @@ composer_home: /usr/local/src/composer
 nvm_home: /opt/nvm
 node_version: --lts
 
-directory_to_clean:
-  - .*json
-  - .ansible
-  - .cache
-  - .composer
-  - .config
-  - .console
-  - .drush
-  - .gem
-  - .local
-  - .node
-  - .npm
-  - .pm2
-  - .subversion
-  - .v8*
-  - node_modules
-  - yarn.lock
-
 
 # -------------------------------------------------------------------------------------------------
 # Software to install (in defined order)
