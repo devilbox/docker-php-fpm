@@ -1,7 +1,7 @@
 ---
 
 - name: generate Dockerfiles
-  template:
+  ansible.builtin.template:
     src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
@@ -10,7 +10,7 @@
     - "{{ template_dockerfiles }}"
 
 - name: generate php configuration files
-  template:
+  ansible.builtin.template:
     src:  "{{ item.src }}"
     dest: "{{ item.dst }}"
     force: True
