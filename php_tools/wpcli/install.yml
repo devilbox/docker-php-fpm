@@ -1,0 +1,23 @@
+---
+
+check: wp --allow-root --version | grep -E '[0-9][.0-9]+' || (wp --allow-root --version; false)
+
+all:
+  type: custom
+  command: curl -sS -L --fail "${WPCLI_URL}" -L -o /usr/local/bin/wp
+  build_dep: []
+  run_dep: []
+  pre: WPCLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+  post: chmod +x /usr/local/bin/wp
+
+5.5:
+  type: custom
+  pre: WPCLI_URL="https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar"
+
+5.4:
+  type: custom
+  pre: WPCLI_URL="https://github.com/wp-cli/wp-cli/releases/download/v2.4.0/wp-cli-2.4.0.phar"
+
+5.3:
+  type: custom
+  pre: WPCLI_URL="https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar"

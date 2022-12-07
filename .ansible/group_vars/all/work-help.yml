@@ -1,0 +1,262 @@
+---
+###################################################################################################
+# Docker: work (docker stage: help)
+###################################################################################################
+
+#
+# This file holds definition for all devibox/php-fpm:x.y-work images
+#
+
+
+# -------------------------------------------------------------------------------------------------
+# Global variables
+# -------------------------------------------------------------------------------------------------
+composer_home: /usr/local/src/composer
+nvm_home: /opt/nvm
+node_version: --lts
+
+directory_to_clean:
+  - .*json
+  - .ansible
+  - .cache
+  - .composer
+  - .config
+  - .console
+  - .drush
+  - .gem
+  - .local
+  - .node
+  - .npm
+  - .pm2
+  - .subversion
+  - .v8*
+  - node_modules
+  - yarn.lock
+
+
+# -------------------------------------------------------------------------------------------------
+# Software to install (in defined order)
+# -------------------------------------------------------------------------------------------------
+help_software_enabled:
+  - composer
+  - nvm
+  - pip
+
+
+## -------------------------------------------------------------------------------------------------
+## Software definition
+## -------------------------------------------------------------------------------------------------
+#
+# all: is generic version of defines
+# 7.2: is specific version of defines
+# disabled: [optional] Array of PHP versions for which to disable this module
+# check:    [optional] Include a check command to test if it was installed successfully
+#
+# all, 7.2, 7.1, 7.0, 5.6, 5.5, 5.4:
+#   pre:       [optional] Run command before 'command:' statement
+#   command:   Command to execute
+#   post:      [optional] Run command after 'command:' statement
+#
+help_software_available:
+
+  ###
+  ### Composer
+  ###
+  composer:
+    disabled: [5.2]
+    check: composer --version 2>/dev/null | grep -Ei '(composer|version)\s*[0-9][.0-9]+'
+    all:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.x" \
+      command: |
+        curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_1_VERSION}/composer.phar" > /usr/local/bin/composer-1 \
+        && curl -sS -L --fail "https://getcomposer.org/download/${COMPOSER_2_VERSION}/composer.phar" > /usr/local/bin/composer-2 \
+        && chmod +x /usr/local/bin/composer-1 \
+        && chmod +x /usr/local/bin/composer-2 \
+      post: |
+        ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+    7.1:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    7.0:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.6:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.5:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.4:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+    5.3:
+      type: custom
+      pre: |
+        COMPOSER_1_VERSION="latest-1.x" \
+        && COMPOSER_2_VERSION="latest-2.2.x" \
+      post: |
+        ln -sf /usr/local/bin/composer-1 /usr/local/bin/composer \
+
+  ###
+  ### nvm
+  ###
+  nvm:
+    check: |
+      su  -c '. {{ nvm_home }}/nvm.sh; nvm --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+      && su  -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+      && su  -c '. {{ nvm_home }}/nvm.sh; yarn --version' devilbox | grep -E '^v?[0-9][.0-9]+' \
+    all:
+      type: custom
+      pre: |
+        NODE_VERSION="{{ node_version }}" \
+      command: |
+        NVM_VERSION="$( \
+          curl -sS 'https://github.com/nvm-sh/nvm/releases' \
+          | grep -Eo '/nvm-sh/nvm/releases/tag/v?[.0-9]+"' \
+          | grep -Eo 'v?[.0-9]+' \
+          | sort -V \
+          | tail -1 \
+        )" \
+        && mkdir -p {{ nvm_home }} \
+        && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
+          | NVM_DIR="{{ nvm_home }}" bash \
+        \
+        && { \
+          echo 'export NVM_DIR="{{ nvm_home }}"'; \
+          echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+          echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+        } >> /home/devilbox/.bashrc \
+        \
+        && chown -R devilbox:devilbox "{{ nvm_home }}" \
+      # Install latest and LTS version and yarn
+      post: |
+        su  -c ". {{ nvm_home }}/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; nvm use ${NODE_VERSION}" devilbox \
+        && su  -c ". {{ nvm_home }}/nvm.sh; corepack enable" devilbox \
+        \
+        && ln -s "{{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/corepack" /usr/local/bin/ \
+        && ln -s "{{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/node" /usr/local/bin/ \
+        && ln -s "{{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/npm" /usr/local/bin/ \
+        && ln -s "{{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/npx" /usr/local/bin/ \
+        && ln -s "{{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/yarn" /usr/local/bin/ \
+        \
+        && chmod 0777 {{ nvm_home }} \
+        && find {{ nvm_home }} -type f -print0 | xargs -n1 -0 chmod go+w \
+        && find {{ nvm_home }} -type d -print0 | xargs -n1 -0 chmod 0777 \
+        \
+        && rm -rf {{ nvm_home }}/.cache \
+        && rm -rf {{ nvm_home }}/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/share \
+        && rm -rf {{ nvm_home }}/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/include \
+    7.0:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+    5.6:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+    5.5:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+    5.4:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+    5.3:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+    5.2:
+      type: custom
+      pre: |
+        NODE_VERSION="17" \
+
+  ###
+  ### Python pip
+  ###
+  pip:
+    check: pip --version
+    all:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/get-pip.py | python3 \
+      # Cleanup
+      post: |
+        /bin/ls -1 /usr/local/lib/ | grep ^python | while read -r version; do \
+          cd "/usr/local/lib/${version}/" \
+          && find . -name '*.pyc' -print0 | xargs -0 -n1 rm -rf \
+          && find . -name '*.exe' -print0 | xargs -0 -n1 rm -rf \
+          && find . -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
+          \
+          && if [ -d "dist-packages" ]; then \
+            cd "dist-packages" \
+            && pwd \
+            && if /bin/ls -1 | grep -v '^pip'; then \
+              /bin/ls -1 | grep -v '^pip' | xargs -n1 rm -rf; \
+            fi \
+          fi \
+        done \
+      run_dep: [python3-distutils]
+      build_dep: [libpython3-dev]
+    7.2:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    7.1:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    7.0:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    5.6:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    5.5:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    5.4:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]
+    5.3:
+      type: custom
+      run_dep: []
+      build_dep: [libpython-dev]
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+    5.2:
+      type: custom
+      command: |
+        curl -sS -L --fail https://bootstrap.pypa.io/pip/2.7/get-pip.py | python \
+      run_dep: []
+      build_dep: [libpython-dev]

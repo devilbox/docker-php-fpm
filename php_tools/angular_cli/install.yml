@@ -1,0 +1,13 @@
+---
+
+check: ng version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' || (ng version; false)
+
+all:
+  type: npm
+  package: "@angular/cli"
+  binary: ng
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

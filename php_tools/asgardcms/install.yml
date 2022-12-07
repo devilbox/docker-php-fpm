@@ -1,0 +1,15 @@
+---
+
+check: asgardcms --version 2>/dev/null | grep -Ei 'AsgardCMS\sInstaller\s[0-9][.0-9]+' || (asgardcms --version; false)
+
+all:
+  type: composer
+  composer: 2
+  package: asgardcms/asgardcms-installer
+  # https://github.com/AsgardCms/asgardcms-installer/issues/1
+  version: dev-master
+  binary: asgardcms
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

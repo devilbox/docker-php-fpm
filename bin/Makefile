@@ -23,7 +23,7 @@ MYPY_ARGS       = --strict --disable-error-code no-any-return
 
 PYLINT_DIR      = *.py
 PYLINT_PIP_PKGS = yamllint
-PYLINT_ARGS     = --disable=invalid-name
+PYLINT_ARGS     = --disable=invalid-name,duplicate-code
 
 PYCODE_ARGS     = --max-line-length=100
 

@@ -54,7 +54,7 @@ php_settings_ini:
   # ---- Inherits from base ----
   prod:
   # ---- Inherits from base and overwrites certain values ----
-  work:
+  slim:
     # Error reporting
     error_reporting:            E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED
     xmlrpc_errors:              'Off'
@@ -73,6 +73,8 @@ php_settings_ini:
     xdebug3_mode:               'Off'
     xdebug3_start_with_request: 'default'
     xdebug3_client_port:        '9000'
+  # ---- Inherits from slim ----
+  work:
 
 # -------------------------------------------------------------------------------------------------
 # php-fpm.conf
@@ -109,5 +111,7 @@ php_settings_fpm:
   mods:
   # ---- Inherits from base ----
   prod:
-  # ---- Inherits from base and overwrites certain values ----
+  # ---- Inherits from base ----
+  slim:
+  # ---- Inherits from base ----
   work:

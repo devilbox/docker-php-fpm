@@ -1,0 +1,14 @@
+---
+
+check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)
+
+all:
+  type: composer
+  composer: 2
+  package: codeception/codeception
+  # version:
+  binary: codecept
+  build_dep: []
+  run_dep: []
+  # pre:
+  # post:

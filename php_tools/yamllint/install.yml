@@ -1,0 +1,11 @@
+---
+
+check: yamllint --version 2>&1 | grep -E '[0-9][.0-9]+' || (yamllint --version; false)
+
+all:
+  type: pip
+  version:
+  build_dep: []
+  run_dep: []
+  # pre:
+  # post:

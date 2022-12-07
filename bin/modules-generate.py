@@ -87,7 +87,12 @@ def get_modules(selected_modules: List[str], ignore_dependencies: bool) -> List[
             if not item.name.startswith(".") and item.is_dir():
                 data = get_module_options(item.name)
                 modules.append(
-                    {"dir": item.name, "name": data["name"], "deps": data["depends_build"]}
+                    {
+                        "dir": item.name,
+                        "name": data["name"],
+                        "deps": data["depends_build"],
+                        "exclude": data["exclude"]
+                    }
                 )
     # Convert list of deps into dict(dir, name, deps)
     items = []
@@ -153,6 +158,7 @@ def print_modules(modules: List[Dict[str, Any]]) -> None:
         for dep in module["deps"]:
             print(dep["name"], end=", ")
         print()
+        print("   excl:", module["exclude"])
 
 
 def print_dependency_tree(tree: Dict[str, Any], lvl: int = 0) -> None:

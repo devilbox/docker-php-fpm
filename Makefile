@@ -20,6 +20,7 @@ include $(MAKEFILES)
 # -------------------------------------------------------------------------------------------------
 # Default configuration
 # -------------------------------------------------------------------------------------------------
+DOCKER_PULL_BASE_IMAGES_IGNORE = devilbox-slim-base devilbox-work-help devilbox-work-tools
 # Own vars
 TAG        = latest
 
@@ -37,12 +38,14 @@ DOCKER_TAG = $(VERSION)-$(STAGE)
 BASE_TAG   = $(VERSION)-base
 MODS_TAG   = $(VERSION)-mods
 PROD_TAG   = $(VERSION)-prod
+SLIM_TAG   = $(VERSION)-slim
 WORK_TAG   = $(VERSION)-work
 else
 DOCKER_TAG = $(VERSION)-$(STAGE)-$(TAG)
 BASE_TAG   = $(VERSION)-base-$(TAG)
 MODS_TAG   = $(VERSION)-mods-$(TAG)
 PROD_TAG   = $(VERSION)-prod-$(TAG)
+SLIM_TAG   = $(VERSION)-slim-$(TAG)
 WORK_TAG   = $(VERSION)-work-$(TAG)
 endif
 ARCH       = linux/amd64
@@ -130,13 +133,13 @@ endif
 .PHONY: build
 build: check-stage-is-set
 build: check-parent-image-exists
-build: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
+build: ARGS+=--build-arg EXT_DIR=$(EXT_DIR) --build-arg ARCH=$(shell if [ "$(ARCH)" = "linux/amd64" ]; then echo "x86_64"; else echo "aarch64"; fi)
 build: docker-arch-build
 
 .PHONY: rebuild
 rebuild: check-stage-is-set
 rebuild: check-parent-image-exists
-rebuild: ARGS+=--build-arg EXT_DIR=$(EXT_DIR)
+rebuild: ARGS+=--build-arg EXT_DIR=$(EXT_DIR) --build-arg ARCH=$(shell if [ "$(ARCH)" = "linux/amd64" ]; then echo "x86_64"; else echo "aarch64"; fi)
 rebuild: docker-arch-rebuild
 
 .PHONY: push
@@ -184,8 +187,8 @@ manifest-push: docker-manifest-push
 .PHONY: test
 test: check-stage-is-set
 test: check-current-image-exists
-test: gen-readme
 test: test-integration
+test: gen-readme
 
 .PHONY: test-integration
 test-integration:
@@ -291,8 +294,8 @@ check-stage-is-set:
 		echo "Exiting."; \
 		exit 1; \
 	fi
-	@if [ "$(STAGE)" != "base" ] && [ "$(STAGE)" != "mods" ] && [ "$(STAGE)" != "prod" ] && [ "$(STAGE)" != "work" ]; then \
-		echo "Error, Flavour can only be one of 'base', 'mods', 'prod', or 'work'."; \
+	@if [ "$(STAGE)" != "base" ] && [ "$(STAGE)" != "mods" ] && [ "$(STAGE)" != "prod" ] && [ "$(STAGE)" != "slim" ] && [ "$(STAGE)" != "work" ]; then \
+		echo "Error, Flavour can only be one of 'base', 'mods', 'prod', 'slim' or 'work'."; \
 		echo "Exiting."; \
 		exit 1; \
 	fi
@@ -330,6 +333,22 @@ check-current-image-exists:
 check-parent-image-exists: check-stage-is-set
 check-parent-image-exists:
 	@if [ "$(STAGE)" = "work" ]; then \
+		if [ "$$( docker images -q $(IMAGE):$(SLIM_TAG) )" = "" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(SLIM_TAG)' was not found locally."; \
+			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \
+			>&2 echo "This is a safeguard to not automatically pull the Docker image."; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+		OS="$$( docker image inspect $(IMAGE):$(SLIM_TAG) --format '{{.Os}}' )"; \
+		ARCH="$$( docker image inspect $(IMAGE):$(SLIM_TAG) --format '{{.Architecture}}' )"; \
+		if [ "$${OS}/$${ARCH}" != "$(ARCH)" ]; then \
+			>&2 echo "Docker image '$(IMAGE):$(SLIM_TAG)' has invalid architecture: $${OS}/$${ARCH}"; \
+			>&2 echo "Expected: $(ARCH)"; \
+			>&2 echo; \
+			exit 1; \
+		fi; \
+	elif [ "$(STAGE)" = "slim" ]; then \
 		if [ "$$( docker images -q $(IMAGE):$(PROD_TAG) )" = "" ]; then \
 			>&2 echo "Docker image '$(IMAGE):$(PROD_TAG)' was not found locally."; \
 			>&2 echo "Either build it first or explicitly pull it from Dockerhub."; \

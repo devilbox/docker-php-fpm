@@ -6,6 +6,7 @@
 edit_comment_base: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-base.j2 instead."
 edit_comment_mods: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-mods.j2 instead."
 edit_comment_prod: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-prod.j2 instead."
+edit_comment_slim: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-slim.j2 instead."
 edit_comment_work: "# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-work.j2 instead."
 
 
@@ -38,7 +39,7 @@ php_all_versions:
 
 
 # -------------------------------------------------------------------------------------------------
-# Docker file paths for each version for base, mods, prod & work
+# Docker file paths for each version for base, mods, prod, slim & work
 # -------------------------------------------------------------------------------------------------
 template_dockerfiles:
   - src: DOCKERFILES/Dockerfile-base.j2
@@ -47,6 +48,8 @@ template_dockerfiles:
     dst: "../Dockerfiles/mods/Dockerfile-{{ php_version }}"
   - src: DOCKERFILES/Dockerfile-prod.j2
     dst: "../Dockerfiles/prod/Dockerfile-{{ php_version }}"
+  - src: DOCKERFILES/Dockerfile-slim.j2
+    dst: "../Dockerfiles/slim/Dockerfile-{{ php_version }}"
   - src: DOCKERFILES/Dockerfile-work.j2
     dst: "../Dockerfiles/work/Dockerfile-{{ php_version }}"
 
@@ -55,6 +58,7 @@ template_dockerfiles:
 # Assign php.ini & php-fpm.conf to PHP versions
 # -------------------------------------------------------------------------------------------------
 template_configurations:
+
   # php.ini
   - src: CONFIGURATIONS/php.ini.j2
     dst: "../Dockerfiles/base/data/php-ini.d/php-{{ php_version }}.ini"
@@ -62,10 +66,11 @@ template_configurations:
     key: base
     alt: base
   - src: CONFIGURATIONS/php.ini.j2
-    dst: "../Dockerfiles/work/data/php-ini.d/php-{{ php_version }}.ini"
+    dst: "../Dockerfiles/slim/data/php-ini.d/php-{{ php_version }}.ini"
     cfg: "{{ php_settings_ini }}"
-    key: work
-    alt: base  # Alternative key to use when definition is not set in 'work'
+    key: slim
+    alt: base  # Alternative key to use when definition is not set in 'slim'
+
   # php-fpm.conf
   - src: CONFIGURATIONS/php-fpm.conf.j2
     dst: "../Dockerfiles/base/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
@@ -73,7 +78,7 @@ template_configurations:
     key: base
     alt: base
   - src: CONFIGURATIONS/php-fpm.conf.j2
-    dst: "../Dockerfiles/work/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
+    dst: "../Dockerfiles/slim/data/php-fpm.conf/php-fpm-{{ php_version }}.conf"
     cfg: "{{ php_settings_fpm }}"
-    key: work
-    alt: base
+    key: slim
+    alt: base  # Alternative key to use when definition is not set in 'slim'

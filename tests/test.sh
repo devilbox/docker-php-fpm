@@ -45,7 +45,7 @@ TAG="${5}"
 ###
 ### Run tests
 ###
-if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
+if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "slim" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find "${CWD}" -regex "${CWD}/base/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
@@ -56,7 +56,7 @@ if [ "${FLAVOUR}" = "base" ] || [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "p
 	done
 fi
 
-if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
+if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "slim" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find "${CWD}" -regex "${CWD}/mods/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
@@ -67,7 +67,7 @@ if [ "${FLAVOUR}" = "mods" ] || [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "w
 	done
 fi
 
-if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
+if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "slim" ] || [ "${FLAVOUR}" = "work" ]; then
 	TESTS="$( find "${CWD}" -regex "${CWD}/prod/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
@@ -78,8 +78,8 @@ if [ "${FLAVOUR}" = "prod" ] || [ "${FLAVOUR}" = "work" ]; then
 	done
 fi
 
-if [ "${FLAVOUR}" = "work" ]; then
-	TESTS="$( find "${CWD}" -regex "${CWD}/work/[0-9].+.*\.sh" | sort -u )"
+if [ "${FLAVOUR}" = "slim" ] || [ "${FLAVOUR}" = "work" ]; then
+	TESTS="$( find "${CWD}" -regex "${CWD}/slim/[0-9].+.*\.sh" | sort -u )"
 	for t in ${TESTS}; do
 		printf "\n\n\033[0;33m%s\033[0m\n" "################################################################################"
 		printf "\033[0;33m%s %s\033[0m\n"  "#" "[${VERSION}-${FLAVOUR}] (${ARCH})"

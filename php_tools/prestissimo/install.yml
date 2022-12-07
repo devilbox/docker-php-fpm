@@ -1,0 +1,14 @@
+---
+
+# check:
+
+all:
+  type: composer
+  composer: 1
+  package: hirak/prestissimo
+  # version:
+  # binary:
+  build_dep: []
+  run_dep: []
+  # pre:
+  # post:
