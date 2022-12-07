@@ -4,10 +4,16 @@ check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --versi
 
 all:
   type: custom
-  command: curl -sS -L --fail "https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar" -L -o /usr/local/bin/phpunit
+  command: |
+    if [ -n "${PHP_UNIT_VERSION}" ]; then \
+      PHP_UNIT_URL="https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar"; \
+    else \
+      PHP_UNIT_URL="https://phar.phpunit.de/phpunit.phar"; \
+    fi \
+    && curl -sS -L --fail "${PHP_UNIT_URL}" -L -o /usr/local/bin/phpunit \
   build_dep: []
   run_dep: []
-  pre: PHP_UNIT_VERSION="9"
+  pre: PHP_UNIT_VERSION=""
   post: chmod +x /usr/local/bin/phpunit
 
 7.2:

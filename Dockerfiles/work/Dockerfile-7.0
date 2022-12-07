@@ -312,7 +312,13 @@ RUN set -eux \
 # -------------------- (custom) phpunit --------------------
 RUN set -eux \
 	&& PHP_UNIT_VERSION="6"	\
-	&& curl -sS -L --fail "https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar" -L -o /usr/local/bin/phpunit	\
+	&& if [ -n "${PHP_UNIT_VERSION}" ]; then \
+	  PHP_UNIT_URL="https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar"; \
+	else \
+	  PHP_UNIT_URL="https://phar.phpunit.de/phpunit.phar"; \
+	fi \
+	&& curl -sS -L --fail "${PHP_UNIT_URL}" -L -o /usr/local/bin/phpunit \
+	\
 	&& chmod +x /usr/local/bin/phpunit	\
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
 	&& true
