@@ -37,6 +37,14 @@ RUN set -eux \
 	&& true
 
 ###
+### Install build_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		libsnappy-dev \
+	&& rm -rf /var/lib/apt/lists/*
+###
 ### Add common build tools
 ###
 RUN set -eux \
@@ -97,6 +105,14 @@ RUN set -eux \
 	  fi \
 	else \
 	  mongofiles --version; \
+	fi \
+	\
+	&& if echo '7.2' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongo --version; \
+	  fi \
+	else \
+	  mongo --version; \
 	fi \
 	\
 	&& true
@@ -161,7 +177,7 @@ RUN set -eux \
 	\
 	&& LIB_GNU="libreadline" \
 	&& USR_LIB="libsnappy libtcmalloc libv8" \
-	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit" \
+	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap" \
 	\
 	&& for lib in ${LIB_GNU}; do \
 		if ls -1 "${LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
@@ -415,6 +431,14 @@ RUN set -eux \
 	  fi \
 	else \
 	  mongofiles --version; \
+	fi \
+	\
+	&& if echo '7.2' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongo --version; \
+	  fi \
+	else \
+	  mongo --version; \
 	fi \
 	\
 	&& true

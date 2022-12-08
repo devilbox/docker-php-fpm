@@ -53,6 +53,27 @@ RUN set -eux \
 {%- endfor -%}
 	{{ "\n\t" }}&& true
 
+{% set build_deps = [] -%}
+{%- for ext in base_software_enabled -%}
+	{%- for dep in fn.get_build_dep(php_version, ext, base_software_available) | from_json -%}
+		{%- if dep -%}
+			{{- build_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+{%- if build_deps -%}
+###
+### Install build_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+{% for build_dep in build_deps | unique | sort %}
+		{{ build_dep }} \
+{% endfor %}
+	&& rm -rf /var/lib/apt/lists/*
+{%- endif %}
+
 ###
 ### Add common build tools
 ###
@@ -117,7 +138,7 @@ RUN set -eux \
 	\
 	&& LIB_GNU="libreadline" \
 	&& USR_LIB="libsnappy libtcmalloc libv8" \
-	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit" \
+	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap" \
 	\
 	&& for lib in ${LIB_GNU}; do \
 		if ls -1 "${LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \

@@ -312,6 +312,14 @@ base_software_available:
       else \
         mongofiles --version; \
       fi \
+      \
+      && if echo '{{ php_version }}' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+        if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+          mongo --version; \
+        fi \
+      else \
+        mongo --version; \
+      fi \
     all:
       type: custom
       pre: |
@@ -323,6 +331,7 @@ base_software_available:
           mongodb-org-tools \
           mongodb-org-shell \
       post: rm -rf /var/lib/apt/lists/*
+      build_dep: [libsnappy-dev]  # Required to copy libsnappy.so to next stage
     7.0:
       type: custom
       pre: apt-get update
