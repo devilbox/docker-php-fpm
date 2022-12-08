@@ -18,7 +18,7 @@ Extensions |
 :information_source: For details on how to add/edit modules see **[Contributor Documentation: PHP Modules](../php_modules/README.md)**
 
 
-#### PHP Modules (`base`)
+### PHP Modules (`base`)
 
 The following PHP modules are available on the `base` flavour:
 
@@ -637,7 +637,7 @@ The following PHP modules are available on the `base` flavour:
 
 
 
-#### PHP Modules (`mods`, `prod` and `work`)
+### PHP Modules (`mods`, `prod` and `work`)
 
 The following PHP modules are available on the `mods`, `prod` and `work` flavour:
 
