@@ -199,14 +199,14 @@ def write_group_vars(tools: List[str]) -> None:
 # --------------------------------------------------------------------------------------------------
 def print_help() -> None:
     """Show help screen."""
-    print("Usage:", os.path.basename(__file__), "[options] [PHP-EXT]...")
+    print("Usage:", os.path.basename(__file__), "[options] [PHP-TOOL]...")
     print("      ", os.path.basename(__file__), "-h, --help")
     print()
     print("This script will generate the Ansible group_vars file: .ansible/group_vars/all/work.yml")
     print("based on all the tools found in php_tools/ directory.")
     print()
     print("Positional arguments:")
-    print("    [PHP-EXT]   Specify None, one or more PHP tools to generate group_vars for.")
+    print("    [PHP-TOOL]  Specify None, one or more PHP tools to generate group_vars for.")
     print("                When no PHP tool is specified (argument is omitted), group_vars")
     print("                for all tools will be genrated.")
     print("                When one or more PHP tool are specified, only group_vars for")
@@ -219,9 +219,9 @@ def print_help() -> None:
     print("                          the changes to take effect, before building the image.")
     print("Optional arguments:")
     print("    -i          Ignore dependent tools.")
-    print("                By default each exentions is checked for build dependencies of other")
-    print("                tools. For example many tools build against libxml ext.")
-    print("                By specifying -i, those dependencies are not beeing added to")
+    print("                By default each tool is checked for dependencies of other")
+    print("                tools.")
+    print("                By specifying -i, those dependent tools are not beeing added to")
     print("                ansible group_vars. Use at your own risk.")
 
 

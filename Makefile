@@ -213,7 +213,7 @@ _gen-readme-docs:
 	@echo "################################################################################"
 	@echo "# Generate doc/php-modules.md for PHP $(VERSION) ($(IMAGE):$(DOCKER_TAG)) on $(ARCH)"
 	@echo "################################################################################"
-	./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION) || bash -x ./bin/gen-readme.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
+	./bin/gen-docs-php-modules.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION) || bash -x ./bin/gen-docs-php-modules.sh $(IMAGE) $(ARCH) $(STAGE) $(VERSION)
 	git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
 	@echo
 
@@ -242,12 +242,12 @@ gen-dockerfiles:
 	@echo "################################################################################"
 	@echo "# Generating PHP modules"
 	@echo "################################################################################"
-	./bin/modules-generate.py $(MODS)
+	./bin/gen-php-modules.py $(MODS)
 	@echo
 	@echo "################################################################################"
 	@echo "# Generating Tools"
 	@echo "################################################################################"
-	./bin/tools-generate.py $(TOOLS)
+	./bin/gen-php-tools.py $(TOOLS)
 	@echo
 	@echo "################################################################################"
 	@echo "# Generating Dockerfiles"

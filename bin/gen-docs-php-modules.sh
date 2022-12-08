@@ -9,6 +9,10 @@ set -o pipefail
 SCRIPT_PATH="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 SCRIPT_NAME="$(basename "${SCRIPT_PATH}")"
 REPO_PATH="${SCRIPT_PATH}/.."
+
+###
+### This file is being updated
+###
 README="${REPO_PATH}/doc/php-modules.md"
 
 
@@ -105,14 +109,14 @@ get_modules_from_image() {
 
 
 ###
-### Validate that README.md has all modules defined that are found in the PHP docker image
+### Validate that *.md file has all modules defined that are found in the PHP docker image
 ###
 validate_readme() {
 	local php_version="${1}"
 	local modules_img="${2}"  # Modules found in the PHP docker image
 	local stage="${3}"        # base or mods
 
-	# Check if README.md contains all modules we have retrieved from the PHP image
+	# Check if *.md contains all modules we have retrieved from the PHP image
 	while read -r line; do
 		module="$( echo "${line}" | tr '[:upper:]' '[:lower:]' )"
 		search="ext_${stage}_${module}_${php_version}"
@@ -126,7 +130,7 @@ validate_readme() {
 
 
 ###
-### Update README.md for a specific PHP version
+### Update *.md for a specific PHP version
 ###
 update_readme() {
 	local php_version="${1}"
