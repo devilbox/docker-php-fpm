@@ -45,7 +45,7 @@ RUN set -eux \
 		libsnappy-dev \
 	&& rm -rf /var/lib/apt/lists/*
 ###
-### Add common build tools
+### Add common tools
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -57,8 +57,35 @@ RUN set -eux \
 		sqlite3
 
 ###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		# ---------- type: apt ----------
+		dnsutils \
+		iputils-ping \
+		netcat-openbsd \
+	&& rm -rf /var/lib/apt/lists/*
+
+###
 ### Devilbox required cli tools from group_vars (slim.yml)
 ###
+
+# -------------------- dig --------------------
+RUN set -eux \
+	&& dig -v 2>&1 | grep -E '[0-9]\.[0-9]'	\
+	&& true
+
+# -------------------- netcat --------------------
+RUN set -eux \
+	&& nc -h 2>&1 | grep netcat	\
+	&& true
+
+# -------------------- ping --------------------
+RUN set -eux \
+	&& ping -V | grep ^ping	\
+	&& true
 
 # -------------------- blackfire --------------------
 RUN set -eux \
@@ -266,6 +293,18 @@ FROM devilbox/php-fpm:7.4-prod as devilbox-slim-base
 ARG ARCH
 
 ###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		# ---------- type: apt ----------
+		dnsutils \
+		iputils-ping \
+		netcat-openbsd \
+	&& rm -rf /var/lib/apt/lists/*
+
+###
 ### Copy shared libraries (required by MongoDB, MySQL, PostgreSQL and Redis)
 ###
 COPY --from=devilbox-slim-base-builder /tmp/lib-gnu/     /lib/${ARCH}-linux-gnu/
@@ -410,6 +449,21 @@ RUN set -eux \
 ###
 ### Check if available tools slim
 ###
+
+# -------------------- dig --------------------
+RUN set -eux \
+	&& dig -v 2>&1 | grep -E '[0-9]\.[0-9]'	\
+	&& true
+
+# -------------------- netcat --------------------
+RUN set -eux \
+	&& nc -h 2>&1 | grep netcat	\
+	&& true
+
+# -------------------- ping --------------------
+RUN set -eux \
+	&& ping -V | grep ^ping	\
+	&& true
 
 # -------------------- blackfire --------------------
 RUN set -eux \

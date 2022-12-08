@@ -59,6 +59,7 @@ help_software_available:
         && chmod +x /usr/local/bin/composer-2 \
       post: |
         ln -sf /usr/local/bin/composer-2 /usr/local/bin/composer \
+      run_dep: [unzip]  # Required for composer to unzip packages
     7.1:
       type: custom
       pre: |

@@ -10,4 +10,3 @@ all:
   pre:
   post: |
     ln -s pwncat /usr/local/bin/netcat \
-    && ln -s pwncat /usr/local/bin/nc \

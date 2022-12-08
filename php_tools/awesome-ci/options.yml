@@ -1,11 +1,15 @@
 ---
 
 # The name of the module
-name: wpcli
+name: awesome-ci
 
 # Exclude module build/installation for the following PHP versions
-exclude: [5.2]
+exclude: []
 
 # In order for this tool to build/install correctly,
 # the following tools must have been installed first.
-depends: []
+depends:
+  - eslint
+  - git
+  - jsonlint
+  - mdl

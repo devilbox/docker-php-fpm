@@ -22,7 +22,14 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		libpython-dev \
 	&& rm -rf /var/lib/apt/lists/*
-
+###
+### Install run_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		unzip \
+	&& rm -rf /var/lib/apt/lists/*
 ###
 ### Devilbox required helper tools from group_vars (work-help.yml)
 ###
@@ -142,6 +149,14 @@ RUN set -eux \
 ###
 FROM devilbox/php-fpm:5.3-slim as devilbox-work-help
 
+###
+### Install run_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		unzip \
+	&& rm -rf /var/lib/apt/lists/*
 
 ###
 ### Copy nvm
@@ -249,9 +264,14 @@ RUN set -eux \
 		# ---------- build_deps ----------
 		ruby-dev \
 		# ---------- run_deps ----------
+		dos2unix \
+		file \
+		moreutils \
 		ruby \
 		# ---------- type: apt ----------
+		git \
 		jq \
+		shellcheck \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -270,6 +290,49 @@ RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force eslint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/eslint /usr/local/bin/ \
 	&& eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)	\
+	&& true
+
+# -------------------- (apt) git --------------------
+RUN set -eux \
+	&& git --version 2>&1 | grep -E '[0-9][.0-9]+' || (git --version; false)	\
+	&& true
+
+# -------------------- (npm) jsonlint --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/jsonlint /usr/local/bin/ \
+	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
+	&& true
+
+# -------------------- (rubygem) mdl --------------------
+RUN set -eux \
+	&& gem install mixlib-config -v 2.2.4 \
+	\
+	&& gem install mdl -v 0.5.0 \
+	&& mdl --version | grep -E '[.0-9]+' || (mdl --version; false)	\
+	&& true
+
+# -------------------- (custom) awesome-ci --------------------
+RUN set -eux \
+	&& git clone https://github.com/cytopia/awesome-ci.git /tmp/awesome-ci \
+	&& cd /tmp/awesome-ci \
+	&& git checkout $(git describe --abbrev=0 --tags) \
+	&& ./configure --prefix=/usr/local \
+	&& make install \
+	&& cd / \
+	&& rm -rf /tmp/awesome-ci \
+	\
+	&& regex-grep --version | grep -E '[0-9][.0-9]+' || (regex-grep --version; false)	\
+	&& true
+
+# -------------------- (custom) git-flow --------------------
+RUN set -eux \
+	&& git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
+	&& cd /tmp/gitflow \
+	&& make install \
+	&& cd / && rm -rf /tmp/gitflow \
+	\
+	&& git-flow version 2>&1 | grep -E '[0-9][.0-9]+' || (git-flow version; false)	\
 	&& true
 
 # -------------------- (npm) grunt-cli --------------------
@@ -291,19 +354,49 @@ RUN set -eux \
 	&& jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)	\
 	&& true
 
-# -------------------- (npm) jsonlint --------------------
+# -------------------- (custom) linkcheck --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
-	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/jsonlint /usr/local/bin/ \
-	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
+	&& curl -sS -L --fail -o /usr/local/bin/linkcheck https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck	\
+	&& chmod +x /usr/local/bin/linkcheck	\
+	&& linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)	\
 	&& true
 
-# -------------------- (rubygem) mdl --------------------
+# -------------------- (npm) mdlint --------------------
 RUN set -eux \
-	&& gem install mixlib-config -v 2.2.4 \
-	\
-	&& gem install mdl -v 0.5.0 \
-	&& mdl --version | grep -E '[.0-9]+' || (mdl --version; false)	\
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/mdlint /usr/local/bin/ \
+	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
+	&& true
+
+# -------------------- (custom) php-cs-fixer --------------------
+RUN set -eux \
+	&& PHP_CS_FIXER_URL="https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar"	\
+	&& curl -sS -k -L --fail -L "${PHP_CS_FIXER_URL}" -o /usr/local/bin/php-cs-fixer	\
+	&& chmod +x /usr/local/bin/php-cs-fixer	\
+	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' || (php-cs-fixer --version; false)	\
+	&& true
+
+# -------------------- (custom) phpcbf --------------------
+RUN set -eux \
+	&& PHPCBF_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar"	\
+	&& curl -sS -k -L --fail -L "${PHPCBF_URL}" -o /usr/local/bin/phpcbf	\
+	&& chmod +x /usr/local/bin/phpcbf	\
+	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' || (phpcbf --version; false)	\
+	&& true
+
+# -------------------- (custom) phpcs --------------------
+RUN set -eux \
+	&& PHPCS_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar"	\
+	&& curl -sS -k -L --fail -L "${PHPCS_URL}" -o /usr/local/bin/phpcs	\
+	&& chmod +x /usr/local/bin/phpcs	\
+	&& phpcs --version | grep -E 'version [0-9][.0-9]+' || (phpcs --version; false)	\
+	&& true
+
+# -------------------- (custom) phpmd --------------------
+RUN set -eux \
+	&& curl -sS -k -L --fail https://phpmd.org/static/latest/phpmd.phar -L -o /usr/local/bin/phpmd	\
+	&& chmod +x /usr/local/bin/phpmd	\
+	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' || (phpmd --version; false)	\
 	&& true
 
 # -------------------- (custom) phpunit --------------------
@@ -320,16 +413,61 @@ RUN set -eux \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
 	&& true
 
+# -------------------- (npm) pm2 --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force pm2' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/pm2 /usr/local/bin/ \
+	&& pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' || (pm2 --no-daemon --version; false)	\
+	&& true
+
 # -------------------- (pip) pwncat --------------------
 RUN set -eux \
 	&& pip install --no-cache-dir --no-compile --force-reinstall pwncat \
 	&& ln -s pwncat /usr/local/bin/netcat \
-	&& ln -s pwncat /usr/local/bin/nc \
 	\
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
-# -------------------- (custom) wpcli --------------------
+# -------------------- (npm) sass --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/sass /usr/local/bin/ \
+	&& sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)	\
+	&& true
+
+# -------------------- (apt) shellcheck --------------------
+RUN set -eux \
+	&& shellcheck --version | grep -E '[0-9][.0-9]+' || (shellcheck --version; false)	\
+	&& true
+
+# -------------------- (npm) stylelint --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force stylelint' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/stylelint /usr/local/bin/ \
+	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
+	&& true
+
+# -------------------- (custom) symfony-cli --------------------
+RUN set -eux \
+	&& curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin	\
+	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (npm) vue-cli --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/vue /usr/local/bin/ \
+	&& vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)	\
+	&& true
+
+# -------------------- (npm) webpack-cli --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/webpack-cli /usr/local/bin/ \
+	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
+	&& true
+
+# -------------------- (custom) wp-cli --------------------
 RUN set -eux \
 	&& WPCLI_URL="https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar"	\
 	&& curl -sS -L --fail "${WPCLI_URL}" -L -o /usr/local/bin/wp	\
@@ -379,9 +517,14 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 		# ---------- run_deps ----------
+		dos2unix \
+		file \
+		moreutils \
 		ruby \
 		# ---------- type: apt ----------
+		git \
 		jq \
+		shellcheck \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -438,6 +581,31 @@ RUN set -eux \
 	&& eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)	\
 	&& true
 
+# -------------------- (apt) git --------------------
+RUN set -eux \
+	&& git --version 2>&1 | grep -E '[0-9][.0-9]+' || (git --version; false)	\
+	&& true
+
+# -------------------- (npm) jsonlint --------------------
+RUN set -eux \
+	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
+	&& true
+
+# -------------------- (rubygem) mdl --------------------
+RUN set -eux \
+	&& mdl --version | grep -E '[.0-9]+' || (mdl --version; false)	\
+	&& true
+
+# -------------------- (custom) awesome-ci --------------------
+RUN set -eux \
+	&& regex-grep --version | grep -E '[0-9][.0-9]+' || (regex-grep --version; false)	\
+	&& true
+
+# -------------------- (custom) git-flow --------------------
+RUN set -eux \
+	&& git-flow version 2>&1 | grep -E '[0-9][.0-9]+' || (git-flow version; false)	\
+	&& true
+
 # -------------------- (npm) grunt-cli --------------------
 RUN set -eux \
 	&& grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)	\
@@ -453,14 +621,34 @@ RUN set -eux \
 	&& jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)	\
 	&& true
 
-# -------------------- (npm) jsonlint --------------------
+# -------------------- (custom) linkcheck --------------------
 RUN set -eux \
-	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
+	&& linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)	\
 	&& true
 
-# -------------------- (rubygem) mdl --------------------
+# -------------------- (npm) mdlint --------------------
 RUN set -eux \
-	&& mdl --version | grep -E '[.0-9]+' || (mdl --version; false)	\
+	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
+	&& true
+
+# -------------------- (custom) php-cs-fixer --------------------
+RUN set -eux \
+	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' || (php-cs-fixer --version; false)	\
+	&& true
+
+# -------------------- (custom) phpcbf --------------------
+RUN set -eux \
+	&& phpcbf --version | grep -E 'version [0-9][.0-9]+' || (phpcbf --version; false)	\
+	&& true
+
+# -------------------- (custom) phpcs --------------------
+RUN set -eux \
+	&& phpcs --version | grep -E 'version [0-9][.0-9]+' || (phpcs --version; false)	\
+	&& true
+
+# -------------------- (custom) phpmd --------------------
+RUN set -eux \
+	&& phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' || (phpmd --version; false)	\
 	&& true
 
 # -------------------- (custom) phpunit --------------------
@@ -468,12 +656,47 @@ RUN set -eux \
 	&& phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)	\
 	&& true
 
+# -------------------- (npm) pm2 --------------------
+RUN set -eux \
+	&& pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' || (pm2 --no-daemon --version; false)	\
+	&& true
+
 # -------------------- (pip) pwncat --------------------
 RUN set -eux \
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
-# -------------------- (custom) wpcli --------------------
+# -------------------- (npm) sass --------------------
+RUN set -eux \
+	&& sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)	\
+	&& true
+
+# -------------------- (apt) shellcheck --------------------
+RUN set -eux \
+	&& shellcheck --version | grep -E '[0-9][.0-9]+' || (shellcheck --version; false)	\
+	&& true
+
+# -------------------- (npm) stylelint --------------------
+RUN set -eux \
+	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
+	&& true
+
+# -------------------- (custom) symfony-cli --------------------
+RUN set -eux \
+	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (npm) vue-cli --------------------
+RUN set -eux \
+	&& vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)	\
+	&& true
+
+# -------------------- (npm) webpack-cli --------------------
+RUN set -eux \
+	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
+	&& true
+
+# -------------------- (custom) wp-cli --------------------
 RUN set -eux \
 	&& wp --allow-root --version | grep -E '[0-9][.0-9]+' || (wp --allow-root --version; false)	\
 	&& true

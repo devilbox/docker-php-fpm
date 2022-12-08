@@ -1,0 +1,13 @@
+---
+
+check: stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)
+
+all:
+  type: npm
+  package: stylelint
+  binary: stylelint
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

@@ -137,7 +137,23 @@ The following PHP cli tools are available on the `slim` flavour:
   <td class="tool_slim_sqlite_8.2">🗸</td>
  </tr>
  <tr>
-  <td><a target="_blank" href="https://github.com/devilbox/mhsendmail/">mhsendmail</a></td>
+  <td><a target="_blank" href="https://linux.die.net/man/1/dig"><code>dig</code></a></td>
+  <td class="tool_slim_dig_5.2">🗸</td>
+  <td class="tool_slim_dig_5.3">🗸</td>
+  <td class="tool_slim_dig_5.4">🗸</td>
+  <td class="tool_slim_dig_5.5">🗸</td>
+  <td class="tool_slim_dig_5.6">🗸</td>
+  <td class="tool_slim_dig_7.0">🗸</td>
+  <td class="tool_slim_dig_7.1">🗸</td>
+  <td class="tool_slim_dig_7.2">🗸</td>
+  <td class="tool_slim_dig_7.3">🗸</td>
+  <td class="tool_slim_dig_7.4">🗸</td>
+  <td class="tool_slim_dig_8.0">🗸</td>
+  <td class="tool_slim_dig_8.1">🗸</td>
+  <td class="tool_slim_dig_8.2">🗸</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="https://github.com/devilbox/mhsendmail/"><code>mhsendmail</code></a></td>
   <td class="tool_slim_mhsendmail_5.2">🗸</td>
   <td class="tool_slim_mhsendmail_5.3">🗸</td>
   <td class="tool_slim_mhsendmail_5.4">🗸</td>
@@ -153,7 +169,7 @@ The following PHP cli tools are available on the `slim` flavour:
   <td class="tool_slim_mhsendmail_8.2">🗸</td>
  </tr>
  <tr>
-  <td><a target="_blank" href="https://mysqldump-secure.org/">mysqldump-secure</a></td>
+  <td><a target="_blank" href="https://mysqldump-secure.org/"><code>mysqldump-secure</code></a></td>
   <td class="tool_slim_mysqldump_secure_5.2">🗸</td>
   <td class="tool_slim_mysqldump_secure_5.3">🗸</td>
   <td class="tool_slim_mysqldump_secure_5.4">🗸</td>
@@ -167,6 +183,38 @@ The following PHP cli tools are available on the `slim` flavour:
   <td class="tool_slim_mysqldump_secure_8.0">🗸</td>
   <td class="tool_slim_mysqldump_secure_8.1">🗸</td>
   <td class="tool_slim_mysqldump_secure_8.2">🗸</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="https://linux.die.net/man/1/nc"><code>netcat</code></a></td>
+  <td class="tool_slim_netcat_5.2">🗸</td>
+  <td class="tool_slim_netcat_5.3">🗸</td>
+  <td class="tool_slim_netcat_5.4">🗸</td>
+  <td class="tool_slim_netcat_5.5">🗸</td>
+  <td class="tool_slim_netcat_5.6">🗸</td>
+  <td class="tool_slim_netcat_7.0">🗸</td>
+  <td class="tool_slim_netcat_7.1">🗸</td>
+  <td class="tool_slim_netcat_7.2">🗸</td>
+  <td class="tool_slim_netcat_7.3">🗸</td>
+  <td class="tool_slim_netcat_7.4">🗸</td>
+  <td class="tool_slim_netcat_8.0">🗸</td>
+  <td class="tool_slim_netcat_8.1">🗸</td>
+  <td class="tool_slim_netcat_8.2">🗸</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="https://linux.die.net/man/8/ping"><code>ping</code></a></td>
+  <td class="tool_slim_ping_5.2">🗸</td>
+  <td class="tool_slim_ping_5.3">🗸</td>
+  <td class="tool_slim_ping_5.4">🗸</td>
+  <td class="tool_slim_ping_5.5">🗸</td>
+  <td class="tool_slim_ping_5.6">🗸</td>
+  <td class="tool_slim_ping_7.0">🗸</td>
+  <td class="tool_slim_ping_7.1">🗸</td>
+  <td class="tool_slim_ping_7.2">🗸</td>
+  <td class="tool_slim_ping_7.3">🗸</td>
+  <td class="tool_slim_ping_7.4">🗸</td>
+  <td class="tool_slim_ping_8.0">🗸</td>
+  <td class="tool_slim_ping_8.1">🗸</td>
+  <td class="tool_slim_ping_8.2">🗸</td>
  </tr>
 </table>
 
@@ -183,54 +231,88 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 
 <!-- TOOLS_WORK_START -->
 
-| Tool                               | 5.2 | 5.3 | 5.4 | 5.5 | 5.6 | 7.0 | 7.1 | 7.2 | 7.3 | 7.4 | 8.0 | 8.1 | 8.2 |
-|------------------------------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
-| [angular-cli][lnk_angular-cli]     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [asgardcms][lnk_asgardcms]         |     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [codeception][lnk_codeception]     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**composer**][lnk_**composer**]   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**corepack**][lnk_**corepack**]   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [deployer][lnk_deployer]           |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [eslint][lnk_eslint]               |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [grunt-cli][lnk_grunt-cli]         |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [gulp][lnk_gulp]                   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [jq][lnk_jq]                       |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [jsonlint][lnk_jsonlint]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [lumen][lnk_lumen]                 |     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [mdl][lnk_mdl]                     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**node**][lnk_**node**]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**npm**][lnk_**npm**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**nvm**][lnk_**nvm**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [phpunit][lnk_phpunit]             |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**pip**][lnk_**pip**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [pwncat][lnk_pwncat]               |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [wpcli][lnk_wpcli]                 |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [yamllint][lnk_yamllint]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [**yarn**][lnk_**yarn**]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
-| [yq][lnk_yq]                       |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| Tool                                       | PHP 5.2 | PHP 5.3 | PHP 5.4 | PHP 5.5 | PHP 5.6 | PHP 7.0 | PHP 7.1 | PHP 7.2 | PHP 7.3 | PHP 7.4 | PHP 8.0 | PHP 8.1 | PHP 8.2 |
+|--------------------------------------------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+| [angular-cli][lnk_angular-cli]             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [asgardcms][lnk_asgardcms]                 |         |         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [awesome-ci][lnk_awesome-ci]               |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [codeception][lnk_codeception]             |         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**composer**][lnk_**composer**]           |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**corepack**][lnk_**corepack**]           |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [deployer][lnk_deployer]                   |         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [eslint][lnk_eslint]                       |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [git][lnk_git]                             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [git-flow][lnk_git-flow]                   |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [grunt-cli][lnk_grunt-cli]                 |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [gulp][lnk_gulp]                           |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [jq][lnk_jq]                               |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [jsonlint][lnk_jsonlint]                   |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [laravel-installer][lnk_laravel-installer] |         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [linkcheck][lnk_linkcheck]                 |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [lumen][lnk_lumen]                         |         |         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [mdl][lnk_mdl]                             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [mdlint][lnk_mdlint]                       |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**node**][lnk_**node**]                   |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**npm**][lnk_**npm**]                     |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**nvm**][lnk_**nvm**]                     |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [php-cs-fixer][lnk_php-cs-fixer]           |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [phpcbf][lnk_phpcbf]                       |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [phpcs][lnk_phpcs]                         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [phpmd][lnk_phpmd]                         |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [phpunit][lnk_phpunit]                     |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**pip**][lnk_**pip**]                     |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [pm2][lnk_pm2]                             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [pwncat][lnk_pwncat]                       |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [sass][lnk_sass]                           |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [shellcheck][lnk_shellcheck]               |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [stylelint][lnk_stylelint]                 |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [symfony-cli][lnk_symfony-cli]             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [vue-cli][lnk_vue-cli]                     |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [webpack-cli][lnk_webpack-cli]             |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [wp-cli][lnk_wp-cli]                       |         |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [yamllint][lnk_yamllint]                   |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [**yarn**][lnk_**yarn**]                   |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
+| [yq][lnk_yq]                               |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |    🗸    |
 
 [lnk_angular-cli]: ../php_tools/angular-cli
 [lnk_asgardcms]: ../php_tools/asgardcms
+[lnk_awesome-ci]: ../php_tools/awesome-ci
 [lnk_codeception]: ../php_tools/codeception
-[lnk_**composer**]: ../.ansible/group_vars/all/work-help.yml
-[lnk_**corepack**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**composer**]: https://getcomposer.org/
+[lnk_**corepack**]: https://nodejs.org/api/corepack.html
 [lnk_deployer]: ../php_tools/deployer
 [lnk_eslint]: ../php_tools/eslint
+[lnk_git]: ../php_tools/git
+[lnk_git-flow]: ../php_tools/git-flow
 [lnk_grunt-cli]: ../php_tools/grunt-cli
 [lnk_gulp]: ../php_tools/gulp
 [lnk_jq]: ../php_tools/jq
 [lnk_jsonlint]: ../php_tools/jsonlint
+[lnk_laravel-installer]: ../php_tools/laravel-installer
+[lnk_linkcheck]: ../php_tools/linkcheck
 [lnk_lumen]: ../php_tools/lumen
 [lnk_mdl]: ../php_tools/mdl
-[lnk_**node**]: ../.ansible/group_vars/all/work-help.yml
-[lnk_**npm**]: ../.ansible/group_vars/all/work-help.yml
-[lnk_**nvm**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_mdlint]: ../php_tools/mdlint
+[lnk_**node**]: https://nodejs.org/en/
+[lnk_**npm**]: https://nodejs.org/en/knowledge/getting-started/npm/what-is-npm/
+[lnk_**nvm**]: https://github.com/nvm-sh/nvm
+[lnk_php-cs-fixer]: ../php_tools/php-cs-fixer
+[lnk_phpcbf]: ../php_tools/phpcbf
+[lnk_phpcs]: ../php_tools/phpcs
+[lnk_phpmd]: ../php_tools/phpmd
 [lnk_phpunit]: ../php_tools/phpunit
-[lnk_**pip**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**pip**]: https://pypi.org/
+[lnk_pm2]: ../php_tools/pm2
 [lnk_pwncat]: ../php_tools/pwncat
-[lnk_wpcli]: ../php_tools/wpcli
+[lnk_sass]: ../php_tools/sass
+[lnk_shellcheck]: ../php_tools/shellcheck
+[lnk_stylelint]: ../php_tools/stylelint
+[lnk_symfony-cli]: ../php_tools/symfony-cli
+[lnk_vue-cli]: ../php_tools/vue-cli
+[lnk_webpack-cli]: ../php_tools/webpack-cli
+[lnk_wp-cli]: ../php_tools/wp-cli
 [lnk_yamllint]: ../php_tools/yamllint
-[lnk_**yarn**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**yarn**]: https://yarnpkg.com/cli/install
 [lnk_yq]: ../php_tools/yq
 
 <!-- TOOLS_WORK_END -->

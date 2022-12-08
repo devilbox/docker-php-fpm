@@ -75,7 +75,7 @@ RUN set -eux \
 {%- endif %}
 
 ###
-### Add common build tools
+### Add common tools
 ###
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -89,6 +89,32 @@ RUN set -eux \
 {% endif %}
 		redis-tools \
 		sqlite3
+
+{% set tools_apt = [] -%}
+{%- for tool in base_software_enabled -%}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, base_software_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, base_software_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if tools_apt -%}
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
 
 ###
 ### Devilbox required cli tools from group_vars (slim.yml)
@@ -225,6 +251,32 @@ RUN set -eux \
 ###
 FROM devilbox/php-fpm:{{ php_version }}-prod as devilbox-slim-base
 ARG ARCH
+
+{% set tools_apt = [] -%}
+{%- for tool in base_software_enabled -%}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, base_software_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, base_software_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if tools_apt -%}
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
 
 ###
 ### Copy shared libraries (required by MongoDB, MySQL, PostgreSQL and Redis)

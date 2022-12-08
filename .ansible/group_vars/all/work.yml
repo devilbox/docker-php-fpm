@@ -6,18 +6,35 @@
 tools_enabled:
   - angular-cli
   - asgardcms
+  - eslint
+  - git
+  - jsonlint
+  - mdl
+  - awesome-ci
   - codeception
   - deployer
-  - eslint
+  - git-flow
   - grunt-cli
   - gulp
   - jq
-  - jsonlint
+  - laravel-installer
+  - linkcheck
   - lumen
-  - mdl
+  - mdlint
+  - php-cs-fixer
+  - phpcbf
+  - phpcs
+  - phpmd
   - phpunit
+  - pm2
   - pwncat
-  - wpcli
+  - sass
+  - shellcheck
+  - stylelint
+  - symfony-cli
+  - vue-cli
+  - webpack-cli
+  - wp-cli
   - yamllint
   - yq
 
@@ -51,42 +68,6 @@ tools_available:
       run_dep: []
       pre:
       post:
-  codeception:
-    disabled: [5.2, 5.3]
-    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)
-    all:
-      type: composer
-      composer: 2
-      package: codeception/codeception
-      # version:
-      flags:
-      binary: codecept
-      build_dep: []
-      run_dep: []
-      # pre:
-      # post:
-  deployer:
-    disabled: [5.2, 5.3]
-    check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)
-    all:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
-      post: chmod +x /usr/local/bin/dep
-    7.1:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
-    7.0:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
-    5.6:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
-    5.5:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
-    5.4:
-      type: custom
-      command: curl -sS -k -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
   eslint:
     disabled: []
     check: eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)
@@ -99,36 +80,12 @@ tools_available:
       run_dep: []
       pre:
       post:
-  grunt-cli:
+  git:
     disabled: []
-    check: grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)
-    all:
-      type: npm
-      package: "grunt-cli"
-      binary: grunt
-      version:
-      build_dep: []
-      run_dep: []
-      pre:
-      post:
-  gulp:
-    disabled: []
-    check: gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)
-    all:
-      type: npm
-      package: gulp
-      binary: gulp
-      version:
-      build_dep: []
-      run_dep: []
-      pre:
-      post:
-  jq:
-    disabled: []
-    check: jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)
+    check: git --version 2>&1 | grep -E '[0-9][.0-9]+' || (git --version; false)
     all:
       type: apt
-      package: jq
+      package: git
   jsonlint:
     disabled: []
     check: jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)
@@ -141,20 +98,6 @@ tools_available:
       run_dep: []
       pre:
       post:
-  lumen:
-    disabled: [5.2, 5.3, 5.4]
-    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' || (lumen --version; false)
-    all:
-      type: composer
-      composer: 2
-      package: laravel/lumen-installer
-      # version:
-      flags:
-      binary: lumen
-      build_dep: []
-      run_dep: []
-      # pre:
-      # post:
   mdl:
     disabled: []
     check: mdl --version | grep -E '[.0-9]+' || (mdl --version; false)
@@ -206,6 +149,234 @@ tools_available:
       version: 0.5.0
       pre: |
         gem install mixlib-config -v 2.2.4 \
+  awesome-ci:
+    disabled: []
+    check: regex-grep --version | grep -E '[0-9][.0-9]+' || (regex-grep --version; false)
+    all:
+      type: custom
+      command: |
+        git clone https://github.com/cytopia/awesome-ci.git /tmp/awesome-ci \
+        && cd /tmp/awesome-ci \
+        && git checkout $(git describe --abbrev=0 --tags) \
+        && ./configure --prefix=/usr/local \
+        && make install \
+        && cd / \
+        && rm -rf /tmp/awesome-ci \
+      # moreutils: isutf8
+      run_dep: [dos2unix, file, moreutils]
+  codeception:
+    disabled: [5.2, 5.3]
+    check: codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)
+    all:
+      type: composer
+      composer: 2
+      package: codeception/codeception
+      # version:
+      flags:
+      binary: codecept
+      build_dep: []
+      run_dep: []
+      # pre:
+      # post:
+  deployer:
+    disabled: [5.2, 5.3]
+    check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
+    7.1:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+    7.0:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+    5.6:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+    5.5:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+    5.4:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
+  git-flow:
+    disabled: []
+    check: git-flow version 2>&1 | grep -E '[0-9][.0-9]+' || (git-flow version; false)
+    all:
+      type: custom
+      command: |
+        git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
+        && cd /tmp/gitflow \
+        && make install \
+        && cd / && rm -rf /tmp/gitflow \
+  grunt-cli:
+    disabled: []
+    check: grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)
+    all:
+      type: npm
+      package: "grunt-cli"
+      binary: grunt
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  gulp:
+    disabled: []
+    check: gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)
+    all:
+      type: npm
+      package: gulp
+      binary: gulp
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  jq:
+    disabled: []
+    check: jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)
+    all:
+      type: apt
+      package: jq
+  laravel-installer:
+    disabled: [5.2, 5.3]
+    check: laravel --version | grep -E '^Laravel Installer\s[0-9][.0-9]+$' || (laravel --version; false)
+    all:
+      type: composer
+      composer: 2
+      package: laravel/installer
+      # version:
+      flags:
+      binary: bin/laravel
+      build_dep: []
+      run_dep: []
+    7.2:
+      type: composer
+      version: 4.0.0
+    7.1:
+      type: composer
+      binary: laravel
+      version: 2.3.0
+    7.0:
+      type: composer
+      binary: laravel
+      version: 2.2.0
+    5.6:
+      type: composer
+      binary: laravel
+      version: 2.2.0
+    5.5:
+      type: composer
+      binary: laravel
+      version: 2.2.0
+    5.4:
+      type: composer
+      binary: laravel
+      version: 1.3.7
+  linkcheck:
+    disabled: []
+    check: linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)
+    all:
+      type: custom
+      command: curl -sS -L --fail -o /usr/local/bin/linkcheck https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck
+      post: chmod +x /usr/local/bin/linkcheck
+      build_dep: []
+      run_dep: []
+  lumen:
+    disabled: [5.2, 5.3, 5.4]
+    check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' || (lumen --version; false)
+    all:
+      type: composer
+      composer: 2
+      package: laravel/lumen-installer
+      # version:
+      flags:
+      binary: lumen
+      build_dep: []
+      run_dep: []
+      # pre:
+      # post:
+  mdlint:
+    disabled: []
+    check: mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)
+    all:
+      type: npm
+      package: mdlint
+      binary: mdlint
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  php-cs-fixer:
+    disabled: [5.2]
+    check: php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' || (php-cs-fixer --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail -L "${PHP_CS_FIXER_URL}" -o /usr/local/bin/php-cs-fixer
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v3.phar"
+      post: chmod +x /usr/local/bin/php-cs-fixer
+    7.3:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v2.phar"
+    7.2:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v2.phar"
+    7.1:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v2.phar"
+    7.0:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v2.phar"
+    5.6:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://cs.symfony.com/download/php-cs-fixer-v2.phar"
+    5.5:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar"
+    5.4:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar"
+    5.3:
+      type: custom
+      pre: PHP_CS_FIXER_URL="https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar"
+  phpcbf:
+    disabled: []
+    check: phpcbf --version | grep -E 'version [0-9][.0-9]+' || (phpcbf --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail -L "${PHPCBF_URL}" -o /usr/local/bin/phpcbf
+      pre: PHPCBF_URL="https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar"
+      post: chmod +x /usr/local/bin/phpcbf
+    5.3:
+      type: custom
+      pre: PHPCBF_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar"
+    5.2:
+      type: custom
+      pre: PHPCBF_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar"
+  phpcs:
+    disabled: []
+    check: phpcs --version | grep -E 'version [0-9][.0-9]+' || (phpcs --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail -L "${PHPCS_URL}" -o /usr/local/bin/phpcs
+      pre: PHPCS_URL="https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar"
+      post: chmod +x /usr/local/bin/phpcs
+    5.3:
+      type: custom
+      pre: PHPCS_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar"
+    5.2:
+      type: custom
+      pre: PHPCS_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar"
+  phpmd:
+    disabled: [5.2]
+    check: phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' || (phpmd --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail https://phpmd.org/static/latest/phpmd.phar -L -o /usr/local/bin/phpmd
+      post: chmod +x /usr/local/bin/phpmd
   phpunit:
     disabled: [5.2]
     check: phpunit --version | grep -iE '^PHPUnit\s[0-9][.0-9]+' || (phpunit --version; false)
@@ -243,6 +414,18 @@ tools_available:
     5.3:
       type: custom
       pre: PHP_UNIT_VERSION="4"
+  pm2:
+    disabled: []
+    check: pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' || (pm2 --no-daemon --version; false)
+    all:
+      type: npm
+      package: pm2
+      binary: pm2
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
   pwncat:
     disabled: []
     check: pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)
@@ -254,8 +437,69 @@ tools_available:
       pre:
       post: |
         ln -s pwncat /usr/local/bin/netcat \
-        && ln -s pwncat /usr/local/bin/nc \
-  wpcli:
+  sass:
+    disabled: []
+    check: sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)
+    all:
+      type: npm
+      package: sass
+      binary: sass
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  shellcheck:
+    disabled: []
+    check: shellcheck --version | grep -E '[0-9][.0-9]+' || (shellcheck --version; false)
+    all:
+      type: apt
+      package: shellcheck
+  stylelint:
+    disabled: []
+    check: stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)
+    all:
+      type: npm
+      package: stylelint
+      binary: stylelint
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  symfony-cli:
+    disabled: []
+    check: symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)
+    all:
+      type: custom
+      command: curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin
+      build_dep: []
+      run_dep: []
+  vue-cli:
+    disabled: []
+    check: vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)
+    all:
+      type: npm
+      package: "@vue/cli"
+      binary: vue
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  webpack-cli:
+    disabled: []
+    check: webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)
+    all:
+      type: npm
+      package: webpack-cli
+      binary: webpack-cli
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  wp-cli:
     disabled: [5.2]
     check: wp --allow-root --version | grep -E '[0-9][.0-9]+' || (wp --allow-root --version; false)
     all:

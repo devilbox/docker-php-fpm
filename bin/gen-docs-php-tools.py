@@ -35,13 +35,13 @@ PHP_VERSIONS = [
 ]
 
 DEFAULT_TOOLS = [
-    {"name": "**composer**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**corepack**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**nvm**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**npm**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**node**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**yarn**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
-    {"name": "**pip**", "dir": "../.ansible/group_vars/all/work-help.yml", "exclude": []},
+    {"name": "**composer**", "dir": "https://getcomposer.org/", "exclude": []},
+    {"name": "**corepack**", "dir": "https://nodejs.org/api/corepack.html", "exclude": []},
+    {"name": "**nvm**", "dir": "https://github.com/nvm-sh/nvm", "exclude": []},
+    {"name": "**npm**", "dir": "https://nodejs.org/en/knowledge/getting-started/npm/what-is-npm/", "exclude": []},
+    {"name": "**node**", "dir": "https://nodejs.org/en/", "exclude": []},
+    {"name": "**yarn**", "dir": "https://yarnpkg.com/cli/install", "exclude": []},
+    {"name": "**pip**", "dir": "https://pypi.org/", "exclude": []},
 ]
 
 
@@ -115,7 +115,7 @@ def get_tools() -> List[Dict[str, Any]]:
 
 def print_terminal(tools: List[Dict[str, Any]]) -> None:
     """Print directory tools."""
-    padding = 15
+    padding = 18
     # First Row
     print("| {name: <{padding}}| ".format(name="Tool", padding=padding), end="")
     print(" | ".join(PHP_VERSIONS), end="")
@@ -137,16 +137,16 @@ def print_terminal(tools: List[Dict[str, Any]]) -> None:
 
 def get_markdown(tools: List[Dict[str, Any]]) -> str:
     """Get markdown tools table."""
-    padding = 35
+    padding = 43
 
     # First Row
-    markdown = "| {name: <{padding}}| ".format(name="Tool", padding=padding)
-    markdown += " | ".join(PHP_VERSIONS)
+    markdown = "| {name: <{padding}}| PHP ".format(name="Tool", padding=padding)
+    markdown += " | PHP ".join(PHP_VERSIONS)
     markdown += " |\n"
     # Second Row
     markdown += "|{name:-<{padding}}-|".format(name="", padding=padding)
     for php in PHP_VERSIONS:
-        markdown += "-----|"
+        markdown += "---------|"
     markdown += "\n"
     for tool in tools:
         markdown += "| {name: <{padding}}|".format(
@@ -154,9 +154,9 @@ def get_markdown(tools: List[Dict[str, Any]]) -> str:
         )
         for php in PHP_VERSIONS:
             if str(php) in tool["exclude"]:
-                markdown += "     |"
+                markdown += "         |"
             else:
-                markdown += "  ✓  |"
+                markdown += "    🗸    |"
         markdown += "\n"
 
     markdown += "\n"

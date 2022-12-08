@@ -74,6 +74,9 @@ base_apt_repositories_enabled:
 # Software to install (in defined order)
 # -------------------------------------------------------------------------------------------------
 base_software_enabled:
+  - dig     # required by Devilbox Intranet
+  - netcat  # required by Devilbox Intranet
+  - ping    # required by Devilbox Intranet
   - blackfire
   - mhsendmail
   - mongo_client
@@ -252,6 +255,33 @@ base_apt_repositories_available:
 #   post:      [optional] Run command after 'command:' statement
 #
 base_software_available:
+
+  ###
+  ### dig
+  ###
+  dig:
+    check: dig -v 2>&1 | grep -E '[0-9]\.[0-9]'
+    all:
+      type: apt
+      package: dnsutils
+
+  ###
+  ### netcat
+  ###
+  netcat:
+    check: nc -h 2>&1 | grep netcat
+    all:
+      type: apt
+      package: netcat-openbsd
+
+  ###
+  ### ping
+  ###
+  ping:
+    check: ping -V | grep ^ping
+    all:
+      type: apt
+      package: iputils-ping
 
   ###
   ### Blackfire

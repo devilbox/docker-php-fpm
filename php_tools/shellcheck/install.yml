@@ -1,0 +1,7 @@
+---
+
+check: shellcheck --version | grep -E '[0-9][.0-9]+' || (shellcheck --version; false)
+
+all:
+  type: apt
+  package: shellcheck

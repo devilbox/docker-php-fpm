@@ -1,0 +1,13 @@
+---
+
+check: mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)
+
+all:
+  type: npm
+  package: mdlint
+  binary: mdlint
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

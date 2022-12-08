@@ -1,0 +1,11 @@
+---
+
+check: git-flow version 2>&1 | grep -E '[0-9][.0-9]+' || (git-flow version; false)
+
+all:
+  type: custom
+  command: |
+    git clone https://github.com/petervanderdoes/gitflow-avh /tmp/gitflow \
+    && cd /tmp/gitflow \
+    && make install \
+    && cd / && rm -rf /tmp/gitflow \
