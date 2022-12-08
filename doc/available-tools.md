@@ -14,6 +14,9 @@ Tools |
 <h2><img name="Documentation" title="Documentation" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Documentation</h2>
 
 
+:information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**<br/>
+
+
 ### PHP Tools (`slim`)
 
 The following PHP cli tools are available on the `slim` flavour:
@@ -176,6 +179,64 @@ The following PHP cli tools are available on the `slim` flavour:
 Additionally to all of the `slim` tools shown above, the following PHP cli tools are available on the `work` flavour:
 
 > :information_source: Click on any tool name to find out what they are
+
+
+<!-- TOOLS_WORK_START -->
+
+| Tool                               | 5.2 | 5.3 | 5.4 | 5.5 | 5.6 | 7.0 | 7.1 | 7.2 | 7.3 | 7.4 | 8.0 | 8.1 | 8.2 |
+|------------------------------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| [angular-cli][lnk_angular-cli]     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [asgardcms][lnk_asgardcms]         |     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [codeception][lnk_codeception]     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**composer**][lnk_**composer**]   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**corepack**][lnk_**corepack**]   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [deployer][lnk_deployer]           |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [eslint][lnk_eslint]               |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [grunt-cli][lnk_grunt-cli]         |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [gulp][lnk_gulp]                   |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [jq][lnk_jq]                       |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [jsonlint][lnk_jsonlint]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [lumen][lnk_lumen]                 |     |     |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [mdl][lnk_mdl]                     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**node**][lnk_**node**]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**npm**][lnk_**npm**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**nvm**][lnk_**nvm**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [phpunit][lnk_phpunit]             |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**pip**][lnk_**pip**]             |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [pwncat][lnk_pwncat]               |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [wpcli][lnk_wpcli]                 |     |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [yamllint][lnk_yamllint]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [**yarn**][lnk_**yarn**]           |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+| [yq][lnk_yq]                       |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |  ✓  |
+
+[lnk_angular-cli]: ../php_tools/angular-cli
+[lnk_asgardcms]: ../php_tools/asgardcms
+[lnk_codeception]: ../php_tools/codeception
+[lnk_**composer**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**corepack**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_deployer]: ../php_tools/deployer
+[lnk_eslint]: ../php_tools/eslint
+[lnk_grunt-cli]: ../php_tools/grunt-cli
+[lnk_gulp]: ../php_tools/gulp
+[lnk_jq]: ../php_tools/jq
+[lnk_jsonlint]: ../php_tools/jsonlint
+[lnk_lumen]: ../php_tools/lumen
+[lnk_mdl]: ../php_tools/mdl
+[lnk_**node**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**npm**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_**nvm**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_phpunit]: ../php_tools/phpunit
+[lnk_**pip**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_pwncat]: ../php_tools/pwncat
+[lnk_wpcli]: ../php_tools/wpcli
+[lnk_yamllint]: ../php_tools/yamllint
+[lnk_**yarn**]: ../.ansible/group_vars/all/work-help.yml
+[lnk_yq]: ../php_tools/yq
+
+<!-- TOOLS_WORK_END -->
+
+
+### PHP Tools (`work`) - deprecated
 
 > **Disclaimer:** It is currently not clear what tools are available in which PHP image (version-dependent). This documentation was done by hand and work has currently started to automate this and keep exact tools up-to-date for each of the provided PHP version.
 

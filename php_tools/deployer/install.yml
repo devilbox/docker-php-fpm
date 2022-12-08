@@ -1,0 +1,28 @@
+---
+
+check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)
+
+all:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+  post: chmod +x /usr/local/bin/dep
+
+7.1:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+
+7.0:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+
+5.6:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+
+5.5:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+
+5.4:
+  type: custom
+  command: curl -sS -k -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep

@@ -1,7 +1,7 @@
 ---
 
 # The name of the module
-name: angular_cli
+name: gulp
 
 # Exclude module build/installation for the following PHP versions
 exclude: []

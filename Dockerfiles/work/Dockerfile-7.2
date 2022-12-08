@@ -258,7 +258,7 @@ RUN set -eux \
 ### Install defined php_tools
 ###
 
-# -------------------- (npm) angular_cli --------------------
+# -------------------- (npm) angular-cli --------------------
 RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @angular/cli' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/ng /usr/local/bin/ \
@@ -281,6 +281,13 @@ RUN set -eux \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)	\
 	&& true
 
+# -------------------- (custom) deployer --------------------
+RUN set -eux \
+	&& curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep	\
+	&& chmod +x /usr/local/bin/dep	\
+	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)	\
+	&& true
+
 # -------------------- (npm) eslint --------------------
 RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force eslint' devilbox \
@@ -288,9 +295,30 @@ RUN set -eux \
 	&& eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)	\
 	&& true
 
+# -------------------- (npm) grunt-cli --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt-cli' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/grunt /usr/local/bin/ \
+	&& grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)	\
+	&& true
+
+# -------------------- (npm) gulp --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force gulp' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/gulp /usr/local/bin/ \
+	&& gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)	\
+	&& true
+
 # -------------------- (apt) jq --------------------
 RUN set -eux \
 	&& jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)	\
+	&& true
+
+# -------------------- (npm) jsonlint --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/jsonlint /usr/local/bin/ \
+	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
 	&& true
 
 # -------------------- (composer) lumen --------------------
@@ -431,7 +459,7 @@ COPY --from=devilbox-work-tools-builder /var/lib/gems /var/lib/gems
 FROM devilbox-work-tools as devilbox-work-tools-test
 
 
-# -------------------- (npm) angular_cli --------------------
+# -------------------- (npm) angular-cli --------------------
 RUN set -eux \
 	&& ng version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' || (ng version; false)	\
 	&& true
@@ -446,14 +474,34 @@ RUN set -eux \
 	&& codecept --version 2>/dev/null | grep -E '^Codeception(\sversion)?\s[0-9][.0-9]+$' || (codecept --version; false)	\
 	&& true
 
+# -------------------- (custom) deployer --------------------
+RUN set -eux \
+	&& dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)	\
+	&& true
+
 # -------------------- (npm) eslint --------------------
 RUN set -eux \
 	&& eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)	\
 	&& true
 
+# -------------------- (npm) grunt-cli --------------------
+RUN set -eux \
+	&& grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)	\
+	&& true
+
+# -------------------- (npm) gulp --------------------
+RUN set -eux \
+	&& gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)	\
+	&& true
+
 # -------------------- (apt) jq --------------------
 RUN set -eux \
 	&& jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)	\
+	&& true
+
+# -------------------- (npm) jsonlint --------------------
+RUN set -eux \
+	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
 	&& true
 
 # -------------------- (composer) lumen --------------------

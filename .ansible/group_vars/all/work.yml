@@ -4,11 +4,15 @@
 
 # The following specifies the order in which tools are being installed.
 tools_enabled:
-  - angular_cli
+  - angular-cli
   - asgardcms
   - codeception
+  - deployer
   - eslint
+  - grunt-cli
+  - gulp
   - jq
+  - jsonlint
   - lumen
   - mdl
   - phpunit
@@ -20,7 +24,7 @@ tools_enabled:
 
 # The following specifies how tools are being installed.
 tools_available:
-  angular_cli:
+  angular-cli:
     disabled: []
     check: ng version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' || (ng version; false)
     all:
@@ -61,6 +65,28 @@ tools_available:
       run_dep: []
       # pre:
       # post:
+  deployer:
+    disabled: [5.2, 5.3]
+    check: dep --version 2>/dev/null | grep -Ei 'deployer\s*(version\s*)?[0-9][.0-9]+' || (dep --version; false)
+    all:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/deployer.phar -L -o /usr/local/bin/dep
+      post: chmod +x /usr/local/bin/dep
+    7.1:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+    7.0:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v6.7.0/deployer.phar -L -o /usr/local/bin/dep
+    5.6:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+    5.5:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v4.3.4/deployer.phar -L -o /usr/local/bin/dep
+    5.4:
+      type: custom
+      command: curl -sS -k -L --fail https://deployer.org/releases/v3.3.0/deployer.phar -L -o /usr/local/bin/dep
   eslint:
     disabled: []
     check: eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)
@@ -73,12 +99,48 @@ tools_available:
       run_dep: []
       pre:
       post:
+  grunt-cli:
+    disabled: []
+    check: grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)
+    all:
+      type: npm
+      package: "grunt-cli"
+      binary: grunt
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
+  gulp:
+    disabled: []
+    check: gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)
+    all:
+      type: npm
+      package: gulp
+      binary: gulp
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
   jq:
     disabled: []
     check: jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)
     all:
       type: apt
       package: jq
+  jsonlint:
+    disabled: []
+    check: jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)
+    all:
+      type: npm
+      package: jsonlint
+      binary: jsonlint
+      version:
+      build_dep: []
+      run_dep: []
+      pre:
+      post:
   lumen:
     disabled: [5.2, 5.3, 5.4]
     check: lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' || (lumen --version; false)
