@@ -305,7 +305,7 @@ RUN set -eux \
 
 # Fix php.ini settings for enabled extensions
 RUN set -eux \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/*
+	&& find "$(php -r 'echo ini_get("extension_dir");')/" -type f -exec chmod +x {} \;
 
 # Fix oracle dir for images that don't have oci installed
 RUN set -eux \
