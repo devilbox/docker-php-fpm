@@ -4,6 +4,23 @@
 ## Unreleased
 
 
+## Release 0.145
+
+This is a massive restructuring release, which adds another layer on top of Ansible to easily manage/edit/add PHP tools and to configure their respective order of building and installing.
+
+Additionally it introduces a new flavour: `slim` which is an intermediated stage between `prod` and `work`. It allows for a slim image with only required cli tools to work with the Devilbox.
+
+### Added
+- New PHP Flavour: `slim`
+- Added `mhsendmail` for `arm64` architecture
+- Added mechanism to easily build custom images with custom set of PHP tools
+- Added automated PHP tools dependency resolver (order of built is always correct)
+- Added tons of documentation
+
+### Changed
+- Split out PHP tools into separate directories
+
+
 ## Release 0.144
 
 This is a massive restructuring release, which adds another layer on top of Ansible to easily manage/edit/add PHP extensions and to configure their respective order of building and loading.
