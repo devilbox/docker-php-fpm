@@ -9,6 +9,24 @@ FROM devilbox/php-fpm:7.4-base as builder
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		ghostscript \
+		libevent-dev \
+		libfreetype6-dev \
+		libjpeg-dev \
+		liblz4-dev \
+		liblzf-dev \
+		libmagickwand-dev \
+		libmariadb-dev \
+		libmemcached-dev \
+		libpng-dev \
+		libpq-dev \
+		libsasl2-dev \
+		libssl-dev \
+		libvpx-dev \
+		libwebp-dev \
+		libxpm-dev \
+		libzstd-dev \
+		zlib1g-dev \
 # Build tools
 		autoconf \
 		bison \
@@ -47,6 +65,215 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: bcmath --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
+	&& true
+
+
+# -------------------- Installing PHP Extension: exif --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gd --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure gd --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
+	&& true
+
+
+# -------------------- Installing PHP Extension: imagick --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install imagick \
+	# Enabling
+	&& docker-php-ext-enable imagick \
+	# Generic post-command
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: igbinary --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install igbinary \
+	# Enabling
+	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcached --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached \
+	# Enabling
+	&& docker-php-ext-enable memcached \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongodb --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install mongodb \
+	# Enabling
+	&& docker-php-ext-enable mongodb \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysqli --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: apcu --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install apcu \
+	# Enabling
+	&& docker-php-ext-enable apcu \
+	&& true
+
+
+# -------------------- Installing PHP Extension: lz4 --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/kjdev/php-ext-lz4 /tmp/lz4 \
+	&& cd /tmp/lz4 \
+	# Custom:       Branch
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-lz4 --with-lz4-includedir=/usr \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+	# Enabling
+	&& docker-php-ext-enable lz4 \
+	&& true
+
+
+# -------------------- Installing PHP Extension: lzf --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install lzf \
+	# Enabling
+	&& docker-php-ext-enable lzf \
+	&& true
+
+
+# -------------------- Installing PHP Extension: zstd --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/kjdev/php-ext-zstd /tmp/zstd \
+	&& cd /tmp/zstd \
+	# Custom:       Branch
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	# Default:      Install command
+	&& phpize \
+	&& ./configure  --enable-zstd --with-libzstd \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
+	# Enabling
+	&& docker-php-ext-enable zstd \
+	&& true
+
+
+# -------------------- Installing PHP Extension: redis --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& if [ -f /usr/include/liblzf/lzf.h ]; then \
+  ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+fi \
+ \
+	# Installation: Generic
+	# Type:         GIT extension
+	&& git clone https://github.com/phpredis/phpredis /tmp/redis \
+	&& cd /tmp/redis \
+	# Custom:       Branch
+	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
+	# Custom:       Install command
+	&& REDIS_ARGS=""; \
+if php -m | grep -q "igbinary"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+fi; \
+if php -m | grep -q "lz4"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+fi; \
+if php -m | grep -q "lzf"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-lzf --with-liblzf=/usr"; \
+fi; \
+if php -m | grep -q "msgpack"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+fi; \
+if php -m | grep -q "zstd"; then \
+  REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+fi; \
+phpize \
+&& ./configure --enable-redis ${REDIS_ARGS} \
+&& make -j$(getconf _NPROCESSORS_ONLN) \
+&& make install \
+ \
+	# Enabling
+	&& docker-php-ext-enable redis \
+	&& true
+
 
 
 
@@ -95,6 +322,21 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 7.4-mods"
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	ghostscript \
+	libevent-2.1-7 \
+	libfreetype6 \
+	libjpeg62-turbo \
+	liblz4-1 \
+	liblzf1 \
+	libmagickwand-6.q16-6 \
+	libmariadbd19 \
+	libmemcachedutil2 \
+	libpng16-16 \
+	libpq5 \
+	libvpx6 \
+	libwebp6 \
+	libxpm4 \
+	libzstd1 \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -115,6 +357,21 @@ COPY --from=builder /usr/lib/oracle/ /usr/lib/oracle/
 ###
 ### Post Install executions
 ###
+RUN set -eux \
+	# ---------- imagick ----------
+	&& sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+&& sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+  \
+	&& true
+
+
 ###
 ### Verify
 ###
@@ -134,8 +391,38 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
-	&& php -m | grep -oiE '^hash$' \
-	&& php-fpm -m | grep -oiE '^hash$' \
+	&& php -m | grep -oiE '^bcmath$' \
+	&& php-fpm -m | grep -oiE '^bcmath$' \
+	&& php -m | grep -oiE '^mbstring$' \
+	&& php-fpm -m | grep -oiE '^mbstring$' \
+	&& php -m | grep -oiE '^exif$' \
+	&& php-fpm -m | grep -oiE '^exif$' \
+	&& php -m | grep -oiE '^gd$' \
+	&& php-fpm -m | grep -oiE '^gd$' \
+	&& php -m | grep -oiE '^imagick$' \
+	&& php-fpm -m | grep -oiE '^imagick$' \
+	&& php -m | grep -oiE '^igbinary$' \
+	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
+	&& php -m | grep -oiE '^memcached$' \
+	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mongodb$' \
+	&& php-fpm -m | grep -oiE '^mongodb$' \
+	&& php -m | grep -oiE '^mysqli$' \
+	&& php-fpm -m | grep -oiE '^mysqli$' \
+	&& php -m | grep -oiE '^pgsql$' \
+	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^apcu$' \
+	&& php-fpm -m | grep -oiE '^apcu$' \
+	&& php -m | grep -oiE '^lz4$' \
+	&& php-fpm -m | grep -oiE '^lz4$' \
+	&& php -m | grep -oiE '^lzf$' \
+	&& php-fpm -m | grep -oiE '^lzf$' \
+	&& php -m | grep -oiE '^zstd$' \
+	&& php-fpm -m | grep -oiE '^zstd$' \
+	&& php -m | grep -oiE '^redis$' \
+	&& php-fpm -m | grep -oiE '^redis$' \
 	&& true
 
 

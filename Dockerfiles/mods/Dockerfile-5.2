@@ -9,6 +9,18 @@ FROM devilbox/php-fpm:5.2-base as builder
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		libenchant-dev \
+		libevent-dev \
+		libfreetype6-dev \
+		libjpeg-dev \
+		libmemcached-dev \
+		libmysqlclient-dev \
+		libpng-dev \
+		libpq-dev \
+		libvpx-dev \
+		libwebp-dev \
+		libxpm-dev \
+		zlib1g-dev \
 # Build tools
 		autoconf \
 		bison \
@@ -47,6 +59,117 @@ RUN set -eux \
 	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini ]; then \
 			echo "ffi.enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini; \
 		fi
+
+# -------------------- Installing PHP Extension: bcmath --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) bcmath \
+	&& true
+
+
+# -------------------- Installing PHP Extension: enchant --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& echo "/usr" | pecl install enchant \
+	# Enabling
+	&& docker-php-ext-enable enchant \
+	&& true
+
+
+# -------------------- Installing PHP Extension: exif --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) exif \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gd --------------------
+RUN set -eux \
+	# Version specific pre-command
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+mkdir /usr/include/freetype2/freetype && \
+ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+ \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure gd --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gd \
+	&& true
+
+
+# -------------------- Installing PHP Extension: igbinary --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install igbinary-2.0.7 \
+	# Enabling
+	&& docker-php-ext-enable igbinary \
+	&& true
+
+
+# -------------------- Installing PHP Extension: msgpack --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install msgpack-0.5.7 \
+	# Enabling
+	&& docker-php-ext-enable msgpack \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcached --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcached-2.1.0 \
+	# Enabling
+	&& docker-php-ext-enable memcached \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysqli --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysqli \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: redis --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& if [ -f /usr/include/liblzf/lzf.h ]; then \
+  ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+fi \
+ \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install redis-2.2.7 \
+	# Enabling
+	&& docker-php-ext-enable redis \
+	&& true
+
 
 
 
@@ -95,6 +218,17 @@ LABEL "org.opencontainers.image.description"="PHP-FPM 5.2-mods"
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	libenchant1c2a \
+	libevent-2.0-5 \
+	libfreetype6 \
+	libjpeg62-turbo \
+	libmemcachedutil2 \
+	libmysqlclient18 \
+	libpng12-0 \
+	libpq5 \
+	libvpx1 \
+	libwebp5 \
+	libxpm4 \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -134,8 +268,28 @@ RUN set -eux \
 	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
 	&& rm -f /usr/local/etc/php/php.ini \
 	\
-	&& php -m | grep -oiE '^hash$' \
-	&& php-fpm -m | grep -oiE '^hash$' \
+	&& php -m | grep -oiE '^bcmath$' \
+	&& php-fpm -m | grep -oiE '^bcmath$' \
+	&& php -m | grep -oiE '^enchant$' \
+	&& php-fpm -m | grep -oiE '^enchant$' \
+	&& php -m | grep -oiE '^mbstring$' \
+	&& php-fpm -m | grep -oiE '^mbstring$' \
+	&& php -m | grep -oiE '^exif$' \
+	&& php-fpm -m | grep -oiE '^exif$' \
+	&& php -m | grep -oiE '^gd$' \
+	&& php-fpm -m | grep -oiE '^gd$' \
+	&& php -m | grep -oiE '^igbinary$' \
+	&& php-fpm -m | grep -oiE '^igbinary$' \
+	&& php -m | grep -oiE '^msgpack$' \
+	&& php-fpm -m | grep -oiE '^msgpack$' \
+	&& php -m | grep -oiE '^memcached$' \
+	&& php-fpm -m | grep -oiE '^memcached$' \
+	&& php -m | grep -oiE '^mysqli$' \
+	&& php-fpm -m | grep -oiE '^mysqli$' \
+	&& php -m | grep -oiE '^pgsql$' \
+	&& php-fpm -m | grep -oiE '^pgsql$' \
+	&& php -m | grep -oiE '^redis$' \
+	&& php-fpm -m | grep -oiE '^redis$' \
 	&& true
 
 

@@ -4,11 +4,527 @@
 
 # The following specifies the order in which modules are being built.
 extensions_enabled:
-  - hash
+  - bcmath
+  - enchant
+  - mbstring
+  - exif
+  - gd
+  - imagick
+  - igbinary
+  - msgpack
+  - memcached
+  - mongodb
+  - mysqli
+  - pgsql
+  - apcu
+  - lz4
+  - lzf
+  - zstd
+  - redis
 
 
 # The following specifies how modules are being built.
 extensions_available:
-  hash:
+  bcmath:
     disabled: []
-    already_avail: "{{ php_all_versions }}"
+    all:
+      type: builtin
+  enchant:
+    disabled: [7.3, 7.4]
+    all:
+      type: builtin
+      build_dep: [libenchant-2-dev]
+      run_dep: [libenchant-2-2]
+    7.2:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.1:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    7.0:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.6:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.5:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.4:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.3:
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+    5.2:
+      type: pecl
+      command: echo "/usr" | pecl install enchant
+      build_dep: [libenchant-dev]
+      run_dep: [libenchant1c2a]
+  mbstring:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"  # Available by default
+  exif:
+    disabled: []
+    all:
+      type: builtin
+  gd:
+    disabled: []
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6]
+    8.2:
+      type: builtin
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev, libavif-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6, libavif9]
+    8.1:
+      type: builtin
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype --with-avif
+      build_dep: [libpng-dev, libjpeg-dev, libxpm-dev, libvpx-dev, zlib1g-dev, libfreetype6-dev, libwebp-dev, libavif-dev]
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx6, libfreetype6, libwebp6, libavif9]
+    8.0:
+      type: builtin
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
+    7.4:
+      type: builtin
+      configure: --enable-gd --with-webp --with-jpeg --with-xpm --with-freetype
+    7.3:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
+    7.2:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
+    7.1:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx5, libfreetype6, libwebp6]
+    7.0:
+      type: builtin
+      configure: --with-gd --with-webp-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+    5.6:
+      type: builtin
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng16-16, libjpeg62-turbo, libxpm4, libvpx4, libfreetype6, libwebp6]
+    5.5:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
+    5.4:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-vpx-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
+    5.3:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
+    5.2:
+      type: builtin
+      pre: |
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libjpeg.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libpng.* /usr/lib/ && \
+        ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libXpm.* /usr/lib/ && \
+        mkdir /usr/include/freetype2/freetype && \
+        ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h \
+      configure: --with-gd --with-jpeg-dir=/usr --with-png-dir=/usr --with-zlib-dir=/usr --with-xpm-dir=/usr --with-freetype-dir=/usr --enable-gd-native-ttf
+      run_dep: [libpng12-0, libjpeg62-turbo, libxpm4, libvpx1, libfreetype6, libwebp5]
+  imagick:
+    disabled: [5.2, 5.3, 5.4]
+    all:
+      type: pecl
+      build_dep: [libmagickwand-dev, libwebp-dev, ghostscript]
+      run_dep: [libmagickwand-6.q16-6, libwebp6, ghostscript]
+      # https://bugs.php.net/bug.php?id=77683
+      # https://github.com/Imagick/imagick/issues/262 (policy prevents PDF from being read)
+      post: |
+        sed -i'' 's|.*"thread".*|  <policy domain="resource" name="thread" value="1"/>|g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"PS2".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"PS3".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"EPS".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"PDF".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
+        && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+    7.0:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
+    5.6:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-3, libwebp6, ghostscript]
+    5.5:
+      type: pecl
+      run_dep: [libmagickwand-6.q16-2, libwebp5, ghostscript]
+  igbinary:
+    disabled: []
+    all:
+      type: pecl
+    5.6:
+      type: pecl
+      version: 2.0.8
+    5.5:
+      type: pecl
+      version: 2.0.8
+    5.4:
+      type: pecl
+      version: 2.0.8
+    5.3:
+      type: pecl
+      version: 2.0.8
+    5.2:
+      type: pecl
+      version: 2.0.7
+  msgpack:
+    disabled: []
+    all:
+      type: pecl
+    5.6:
+      type: pecl
+      version: 0.5.7
+    5.5:
+      type: pecl
+      version: 0.5.7
+    5.4:
+      type: pecl
+      version: 0.5.7
+    5.3:
+      type: pecl
+      version: 0.5.7
+    5.2:
+      type: pecl
+      version: 0.5.7
+  memcached:
+    disabled: []
+    all:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      build_dep: [zlib1g-dev, libmemcached-dev, libevent-dev]
+      run_dep: [libmemcachedutil2, libevent-2.1-7]
+    8.2:
+      type: git
+      git_url: https://github.com/php-memcached-dev/php-memcached
+      git_ref: master
+      command: |
+        true \
+        # FIXME: This is a work-around to mitigate compile error with PHP 8.2
+        && sed -i'' 's/\sTSRMLS_CC//g' php_memcached_session.c \
+        && phpize \
+        && ./configure --enable-memcached \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+    7.2:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.1-6]
+    7.1:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.1-6]
+    7.0:
+      type: pecl
+      command: printf "\n\n\nyes\nyes\nyes\n" | pecl install memcached
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    5.6:
+      type: pecl
+      version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    5.5:
+      type: pecl
+      version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    5.4:
+      type: pecl
+      version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    5.3:
+      type: pecl
+      version: 2.2.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+    5.2:
+      type: pecl
+      version: 2.1.0
+      run_dep: [libmemcachedutil2, libevent-2.0-5]
+  mongodb:
+    disabled: [5.2]
+    all:
+      type: pecl
+      build_dep: [libssl-dev, libsasl2-dev]
+    7.1:
+      type: pecl
+      version: 1.11.1
+    7.0:
+      type: pecl
+      version: 1.9.2
+    5.6:
+      type: pecl
+      version: 1.7.5
+    5.5:
+      type: pecl
+      version: 1.5.5
+    5.4:
+      type: pecl
+      version: 1.2.11
+    5.3:
+      type: pecl
+      version: 0.6.3
+  mysqli:
+    disabled: []
+    all:
+      type: builtin
+      run_dep: [libmariadbd19]
+      build_dep: [libmariadb-dev]
+    7.0:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
+    5.5:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.4:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.3:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.2:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+  pgsql:
+    disabled: []
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  apcu:
+    disabled: [5.2]
+    all:
+      type: pecl
+    5.6:
+      type: pecl
+      version: 4.0.11
+    5.5:
+      type: pecl
+      version: 4.0.11
+    5.4:
+      type: pecl
+      version: 4.0.11
+    5.3:
+      type: pecl
+      version: 4.0.11
+  lz4:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: git
+      git_url: https://github.com/kjdev/php-ext-lz4
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      configure: --enable-lz4 --with-lz4-includedir=/usr
+      build_dep: [liblz4-dev]
+      run_dep: [liblz4-1]
+  lzf:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: pecl
+      build_dep: [liblzf-dev]
+      run_dep: [liblzf1]
+    7.2:
+      type: pecl
+      build_dep: []
+      run_dep: []
+    7.1:
+      type: pecl
+      version: 1.6.8
+      build_dep: []
+      run_dep: []
+    7.0:
+      type: pecl
+      version: 1.6.8
+      build_dep: []
+      run_dep: []
+  zstd:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: git
+      git_url: https://github.com/kjdev/php-ext-zstd
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      configure: --enable-zstd --with-libzstd
+      build_dep: [libzstd-dev]
+      run_dep: [libzstd1]
+    7.0:
+      type: pecl
+      build_dep: [libzstd-dev]
+      run_dep: [libzstd1]
+  redis:
+    disabled: []
+    all:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      pre: |
+        if [ -f /usr/include/liblzf/lzf.h ]; then \
+          ln -s /usr/include/liblzf/lzf.h /usr/include/; \
+        fi \
+      command: |
+        REDIS_ARGS=""; \
+        if php -m | grep -q "igbinary"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+        fi; \
+        if php -m | grep -q "lz4"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+        fi; \
+        if php -m | grep -q "lzf"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-lzf --with-liblzf=/usr"; \
+        fi; \
+        if php -m | grep -q "msgpack"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+        fi; \
+        if php -m | grep -q "zstd"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+        fi; \
+        phpize \
+        && ./configure --enable-redis ${REDIS_ARGS} \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      build_dep:
+        - liblz4-dev
+        - liblzf-dev
+        - libzstd-dev
+      run_dep:
+        - liblz4-1
+        - liblzf1
+        - libzstd1
+    7.2:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      command: |
+        REDIS_ARGS=""; \
+        if php -m | grep -q "igbinary"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+        fi; \
+        if php -m | grep -q "lz4"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+        fi; \
+        if php -m | grep -q "msgpack"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+        fi; \
+        if php -m | grep -q "zstd"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+        fi; \
+        phpize \
+        && ./configure --enable-redis ${REDIS_ARGS} \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      build_dep:
+        - liblz4-dev
+        - libzstd-dev
+      run_dep:
+        - liblz4-1
+        - libzstd1
+    7.1:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      command: |
+        REDIS_ARGS=""; \
+        if php -m | grep -q "igbinary"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+        fi; \
+        if php -m | grep -q "lz4"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+        fi; \
+        if php -m | grep -q "msgpack"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+        fi; \
+        if php -m | grep -q "zstd"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-zstd"; \
+        fi; \
+        phpize \
+        && ./configure --enable-redis ${REDIS_ARGS} \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      build_dep:
+        - liblz4-dev
+        - libzstd-dev
+      run_dep:
+        - liblz4-1
+        - libzstd1
+    7.0:
+      type: git
+      git_url: https://github.com/phpredis/phpredis
+      git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
+      command: |
+        REDIS_ARGS=""; \
+        if php -m | grep -q "igbinary"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-igbinary"; \
+        fi; \
+        if php -m | grep -q "lz4"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-lz4 --with-liblz4=/usr"; \
+        fi; \
+        if php -m | grep -q "msgpack"; then \
+          REDIS_ARGS="${REDIS_ARGS} --enable-redis-msgpack"; \
+        fi; \
+        phpize \
+        && ./configure --enable-redis ${REDIS_ARGS} \
+        && make -j$(getconf _NPROCESSORS_ONLN) \
+        && make install \
+      build_dep:
+        - liblz4-dev
+      run_dep:
+        - liblz4-1
+    5.6:
+      type: pecl
+      version: 4.3.0
+      build_dep: []
+      run_dep: []
+    5.5:
+      type: pecl
+      version: 4.3.0
+      build_dep: []
+      run_dep: []
+    5.4:
+      type: pecl
+      version: 4.3.0
+      build_dep: []
+      run_dep: []
+    5.3:
+      type: pecl
+      version: 4.3.0
+      build_dep: []
+      run_dep: []
+    5.2:
+      type: pecl
+      version: 2.2.7
+      build_dep: []
+      run_dep: []
