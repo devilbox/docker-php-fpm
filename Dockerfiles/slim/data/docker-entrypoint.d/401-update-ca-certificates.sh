@@ -17,6 +17,7 @@ update_ca_certificates() {
 	local debug="${2}"
 
 	if [ -d "${dir}" ]; then
+		# shellcheck disable=SC2044
 		for cert in $( find "${dir}" -name \*.crt ); do
 			name="$( basename "${cert}" )"
 			run "cp ${cert} /usr/local/share/ca-certificates/devilbox-${name}" "${debug}"
