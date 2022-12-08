@@ -66,8 +66,8 @@ os_release:
 base_apt_repositories_enabled:
   - backports
   - blackfire
-  - mongo
-  - pgsql
+  # - mongo  # Note: This is done separately in tools (to check ARCH as well)
+  # - pgsql  # Note: This is done separately in tools (to check ARCH as well)
 
 
 # -------------------------------------------------------------------------------------------------

@@ -34,10 +34,6 @@ RUN set -eux \
 	&& echo "deb http://ftp.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
 	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -	\
 	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
-	&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 20691EEC35216C63CAF66CE1656408E390CFB1F5 \
-	&& echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" > /etc/apt/sources.list.d/mongo.list \
-	&& curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -	\
-	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
 	&& true
 
 ###
@@ -149,9 +145,8 @@ RUN set -eux \
 	\
 	&& true
 
-
 ###
-### Prepare libraries for copying (keep symlinks)
+### Prepare required shared libraries for copying (keep symlinks)
 ###
 RUN set -eux \
 	&& LIB_GNU_DIR="/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
@@ -185,6 +180,31 @@ RUN set -eux \
 		fi \
 	done
 
+###
+### Fix expected PostgreSQL directories
+###
+### This might not exist on arm64 as software was not available,
+### but they are still needed to be present, so we can copy them.
+###
+RUN set -eux \
+	&& if [ ! -d "/usr/lib/postgresql" ]; then \
+		mkdir "/usr/lib/postgresql"; \
+	fi \
+	&& if [ ! -d "/usr/share/postgresql-common" ]; then \
+		mkdir "/usr/share/postgresql-common"; \
+	fi
+
+###
+### Prepare MongoDB binaries for copying.
+###
+### They might not be available on all architectures (e.g.: arm64).
+###
+RUN set -eux \
+	&& mkdir /tmp/mongo \
+	&& if ls -1 "/usr/bin/" | grep "^mongo" >/dev/null; then \
+		cp -r /usr/bin/mongo* /tmp/mongo/; \
+	fi
+
 
 
 ########################################################################################################################
@@ -202,27 +222,26 @@ FROM devilbox/php-fpm:7.1-prod as devilbox-slim-base
 ARG ARCH
 
 ###
-### Copy libraries
+### Copy shared libraries
 ###
 COPY --from=devilbox-slim-base-builder /tmp/lib-gnu/     /lib/${ARCH}-linux-gnu/
 COPY --from=devilbox-slim-base-builder /tmp/usr-lib-gnu/ /usr/lib/${ARCH}-linux-gnu/
 COPY --from=devilbox-slim-base-builder /tmp/usr-lib/     /usr/lib/
 
 ###
-### System files
+### Copy system files
 ###
 COPY --from=devilbox-slim-base-builder /etc/group /etc/group
 COPY --from=devilbox-slim-base-builder /etc/passwd /etc/passwd
 COPY --from=devilbox-slim-base-builder /etc/shadow /etc/shadow
 
 ###
-### Blackfire
+### Copy Blackfire
 ###
 COPY --from=devilbox-slim-base-builder /etc/blackfire /etc/blackfire
 COPY --from=devilbox-slim-base-builder /etc/default/blackfire-agent /etc/default/blackfire-agent
 COPY --from=devilbox-slim-base-builder /usr/bin/blackfire* /usr/bin/
 COPY --from=devilbox-slim-base-builder /var/log/blackfire /var/log/blackfire
-
 
 ###
 ### Copy mhsendmail
@@ -230,12 +249,12 @@ COPY --from=devilbox-slim-base-builder /var/log/blackfire /var/log/blackfire
 COPY --from=devilbox-slim-base-builder /usr/local/bin/mhsendmail /usr/local/bin/
 
 ###
-### Copy Mongo client
+### Copy MongoDB client (if exists)
 ###
-COPY --from=devilbox-slim-base-builder /usr/bin/mongo* /usr/bin/
+COPY --from=devilbox-slim-base-builder /tmp/mongo/ /usr/bin/
 
 ###
-### Copy mysql* binaries
+### Copy MysQL Client
 ###
 COPY --from=devilbox-slim-base-builder /usr/bin/mysql* /usr/bin/
 
@@ -248,56 +267,59 @@ COPY --from=devilbox-slim-base-builder /etc/mysqldump-secure.cnf /etc/
 COPY --from=devilbox-slim-base-builder /var/log/mysqldump-secure.log /var/log/
 
 ###
-### Copy PostgreSQL client
+### Copy PostgreSQL
+###
+COPY --from=devilbox-slim-base-builder /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=devilbox-slim-base-builder /usr/share/postgresql-common /usr/share/postgresql-common
+COPY --from=devilbox-slim-base-builder /usr/share/perl5 /usr/share/perl5
+
+###
+### Create PostgreSQL symlinks
 ###
 RUN set -eux \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/clusterdb \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createdb \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createlang \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createuser \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropdb \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/droplang \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropuser \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_basebackup \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dump \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dumpall \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_isready \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivewal \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivexlog \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_recvlogical \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_restore \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pgbench \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/psql \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/reindexdb \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumdb \
-	&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumlo
-
-COPY --from=devilbox-slim-base-builder /usr/lib/postgresql /usr/lib/postgresql
-#COPY --from=devilbox-slim-base-builder /usr/lib/${ARCH}-linux-gnu/libpq.so* /usr/lib/${ARCH}-linux-gnu/
-COPY --from=devilbox-slim-base-builder /usr/share/perl5 /usr/share/perl5
-COPY --from=devilbox-slim-base-builder /usr/share/postgresql-common /usr/share/postgresql-common
-#COPY --from=devilbox-slim-base-builder /etc/perl /etc/perl
-#COPY --from=devilbox-slim-base-builder /usr/lib/${ARCH}-linux-gnu/perl-base /usr/lib/${ARCH}-linux-gnu/perl-base
-#COPY --from=devilbox-slim-base-builder /usr/lib/${ARCH}-linux-gnu/perl5 /usr/lib/${ARCH}-linux-gnu/perl5
-#COPY --from=devilbox-slim-base-builder /usr/share/postgresql /usr/share/postgresql
+	&& if [ -f "/usr/share/postgresql-common/pg_wrapper" ]; then \
+		ln -s ../share/postgresql-common/pg_wrapper /usr/bin/clusterdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createlang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/droplang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_basebackup \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dump \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dumpall \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_isready \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivewal \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivexlog \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_recvlogical \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_restore \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pgbench \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/psql \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/reindexdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumlo; \
+	fi
 
 ###
-### Copy redis* binaries
+### Copy Redis Client
 ###
 COPY --from=devilbox-slim-base-builder /usr/bin/redis* /usr/bin/
 
 
 ###
-### Copy sqlite* binaries
+### Copy SQLite Client
 ###
 COPY --from=devilbox-slim-base-builder /usr/bin/sqlite* /usr/bin/
 
 ###
-### Copy configuration files
+### ADD PHP configuration files
 ###
 COPY ./data/php-ini.d/php-7.1.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
 COPY ./data/php-fpm.conf/php-fpm-7.1.conf /usr/local/etc/php-fpm.conf
 
+###
+### ADD Devilbox configuration files
+###
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/bash-devilbox /etc/bash-devilbox
