@@ -183,7 +183,7 @@ RUN set -eux \
 	\
 	&& LIB_GNU="libreadline" \
 	&& USR_LIB="libsnappy libtcmalloc libv8" \
-	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap" \
+	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap libbsd liblzf" \
 	\
 	&& for lib in ${LIB_GNU}; do \
 		if ls -1 "${LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
