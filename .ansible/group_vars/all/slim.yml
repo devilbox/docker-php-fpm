@@ -273,15 +273,17 @@ base_software_available:
   ### mhsendmail
   ###
   mhsendmail:
+    check: mhsendmail -h 2>&1 | grep 'Usage'
     all:
       type: custom
       command: |
-        if [ "$(dpkg-architecture --query DEB_HOST_ARCH)" = "amd64" ]; then \
-          curl -sS -L --fail https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_amd64 > mhsendmail_linux_amd64 \
-          && chmod +x mhsendmail_linux_amd64 \
-          && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail; \
+        DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
+        && if [ "${DEB_HOST_ARCH}" = "amd64" ] || [ "${DEB_HOST_ARCH}" = "arm64" ]; then \
+          MHSENDMAIL_URL="https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_${DEB_HOST_ARCH}" \
+          && curl -sS -L --fail "${MHSENDMAIL_URL}" > /usr/local/bin/mhsendmail \
+          && chmod +x /usr/local/bin/mhsendmail; \
         else \
-          printf '%s\n%s\n%s\n' '#!/bin/sh' 'echo "Not available for arm64."' 'exit 1' > /usr/local/bin/mhsendmail \
+          printf '%s\n%s\n%s\n' '#!/bin/sh' 'echo "Not available for this platform."' 'exit 1' > /usr/local/bin/mhsendmail \
           && chmod +x /usr/local/bin/mhsendmail; \
         fi \
 
