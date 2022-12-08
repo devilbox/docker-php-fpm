@@ -58,10 +58,10 @@ The following PHP cli tools are available on the `slim` flavour:
  </tr>
  <tr>
   <td><a target="_blank" href="https://www.mongodb.com/docs/v4.4/mongo/">MongoDB client</a></td>
-  <td class="tool_slim_mongo_5.2">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_mongo_5.3">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_mongo_5.4">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_mongo_5.5">🗸<sup>\[1\]</sup></td>
+  <td class="tool_slim_mongo_5.2">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_mongo_5.3">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_mongo_5.4">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_mongo_5.5">🗸<sup>[1]</sup></td>
   <td class="tool_slim_mongo_5.6">🗸</td>
   <td class="tool_slim_mongo_7.0">🗸</td>
   <td class="tool_slim_mongo_7.1">🗸</td>
@@ -90,12 +90,12 @@ The following PHP cli tools are available on the `slim` flavour:
  </tr>
  <tr>
   <td><a target="_blank" href="https://www.postgresql.org/docs/current/reference-client.html">PostgreSQL client</a></td>
-  <td class="tool_slim_pgsql_5.2">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_pgsql_5.3">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_pgsql_5.4">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_pgsql_5.5">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_pgsql_5.6">🗸<sup>\[1\]</sup></td>
-  <td class="tool_slim_pgsql_7.0">🗸<sup>\[1\]</sup></td>
+  <td class="tool_slim_pgsql_5.2">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_pgsql_5.3">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_pgsql_5.4">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_pgsql_5.5">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_pgsql_5.6">🗸<sup>[1]</sup></td>
+  <td class="tool_slim_pgsql_7.0">🗸<sup>[1]</sup></td>
   <td class="tool_slim_pgsql_7.1">🗸</td>
   <td class="tool_slim_pgsql_7.2">🗸</td>
   <td class="tool_slim_pgsql_7.3">🗸</td>
