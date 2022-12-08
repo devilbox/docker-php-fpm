@@ -163,6 +163,32 @@ RUN set -eux \
 		cp -r /usr/bin/mongo* /tmp/mongo/; \
 	fi
 
+###
+### Strip debugging information to smallen filesize
+###
+RUN set -eux \
+	&& STRIP_USR_BINS="blackfire mongo mysql redis sqlite" \
+	&& STRIP_DIRS="/usr/lib/postgresql/ /usr/share/postgresql-common/ /tmp" \
+	\
+	&& for bin in ${STRIP_USR_BINS}; do \
+		( \
+			find /usr/bin/ -name "${bin}"* -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& for dir in ${STRIP_DIRS}; do \
+		( \
+			find ${dir} -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& strip --strip-all -p /usr/local/bin/mhsendmail 2>/dev/null || true \
+	&& strip --strip-all -p /usr/local/bin/mysqldump-secure 2>/dev/null || true
+
 
 
 ########################################################################################################################
@@ -180,7 +206,7 @@ FROM devilbox/php-fpm:{{ php_version }}-prod as devilbox-slim-base
 ARG ARCH
 
 ###
-### Copy shared libraries
+### Copy shared libraries (required by MongoDB, MySQL, PostgreSQL and Redis)
 ###
 COPY --from=devilbox-slim-base-builder /tmp/lib-gnu/     /lib/${ARCH}-linux-gnu/
 COPY --from=devilbox-slim-base-builder /tmp/usr-lib-gnu/ /usr/lib/${ARCH}-linux-gnu/
