@@ -91,7 +91,7 @@ def get_modules(selected_modules: List[str], ignore_dependencies: bool) -> List[
                         "dir": item.name,
                         "name": data["name"],
                         "deps": data["depends_build"],
-                        "exclude": data["exclude"]
+                        "exclude": data["exclude"],
                     }
                 )
     # Convert list of deps into dict(dir, name, deps)

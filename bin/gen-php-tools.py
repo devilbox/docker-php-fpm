@@ -86,7 +86,7 @@ def get_tools(selected_tools: List[str], ignore_dependencies: bool) -> List[Dict
                         "dir": item.name,
                         "name": data["name"],
                         "deps": data["depends"],
-                        "exclude": data["exclude"]
+                        "exclude": data["exclude"],
                     }
                 )
     # Convert list of deps into dict(dir, name, deps)
