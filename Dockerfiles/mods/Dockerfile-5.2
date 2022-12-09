@@ -9,14 +9,20 @@ FROM devilbox/php-fpm:5.2-base as builder
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		firebird-dev \
+		freetds-dev \
 		libenchant-dev \
 		libevent-dev \
+		libfbclient2 \
 		libfreetype6-dev \
+		libib-util \
 		libjpeg-dev \
+		libmagic-dev \
 		libmemcached-dev \
 		libmysqlclient-dev \
 		libpng-dev \
 		libpq-dev \
+		libsasl2-dev \
 		libssl-dev \
 		libvpx-dev \
 		libwebp-dev \
@@ -195,6 +201,102 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: fileinfo --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install fileinfo \
+	# Enabling
+	&& docker-php-ext-enable fileinfo \
+	&& true
+
+
+# -------------------- Installing PHP Extension: gettext --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
+	&& true
+
+
+# -------------------- Installing PHP Extension: interbase --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache-2.2.7 \
+	# Enabling
+	&& docker-php-ext-enable memcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongo --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install mongo-1.5.8 \
+	# Enabling
+	&& docker-php-ext-enable mongo \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure mysql --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_dblib --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_firebird --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_mysql --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Default:      configure command
+	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -244,12 +346,15 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	libenchant1c2a \
 	libevent-2.0-5 \
+	libfbclient2 \
 	libfreetype6 \
 	libjpeg62-turbo \
+	libmagic1 \
 	libmemcachedutil2 \
 	libmysqlclient18 \
 	libpng12-0 \
 	libpq5 \
+	libsybdb5 \
 	libvpx1 \
 	libwebp5 \
 	libxpm4 \
@@ -319,6 +424,36 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
+	&& php -m | grep -oiE '^curl$' \
+	&& php-fpm -m | grep -oiE '^curl$' \
+	&& php -m | grep -oiE '^fileinfo$' \
+	&& php-fpm -m | grep -oiE '^fileinfo$' \
+	&& php -m | grep -oiE '^gettext$' \
+	&& php-fpm -m | grep -oiE '^gettext$' \
+	&& php -m | grep -oiE '^interbase$' \
+	&& php-fpm -m | grep -oiE '^interbase$' \
+	&& php -m | grep -oiE '^json$' \
+	&& php-fpm -m | grep -oiE '^json$' \
+	&& php -m | grep -oiE '^memcache$' \
+	&& php-fpm -m | grep -oiE '^memcache$' \
+	&& php -m | grep -oiE '^mongo$' \
+	&& php-fpm -m | grep -oiE '^mongo$' \
+	&& php -m | grep -oiE '^mysql$' \
+	&& php-fpm -m | grep -oiE '^mysql$' \
+	&& php -m | grep -oiE '^openssl$' \
+	&& php-fpm -m | grep -oiE '^openssl$' \
+	&& php -m | grep -oiE '^pdo$' \
+	&& php-fpm -m | grep -oiE '^pdo$' \
+	&& php -m | grep -oiE '^pdo_dblib$' \
+	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
+	&& php -m | grep -oiE '^pdo_firebird$' \
+	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
+	&& php -m | grep -oiE '^pdo_mysql$' \
+	&& php-fpm -m | grep -oiE '^pdo_mysql$' \
+	&& php -m | grep -oiE '^pdo_pgsql$' \
+	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
+	&& php -m | grep -oiE '^pdo_sqlite$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
 	&& true
 
 

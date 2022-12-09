@@ -23,6 +23,31 @@ extensions_enabled:
   - redis
   - zip
   - phar
+  - curl
+  - fileinfo
+  - gettext
+  - interbase
+  - json
+  - memcache
+  - mongo
+  - mysql
+  - mysqlnd
+  - oci8
+  - odbc
+  - openssl
+  - pdo
+  - pdo_dblib
+  - pdo_firebird
+  - pdo_mysql
+  - pdo_oci
+  - pdo_odbc
+  - pdo_pgsql
+  - pdo_sqlite
+  - pdo_sqlsrv
+  - psr
+  - sqlite3
+  - sqlsrv
+  - phalcon
 
 
 # The following specifies how modules are being built.
@@ -588,3 +613,361 @@ extensions_available:
     5.2:
       type: pecl
       build_dep: [libssl-dev]
+  curl:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
+  fileinfo:
+    disabled: []
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    5.2:
+      type: pecl
+      build_dep: [libmagic-dev]
+      run_dep: [libmagic1]
+  gettext:
+    disabled: []
+    all:
+      type: builtin
+  interbase:
+    disabled: [7.4, 8.0, 8.1, 8.2]
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  json:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
+  memcache:
+    disabled: []
+    all:
+      type: pecl
+      build_dep: [zlib1g-dev]
+    7.4:
+      type: pecl
+      version: 4.0.5.2
+    7.3:
+      type: pecl
+      version: 4.0.5.2
+    7.2:
+      type: pecl
+      version: 4.0.5.2
+    7.1:
+      type: pecl
+      version: 4.0.5.2
+    7.0:
+      type: pecl
+      version: 4.0.5.2
+    5.6:
+      type: pecl
+      version: 2.2.7
+    5.5:
+      type: pecl
+      version: 2.2.7
+    5.4:
+      type: pecl
+      version: 2.2.7
+    5.3:
+      type: pecl
+      version: 2.2.7
+    5.2:
+      type: pecl
+      version: 2.2.7
+  mongo:
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    all:
+      type: pecl
+      command: yes yes | pecl install mongo
+      build_dep: [libssl-dev, libsasl2-dev]
+    5.2:
+      type: pecl
+      command: yes yes | pecl install mongo-1.5.8
+  mysql:
+    disabled: [7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+    all:
+      type: builtin
+      configure: --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"
+      run_dep: [libmysqlclient18]
+      build_dep: [libmysqlclient-dev]
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [libmariadbclient-dev]
+  mysqlnd:
+    disabled: [5.2]
+    already_avail: [5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+  oci8:
+    disabled: [5.2]
+    all:
+      type: builtin
+      configure: --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+      pre: |
+        ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+        && ORACLE_HREF="$( \
+            curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+            | tac \
+            | tac \
+            | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+            | tail -1 \
+        )" \
+        && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+        && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+        \
+        && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+        && curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+      build_dep: [alien, libaio-dev]
+      run_dep: [libaio1]
+      post: |
+        ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+        && ORACLE_HREF="$( \
+            curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+            | tac \
+            | tac \
+            | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+            | tail -1 \
+        )" \
+        && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+        && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+        && (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+  odbc:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+  openssl:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
+  pdo:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
+  pdo_dblib:
+    disabled: []
+    all:
+      type: builtin
+      pre: ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/
+      build_dep: [freetds-dev]
+      run_dep: [libsybdb5]
+  pdo_firebird:
+    disabled: []
+    all:
+      type: builtin
+      build_dep: [libfbclient2, libib-util, firebird-dev]
+      run_dep: [libfbclient2]
+  pdo_mysql:
+    disabled: []
+    all:
+      type: builtin
+      configure: --with-zlib-dir=/usr
+      run_dep: [libmariadbd19]
+      build_dep: [zlib1g-dev, libmariadb-dev]
+    7.0:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [zlib1g-dev, libmariadbclient-dev]
+    5.6:
+      type: builtin
+      run_dep: [libmariadbclient18]
+      build_dep: [zlib1g-dev, libmariadbclient-dev]
+    5.5:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.4:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.3:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+    5.2:
+      type: builtin
+      run_dep: [libmysqlclient18]
+      build_dep: [zlib1g-dev, libmysqlclient-dev]
+  pdo_oci:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr,${ORACLE_VERSION_MAJOR}
+      pre: |
+        ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+        && ORACLE_HREF="$( \
+            curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+            | tac \
+            | tac \
+            | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+            | tail -1 \
+        )" \
+        && ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+        && ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+        \
+        && rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+        && curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && alien \
+          -v \
+          --target=$( dpkg --print-architecture ) \
+          -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+        && (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+      build_dep: [alien]
+    8.2:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    8.1:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    8.0:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    7.4:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    7.3:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+    7.2:
+      type: builtin
+      configure: --with-pdo-oci=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR}
+  pdo_odbc:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2]
+  pdo_pgsql:
+    disabled: []
+    all:
+      type: builtin
+      build_dep: [libpq-dev]
+      run_dep: [libpq5]
+  pdo_sqlite:
+    disabled: []
+    already_avail: "{{ php_all_versions }}"
+  pdo_sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    7.3:
+      type: pecl
+      version: 5.9.0
+    7.2:
+      type: pecl
+      version: 5.8.1
+    7.1:
+      type: pecl
+      version: 5.6.1
+    7.0:
+      type: pecl
+      version: 5.3.0
+  psr:
+    disabled: [5.2, 5.3]
+    all:
+      type: pecl
+    7.2:
+      type: pecl
+      version: 1.1.0
+    7.1:
+      type: pecl
+      version: 1.1.0
+    7.0:
+      type: pecl
+      version: 1.1.0
+    5.6:
+      type: pecl
+      version: 0.6.0  # NOTE: 0.6.1 fails with: Package "psr" Version "0.6.1" does not have REST xml available
+    5.5:
+      type: pecl
+      version: 0.5.1
+    5.4:
+      type: pecl
+      version: 0.5.1
+  sqlite3:
+    disabled: [5.2]
+    already_avail: "{{ php_all_versions }}"
+  sqlsrv:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: pecl
+      build_dep: [unixodbc-dev]
+      run_dep: [unixodbc]
+    7.3:
+      type: pecl
+      version: 5.9.0
+    7.2:
+      type: pecl
+      version: 5.8.1
+    7.1:
+      type: pecl
+      version: 5.6.1
+    7.0:
+      type: pecl
+      version: 5.3.0
+  phalcon:
+    disabled: [5.2, 8.2]
+    all:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: |
+        $(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname)' refs/tags \
+          | sort -V \
+          | sed 's/^.*tags\///g' \
+          | grep -E '^v[.0-9]+$' \
+          | tail -1 \
+        ) \
+      command: cd build && ./install
+      build_dep: [libpcre3-dev, re2c]
+      run_dep: []
+    7.3:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v4.1.2
+      command: cd build && ./install
+    7.2:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v4.1.1
+      command: cd build && ./install
+    7.1:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.4
+      command: cd build && ./install
+    7.0:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.4
+      command: cd build && ./install
+    5.6:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.4
+      command: cd build && ./install
+    5.5:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: v3.4.4
+      command: cd build && ./install
+    5.4:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.13
+      command: cd build && ./install
+    5.3:
+      type: git
+      git_url: https://github.com/phalcon/cphalcon
+      git_ref: phalcon-v2.0.9
+      command: cd build && ./install

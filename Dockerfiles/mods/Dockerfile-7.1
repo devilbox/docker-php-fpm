@@ -9,15 +9,22 @@ FROM devilbox/php-fpm:7.1-base as builder
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		alien \
+		firebird-dev \
+		freetds-dev \
 		ghostscript \
+		libaio-dev \
 		libenchant-dev \
 		libevent-dev \
+		libfbclient2 \
 		libfreetype6-dev \
+		libib-util \
 		libjpeg-dev \
 		liblz4-dev \
 		libmagickwand-dev \
 		libmariadb-dev \
 		libmemcached-dev \
+		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
 		libsasl2-dev \
@@ -27,6 +34,8 @@ RUN set -eux \
 		libxpm-dev \
 		libzip-dev \
 		libzstd-dev \
+		re2c \
+		unixodbc-dev \
 		zlib1g-dev \
 # Build tools
 		autoconf \
@@ -292,6 +301,207 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: gettext --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
+	&& true
+
+
+# -------------------- Installing PHP Extension: interbase --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache-4.0.5.2 \
+	# Enabling
+	&& docker-php-ext-enable memcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: oci8 --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+\
+&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
+	# Generic post-command
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_dblib --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_firebird --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_mysql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_oci --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+\
+&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& (ln -s /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr,${ORACLE_VERSION_MAJOR} \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_oci \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_sqlsrv --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install pdo_sqlsrv-5.6.1 \
+	# Enabling
+	&& docker-php-ext-enable pdo_sqlsrv \
+	&& true
+
+
+# -------------------- Installing PHP Extension: psr --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install psr-1.1.0 \
+	# Enabling
+	&& docker-php-ext-enable psr \
+	&& true
+
+
+# -------------------- Installing PHP Extension: sqlsrv --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install sqlsrv-5.6.1 \
+	# Enabling
+	&& docker-php-ext-enable sqlsrv \
+	&& true
+
+
+# -------------------- Installing PHP Extension: phalcon --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         GIT extension
+	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
+	&& cd /tmp/phalcon \
+	# Custom:       Branch
+	&& git checkout v3.4.4 \
+	# Custom:       Install command
+	&& cd build && ./install \
+	# Enabling
+	&& docker-php-ext-enable phalcon \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -340,8 +550,10 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	ghostscript \
+	libaio1 \
 	libenchant1c2a \
 	libevent-2.1-6 \
+	libfbclient2 \
 	libfreetype6 \
 	libjpeg62-turbo \
 	liblz4-1 \
@@ -350,11 +562,13 @@ RUN set -eux \
 	libmemcachedutil2 \
 	libpng16-16 \
 	libpq5 \
+	libsybdb5 \
 	libvpx5 \
 	libwebp6 \
 	libxpm4 \
 	libzip4 \
 	libzstd1 \
+	unixodbc \
 	zlib1g \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -387,6 +601,19 @@ RUN set -eux \
 && sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
 && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
 && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+  \
+	# ---------- oci8 ----------
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
   \
 	&& true
 
@@ -448,6 +675,48 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
+	&& php -m | grep -oiE '^curl$' \
+	&& php-fpm -m | grep -oiE '^curl$' \
+	&& php -m | grep -oiE '^fileinfo$' \
+	&& php-fpm -m | grep -oiE '^fileinfo$' \
+	&& php -m | grep -oiE '^gettext$' \
+	&& php-fpm -m | grep -oiE '^gettext$' \
+	&& php -m | grep -oiE '^interbase$' \
+	&& php-fpm -m | grep -oiE '^interbase$' \
+	&& php -m | grep -oiE '^json$' \
+	&& php-fpm -m | grep -oiE '^json$' \
+	&& php -m | grep -oiE '^memcache$' \
+	&& php-fpm -m | grep -oiE '^memcache$' \
+	&& php -m | grep -oiE '^mysqlnd$' \
+	&& php-fpm -m | grep -oiE '^mysqlnd$' \
+	&& php -m | grep -oiE '^oci8$' \
+	&& php-fpm -m | grep -oiE '^oci8$' \
+	&& php -m | grep -oiE '^openssl$' \
+	&& php-fpm -m | grep -oiE '^openssl$' \
+	&& php -m | grep -oiE '^pdo$' \
+	&& php-fpm -m | grep -oiE '^pdo$' \
+	&& php -m | grep -oiE '^pdo_dblib$' \
+	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
+	&& php -m | grep -oiE '^pdo_firebird$' \
+	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
+	&& php -m | grep -oiE '^pdo_mysql$' \
+	&& php-fpm -m | grep -oiE '^pdo_mysql$' \
+	&& php -m | grep -oiE '^pdo_oci$' \
+	&& php-fpm -m | grep -oiE '^pdo_oci$' \
+	&& php -m | grep -oiE '^pdo_pgsql$' \
+	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
+	&& php -m | grep -oiE '^pdo_sqlite$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
+	&& php -m | grep -oiE '^pdo_sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlsrv$' \
+	&& php -m | grep -oiE '^psr$' \
+	&& php-fpm -m | grep -oiE '^psr$' \
+	&& php -m | grep -oiE '^sqlite3$' \
+	&& php-fpm -m | grep -oiE '^sqlite3$' \
+	&& php -m | grep -oiE '^sqlsrv$' \
+	&& php-fpm -m | grep -oiE '^sqlsrv$' \
+	&& php -m | grep -oiE '^phalcon$' \
+	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& true
 
 

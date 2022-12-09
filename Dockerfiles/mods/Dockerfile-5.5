@@ -9,14 +9,21 @@ FROM devilbox/php-fpm:5.5-base as builder
 RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		alien \
+		firebird-dev \
+		freetds-dev \
 		ghostscript \
+		libaio-dev \
 		libenchant-dev \
 		libevent-dev \
+		libfbclient2 \
 		libfreetype6-dev \
+		libib-util \
 		libjpeg-dev \
 		libmagickwand-dev \
 		libmemcached-dev \
 		libmysqlclient-dev \
+		libpcre3-dev \
 		libpng-dev \
 		libpq-dev \
 		libsasl2-dev \
@@ -25,6 +32,7 @@ RUN set -eux \
 		libwebp-dev \
 		libxpm-dev \
 		libzip-dev \
+		re2c \
 		zlib1g-dev \
 # Build tools
 		autoconf \
@@ -228,6 +236,168 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: gettext --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) gettext \
+	&& true
+
+
+# -------------------- Installing PHP Extension: interbase --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) interbase \
+	&& true
+
+
+# -------------------- Installing PHP Extension: memcache --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install memcache-2.2.7 \
+	# Enabling
+	&& docker-php-ext-enable memcache \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mongo --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Custom:       Pecl command
+	&& yes yes | pecl install mongo \
+	# Enabling
+	&& docker-php-ext-enable mongo \
+	&& true
+
+
+# -------------------- Installing PHP Extension: mysql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure mysql --with-mysql --with-mysql-sock --with-zlib-dir=/usr --with-libdir="/lib/$(dpkg-architecture --query DEB_BUILD_MULTIARCH)" \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: oci8 --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+\
+&& rpm --import http://yum.oracle.com/RPM-GPG-KEY-oracle-ol7 \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& curl -sS -o /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/getPackage/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& alien \
+  -v \
+  --target=$( dpkg --print-architecture ) \
+  -i /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-basiclite-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+&& rm -f /tmp/oracle-instantclient${ORACLE_VERSION_MAJOR}-devel-${ORACLE_VERSION_FULL}.${ARCH}.rpm \
+ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	# Custom:       configure command
+	&& docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/,${ORACLE_VERSION_MAJOR} \
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) oci8 \
+	# Generic post-command
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
+ \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_dblib --------------------
+RUN set -eux \
+	# Generic pre-command
+	&& ln -s /usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)/libsybdb.* /usr/lib/ \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_dblib \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_firebird --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_firebird \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_mysql --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         Built-in extension
+	# Default:      configure command
+	&& docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+	# Installation
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_mysql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: pdo_pgsql --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         Built-in extension
+	&& docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) pdo_pgsql \
+	&& true
+
+
+# -------------------- Installing PHP Extension: psr --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install psr-0.5.1 \
+	# Enabling
+	&& docker-php-ext-enable psr \
+	&& true
+
+
+# -------------------- Installing PHP Extension: phalcon --------------------
+RUN set -eux \
+	# Installation: Version specific
+	# Type:         GIT extension
+	&& git clone https://github.com/phalcon/cphalcon /tmp/phalcon \
+	&& cd /tmp/phalcon \
+	# Custom:       Branch
+	&& git checkout v3.4.4 \
+	# Custom:       Install command
+	&& cd build && ./install \
+	# Enabling
+	&& docker-php-ext-enable phalcon \
+	&& true
+
+
 
 
 # Fix php.ini settings for enabled extensions
@@ -276,8 +446,10 @@ RUN set -eux \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
 	ghostscript \
+	libaio1 \
 	libenchant1c2a \
 	libevent-2.0-5 \
+	libfbclient2 \
 	libfreetype6 \
 	libjpeg62-turbo \
 	libmagickwand-6.q16-2 \
@@ -285,6 +457,7 @@ RUN set -eux \
 	libmysqlclient18 \
 	libpng12-0 \
 	libpq5 \
+	libsybdb5 \
 	libvpx1 \
 	libwebp5 \
 	libxpm4 \
@@ -321,6 +494,19 @@ RUN set -eux \
 && sed -i'' 's|.*<policy domain="coder".*"XPS".*||g' /etc/ImageMagick-6/policy.xml \
 && sed -i'' 's|.*<policy domain="coder".*"PS".*||g' /etc/ImageMagick-6/policy.xml \
 && sed -i'' 's|.*<policy domain="delegate".*pattern="gs".*||g' /etc/ImageMagick-6/policy.xml \
+  \
+	# ---------- oci8 ----------
+	&& ARCH="$(dpkg-architecture --query DEB_HOST_GNU_CPU)" \
+&& ORACLE_HREF="$( \
+    curl -sS https://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/${ARCH}/ \
+    | tac \
+    | tac \
+    | grep -Eo 'href="getPackage/oracle-instantclient.+basiclite.+rpm"' \
+    | tail -1 \
+)" \
+&& ORACLE_VERSION_MAJOR="$( echo "${ORACLE_HREF}" | grep -Eo 'instantclient[.0-9]+' | sed 's/instantclient//g' )" \
+&& ORACLE_VERSION_FULL="$( echo "${ORACLE_HREF}" | grep -Eo 'basiclite-[-.0-9]+' | sed -e 's/basiclite-//g' -e 's/\.$//g' )" \
+&& (ln -sf /usr/lib/oracle/${ORACLE_VERSION_MAJOR}/client64/lib/*.so* /usr/lib/ || true) \
   \
 	&& true
 
@@ -376,6 +562,46 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^zip$' \
 	&& php -m | grep -oiE '^phar$' \
 	&& php-fpm -m | grep -oiE '^phar$' \
+	&& php -m | grep -oiE '^curl$' \
+	&& php-fpm -m | grep -oiE '^curl$' \
+	&& php -m | grep -oiE '^fileinfo$' \
+	&& php-fpm -m | grep -oiE '^fileinfo$' \
+	&& php -m | grep -oiE '^gettext$' \
+	&& php-fpm -m | grep -oiE '^gettext$' \
+	&& php -m | grep -oiE '^interbase$' \
+	&& php-fpm -m | grep -oiE '^interbase$' \
+	&& php -m | grep -oiE '^json$' \
+	&& php-fpm -m | grep -oiE '^json$' \
+	&& php -m | grep -oiE '^memcache$' \
+	&& php-fpm -m | grep -oiE '^memcache$' \
+	&& php -m | grep -oiE '^mongo$' \
+	&& php-fpm -m | grep -oiE '^mongo$' \
+	&& php -m | grep -oiE '^mysql$' \
+	&& php-fpm -m | grep -oiE '^mysql$' \
+	&& php -m | grep -oiE '^mysqlnd$' \
+	&& php-fpm -m | grep -oiE '^mysqlnd$' \
+	&& php -m | grep -oiE '^oci8$' \
+	&& php-fpm -m | grep -oiE '^oci8$' \
+	&& php -m | grep -oiE '^openssl$' \
+	&& php-fpm -m | grep -oiE '^openssl$' \
+	&& php -m | grep -oiE '^pdo$' \
+	&& php-fpm -m | grep -oiE '^pdo$' \
+	&& php -m | grep -oiE '^pdo_dblib$' \
+	&& php-fpm -m | grep -oiE '^pdo_dblib$' \
+	&& php -m | grep -oiE '^pdo_firebird$' \
+	&& php-fpm -m | grep -oiE '^pdo_firebird$' \
+	&& php -m | grep -oiE '^pdo_mysql$' \
+	&& php-fpm -m | grep -oiE '^pdo_mysql$' \
+	&& php -m | grep -oiE '^pdo_pgsql$' \
+	&& php-fpm -m | grep -oiE '^pdo_pgsql$' \
+	&& php -m | grep -oiE '^pdo_sqlite$' \
+	&& php-fpm -m | grep -oiE '^pdo_sqlite$' \
+	&& php -m | grep -oiE '^psr$' \
+	&& php-fpm -m | grep -oiE '^psr$' \
+	&& php -m | grep -oiE '^sqlite3$' \
+	&& php-fpm -m | grep -oiE '^sqlite3$' \
+	&& php -m | grep -oiE '^phalcon$' \
+	&& php-fpm -m | grep -oiE '^phalcon$' \
 	&& true
 
 
