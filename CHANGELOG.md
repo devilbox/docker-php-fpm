@@ -13,12 +13,17 @@ Additionally it introduces a new flavour: `slim` which is an intermediated stage
 ### Added
 - New PHP Flavour: `slim`
 - Added `mhsendmail` for `arm64` architecture
+- Added `wkhtmltopdf` for `arm64 architecture [#252](https://github.com/devilbox/docker-php-fpm/issues/252)
+- Added `taskfile` (https://taskfile.dev/)
 - Added mechanism to easily build custom images with custom set of PHP tools
 - Added automated PHP tools dependency resolver (order of built is always correct)
 - Added tons of documentation
 
 ### Changed
 - Split out PHP tools into separate directories
+
+### Fixed
+- Fixed `xdebug` build
 
 
 ## Release 0.144
