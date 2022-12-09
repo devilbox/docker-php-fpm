@@ -787,17 +787,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
-	&& cd /tmp/xdebug \
-	# Custom:       Branch
-	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --enable-xdebug \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xdebug \
 	# Enabling
 	&& docker-php-ext-enable xdebug \
 	&& true

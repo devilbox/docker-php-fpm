@@ -8,18 +8,17 @@
 all:
   type: pecl
 
-8.2:
-  type: git
-  git_url: https://github.com/xdebug/xdebug
-  # FIXME: revert to latest tag once PHP 8.2 support is out of alpha/beta
-  git_ref: 3.2.0RC2
-  configure: --enable-xdebug
+7.4:
+  type: pecl
+  version: 3.1.6
 
-8.1:
-  type: git
-  git_url: https://github.com/xdebug/xdebug
-  git_ref: $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1)
-  configure: --enable-xdebug
+7.3:
+  type: pecl
+  version: 3.1.6
+
+7.2:
+  type: pecl
+  version: 3.1.6
 
 7.1:
   type: pecl
