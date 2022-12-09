@@ -288,6 +288,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 | [stylelint][lnk_stylelint]                 |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [svn][lnk_svn]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [symfony-cli][lnk_symfony-cli]             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
+| [taskfile][lnk_taskfile]                   |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [tig][lnk_tig]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [vim][lnk_vim]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [vue-cli][lnk_vue-cli]                     |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
@@ -338,6 +339,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 [lnk_stylelint]: ../php_tools/stylelint
 [lnk_svn]: ../php_tools/svn
 [lnk_symfony-cli]: ../php_tools/symfony-cli
+[lnk_taskfile]: ../php_tools/taskfile
 [lnk_tig]: ../php_tools/tig
 [lnk_vim]: ../php_tools/vim
 [lnk_vue-cli]: ../php_tools/vue-cli
