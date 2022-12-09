@@ -87,28 +87,6 @@ RUN set -eux \
 	{%- endif -%}
 {%- endfor %}
 
-###
-### Configure Bash (composer, node yarn)
-###
-RUN set -eux \
-	&& { \
-		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
-		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
-		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
-		echo 'PATH="{{ nvm_home }}/versions/node/$(nvm version default)/bin:${PATH}"'; \
-		echo "export PATH"; \
-		echo ". /etc/bash-devilbox"; \
-		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
-		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
-		echo "        if [ -r \"\${f}\" ]; then"; \
-		echo "            . \"\${f}\""; \
-		echo "        fi"; \
-		echo "    done"; \
-		echo "    unset f"; \
-		echo "fi"; \
-	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
-	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
-
 
 
 ########################################################################################################################
@@ -159,6 +137,38 @@ COPY --from=devilbox-work-help-builder /usr/local/bin /usr/local/bin
 ### Python packages
 ###
 COPY --from=devilbox-work-help-builder /usr/local/lib /usr/local/lib
+
+
+###
+### Configure Bash (composer, node yarn)
+###
+RUN set -eux \
+	&& { \
+		#echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
+		echo; \
+		echo "# [Devilbox] Ensure yarn, composer and node are in PATH"; \
+		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
+		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
+		echo 'PATH="{{ nvm_home }}/versions/node/$(node --version)/bin:${PATH}"'; \
+		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Ensure to load nvm"; \
+		echo 'export NVM_DIR="{{ nvm_home }}"'; \
+		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+		#echo; \
+		#echo ". /etc/bash-devilbox"; \
+		#echo; \
+		#echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		#echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		#echo "        if [ -r \"\${f}\" ]; then"; \
+		#echo "            . \"\${f}\""; \
+		#echo "        fi"; \
+		#echo "    done"; \
+		#echo "    unset f"; \
+		#echo "fi"; \
+	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
 
 
 

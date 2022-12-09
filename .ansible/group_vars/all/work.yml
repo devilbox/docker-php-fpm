@@ -37,6 +37,7 @@ tools_enabled:
   - stylelint
   - svn
   - symfony-cli
+  - taskfile
   - tig
   - vim
   - vue-cli
@@ -571,6 +572,12 @@ tools_available:
       command: curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin
       build_dep: []
       run_dep: []
+  taskfile:
+    disabled: []
+    check: task --version | grep -E '[0-9][.0-9]+' || (task --version; false)
+    all:
+      type: custom
+      command: sh -c "$(curl -sS -K --fail -k https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin/
   tig:
     disabled: []
     check: tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)

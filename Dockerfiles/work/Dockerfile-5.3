@@ -63,12 +63,6 @@ RUN set -eux \
 	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
 	  | NVM_DIR="/opt/nvm" bash \
 	\
-	&& { \
-	  echo 'export NVM_DIR="/opt/nvm"'; \
-	  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
-	  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
-	} >> /home/devilbox/.bashrc \
-	\
 	&& chown -R devilbox:devilbox "/opt/nvm" \
 	\
 	&& su  -c ". /opt/nvm/nvm.sh; nvm install ${NODE_VERSION}" devilbox \
@@ -112,28 +106,6 @@ RUN set -eux \
 	\
 	&& true
 
-###
-### Configure Bash (composer, node yarn)
-###
-RUN set -eux \
-	&& { \
-		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
-		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
-		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
-		echo 'PATH="/opt/nvm/versions/node/$(nvm version default)/bin:${PATH}"'; \
-		echo "export PATH"; \
-		echo ". /etc/bash-devilbox"; \
-		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
-		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
-		echo "        if [ -r \"\${f}\" ]; then"; \
-		echo "            . \"\${f}\""; \
-		echo "        fi"; \
-		echo "    done"; \
-		echo "    unset f"; \
-		echo "fi"; \
-	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
-	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
-
 
 
 ########################################################################################################################
@@ -172,6 +144,38 @@ COPY --from=devilbox-work-help-builder /usr/local/bin /usr/local/bin
 ### Python packages
 ###
 COPY --from=devilbox-work-help-builder /usr/local/lib /usr/local/lib
+
+
+###
+### Configure Bash (composer, node yarn)
+###
+RUN set -eux \
+	&& { \
+		#echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
+		echo; \
+		echo "# [Devilbox] Ensure yarn, composer and node are in PATH"; \
+		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
+		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
+		echo 'PATH="/opt/nvm/versions/node/$(node --version)/bin:${PATH}"'; \
+		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Ensure to load nvm"; \
+		echo 'export NVM_DIR="/opt/nvm"'; \
+		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+		#echo; \
+		#echo ". /etc/bash-devilbox"; \
+		#echo; \
+		#echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		#echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		#echo "        if [ -r \"\${f}\" ]; then"; \
+		#echo "            . \"\${f}\""; \
+		#echo "        fi"; \
+		#echo "    done"; \
+		#echo "    unset f"; \
+		#echo "fi"; \
+	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
 
 
 
@@ -490,6 +494,12 @@ RUN set -eux \
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
 	&& true
 
+# -------------------- (custom) taskfile --------------------
+RUN set -eux \
+	&& sh -c "$(curl -sS -K --fail -k https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin/	\
+	&& task --version | grep -E '[0-9][.0-9]+' || (task --version; false)	\
+	&& true
+
 # -------------------- (apt) tig --------------------
 RUN set -eux \
 	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
@@ -773,6 +783,11 @@ RUN set -eux \
 # -------------------- (custom) symfony-cli --------------------
 RUN set -eux \
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (custom) taskfile --------------------
+RUN set -eux \
+	&& task --version | grep -E '[0-9][.0-9]+' || (task --version; false)	\
 	&& true
 
 # -------------------- (apt) tig --------------------

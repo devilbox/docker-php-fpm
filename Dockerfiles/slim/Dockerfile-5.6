@@ -426,9 +426,15 @@ COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
 ###
 RUN set -eux \
 	&& { \
+		echo; \
+		echo "# [Devilbox] Ensure /usr/local(s)?bin is in PATH"; \
 		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
 		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox main bash config"; \
 		echo ". /etc/bash-devilbox"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox custom configs"; \
 		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
 		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
 		echo "        if [ -r \"\${f}\" ]; then"; \

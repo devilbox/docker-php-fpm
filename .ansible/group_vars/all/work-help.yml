@@ -117,12 +117,6 @@ help_software_available:
         && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" \
           | NVM_DIR="{{ nvm_home }}" bash \
         \
-        && { \
-          echo 'export NVM_DIR="{{ nvm_home }}"'; \
-          echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
-          echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
-        } >> /home/devilbox/.bashrc \
-        \
         && chown -R devilbox:devilbox "{{ nvm_home }}" \
       # Install latest and LTS version and yarn
       post: |
