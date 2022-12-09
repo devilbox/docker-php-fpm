@@ -377,11 +377,16 @@ RUN set -eux \
 
 # -------------------- (apt) mupdf-tools --------------------
 RUN set -eux \
-	&& echo test > test.txt \
-	&& mutool create -o test.pdf test.txt \
-	&& file test.pdf | grep 'PDF document' \
-	&& rm test.txt \
-	&& rm test.pdf \
+	&& PHP_VERSION="$(php -v | grep ^PHP | awk '{print $2}' | grep -Eo '[0-9]\.[0-9]')" \
+	&& if echo "${PHP_VERSION}" | grep -E '5\.2|5\.3|5\.4|5\.5'; then \
+	  mutool 2>&1 | grep ^usage; \
+	else \
+	  echo test > test.txt \
+	  && mutool create -o test.pdf test.txt \
+	  && file test.pdf | grep 'PDF document' \
+	  && rm test.txt \
+	  && rm test.pdf; \
+	fi \
 	\
 	&& true
 
@@ -687,11 +692,16 @@ RUN set -eux \
 
 # -------------------- (apt) mupdf-tools --------------------
 RUN set -eux \
-	&& echo test > test.txt \
-	&& mutool create -o test.pdf test.txt \
-	&& file test.pdf | grep 'PDF document' \
-	&& rm test.txt \
-	&& rm test.pdf \
+	&& PHP_VERSION="$(php -v | grep ^PHP | awk '{print $2}' | grep -Eo '[0-9]\.[0-9]')" \
+	&& if echo "${PHP_VERSION}" | grep -E '5\.2|5\.3|5\.4|5\.5'; then \
+	  mutool 2>&1 | grep ^usage; \
+	else \
+	  echo test > test.txt \
+	  && mutool create -o test.pdf test.txt \
+	  && file test.pdf | grep 'PDF document' \
+	  && rm test.txt \
+	  && rm test.pdf; \
+	fi \
 	\
 	&& true
 
