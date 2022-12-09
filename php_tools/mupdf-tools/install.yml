@@ -1,0 +1,12 @@
+---
+
+check: |
+  echo test > test.txt \
+  && mutool create -o test.pdf test.txt \
+  && file test.pdf | gre 'PDF document' \
+  && rm test.txt \
+  && rm test.pdf \
+
+all:
+  type: apt
+  package: mupdf-tools

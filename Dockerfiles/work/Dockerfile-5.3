@@ -271,7 +271,13 @@ RUN set -eux \
 		# ---------- type: apt ----------
 		git \
 		jq \
+		mupdf-tools \
+		openssh-client \
+		rsync \
 		shellcheck \
+		subversion \
+		tig \
+		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -368,6 +374,16 @@ RUN set -eux \
 	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
 	&& true
 
+# -------------------- (apt) mupdf-tools --------------------
+RUN set -eux \
+	&& echo test > test.txt \
+	&& mutool create -o test.pdf test.txt \
+	&& file test.pdf | gre 'PDF document' \
+	&& rm test.txt \
+	&& rm test.pdf \
+	\
+	&& true
+
 # -------------------- (custom) php-cs-fixer --------------------
 RUN set -eux \
 	&& PHP_CS_FIXER_URL="https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.2.19/php-cs-fixer.phar"	\
@@ -428,6 +444,16 @@ RUN set -eux \
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
+# -------------------- (apt) ssh --------------------
+RUN set -eux \
+	&& ssh -V 2>&1 | grep ^OpenSSH || (ssh -V; false)	\
+	&& true
+
+# -------------------- (apt) rsync --------------------
+RUN set -eux \
+	&& rsync --version | grep version | grep -E '[0-9]\.[0-9]+' || (rsync --version; false)	\
+	&& true
+
 # -------------------- (npm) sass --------------------
 RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
@@ -447,10 +473,20 @@ RUN set -eux \
 	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
 	&& true
 
+# -------------------- (apt) svn --------------------
+RUN set -eux \
+	&& svn --version | grep version | grep -E '[0-9]+\.[0-9]+' || (svn --version; false)	\
+	&& true
+
 # -------------------- (custom) symfony-cli --------------------
 RUN set -eux \
 	&& curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin	\
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (apt) tig --------------------
+RUN set -eux \
+	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
 	&& true
 
 # -------------------- (npm) vue-cli --------------------
@@ -485,6 +521,11 @@ RUN set -eux \
 RUN set -eux \
 	&& pip install --no-cache-dir --no-compile --force-reinstall yq \
 	&& yq --version 2>&1 | grep -E '[0-9][.0-9]+' || (yq --version; false)	\
+	&& true
+
+# -------------------- (apt) zsh --------------------
+RUN set -eux \
+	&& zsh --version 2>&1 | grep -E '[0-9][.0-9]+' || (zsh --version; false)	\
 	&& true
 
 ###
@@ -524,7 +565,13 @@ RUN set -eux \
 		# ---------- type: apt ----------
 		git \
 		jq \
+		mupdf-tools \
+		openssh-client \
+		rsync \
 		shellcheck \
+		subversion \
+		tig \
+		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -631,6 +678,16 @@ RUN set -eux \
 	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
 	&& true
 
+# -------------------- (apt) mupdf-tools --------------------
+RUN set -eux \
+	&& echo test > test.txt \
+	&& mutool create -o test.pdf test.txt \
+	&& file test.pdf | gre 'PDF document' \
+	&& rm test.txt \
+	&& rm test.pdf \
+	\
+	&& true
+
 # -------------------- (custom) php-cs-fixer --------------------
 RUN set -eux \
 	&& php-cs-fixer --version 2>&1 | grep -E 'Fixer\s+(version\s*)?[-_.0-9]+\s+' || (php-cs-fixer --version; false)	\
@@ -666,6 +723,16 @@ RUN set -eux \
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
+# -------------------- (apt) ssh --------------------
+RUN set -eux \
+	&& ssh -V 2>&1 | grep ^OpenSSH || (ssh -V; false)	\
+	&& true
+
+# -------------------- (apt) rsync --------------------
+RUN set -eux \
+	&& rsync --version | grep version | grep -E '[0-9]\.[0-9]+' || (rsync --version; false)	\
+	&& true
+
 # -------------------- (npm) sass --------------------
 RUN set -eux \
 	&& sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)	\
@@ -681,9 +748,19 @@ RUN set -eux \
 	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
 	&& true
 
+# -------------------- (apt) svn --------------------
+RUN set -eux \
+	&& svn --version | grep version | grep -E '[0-9]+\.[0-9]+' || (svn --version; false)	\
+	&& true
+
 # -------------------- (custom) symfony-cli --------------------
 RUN set -eux \
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (apt) tig --------------------
+RUN set -eux \
+	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
 	&& true
 
 # -------------------- (npm) vue-cli --------------------
@@ -709,6 +786,11 @@ RUN set -eux \
 # -------------------- (pip) yq --------------------
 RUN set -eux \
 	&& yq --version 2>&1 | grep -E '[0-9][.0-9]+' || (yq --version; false)	\
+	&& true
+
+# -------------------- (apt) zsh --------------------
+RUN set -eux \
+	&& zsh --version 2>&1 | grep -E '[0-9][.0-9]+' || (zsh --version; false)	\
 	&& true
 
 ###

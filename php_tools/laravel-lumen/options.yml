@@ -1,10 +1,10 @@
 ---
 
 # The name of the module
-name: php-cs-fixer
+name: laravel-lumen
 
 # Exclude module build/installation for the following PHP versions
-exclude: [5.2, 8.2]
+exclude: [5.2, 5.3, 5.4]
 
 # In order for this tool to build/install correctly,
 # the following tools must have been installed first.

@@ -66,6 +66,7 @@ RUN set -eux \
 		dnsutils \
 		iputils-ping \
 		netcat-openbsd \
+		sudo \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -85,6 +86,11 @@ RUN set -eux \
 # -------------------- ping --------------------
 RUN set -eux \
 	&& ping -V | grep ^ping	\
+	&& true
+
+# -------------------- sudo --------------------
+RUN set -eux \
+	&& sudo --version | grep -E 'version [0-9]+\.[0-9]+'	\
 	&& true
 
 # -------------------- blackfire --------------------
@@ -304,6 +310,7 @@ RUN set -eux \
 		dnsutils \
 		iputils-ping \
 		netcat-openbsd \
+		sudo \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -465,6 +472,11 @@ RUN set -eux \
 # -------------------- ping --------------------
 RUN set -eux \
 	&& ping -V | grep ^ping	\
+	&& true
+
+# -------------------- sudo --------------------
+RUN set -eux \
+	&& sudo --version | grep -E 'version [0-9]+\.[0-9]+'	\
 	&& true
 
 # -------------------- blackfire --------------------

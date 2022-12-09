@@ -273,7 +273,13 @@ RUN set -eux \
 		# ---------- type: apt ----------
 		git \
 		jq \
+		mupdf-tools \
+		openssh-client \
+		rsync \
 		shellcheck \
+		subversion \
+		tig \
+		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -382,7 +388,15 @@ RUN set -eux \
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  laravel/installer \
 	&& ln -s /usr/local/src/composer/vendor/laravel/installer/bin/laravel /usr/local/bin/ \
 	&& rm -rf /usr/local/src/composer/cache/* \
-	&& laravel --version | grep -E '^Laravel Installer\s[0-9][.0-9]+$' || (laravel --version; false)	\
+	&& laravel --version | grep version | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
+	&& true
+
+# -------------------- (composer) laravel-lumen --------------------
+RUN set -eux \
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  laravel/lumen-installer \
+	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
+	&& rm -rf /usr/local/src/composer/cache/* \
+	&& lumen --version 2>/dev/null | grep ^Lumen | grep -E '[0-9]\.[0-9]+' || (lumen --version; false)	\
 	&& true
 
 # -------------------- (custom) linkcheck --------------------
@@ -392,19 +406,60 @@ RUN set -eux \
 	&& linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)	\
 	&& true
 
-# -------------------- (composer) lumen --------------------
-RUN set -eux \
-	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  laravel/lumen-installer \
-	&& ln -s /usr/local/src/composer/vendor/laravel/lumen-installer/lumen /usr/local/bin/ \
-	&& rm -rf /usr/local/src/composer/cache/* \
-	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' || (lumen --version; false)	\
-	&& true
-
 # -------------------- (npm) mdlint --------------------
 RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/mdlint /usr/local/bin/ \
 	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
+	&& true
+
+# -------------------- (apt) mupdf-tools --------------------
+RUN set -eux \
+	&& echo test > test.txt \
+	&& mutool create -o test.pdf test.txt \
+	&& file test.pdf | gre 'PDF document' \
+	&& rm test.txt \
+	&& rm test.pdf \
+	\
+	&& true
+
+# -------------------- (composer) phalcon-devtools --------------------
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+	  echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
+	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  phalcon/devtools \
+	&& ln -s /usr/local/src/composer/vendor/phalcon/devtools/phalcon /usr/local/bin/ \
+	&& rm -rf /usr/local/src/composer/cache/* \
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini ]; then \
+	  rm /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini ]; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+	  echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
+	\
+	&& phalcon commands | grep -E '[0-9][.0-9]+' || (phalcon commands; false) \
+	\
+	\
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini ]; then \
+	  rm /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini ]; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
 	&& true
 
 # -------------------- (custom) php-cs-fixer --------------------
@@ -467,6 +522,16 @@ RUN set -eux \
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
+# -------------------- (apt) ssh --------------------
+RUN set -eux \
+	&& ssh -V 2>&1 | grep ^OpenSSH || (ssh -V; false)	\
+	&& true
+
+# -------------------- (apt) rsync --------------------
+RUN set -eux \
+	&& rsync --version | grep version | grep -E '[0-9]\.[0-9]+' || (rsync --version; false)	\
+	&& true
+
 # -------------------- (npm) sass --------------------
 RUN set -eux \
 	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
@@ -486,10 +551,20 @@ RUN set -eux \
 	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
 	&& true
 
+# -------------------- (apt) svn --------------------
+RUN set -eux \
+	&& svn --version | grep version | grep -E '[0-9]+\.[0-9]+' || (svn --version; false)	\
+	&& true
+
 # -------------------- (custom) symfony-cli --------------------
 RUN set -eux \
 	&& curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin	\
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (apt) tig --------------------
+RUN set -eux \
+	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
 	&& true
 
 # -------------------- (npm) vue-cli --------------------
@@ -524,6 +599,11 @@ RUN set -eux \
 RUN set -eux \
 	&& pip install --no-cache-dir --no-compile --force-reinstall yq \
 	&& yq --version 2>&1 | grep -E '[0-9][.0-9]+' || (yq --version; false)	\
+	&& true
+
+# -------------------- (apt) zsh --------------------
+RUN set -eux \
+	&& zsh --version 2>&1 | grep -E '[0-9][.0-9]+' || (zsh --version; false)	\
 	&& true
 
 ###
@@ -563,7 +643,13 @@ RUN set -eux \
 		# ---------- type: apt ----------
 		git \
 		jq \
+		mupdf-tools \
+		openssh-client \
+		rsync \
 		shellcheck \
+		subversion \
+		tig \
+		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
 ###
@@ -677,7 +763,12 @@ RUN set -eux \
 
 # -------------------- (composer) laravel-installer --------------------
 RUN set -eux \
-	&& laravel --version | grep -E '^Laravel Installer\s[0-9][.0-9]+$' || (laravel --version; false)	\
+	&& laravel --version | grep version | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
+	&& true
+
+# -------------------- (composer) laravel-lumen --------------------
+RUN set -eux \
+	&& lumen --version 2>/dev/null | grep ^Lumen | grep -E '[0-9]\.[0-9]+' || (lumen --version; false)	\
 	&& true
 
 # -------------------- (custom) linkcheck --------------------
@@ -685,14 +776,41 @@ RUN set -eux \
 	&& linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)	\
 	&& true
 
-# -------------------- (composer) lumen --------------------
-RUN set -eux \
-	&& lumen --version 2>/dev/null | grep -E '^Lumen Installer\s[0-9][.0-9]+$' || (lumen --version; false)	\
-	&& true
-
 # -------------------- (npm) mdlint --------------------
 RUN set -eux \
 	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
+	&& true
+
+# -------------------- (apt) mupdf-tools --------------------
+RUN set -eux \
+	&& echo test > test.txt \
+	&& mutool create -o test.pdf test.txt \
+	&& file test.pdf | gre 'PDF document' \
+	&& rm test.txt \
+	&& rm test.pdf \
+	\
+	&& true
+
+# -------------------- (composer) phalcon-devtools --------------------
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+	  echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
+	\
+	&& phalcon commands | grep -E '[0-9][.0-9]+' || (phalcon commands; false) \
+	\
+	\
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini ]; then \
+	  rm /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if [ -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini ]; then \
+	  echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi \
+	\
 	&& true
 
 # -------------------- (custom) php-cs-fixer --------------------
@@ -730,6 +848,16 @@ RUN set -eux \
 	&& pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)	\
 	&& true
 
+# -------------------- (apt) ssh --------------------
+RUN set -eux \
+	&& ssh -V 2>&1 | grep ^OpenSSH || (ssh -V; false)	\
+	&& true
+
+# -------------------- (apt) rsync --------------------
+RUN set -eux \
+	&& rsync --version | grep version | grep -E '[0-9]\.[0-9]+' || (rsync --version; false)	\
+	&& true
+
 # -------------------- (npm) sass --------------------
 RUN set -eux \
 	&& sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)	\
@@ -745,9 +873,19 @@ RUN set -eux \
 	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
 	&& true
 
+# -------------------- (apt) svn --------------------
+RUN set -eux \
+	&& svn --version | grep version | grep -E '[0-9]+\.[0-9]+' || (svn --version; false)	\
+	&& true
+
 # -------------------- (custom) symfony-cli --------------------
 RUN set -eux \
 	&& symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)	\
+	&& true
+
+# -------------------- (apt) tig --------------------
+RUN set -eux \
+	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
 	&& true
 
 # -------------------- (npm) vue-cli --------------------
@@ -773,6 +911,11 @@ RUN set -eux \
 # -------------------- (pip) yq --------------------
 RUN set -eux \
 	&& yq --version 2>&1 | grep -E '[0-9][.0-9]+' || (yq --version; false)	\
+	&& true
+
+# -------------------- (apt) zsh --------------------
+RUN set -eux \
+	&& zsh --version 2>&1 | grep -E '[0-9][.0-9]+' || (zsh --version; false)	\
 	&& true
 
 ###

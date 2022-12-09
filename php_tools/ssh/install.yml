@@ -1,0 +1,7 @@
+---
+
+check: ssh -V 2>&1 | grep ^OpenSSH || (ssh -V; false)
+
+all:
+  type: apt
+  package: openssh-client

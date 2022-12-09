@@ -156,7 +156,7 @@ def get_markdown(tools: List[Dict[str, Any]]) -> str:
             if str(php) in tool["exclude"]:
                 markdown += "         |"
             else:
-                markdown += "    🗸    |"
+                markdown += "    ✓    |"
         markdown += "\n"
 
     markdown += "\n"
