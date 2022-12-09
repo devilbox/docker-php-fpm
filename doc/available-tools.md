@@ -292,6 +292,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 | [vim][lnk_vim]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [vue-cli][lnk_vue-cli]                     |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [webpack-cli][lnk_webpack-cli]             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
+| [wkhtmltopdf][lnk_wkhtmltopdf]             |         |         |         |         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [wp-cli][lnk_wp-cli]                       |         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [yamllint][lnk_yamllint]                   |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [**yarn**][lnk_**yarn**]                   |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
@@ -341,6 +342,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 [lnk_vim]: ../php_tools/vim
 [lnk_vue-cli]: ../php_tools/vue-cli
 [lnk_webpack-cli]: ../php_tools/webpack-cli
+[lnk_wkhtmltopdf]: ../php_tools/wkhtmltopdf
 [lnk_wp-cli]: ../php_tools/wp-cli
 [lnk_yamllint]: ../php_tools/yamllint
 [lnk_**yarn**]: https://yarnpkg.com/cli/install

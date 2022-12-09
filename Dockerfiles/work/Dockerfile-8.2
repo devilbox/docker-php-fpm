@@ -268,8 +268,16 @@ RUN set -eux \
 		# ---------- run_deps ----------
 		dos2unix \
 		file \
+		fontconfig \
+		libfontenc1 \
+		libxfont2 \
+		libxrender1 \
 		moreutils \
 		ruby \
+		xfonts-75dpi \
+		xfonts-base \
+		xfonts-encodings \
+		xfonts-utils \
 		# ---------- type: apt ----------
 		git \
 		jq \
@@ -545,6 +553,23 @@ RUN set -eux \
 	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
 	&& true
 
+# -------------------- (custom) wkhtmltopdf --------------------
+RUN set -eux \
+	&& OS_RELEASE="bullseye"	\
+	&& DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
+	&& WK_URL="$( \
+	  curl -sSL -L --fail https://api.github.com/repos/wkhtmltopdf/packaging/releases \
+	  | awk -F\" "/wkhtmltopdf.*.${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
+	  | head -1 \
+	)" \
+	&& echo "URL: ${WK_URL}" \
+	&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb "${WK_URL}" \
+	&& dpkg -i /tmp/wkhtmltopdf.deb \
+	&& rm -f /tmp/wkhtmltopdf.deb \
+	\
+	&& wkhtmltopdf --version | grep ^wkhtmltopdf | grep -E '[0-9]\.[0-9]+' | grep patched || (wkhtmltopdf --version; false)	\
+	&& true
+
 # -------------------- (custom) wp-cli --------------------
 RUN set -eux \
 	&& WPCLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"	\
@@ -602,8 +627,16 @@ RUN set -eux \
 		# ---------- run_deps ----------
 		dos2unix \
 		file \
+		fontconfig \
+		libfontenc1 \
+		libxfont2 \
+		libxrender1 \
 		moreutils \
 		ruby \
+		xfonts-75dpi \
+		xfonts-base \
+		xfonts-encodings \
+		xfonts-utils \
 		# ---------- type: apt ----------
 		git \
 		jq \
@@ -844,6 +877,11 @@ RUN set -eux \
 # -------------------- (npm) webpack-cli --------------------
 RUN set -eux \
 	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
+	&& true
+
+# -------------------- (custom) wkhtmltopdf --------------------
+RUN set -eux \
+	&& wkhtmltopdf --version | grep ^wkhtmltopdf | grep -E '[0-9]\.[0-9]+' | grep patched || (wkhtmltopdf --version; false)	\
 	&& true
 
 # -------------------- (custom) wp-cli --------------------
