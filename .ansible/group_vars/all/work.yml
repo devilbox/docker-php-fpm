@@ -38,6 +38,7 @@ tools_enabled:
   - svn
   - symfony-cli
   - tig
+  - vim
   - vue-cli
   - webpack-cli
   - wp-cli
@@ -249,7 +250,7 @@ tools_available:
       package: jq
   laravel-installer:
     disabled: [5.2, 5.3]
-    check: laravel --version | grep version | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)
+    check: laravel --version | grep ^Laravel | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)
     all:
       type: composer
       composer: 2
@@ -322,7 +323,7 @@ tools_available:
     check: |
       echo test > test.txt \
       && mutool create -o test.pdf test.txt \
-      && file test.pdf | gre 'PDF document' \
+      && file test.pdf | grep 'PDF document' \
       && rm test.txt \
       && rm test.pdf \
     all:
@@ -570,6 +571,12 @@ tools_available:
     all:
       type: apt
       package: tig
+  vim:
+    disabled: []
+    check: vim --version | grep ^VIM | grep -E '[0-9]\.[0-9]+' || (vim --version; false)
+    all:
+      type: apt
+      package: vim
   vue-cli:
     disabled: []
     check: vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)

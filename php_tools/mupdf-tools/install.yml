@@ -3,7 +3,7 @@
 check: |
   echo test > test.txt \
   && mutool create -o test.pdf test.txt \
-  && file test.pdf | gre 'PDF document' \
+  && file test.pdf | grep 'PDF document' \
   && rm test.txt \
   && rm test.pdf \
 

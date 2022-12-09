@@ -289,6 +289,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 | [svn][lnk_svn]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [symfony-cli][lnk_symfony-cli]             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [tig][lnk_tig]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
+| [vim][lnk_vim]                             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [vue-cli][lnk_vue-cli]                     |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [webpack-cli][lnk_webpack-cli]             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [wp-cli][lnk_wp-cli]                       |         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
@@ -337,6 +338,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 [lnk_svn]: ../php_tools/svn
 [lnk_symfony-cli]: ../php_tools/symfony-cli
 [lnk_tig]: ../php_tools/tig
+[lnk_vim]: ../php_tools/vim
 [lnk_vue-cli]: ../php_tools/vue-cli
 [lnk_webpack-cli]: ../php_tools/webpack-cli
 [lnk_wp-cli]: ../php_tools/wp-cli

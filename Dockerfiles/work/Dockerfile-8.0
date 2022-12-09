@@ -279,6 +279,7 @@ RUN set -eux \
 		shellcheck \
 		subversion \
 		tig \
+		vim \
 		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -288,7 +289,7 @@ RUN set -eux \
 
 # -------------------- (npm) angular-cli --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @angular/cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global @angular/cli' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/ng /usr/local/bin/ \
 	&& ng version 2>&1 | grep -iE 'Angular CLI:\s*[0-9][.0-9]+' || (ng version; false)	\
 	&& true
@@ -303,7 +304,7 @@ RUN set -eux \
 
 # -------------------- (npm) eslint --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force eslint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global eslint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/eslint /usr/local/bin/ \
 	&& eslint -v | grep -E '[0-9][.0-9]+' || (eslint -v; false)	\
 	&& true
@@ -315,7 +316,7 @@ RUN set -eux \
 
 # -------------------- (npm) jsonlint --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force jsonlint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global jsonlint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/jsonlint /usr/local/bin/ \
 	&& jsonlint --version | grep -E '[0-9][.0-9]+' || (jsonlint --version; false)	\
 	&& true
@@ -366,14 +367,14 @@ RUN set -eux \
 
 # -------------------- (npm) grunt-cli --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force grunt-cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global grunt-cli' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/grunt /usr/local/bin/ \
 	&& grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)	\
 	&& true
 
 # -------------------- (npm) gulp --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force gulp' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global gulp' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/gulp /usr/local/bin/ \
 	&& gulp --version | grep -E '[0-9][.0-9]+' || (gulp --version; false)	\
 	&& true
@@ -388,7 +389,7 @@ RUN set -eux \
 	&& COMPOSER_HOME="/usr/local/src/composer" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-2 global require --no-interaction --no-cache  laravel/installer \
 	&& ln -s /usr/local/src/composer/vendor/laravel/installer/bin/laravel /usr/local/bin/ \
 	&& rm -rf /usr/local/src/composer/cache/* \
-	&& laravel --version | grep version | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
+	&& laravel --version | grep ^Laravel | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
 	&& true
 
 # -------------------- (composer) laravel-lumen --------------------
@@ -408,7 +409,7 @@ RUN set -eux \
 
 # -------------------- (npm) mdlint --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force mdlint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global mdlint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/mdlint /usr/local/bin/ \
 	&& mdlint --version | grep -E '[0-9][.0-9]+' || (mdlint --version; false)	\
 	&& true
@@ -417,7 +418,7 @@ RUN set -eux \
 RUN set -eux \
 	&& echo test > test.txt \
 	&& mutool create -o test.pdf test.txt \
-	&& file test.pdf | gre 'PDF document' \
+	&& file test.pdf | grep 'PDF document' \
 	&& rm test.txt \
 	&& rm test.pdf \
 	\
@@ -509,7 +510,7 @@ RUN set -eux \
 
 # -------------------- (npm) pm2 --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force pm2' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global pm2' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/pm2 /usr/local/bin/ \
 	&& pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' || (pm2 --no-daemon --version; false)	\
 	&& true
@@ -534,7 +535,7 @@ RUN set -eux \
 
 # -------------------- (npm) sass --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force sass' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global sass' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/sass /usr/local/bin/ \
 	&& sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)	\
 	&& true
@@ -546,7 +547,7 @@ RUN set -eux \
 
 # -------------------- (npm) stylelint --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force stylelint' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global stylelint' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/stylelint /usr/local/bin/ \
 	&& stylelint --version | grep -E '[0-9][.0-9]+' || (stylelint --version; false)	\
 	&& true
@@ -567,16 +568,21 @@ RUN set -eux \
 	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
 	&& true
 
+# -------------------- (apt) vim --------------------
+RUN set -eux \
+	&& vim --version | grep ^VIM | grep -E '[0-9]\.[0-9]+' || (vim --version; false)	\
+	&& true
+
 # -------------------- (npm) vue-cli --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force @vue/cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global @vue/cli' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/vue /usr/local/bin/ \
 	&& vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)	\
 	&& true
 
 # -------------------- (npm) webpack-cli --------------------
 RUN set -eux \
-	&& su -c '. /opt/nvm/nvm.sh; npm install -g --force webpack-cli' devilbox \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global webpack-cli' devilbox \
 	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/webpack-cli /usr/local/bin/ \
 	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
 	&& true
@@ -649,6 +655,7 @@ RUN set -eux \
 		shellcheck \
 		subversion \
 		tig \
+		vim \
 		zsh \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -763,7 +770,7 @@ RUN set -eux \
 
 # -------------------- (composer) laravel-installer --------------------
 RUN set -eux \
-	&& laravel --version | grep version | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
+	&& laravel --version | grep ^Laravel | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)	\
 	&& true
 
 # -------------------- (composer) laravel-lumen --------------------
@@ -785,7 +792,7 @@ RUN set -eux \
 RUN set -eux \
 	&& echo test > test.txt \
 	&& mutool create -o test.pdf test.txt \
-	&& file test.pdf | gre 'PDF document' \
+	&& file test.pdf | grep 'PDF document' \
 	&& rm test.txt \
 	&& rm test.pdf \
 	\
@@ -886,6 +893,11 @@ RUN set -eux \
 # -------------------- (apt) tig --------------------
 RUN set -eux \
 	&& tig --version 2>&1 | grep -E '[0-9][.0-9]+' || (tig --version; false)	\
+	&& true
+
+# -------------------- (apt) vim --------------------
+RUN set -eux \
+	&& vim --version | grep ^VIM | grep -E '[0-9]\.[0-9]+' || (vim --version; false)	\
 	&& true
 
 # -------------------- (npm) vue-cli --------------------

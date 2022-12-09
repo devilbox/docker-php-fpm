@@ -313,7 +313,7 @@ RUN set -eux \
 			{%- set npm_package = fn.tool_npm_get_package(php_version, tool, tools_available) -%}
 			{%- set npm_version = fn.tool_npm_get_version(php_version, tool, tools_available) -%}
 			{%- set npm_binary = fn.tool_npm_get_binary(php_version, tool, tools_available) -%}
-			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_package }}{{ npm_version }}' devilbox \
+			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install --location=global {{ npm_package }}{{ npm_version }}' devilbox \
 			{%- if npm_binary | length -%}
 				{{ "\n\t" }}&& ln -s {{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/{{ npm_binary }} /usr/local/bin/ \
 			{%- endif -%}
