@@ -29,7 +29,7 @@ Have a look at the following table to see all offered volumes for each Docker im
  </thead>
  <tbody>
   <tr>
-   <td rowspan="8"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="8"><strong>prod</strong><br/><br/><strong>slim</strong><br/><br/><strong>work</strong></td>
    <td><code>/etc/php-custom.d</code></td>
    <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
   </tr>
@@ -65,7 +65,7 @@ Have a look at the following table to see all offered volumes for each Docker im
    <td colspan="3"></td>
   </tr>
   <tr>
-   <td rowspan="3"><strong>work</strong></td>
+   <td rowspan="3"><strong>slim</strong><br/><br/><strong>work</strong></td>
    <td><code>/etc/bashrc-devilbox.d</code></td>
    <td>Mount this directory into your host computer and add custom configuration files for <code>bash</code> and other tools.</td>
   </tr>
