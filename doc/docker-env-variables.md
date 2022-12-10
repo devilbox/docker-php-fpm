@@ -30,7 +30,7 @@ Have a look at the following table to see all supported environment variables fo
  </thead>
  <tbody>
   <tr>
-   <td rowspan="3"><strong>base</strong><br/><br/><strong>mods</strong><br/><br/><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="3"><strong>base</strong><br/><br/><strong>mods</strong><br/><br/><strong>prod</strong><br/><br/><strong>slim</strong><br/><br/><strong>work</strong></td>
    <td><code>DEBUG_ENTRYPOINT</code></td>
    <td>int</td>
    <td><code>0</code></td>
@@ -52,7 +52,7 @@ Have a look at the following table to see all supported environment variables fo
    <td colspan="5"></td>
   </tr>
   <tr>
-   <td rowspan="6"><strong>prod</strong><br/><br/><strong>work</strong></td>
+   <td rowspan="6"><strong>prod</strong><br/><br/><strong>slim</strong><br/><br/><strong>work</strong></td>
    <td><code>TIMEZONE</code></td>
    <td>string</td>
    <td><code>UTC</code></td>
@@ -92,7 +92,7 @@ Have a look at the following table to see all supported environment variables fo
    <td colspan="5"></td>
   </tr>
   <tr>
-   <td rowspan="3"><strong>work</strong></td>
+   <td rowspan="3"><strong>slim</strong><br/><br/><strong>work</strong></td>
    <td><code>MYSQL_BACKUP_USER</code></td>
    <td>string</td>
    <td><code>''</code></td>

@@ -38,6 +38,7 @@ This repository uses Docker tags to refer to different flavours and types of the
     <code>:X.Y-base</code><br/>
     <code>:X.Y-mods</code><br/>
     <code>:X.Y-prod</code><br/>
+    <code>:X.Y-slim</code><br/>
     <code>:X.Y-work</code><br/>
    </td>
    <td>Stable<br/><sub>(rolling)</sub><br/><br/>These tags are produced by the master branch of this repository.</td>
@@ -48,6 +49,7 @@ This repository uses Docker tags to refer to different flavours and types of the
     <code>:X.Y-base-&lt;git-tag-name&gt;</code><br/>
     <code>:X.Y-mods-&lt;git-tag-name&gt;</code><br/>
     <code>:X.Y-prod-&lt;git-tag-name&gt;</code><br/>
+    <code>:X.Y-slim-&lt;git-tag-name&gt;</code><br/>
     <code>:X.Y-work-&lt;git-tag-name&gt;</code><br/>
    </td>
    <td>Stable<br/><sub>(fixed)</sub><br/><br/>Every git tag will produce and preserve these Docker tags.</td>
@@ -58,6 +60,7 @@ This repository uses Docker tags to refer to different flavours and types of the
     <code>:X.Y-base-&lt;git-branch-name&gt;</code><br/>
     <code>:X.Y-mods-&lt;git-branch-name&gt;</code><br/>
     <code>:X.Y-prod-&lt;git-branch-name&gt;</code><br/>
+    <code>:X.Y-slim-&lt;git-branch-name&gt;</code><br/>
     <code>:X.Y-work-&lt;git-branch-name&gt;</code><br/>
    </td>
    <td>Feature<br/><sub>(for testing)</sub><br/><br/>Tags produced by unmerged branches. Do not rely on them as they might come and go.</td>
@@ -240,6 +243,60 @@ The following table shows a more complete overview about the offered Docker imag
   <tr>
    <td><code>devilbox/php-fpm:8.2-prod</code></td>
    <td><code>devilbox/php-fpm:8.2-prod-&lt;git-tag&gt;</code></td>
+  </tr>
+
+  <tr>
+   <td rowspan="13"><strong>slim</strong></td>
+   <td><code>devilbox/php-fpm:5.2-slim</code></td>
+   <td><code>devilbox/php-fpm:5.2-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:5.3-slim</code></td>
+   <td><code>devilbox/php-fpm:5.3-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:5.4-slim</code></td>
+   <td><code>devilbox/php-fpm:5.4-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:5.5-slim</code></td>
+   <td><code>devilbox/php-fpm:5.5-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:5.6-slim</code></td>
+   <td><code>devilbox/php-fpm:5.6-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.0-slim</code></td>
+   <td><code>devilbox/php-fpm:7.0-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.1-slim</code></td>
+   <td><code>devilbox/php-fpm:7.1-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.2-slim</code></td>
+   <td><code>devilbox/php-fpm:7.2-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.3-slim</code></td>
+   <td><code>devilbox/php-fpm:7.3-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:7.4-slim</code></td>
+   <td><code>devilbox/php-fpm:7.4-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:8.0-slim</code></td>
+   <td><code>devilbox/php-fpm:8.0-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:8.1-slim</code></td>
+   <td><code>devilbox/php-fpm:8.1-slim-&lt;git-tag&gt;</code></td>
+  </tr>
+  <tr>
+   <td><code>devilbox/php-fpm:8.2-slim</code></td>
+   <td><code>devilbox/php-fpm:8.2-slim-&lt;git-tag&gt;</code></td>
   </tr>
 
   <tr>

@@ -29,6 +29,10 @@ Generic PHP-FPM image with fully loaded extensions. Use it to derive your own ph
 
 Devilbox production image. This Docker image comes with many injectables, port-forwardings, mail-catch-all and user/group rewriting.
 
+#### Image: slim
+
+Devilbox intranet-ready image. Similar to `prod`, but contains least subset of required cli tools to make the Devilbox intranet work.
+
 #### Image: work
 
 Devilbox development image. Same as prod, but comes with lots of locally installed tools to make development inside the container as convenient as possible. See [Integrated Development Environment](../README.md#integrated-development-environment) for more information about this.
