@@ -1,0 +1,68 @@
+---
+
+# Ensure to load phalcon (and its requirement psr prior testing)
+check: |
+    if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+      echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+    fi \
+    && if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+      echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+    fi \
+    \
+    \
+    && phalcon commands | grep -E '[0-9][.0-9]+' || (phalcon commands; false) \
+    \
+    \
+    && if [ -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini ]; then \
+      rm /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+    fi \
+    && if [ -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini ]; then \
+      echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+    fi \
+
+all:
+  type: composer
+  composer: 2
+  package: phalcon/devtools
+  binary: phalcon
+  # Enable phalcon.so (and its requirement psr prior installing)
+  pre: |
+    if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+      echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+    fi \
+    && if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+      echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+    fi \
+  # Disable phalcon.so (and its requirement psr after installing)
+  post: |
+    if [ -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini ]; then \
+      rm /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+    fi \
+    && if [ -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini ]; then \
+      echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+    fi \
+
+7.1:
+  type: composer
+  version: 3.4.11
+
+7.0:
+  type: composer
+  version: 3.4.11
+
+5.6:
+  type: composer
+  version: 3.4.11
+
+5.5:
+  type: composer
+  version: 3.4.11
+
+# Disabled, as their symlink does not work. Filename: phalcon.php
+# 5.4:
+#   type: composer
+#   version: 2.0.9
+#
+# 5.3:
+#   type: composer
+#   version: 2.0.7

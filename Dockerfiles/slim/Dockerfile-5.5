@@ -1,0 +1,622 @@
+# vi: ft=dockerfile
+# Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-slim.j2 instead.
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 1/4: Devilbox slim image (BASE BUILDER)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Installs all cli tools required to run Devilbox and its intranet
+###
+FROM devilbox/php-fpm:5.5-prod as devilbox-slim-base-builder
+
+###
+### Install apt Tools
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
+		curl \
+		dirmngr \
+		gnupg
+
+###
+### Add apt repositories
+###
+RUN set -eux \
+	&& echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until	\
+	&& echo "deb [trusted=yes] http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
+	&& curl -sS -L --fail "https://packages.blackfire.io/gpg.key" | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -	\
+	&& echo "deb http://packages.blackfire.io/debian any main" > /etc/apt/sources.list.d/blackfire.list \
+	&& true
+
+###
+### Install build_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		libsnappy-dev \
+	&& rm -rf /var/lib/apt/lists/*
+###
+### Add common tools
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		file \
+		git \
+		mysql-client \
+		redis-tools \
+		sqlite3
+
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		# ---------- type: apt ----------
+		dnsutils \
+		iputils-ping \
+		netcat-openbsd \
+		sudo \
+	&& rm -rf /var/lib/apt/lists/*
+
+###
+### Devilbox required cli tools from group_vars (slim.yml)
+###
+
+# -------------------- dig --------------------
+RUN set -eux \
+	&& dig -v 2>&1 | grep -E '[0-9]\.[0-9]'	\
+	&& true
+
+# -------------------- netcat --------------------
+RUN set -eux \
+	&& nc -h 2>&1 | grep netcat	\
+	&& true
+
+# -------------------- ping --------------------
+RUN set -eux \
+	&& ping -V | grep ^ping	\
+	&& true
+
+# -------------------- sudo --------------------
+RUN set -eux \
+	&& sudo --version | grep -E 'version [0-9]+\.[0-9]+'	\
+	&& true
+
+# -------------------- blackfire --------------------
+RUN set -eux \
+	&& apt-get update \
+	\
+	&& apt-get install -y --no-install-recommends --no-install-suggests \
+	  blackfire-agent \
+	\
+	&& rm -rf /var/lib/apt/lists/*	\
+	&& blackfire version \
+	&& blackfire-agent -v \
+	\
+	&& true
+
+# -------------------- mhsendmail --------------------
+RUN set -eux \
+	&& DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
+	&& if [ "${DEB_HOST_ARCH}" = "amd64" ] || [ "${DEB_HOST_ARCH}" = "arm64" ]; then \
+	  MHSENDMAIL_URL="https://github.com/devilbox/mhsendmail/releases/download/v0.3.0/mhsendmail_linux_${DEB_HOST_ARCH}" \
+	  && curl -sS -L --fail "${MHSENDMAIL_URL}" > /usr/local/bin/mhsendmail \
+	  && chmod +x /usr/local/bin/mhsendmail; \
+	else \
+	  printf '%s\n%s\n%s\n' '#!/bin/sh' 'echo "Not available for this platform."' 'exit 1' > /usr/local/bin/mhsendmail \
+	  && chmod +x /usr/local/bin/mhsendmail; \
+	fi \
+	\
+	&& mhsendmail -h 2>&1 | grep 'Usage'	\
+	&& true
+
+# -------------------- mongo_client --------------------
+RUN set -eux \
+	&& apt-get update	\
+	&& if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	  apt-get install -y --no-install-recommends --no-install-suggests \
+	    mongodb-clients; \
+	fi \
+	\
+	&& rm -rf /var/lib/apt/lists/*	\
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5|5.6|7.0)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongofiles --version; \
+	  fi \
+	else \
+	  mongofiles --version; \
+	fi \
+	\
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongo --version; \
+	  fi \
+	else \
+	  mongo --version; \
+	fi \
+	\
+	&& true
+
+# -------------------- mysqldumpsecure --------------------
+RUN set -eux \
+	&& git clone https://github.com/cytopia/mysqldump-secure.git /usr/local/src/mysqldump-secure \
+	&& cd /usr/local/src/mysqldump-secure \
+	&& git checkout $(git describe --abbrev=0 --tags) \
+	&& cp /usr/local/src/mysqldump-secure/bin/mysqldump-secure /usr/local/bin \
+	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.conf /etc \
+	&& cp /usr/local/src/mysqldump-secure/etc/mysqldump-secure.cnf /etc \
+	&& touch /var/log/mysqldump-secure.log \
+	&& chown ${MY_USER}:${MY_GROUP} /etc/mysqldump-secure.* \
+	&& chown ${MY_USER}:${MY_GROUP} /var/log/mysqldump-secure.log \
+	&& chmod 0400 /etc/mysqldump-secure.conf \
+	&& chmod 0400 /etc/mysqldump-secure.cnf \
+	&& chmod 0644 /var/log/mysqldump-secure.log \
+	&& sed -i'' 's/^COMPRESS_ARG=.*/COMPRESS_ARG="-9 -c"/g' /etc/mysqldump-secure.conf \
+	&& sed -i'' 's/^DUMP_DIR=.*/DUMP_DIR="\/shared\/backups\/mysql"/g' /etc/mysqldump-secure.conf \
+	&& sed -i'' 's/^DUMP_DIR_CHMOD=.*/DUMP_DIR_CHMOD="0755"/g' /etc/mysqldump-secure.conf \
+	&& sed -i'' 's/^DUMP_FILE_CHMOD=.*/DUMP_FILE_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+	&& sed -i'' 's/^LOG_CHMOD=.*/LOG_CHMOD="0644"/g' /etc/mysqldump-secure.conf \
+	&& sed -i'' 's/^NAGIOS_LOG=.*/NAGIOS_LOG=0/g' /etc/mysqldump-secure.conf \
+	&& cd / \
+	&& rm -rf /usr/local/src/mysqldump-secure \
+	\
+	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+'	\
+	&& true
+
+# -------------------- pgsql_client --------------------
+RUN set -eux \
+	&& if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	  curl -sS -k -L --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add - \
+	  && echo "deb https://apt-archive.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgsql.list \
+	  && apt-get update; \
+	fi \
+	\
+	&& if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	  apt-get install -y --no-install-recommends --no-install-suggests \
+	    postgresql-client; \
+	fi \
+	\
+	&& rm -rf /var/lib/apt/lists/*	\
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5|5.6|7.0)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    pg_isready --version; \
+	  fi \
+	else \
+	  pg_isready --version; \
+	fi \
+	\
+	&& true
+
+###
+### Prepare required shared libraries for copying (keep symlinks)
+###
+RUN set -eux \
+	&& LIB_GNU_DIR="/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	&& USR_LIB_DIR="/usr/lib" \
+	&& USR_LIB_GNU_DIR="/usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	\
+	&& mkdir /tmp/lib-gnu \
+	&& mkdir /tmp/usr-lib \
+	&& mkdir /tmp/usr-lib-gnu \
+	\
+	&& LIB_GNU="libreadline" \
+	&& USR_LIB="libsnappy libtcmalloc libv8" \
+	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap libbsd liblzf" \
+	\
+	&& for lib in ${LIB_GNU}; do \
+		if ls -1 "${LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${LIB_GNU_DIR}"; \
+			cp -r ${LIB_GNU_DIR}/${lib}* /tmp/lib-gnu/; \
+		fi \
+	done \
+	&& for lib in ${USR_LIB}; do \
+		if ls -1 "${USR_LIB_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${USR_LIB_DIR}"; \
+			cp -r ${USR_LIB_DIR}/${lib}* /tmp/usr-lib/; \
+		fi \
+	done \
+	&& for lib in ${USR_LIB_GNU}; do \
+		if ls -1 "${USR_LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${USR_LIB_GNU_DIR}"; \
+			cp -r ${USR_LIB_GNU_DIR}/${lib}* /tmp/usr-lib-gnu/; \
+		fi \
+	done
+
+###
+### Fix expected PostgreSQL directories
+###
+### This might not exist on arm64 as software was not available,
+### but they are still needed to be present, so we can copy them.
+###
+RUN set -eux \
+	&& if [ ! -d "/usr/lib/postgresql" ]; then \
+		mkdir "/usr/lib/postgresql"; \
+	fi \
+	&& if [ ! -d "/usr/share/postgresql-common" ]; then \
+		mkdir "/usr/share/postgresql-common"; \
+	fi
+
+###
+### Prepare MongoDB binaries for copying.
+###
+### They might not be available on all architectures (e.g.: arm64).
+###
+RUN set -eux \
+	&& mkdir /tmp/mongo \
+	&& if ls -1 "/usr/bin/" | grep "^mongo" >/dev/null; then \
+		cp -r /usr/bin/mongo* /tmp/mongo/; \
+	fi
+
+###
+### Strip debugging information to smallen filesize
+###
+RUN set -eux \
+	&& STRIP_USR_BINS="blackfire mongo mysql redis sqlite" \
+	&& STRIP_DIRS="/usr/lib/postgresql/ /usr/share/postgresql-common/ /tmp" \
+	\
+	&& for bin in ${STRIP_USR_BINS}; do \
+		( \
+			find /usr/bin/ -name "${bin}"* -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& for dir in ${STRIP_DIRS}; do \
+		( \
+			find ${dir} -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& strip --strip-all -p /usr/local/bin/mhsendmail 2>/dev/null || true \
+	&& strip --strip-all -p /usr/local/bin/mysqldump-secure 2>/dev/null || true
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 2/4: Devilbox slim image (BASE)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Copies all cli tools required to run Devilbox and its intranet into a clean image
+###
+FROM devilbox/php-fpm:5.5-prod as devilbox-slim-base
+ARG ARCH
+
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		# ---------- type: apt ----------
+		dnsutils \
+		iputils-ping \
+		netcat-openbsd \
+		sudo \
+	&& rm -rf /var/lib/apt/lists/*
+
+###
+### Copy shared libraries (required by MongoDB, MySQL, PostgreSQL and Redis)
+###
+COPY --from=devilbox-slim-base-builder /tmp/lib-gnu/     /lib/${ARCH}-linux-gnu/
+COPY --from=devilbox-slim-base-builder /tmp/usr-lib-gnu/ /usr/lib/${ARCH}-linux-gnu/
+COPY --from=devilbox-slim-base-builder /tmp/usr-lib/     /usr/lib/
+
+###
+### Copy system files
+###
+COPY --from=devilbox-slim-base-builder /etc/group /etc/group
+COPY --from=devilbox-slim-base-builder /etc/passwd /etc/passwd
+COPY --from=devilbox-slim-base-builder /etc/shadow /etc/shadow
+
+###
+### Copy Blackfire
+###
+COPY --from=devilbox-slim-base-builder /etc/blackfire /etc/blackfire
+COPY --from=devilbox-slim-base-builder /etc/default/blackfire-agent /etc/default/blackfire-agent
+COPY --from=devilbox-slim-base-builder /usr/bin/blackfire* /usr/bin/
+COPY --from=devilbox-slim-base-builder /var/log/blackfire /var/log/blackfire
+
+###
+### Copy mhsendmail
+###
+COPY --from=devilbox-slim-base-builder /usr/local/bin/mhsendmail /usr/local/bin/
+
+###
+### Copy MongoDB client (if exists)
+###
+COPY --from=devilbox-slim-base-builder /tmp/mongo/ /usr/bin/
+
+###
+### Copy MysQL Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/mysql* /usr/bin/
+
+###
+### Copy mysqldump-secure
+###
+COPY --from=devilbox-slim-base-builder /usr/local/bin/mysqldump-secure /usr/local/bin/
+COPY --from=devilbox-slim-base-builder /etc/mysqldump-secure.conf /etc/
+COPY --from=devilbox-slim-base-builder /etc/mysqldump-secure.cnf /etc/
+COPY --from=devilbox-slim-base-builder /var/log/mysqldump-secure.log /var/log/
+
+###
+### Copy PostgreSQL
+###
+COPY --from=devilbox-slim-base-builder /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=devilbox-slim-base-builder /usr/share/postgresql-common /usr/share/postgresql-common
+COPY --from=devilbox-slim-base-builder /usr/share/perl5 /usr/share/perl5
+
+###
+### Create PostgreSQL symlinks
+###
+RUN set -eux \
+	&& if [ -f "/usr/share/postgresql-common/pg_wrapper" ]; then \
+		ln -s ../share/postgresql-common/pg_wrapper /usr/bin/clusterdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createlang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/droplang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_basebackup \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dump \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dumpall \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_isready \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivewal \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivexlog \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_recvlogical \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_restore \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pgbench \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/psql \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/reindexdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumlo; \
+	fi
+
+###
+### Copy Redis Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/redis* /usr/bin/
+
+
+###
+### Copy SQLite Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/sqlite* /usr/bin/
+
+###
+### ADD PHP configuration files
+###
+COPY ./data/php-ini.d/php-5.5.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-5.5.conf /usr/local/etc/php-fpm.conf
+
+###
+### ADD Devilbox configuration files
+###
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+###
+### Configure Bash
+###
+RUN set -eux \
+	&& { \
+		echo; \
+		echo "# [Devilbox] Ensure /usr/local(s)?bin is in PATH"; \
+		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
+		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox main bash config"; \
+		echo ". /etc/bash-devilbox"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox custom configs"; \
+		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 3/4: Devilbox slim image (BASE TEST)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Test all Devilbox cli utils if copying was successful
+###
+FROM devilbox-slim-base as devilbox-slim-base-test
+RUN set -eux \
+	&& mysql --version \
+	&& redis-cli --version \
+	&& sqlite3 --version
+
+###
+### Check if available tools slim
+###
+
+# -------------------- dig --------------------
+RUN set -eux \
+	&& dig -v 2>&1 | grep -E '[0-9]\.[0-9]'	\
+	&& true
+
+# -------------------- netcat --------------------
+RUN set -eux \
+	&& nc -h 2>&1 | grep netcat	\
+	&& true
+
+# -------------------- ping --------------------
+RUN set -eux \
+	&& ping -V | grep ^ping	\
+	&& true
+
+# -------------------- sudo --------------------
+RUN set -eux \
+	&& sudo --version | grep -E 'version [0-9]+\.[0-9]+'	\
+	&& true
+
+# -------------------- blackfire --------------------
+RUN set -eux \
+	&& blackfire version \
+	&& blackfire-agent -v \
+	\
+	&& true
+
+# -------------------- mhsendmail --------------------
+RUN set -eux \
+	&& mhsendmail -h 2>&1 | grep 'Usage'	\
+	&& true
+
+# -------------------- mongo_client --------------------
+RUN set -eux \
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5|5.6|7.0)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongofiles --version; \
+	  fi \
+	else \
+	  mongofiles --version; \
+	fi \
+	\
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    mongo --version; \
+	  fi \
+	else \
+	  mongo --version; \
+	fi \
+	\
+	&& true
+
+# -------------------- mysqldumpsecure --------------------
+RUN set -eux \
+	&& mysqldump-secure --version | grep -E 'Version:\s*[0-9][.0-9]+'	\
+	&& true
+
+# -------------------- pgsql_client --------------------
+RUN set -eux \
+	&& if echo '5.5' | grep -E '^(5.2|5.3|5.4|5.5|5.6|7.0)$' >/dev/null; then \
+	  if [ "$(dpkg-architecture --query DEB_BUILD_ARCH)" = "amd64" ]; then \
+	    pg_isready --version; \
+	  fi \
+	else \
+	  pg_isready --version; \
+	fi \
+	\
+	&& true
+
+###
+### Re-activate modules which have been deactivated in mods (for testing).
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+###
+### Check if PHP still works
+###
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^5.5' \
+	&& /usr/local/sbin/php-fpm --test \
+	\
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 4/4: Devilbox slim image (FINAL)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Prepare final base image (STAGE: slim)
+###
+FROM devilbox-slim-base as slim
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+###
+### Labels
+###
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="5.5-slim"
+LABEL "org.opencontainers.image.title"="PHP-FPM 5.5-slim"
+LABEL "org.opencontainers.image.description"="PHP-FPM 5.5-slim"
+
+###
+### Volumes
+###
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+###
+### Ports
+###
+EXPOSE 9000
+
+###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+###
+### Entrypoint
+###
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

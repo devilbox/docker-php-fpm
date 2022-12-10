@@ -1,8 +1,538 @@
+# vi: ft=dockerfile
 {{ edit_comment_work }}
-FROM devilbox/php-fpm:{{ php_version }}-prod
-MAINTAINER "cytopia" <cytopia@everythingcli.org>
+{% import './jinja2/macros-work.j2' as fn %}
 
-ARG ARCH
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 1/7: Devilbox work image (HELP BUILDER)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Installs all cli tools required to install custom tools
+###
+FROM devilbox/php-fpm:{{ php_version }}-slim as devilbox-work-help-builder
+
+{% set build_deps = [] -%}
+{%- for ext in help_software_enabled -%}
+	{%- for dep in fn.get_build_dep(php_version, ext, help_software_available) | from_json -%}
+		{%- if dep -%}
+			{{- build_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+{%- if build_deps -%}
+###
+### Install build_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+{% for build_dep in build_deps | unique | sort %}
+		{{ build_dep }} \
+{% endfor %}
+	&& rm -rf /var/lib/apt/lists/*
+{%- endif %}
+
+{% set run_deps = [] -%}
+{%- for ext in help_software_enabled -%}
+	{%- for dep in fn.get_run_dep(php_version, ext, help_software_available) | from_json -%}
+		{%- if dep -%}
+			{{- run_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+{%- if run_deps -%}
+
+###
+### Install run_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+{% for run_dep in run_deps | unique | sort %}
+		{{ run_dep }} \
+{% endfor %}
+	&& rm -rf /var/lib/apt/lists/*
+{%- endif %}
+
+###
+### Devilbox required helper tools from group_vars (work-help.yml)
+###
+{% for tool in help_software_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in help_software_available[tool]) or (php_version not in help_software_available[tool]['disabled']) -%}
+		{{- "\n" }}# -------------------- {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{#- -#}
+		{#- [PRE] -#}
+		{%- if fn.get_pre(php_version, tool, help_software_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_pre(php_version, tool, help_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [COMMAND] -#}
+		{%- if fn.get_type(php_version, tool, help_software_available) == 'custom' -%}
+			{{ "\n\t" }}&& {{ fn.tool_custom_get_command(php_version, tool, help_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [POST] -#}
+		{%- if fn.get_post(php_version, tool, help_software_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_post(php_version, tool, help_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- Finalize -#}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 2/7: Devilbox work image (HELP)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Copies all cli tools required to run Devilbox and its intranet into a clean image
+###
+FROM devilbox/php-fpm:{{ php_version }}-slim as devilbox-work-help
+
+{% set run_deps = [] -%}
+{%- for ext in help_software_enabled -%}
+	{%- for dep in fn.get_run_dep(php_version, ext, help_software_available) | from_json -%}
+		{%- if dep -%}
+			{{- run_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+{%- if run_deps -%}
+###
+### Install run_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+{% for run_dep in run_deps | unique | sort %}
+		{{ run_dep }} \
+{% endfor %}
+	&& rm -rf /var/lib/apt/lists/*
+{% endif %}
+
+###
+### Copy nvm
+###
+COPY --from=devilbox-work-help-builder /opt/nvm /opt/nvm
+
+###
+### Copy binaries (Composer & Pip binaries)
+###
+COPY --from=devilbox-work-help-builder /usr/local/bin /usr/local/bin
+
+###
+### Python packages
+###
+COPY --from=devilbox-work-help-builder /usr/local/lib /usr/local/lib
+
+
+###
+### Configure Bash (composer, node yarn)
+###
+RUN set -eux \
+	&& { \
+		#echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
+		echo; \
+		echo "# [Devilbox] Ensure yarn, composer and node are in PATH"; \
+		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
+		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
+		echo 'PATH="{{ nvm_home }}/versions/node/$(node --version)/bin:${PATH}"'; \
+		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Ensure to load nvm"; \
+		echo 'export NVM_DIR="{{ nvm_home }}"'; \
+		echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm'; \
+		echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion'; \
+		#echo; \
+		#echo ". /etc/bash-devilbox"; \
+		#echo; \
+		#echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		#echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		#echo "        if [ -r \"\${f}\" ]; then"; \
+		#echo "            . \"\${f}\""; \
+		#echo "        fi"; \
+		#echo "    done"; \
+		#echo "    unset f"; \
+		#echo "fi"; \
+	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 3/7: Devilbox work image (HELP TEST)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Test all Devilbox cli utils if copying was successful
+###
+FROM devilbox-work-help as devilbox-work-help-test
+
+###
+### Devilbox required helper tools from group_vars (work-help.yml)
+###
+{% for tool in help_software_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in help_software_available[tool]) or (php_version not in help_software_available[tool]['disabled']) -%}
+		{{- "\n" }}# -------------------- {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{#- -#}
+		{#- [CHECK] -#}
+		{%- if 'check' in help_software_available[tool] -%}
+			{{ "\n\t" }}&& {{ help_software_available[tool]['check'] | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- Finalize -#}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+###
+### Re-activate modules which have been deactivated in mods (for testing).
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+###
+### Check if PHP still works
+###
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& /usr/local/sbin/php-fpm --test \
+	\
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 4/7: Devilbox work image (TOOLS BUILDER)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### This stage can be easily modified by adding tools into the ./php_tools/ directory.
+###
+FROM devilbox-work-help as devilbox-work-tools-builder
+
+{% set build_deps = [] -%}
+{%- set run_deps = [] -%}
+{%- set tools_apt = [] -%}
+{%- for tool in tools_enabled -%}
+	{%- for dep in fn.get_build_dep(php_version, tool, tools_available) | from_json -%}
+		{%- if dep -%}
+			{{- build_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- for dep in fn.get_run_dep(php_version, tool, tools_available) | from_json -%}
+		{%- if dep -%}
+			{{- run_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- if ('disabled' not in tools_available[tool]) or (php_version not in tools_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, tools_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, tools_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if build_deps or run_deps or tools_apt -%}
+###
+### Install build_dep, run_dep or tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if build_deps -%}
+		{{- "\t\t# ---------- build_deps ----------\n" -}}
+		{%- for apt in build_deps | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{%- if run_deps -%}
+		{{- "\t\t# ---------- run_deps ----------\n" -}}
+		{%- for apt in run_deps | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
+
+###
+### Install defined php_tools
+###
+{% for tool in tools_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in tools_available[tool]) or (php_version not in tools_available[tool]['disabled']) -%}
+		{{- "\n" }}# -------------------- ({{ fn.get_type(php_version, tool, tools_available) }}) {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{#- -#}
+		{#- [PRE] -#}
+		{%- if fn.get_pre(php_version, tool, tools_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_pre(php_version, tool, tools_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [CUSTOM] -#}
+		{%- if fn.get_type(php_version, tool, tools_available) == 'custom' -%}
+			{{ "\n\t" }}&& {{ fn.tool_custom_get_command(php_version, tool, tools_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [NPM] -#}
+		{%- if fn.get_type(php_version, tool, tools_available) == 'npm' -%}
+			{%- set npm_package = fn.tool_npm_get_package(php_version, tool, tools_available) -%}
+			{%- set npm_version = fn.tool_npm_get_version(php_version, tool, tools_available) -%}
+			{%- set npm_binary = fn.tool_npm_get_binary(php_version, tool, tools_available) -%}
+			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install --location=global {{ npm_package }}{{ npm_version }}' devilbox \
+			{%- if npm_binary | length -%}
+				{{ "\n\t" }}&& ln -s {{ nvm_home }}/versions/node/$(su -c '. {{ nvm_home }}/nvm.sh; node --version' devilbox)/bin/{{ npm_binary }} /usr/local/bin/ \
+			{%- endif -%}
+		{%- endif -%}
+		{#- -#}
+		{#- [COMPOSER] -#}
+		{%- if fn.get_type(php_version, tool, tools_available) == 'composer' -%}
+			{%- set comp_composer = fn.tool_composer_get_composer(php_version, tool, tools_available) -%}
+			{%- set comp_package = fn.tool_composer_get_package(php_version, tool, tools_available) -%}
+			{%- set comp_version = fn.tool_composer_get_version(php_version, tool, tools_available) -%}
+			{%- set comp_flags   = fn.tool_composer_get_flags(php_version, tool, tools_available) -%}
+			{%- set comp_binary  = fn.tool_composer_get_binary(php_version, tool, tools_available) -%}
+			{#- FIXME: use su -c ' devilbox -#}
+			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ comp_composer }} global require --no-interaction --no-cache {{ comp_flags }} {{ comp_package }}{{ comp_version }} \
+			{%- if comp_binary | length -%}
+				{{ "\n\t" }}&& ln -s {{ composer_home }}/vendor/{{ comp_package }}/{{ comp_binary }} /usr/local/bin/ \
+			{%- endif -%}
+			{{ "\n\t" }}&& rm -rf {{ composer_home }}/cache/* \
+		{%- endif -%}
+		{#- -#}
+		{#- [RUBYGEM] -#}
+		{%- if fn.get_type(php_version, tool, tools_available) == 'rubygem' -%}
+			{%- set rubygem_package = fn.tool_rubygem_get_package(php_version, tool, tools_available) -%}
+			{%- set rubygem_version = fn.tool_rubygem_get_version(php_version, tool, tools_available) -%}
+			{{ "\n\t" }}&& gem install {{ rubygem_package }}{{ rubygem_version }} \
+		{%- endif -%}
+		{#- -#}
+		{#- [PIP] -#}
+		{%- if fn.get_type(php_version, tool, tools_available) == 'pip' -%}
+			{%- set pip_package = fn.tool_pip_get_package(php_version, tool, tools_available) -%}
+			{%- set pip_version = fn.tool_pip_get_version(php_version, tool, tools_available) -%}
+			{{ "\n\t" }}&& pip install --no-cache-dir --no-compile --force-reinstall {{ pip_package }}{{ pip_version }} \
+		{%- endif -%}
+		{#- -#}
+		{#- [POST] -#}
+		{%- if fn.get_post(php_version, tool, tools_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_post(php_version, tool, tools_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [CHECK] -#}
+		{%- if 'check' in tools_available[tool] -%}
+			{{ "\n\t" }}&& {{ tools_available[tool]['check'] | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- Finalize -#}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+###
+### Post fixes
+###
+RUN set -eux \
+	&& if [ ! -d "/var/lib/gems" ]; then \
+		mkdir "/var/lib/gems"; \
+	fi
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 5/7: Devilbox work image (TOOLS)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### This stage can be easily modified by adding tools into the ./php_tools/ directory.
+###
+FROM devilbox-work-help as devilbox-work-tools
+
+{% set run_deps = [] -%}
+{%- set tools_apt = [] -%}
+{%- for tool in tools_enabled -%}
+	{%- for dep in fn.get_run_dep(php_version, tool, tools_available) | from_json -%}
+		{%- if dep -%}
+			{{- run_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+	{%- if ('disabled' not in tools_available[tool]) or (php_version not in tools_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, tools_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, tools_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if build_deps or run_deps or tools_apt -%}
+###
+### Install run_dep or tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if run_deps -%}
+		{{- "\t\t# ---------- run_deps ----------\n" -}}
+		{%- for apt in run_deps | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
+
+###
+### Copy Custom (binaries in /usr/local/bin)
+###
+COPY --from=devilbox-work-tools-builder /usr/local/bin /usr/local/bin
+
+###
+### Copy NPM
+###
+COPY --from=devilbox-work-tools-builder /opt/nvm /opt/nvm
+
+###
+### Copy Composer
+###
+COPY --from=devilbox-work-tools-builder /usr/local/src /usr/local/src
+
+###
+### Copy Pip
+###
+COPY --from=devilbox-work-tools-builder /usr/local/lib /usr/local/lib
+
+###
+### Copy RubyGems
+###
+COPY --from=devilbox-work-tools-builder /var/lib/gems /var/lib/gems
+
+
+# FIXME: / TODO: Add post: stage into here as well
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 6/7: Devilbox work image (TOOLS TEST)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Test all Devilbox cli utils if copying was successful
+###
+FROM devilbox-work-tools as devilbox-work-tools-test
+
+{% for tool in tools_enabled -%}
+	{%- if fn.is_not_disabled(php_version, tool, tools_available) -%}
+		{{- "\n" }}# -------------------- ({{ fn.get_type(php_version, tool, tools_available) }}) {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{%- if 'check' in tools_available[tool] -%}
+			{{ "\n\t" }}&& {{ tools_available[tool]['check'] | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+###
+### Re-activate modules which have been deactivated in mods (for testing).
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+###
+### Check if PHP still works
+###
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& /usr/local/sbin/php-fpm --test \
+	\
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 7/7: Devilbox sliwork image (FINAL)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Prepare final base image (STAGE: work)
+###
+FROM devilbox-work-tools as work
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
 
 ###
 ### Labels
@@ -22,578 +552,6 @@ LABEL "org.opencontainers.image.ref.name"="{{ php_version }}-work"
 LABEL "org.opencontainers.image.title"="PHP-FPM {{ php_version }}-work"
 LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-work"
 
-
-###
-### Re-activate modules which have been deactivated in mods.
-### NOTE: They will be removed at the very bottom
-###
-RUN set -eux \
-	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
-		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
-	fi \
-	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
-		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
-	fi
-
-
-###
-### Envs
-###
-ENV BASH_PROFILE=".bashrc"
-
-
-###
-### Install Tools
-###
-RUN set -eux \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
-		apt-transport-https \
-		ca-certificates \
-		curl \
-		dirmngr \
-		gnupg \
-		\
-{%- for repo in apt_repositories_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in apt_repositories_available[repo]) or (php_version not in apt_repositories_available[repo]['disabled']) -%}
-		{#- Version specific pre-command available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo][php_version] -%}
-			{{ "\n\t" }}&& {{ apt_repositories_available[repo][php_version]['pre'] }} \
-		{#- Generic pre-command available? -#}
-		{%- elif 'all' in apt_repositories_available[repo] and 'pre' in apt_repositories_available[repo]['all'] -%}
-			{{ "\n\t" }}&& {{ apt_repositories_available[repo]['all']['pre'] }} \
-		{%- endif -%}
-		{#- Version specific key available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo][php_version] -%}
-			{{ "\n\t" }}&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo][php_version]['key'] }} \
-		{#- Generic key available? -#}
-		{%- elif 'all' in apt_repositories_available[repo] and 'key' in apt_repositories_available[repo]['all'] -%}
-			{{ "\n\t" }}&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ apt_repositories_available[repo]['all']['key'] }} \
-		{%- endif -%}
-		{#- Version specific repository available? -#}
-		{%- if php_version in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo][php_version] -%}
-			{{ "\n\t" }}&& echo "{{ apt_repositories_available[repo][php_version]['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-		{#- Generic repository available? -#}
-		{%- elif 'all' in apt_repositories_available[repo] and 'deb' in apt_repositories_available[repo]['all'] -%}
-			{{ "\n\t" }}&& echo "{{ apt_repositories_available[repo]['all']['deb'] }}" > /etc/apt/sources.list.d/{{ repo }}.list \
-		{%- endif -%}
-	{%- endif -%}
-{%- endfor -%}{{ "\n\t" }}\
-	&& DEBIAN_FRONTEND=noninteractive apt-get update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
-		ack-grep \
-		aspell \
-		autoconf \
-		automake \
-		bash-completion \
-		binutils \
-		blackfire-agent \
-		build-essential \
-		bzip2 \
-{% if php_version not in [5.2, 5.3, 5.4, 5.5] %}
-		certbot \
-{% endif %}
-		coreutils \
-		dnsutils \
-		dos2unix \
-		file \
-		gawk \
-		gcc \
-		git \
-		git-flow \
-		git-svn \
-		ghostscript \
-		graphviz \
-		gsfonts \
-		hostname \
-		htop \
-		imagemagick \
-		iputils-ping \
-		jq \
-		less \
-		libc-dev \
-		libffi-dev \
-		libssl-dev \
-		libyaml-dev \
-		locales \
-		make \
-		moreutils \
-		\
-{% if php_version in [7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] %}
-		mariadb-client \
-{% else %}
-		mysql-client \
-{% endif %}
-		\
-		mupdf \
-		mupdf-tools \
-		nano \
-		net-tools \
-		netcat \
-		openssh-client \
-		patch \
-		patchelf \
-		redis-tools \
-		rsync \
-		rubygems \
-		ruby-dev \
-		shellcheck \
-		silversearcher-ag \
-		sqlite3 \
-		subversion \
-		sudo \
-		tig \
-		tree \
-		unzip \
-		vim \
-		w3m \
-		wget \
-		whois \
-		xz-utils \
-		zip \
-		zlib1g-dev \
-		zsh \
-{% if php_version in [5.6, 7.0] %}
-		zsh-common \
-{% endif %}
-	&& rm -rf /var/lib/apt/lists/* \
-	\
-	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install custom software
-###
-{% if not build_fail_fast %}
-RUN set -eux \
-{%- endif -%}
-{%- for tool in software_enabled -%}
-	{# Not disabled #}
-	{%- if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) -%}
-		{{ "\n" }}# -------------------- {{ tool }} --------------------
-		{%- if build_fail_fast -%}
-		{{ "\n" }}RUN set -eux \
-		{%- endif -%}
-		{#- Version specific pre-command available? -#}
-		{%- if php_version in software_available[tool] and 'pre' in software_available[tool][php_version] -%}
-			{{ "\n\t" }}&& {{ software_available[tool][php_version]['pre'] }} \
-		{#- Generic pre-command available? -#}
-		{%- elif 'all' in software_available[tool] and 'pre' in software_available[tool]['all'] -%}
-			{{ "\n\t" }}&& {{ software_available[tool]['all']['pre'] }} \
-		{%- endif -%}
-		{#- Version specific command available? -#}
-		{%- if php_version in software_available[tool] and 'command' in software_available[tool][php_version] -%}
-			{{ "\n\t" }}&& {{ software_available[tool][php_version]['command'] }} \
-		{#- Generic command available? -#}
-		{%- else -%}
-			{{ "\n\t" }}&& {{ software_available[tool]['all']['command'] }} \
-		{%- endif -%}
-		{#- Version specific post-command available? -#}
-		{%- if php_version in software_available[tool] and 'post' in software_available[tool][php_version] -%}
-			{{ "\n\t" }}&& {{ software_available[tool][php_version]['post'] }} \
-		{#- Generic post-command available? -#}
-		{%- elif 'all' in software_available[tool] and 'post' in software_available[tool]['all'] -%}
-			{{ "\n\t" }}&& {{ software_available[tool]['all']['post'] }} \
-		{%- endif -%}
-		{#- Fail fast version -#}
-		{%- if build_fail_fast -%}
-			{%- if 'check' in software_available[tool] -%}
-				{{ "\n\t" }}&& {{ software_available[tool]['check'] }}{{ "\n\n" }}
-			{%- else -%}
-			{{ "\n\t" }}&& true{{ "\n\n" }}
-			{%- endif -%}
-		{%- else -%}
-			{{ "\n\t" }}\
-		{%- endif -%}
-		{#- end of Fail fast version -#}
-	{%- endif -%}
-{%- endfor -%}
-{% if build_fail_fast -%}
-	RUN set -eux \{{ "\n" }}
-{%- else -%}
-	{{ "\n\t" }}\{{ "\n" }}
-{%- endif %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /usr/local/src/composer/cache/* || true) \
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true)
-
-
-###
-### Install Composer (PHP)
-###
-{% if not build_fail_fast %}
-RUN set -eux \
-{%- endif -%}
-{%- for tool in composer_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) -%}
-		{{ "\n" }}# -------------------- {{ tool }} --------------------
-		{%- if build_fail_fast -%}
-		{{ "\n" }}RUN set -eux \
-		{%- endif -%}
-		{#- Version specific gem version available? -#}
-		{%- if php_version in composer_available[tool] and 'version' in composer_available[tool][php_version] -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ composer_available[tool]['version'] }} global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool][php_version]['version'] }} \
-		{#- Generic gem version  available? -#}
-		{%- elif 'all' in composer_available[tool] and 'version' in composer_available[tool]['all'] -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ composer_available[tool]['version'] }} global require {{ composer_available[tool]['name'] }}:{{ composer_available[tool]['all']['version'] }} \
-		{#- No version info available -#}
-		{%- else -%}
-			{{ "\n\t" }}&& COMPOSER_HOME="{{ composer_home }}" COMPOSER_MEMORY_LIMIT=-1 /usr/local/bin/composer-{{ composer_available[tool]['version'] }} global require  {{ composer_available[tool]['name'] }} \
-		{%- endif -%}
-		{#- Symlinks available? -#}
-		{%- if 'link' in composer_available[tool] -%}
-			{{ "\n\t" }}&& ln -s {{ composer_home }}/vendor/{{ composer_available[tool]['name'] }}/{{ composer_available[tool]['link'] }} /usr/local/bin/ \
-		{%- endif -%}
-		{#- Fail fast version -#}
-		{%- if build_fail_fast -%}
-			{%- if 'check' in composer_available[tool] -%}
-				{{ "\n\t" }}&& {{ composer_available[tool]['check'] }}{{ "\n\n" }}
-			{%- else -%}
-			{{ "\n\t" }}&& true{{ "\n\n" }}
-			{%- endif -%}
-		{%- else -%}
-			{{ "\n\t" }}\
-		{%- endif -%}
-		{#- end of Fail fast version -#}
-	{%- endif -%}
-{% endfor %}
-{% if build_fail_fast -%}
-	RUN set -eux \{{ "\n" }}
-{%- else -%}
-	{{ "\n\t" }}\{{ "\n" }}
-{%- endif %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install npm (Node)
-###
-{% if not build_fail_fast %}
-RUN set -eux \
-{%- endif -%}
-{%- for tool in npm_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) -%}
-		{{ "\n" }}# -------------------- {{ tool }} --------------------
-		{%- if build_fail_fast -%}
-		{{ "\n" }}RUN set -eux \
-		{%- endif -%}
-		{#- Version specific gem version available? -#}
-		{%- if php_version in npm_available[tool] and 'version' in npm_available[tool][php_version] -%}
-			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool][php_version]['version'] }}' devilbox \
-		{#- Generic gem version  available? -#}
-		{%- elif 'all' in npm_available[tool] and 'version' in npm_available[tool]['all'] -%}
-			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }} {{ npm_available[tool]['all']['version'] }}' devilbox \
-		{#- No version info available -#}
-		{%- else -%}
-			{{ "\n\t" }}&& su -c '. {{ nvm_home }}/nvm.sh; npm install -g --force {{ npm_available[tool]['name'] }}' devilbox \
-		{%- endif -%}
-		{#- Fail fast version -#}
-		{%- if build_fail_fast -%}
-			{%- if 'check' in npm_available[tool] -%}
-				{{ "\n\t" }}&& PATH=$PATH:{{ nvm_home }}/versions/node/$(/bin/ls -1 {{ nvm_home }}/versions/node/ | sort -V | tail -1)/bin {{ nvm_home }}/versions/node/$(/bin/ls -1 {{ nvm_home }}/versions/node/ | sort -V | tail -1)/bin/{{ npm_available[tool]['check'] }}{{ "\n\n" }}
-			{%- else -%}
-			{{ "\n\t" }}&& true{{ "\n\n" }}
-			{%- endif -%}
-		{%- else -%}
-			{{ "\n\t" }}\
-		{%- endif -%}
-		{#- end of Fail fast version -#}
-	{%- endif -%}
-{%- endfor -%}
-{% if build_fail_fast -%}
-	RUN set -eux \{{ "\n" }}
-{%- else -%}
-	{{ "\n\t" }}\{{ "\n" }}
-{%- endif %}
-	\
-	&& if [ -f "{{ nvm_home }}/nvm.sh" ]; then \
-		ln -sf $(dirname $(su -c '. {{ nvm_home }}/nvm.sh; nvm which current' devilbox))/* /usr/local/bin/ \
-		\
-		&& su -c '. {{ nvm_home }}/nvm.sh; npm cache clear --force' devilbox \
-		&& su -c '. {{ nvm_home }}/nvm.sh; nvm cache clear --force' devilbox; \
-	fi \
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find {{ nvm_home }} -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install gem (Ruby)
-###
-{% if not build_fail_fast %}
-RUN set -eux \
-{%- endif -%}
-{%- for tool in gem_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) -%}
-		{{ "\n" }}# -------------------- {{ tool }} --------------------
-		{%- if build_fail_fast -%}
-		{{ "\n" }}RUN set -eux \
-		{%- endif -%}
-		{#- Version specific gem version available? -#}
-		{%- if php_version in gem_available[tool] and 'version' in gem_available[tool][php_version] -%}
-			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool][php_version]['version'] }} \
-		{#- Generic gem version  available? -#}
-		{%- elif 'all' in gem_available[tool] and 'version' in gem_available[tool]['all'] -%}
-			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} -v {{ gem_available[tool]['all']['version'] }} \
-		{#- No version info available -#}
-		{%- else -%}
-			{{ "\n\t" }}&& gem install {{ gem_available[tool]['name'] }} \
-		{%- endif -%}
-		{#- Fail fast version -#}
-		{%- if build_fail_fast -%}
-			{%- if 'check' in gem_available[tool] -%}
-				{{ "\n\t" }}&& {{ gem_available[tool]['check'] }}{{ "\n\n" }}
-			{%- else -%}
-			{{ "\n\t" }}&& true{{ "\n\n" }}
-			{%- endif -%}
-		{%- else -%}
-			{{ "\n\t" }}\
-		{%- endif -%}
-		{#- end of Fail fast version -#}
-	{%- endif -%}
-{%- endfor -%}
-{% if build_fail_fast -%}
-	RUN set -eux \{{ "\n" }}
-{%- else -%}
-	{{ "\n\t" }}\{{ "\n" }}
-{%- endif %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Install pip (Python) packages
-###
-{% if not build_fail_fast %}
-RUN set -eux \
-{%- endif -%}
-{%- for tool in pip_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) -%}
-		{{ "\n" }}# -------------------- {{ tool }} --------------------
-		{%- if build_fail_fast -%}
-		{{ "\n" }}RUN set -eux \
-		{%- endif -%}
-		{#- Version specific gem version available? -#}
-		{%- if php_version in pip_available[tool] and 'version' in pip_available[tool][php_version] -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool][php_version]['version'] }} || true \
-		{#- Generic gem version  available? -#}
-		{%- elif 'all' in pip_available[tool] and 'version' in pip_available[tool]['all'] -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }}=={{ pip_available[tool]['all']['version'] }} || true \
-		{#- No version info available -#}
-		{%- else -%}
-			{{ "\n\t" }}&& pip install --no-cache-dir --force-reinstall {{ pip_available[tool]['name'] }} || true \
-		{%- endif -%}
-		{#- Fail fast version -#}
-		{%- if build_fail_fast -%}
-			{%- if 'check' in pip_available[tool] -%}
-				{{ "\n\t" }}&& {{ pip_available[tool]['check'] }}{{ "\n\n" }}
-			{%- else -%}
-			{{ "\n\t" }}&& true{{ "\n\n" }}
-			{%- endif -%}
-		{%- else -%}
-			{{ "\n\t" }}\
-		{%- endif -%}
-		{#- end of Fail fast version -#}
-	{%- endif -%}
-{%- endfor -%}
-{% if build_fail_fast -%}
-	RUN set -eux \{{ "\n" }}
-{%- else -%}
-	{{ "\n\t" }}\{{ "\n" }}
-{%- endif %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true) \
-	\
-	&& (find /usr/local/bin  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/lib  -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true) \
-	&& (find /usr/local/sbin -type f -print0 | xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) strip --strip-all -p 2>/dev/null || true)
-
-
-###
-### Configure Bash
-###
-RUN \
-	{ \
-		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
-		echo 'PATH="${HOME}/.yarn/bin:${PATH}"'; \
-		echo 'PATH="${HOME}/.composer/vendor/bin:${PATH}"'; \
-		echo 'PATH="{{ nvm_home }}/versions/node/$(nvm version default)/bin:${PATH}"'; \
-		echo "export PATH"; \
-		echo ". /etc/bash-devilbox"; \
-		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
-		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
-		echo "        if [ -r \"\${f}\" ]; then"; \
-		echo "            . \"\${f}\""; \
-		echo "        fi"; \
-		echo "    done"; \
-		echo "    unset f"; \
-		echo "fi"; \
-	} | tee -a /home/${MY_USER}/${BASH_PROFILE} /root/${BASH_PROFILE} \
-	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/${BASH_PROFILE}
-
-
-{% if debug %}
-###
-### Verify
-###
-RUN set -eux \
-	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
-	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
-	&& /usr/local/sbin/php-fpm --test \
-	\
-	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
-	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
-	\
-	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
-	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
-	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
-	&& rm -f /usr/local/etc/php/php.ini
-
-RUN set -eux \
-# -------------------- Software --------------------
-{%- for tool in software_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in software_available[tool]) or (php_version not in software_available[tool]['disabled']) -%}
-		{%- if 'check' in software_available[tool] -%}
-			{{ "\n\t" }}&& {{ software_available[tool]['check'] }} \
-		{%- endif -%}
-	{%- endif -%}
-{%- endfor -%}{{ "\n\t" }}\
-# -------------------- Composer --------------------
-{%- for tool in composer_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in composer_available[tool]) or (php_version not in composer_available[tool]['disabled']) -%}
-		{%- if 'check' in composer_available[tool] -%}
-			{{ "\n\t" }}&& {{ composer_available[tool]['check'] }} \
-		{%- endif -%}
-	{%- endif -%}
-{%- endfor -%}{{ "\n\t" }}\
-# -------------------- PIP --------------------
-{%- for tool in pip_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in pip_available[tool]) or (php_version not in pip_available[tool]['disabled']) -%}
-		{%- if 'check' in pip_available[tool] -%}
-			{{ "\n\t" }}&& {{ pip_available[tool]['check'] }} \
-		{%- endif -%}
-	{%- endif -%}
-{%- endfor -%}{{ "\n\t" }}\
-# -------------------- NPM --------------------
-{%- for tool in npm_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in npm_available[tool]) or (php_version not in npm_available[tool]['disabled']) -%}
-		{%- if 'check' in npm_available[tool] -%}
-			{{ "\n\t" }}&& {{ npm_available[tool]['check'] }} \
-		{%- endif -%}
-	{%- endif -%}
-{%- endfor -%}{{ "\n\t" }}\
-# -------------------- GEM --------------------
-{%- for tool in gem_enabled -%}
-	{#- Not disabled -#}
-	{%- if ('disabled' not in gem_available[tool]) or (php_version not in gem_available[tool]['disabled']) -%}
-		{%- if 'check' in gem_available[tool] -%}
-			{{ "\n\t" }}&& {{ gem_available[tool]['check'] }} \
-		{%- endif -%}
-	{%- endif -%}
-{% endfor %}{{ "\n\t" }}\
-# -------------------- Cleanup --------------------
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /home/devilbox/{{ f }} || true) \
-	{% endfor %}
-	\
-	{% for f in directory_to_clean %}
-	&& (rm -rf /root/{{ f }} || true) \
-	{% endfor %}
-	\
-	&& (rm -rf /tmp/*  || true) \
-	&& (rm -rf /tmp/.* || true)
-
-
-{% endif %}
-# Deactive PSR and Phalcon:
-# https://github.com/devilbox/docker-php-fpm/issues/201
-RUN set -eux \
-	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
-	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
-
-
-###
-### Copy files
-###
-COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
-COPY ./data/php-fpm.conf/php-fpm-{{ php_version }}.conf /usr/local/etc/php-fpm.conf
-
-COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
-COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
-COPY ./data/bash-devilbox /etc/bash-devilbox
-COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
-
-
 ###
 ### Volumes
 ###
@@ -601,18 +559,15 @@ VOLUME /shared/backups
 VOLUME /var/log/php
 VOLUME /var/mail
 
-
 ###
 ### Ports
 ###
 EXPOSE 9000
 
-
 ###
 ### Where to start inside the container
 ###
 WORKDIR /shared/httpd
-
 
 ###
 ### Entrypoint

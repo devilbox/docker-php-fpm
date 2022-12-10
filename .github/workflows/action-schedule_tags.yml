@@ -20,14 +20,14 @@ on:
 jobs:
 
   # -----------------------------------------------------------------------------------------------
-  # (1/8) Determine parameter settings
+  # (1/9) Determine parameter settings
   # -----------------------------------------------------------------------------------------------
   params:
     uses: ./.github/workflows/params-nightly_tags.yml
 
 
   # -----------------------------------------------------------------------------------------------
-  # (2/8) Configure Build and Deploy Matrices
+  # (2/9) Configure Build and Deploy Matrices
   # -----------------------------------------------------------------------------------------------
   configure:
     needs: [params]
@@ -43,7 +43,7 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (3/8) Build & Test base
+  # (3/9) Build & Test base
   # -----------------------------------------------------------------------------------------------
   build-base:
     needs:
@@ -72,7 +72,7 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (4/8) Build & Test mods
+  # (4/9) Build & Test mods
   # -----------------------------------------------------------------------------------------------
   build-mods:
     needs:
@@ -101,7 +101,7 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (5/8) Build & Test prod
+  # (5/9) Build & Test prod
   # -----------------------------------------------------------------------------------------------
   build-prod:
     needs:
@@ -130,9 +130,9 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (6/8) Build & Test work
+  # (6/9) Build & Test slim
   # -----------------------------------------------------------------------------------------------
-  build-work:
+  build-slim:
     needs:
       - configure
       - build-prod
@@ -143,8 +143,37 @@ jobs:
       upload_artifact: true
       matrix: ${{ needs.configure.outputs.matrix_build }}
       artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
-      stage: work
+      stage: slim
       stage_prev: prod
+
+  test-slim:
+    needs:
+      - configure
+      - build-slim
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-test.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: slim
+
+
+  # -----------------------------------------------------------------------------------------------
+  # (7/9) Build & Test work
+  # -----------------------------------------------------------------------------------------------
+  build-work:
+    needs:
+      - configure
+      - build-slim
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-build.yml@master
+    with:
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      run_tests: false
+      upload_artifact: true
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: work
+      stage_prev: slim
 
   test-work:
     needs:
@@ -159,14 +188,15 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (7/8) Push images
+  # (8/9) Push images
   # -----------------------------------------------------------------------------------------------
   push-base:
     needs:
       - configure
       - test-base
-      - test-prod
       - test-mods
+      - test-prod
+      - test-slim
       - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
@@ -183,8 +213,9 @@ jobs:
     needs:
       - configure
       - test-base
-      - test-prod
       - test-mods
+      - test-prod
+      - test-slim
       - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
@@ -201,8 +232,9 @@ jobs:
     needs:
       - configure
       - test-base
-      - test-prod
       - test-mods
+      - test-prod
+      - test-slim
       - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
@@ -215,12 +247,32 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+  push-slim:
+    needs:
+      - configure
+      - test-base
+      - test-mods
+      - test-prod
+      - test-slim
+      - test-work
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_build }}
+      artifact_prefix: ${{ needs.configure.outputs.artifact_prefix }}
+      stage: slim
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
   push-work:
     needs:
       - configure
       - test-base
-      - test-prod
       - test-mods
+      - test-prod
+      - test-slim
       - test-work
     uses: devilbox/github-actions/.github/workflows/docker-multistage-push-image.yml@master
     with:
@@ -235,7 +287,7 @@ jobs:
 
 
   # -----------------------------------------------------------------------------------------------
-  # (8/8) Push Manifests
+  # (9/9) Push Manifests
   # -----------------------------------------------------------------------------------------------
   manifest-base:
     needs:
@@ -278,6 +330,21 @@ jobs:
       matrix: ${{ needs.configure.outputs.matrix_deploy }}
       versions: ${{ needs.configure.outputs.versions }}
       stage: prod
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  manifest-slim:
+    needs:
+      - configure
+      - push-slim
+    uses: devilbox/github-actions/.github/workflows/docker-multistage-push-manifest.yml@master
+    with:
+      can_deploy: ${{ needs.configure.outputs.can_login == 'true' && needs.configure.outputs.can_push == 'true' }}
+      has_refs: ${{ needs.configure.outputs.has_refs == 'true' }}
+      matrix: ${{ needs.configure.outputs.matrix_deploy }}
+      versions: ${{ needs.configure.outputs.versions }}
+      stage: slim
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}

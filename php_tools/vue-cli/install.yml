@@ -1,0 +1,13 @@
+---
+
+check: vue --version | grep -E '[0-9][.0-9]+' || (vue --version; false)
+
+all:
+  type: npm
+  package: "@vue/cli"
+  binary: vue
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

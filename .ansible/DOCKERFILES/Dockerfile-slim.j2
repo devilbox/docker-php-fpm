@@ -1,0 +1,533 @@
+# vi: ft=dockerfile
+{{ edit_comment_slim }}
+{% import './jinja2/macros-work.j2' as fn %}
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 1/4: Devilbox slim image (BASE BUILDER)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Installs all cli tools required to run Devilbox and its intranet
+###
+FROM devilbox/php-fpm:{{ php_version }}-prod as devilbox-slim-base-builder
+
+###
+### Install apt Tools
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		apt-transport-https \
+		ca-certificates \
+		curl \
+		dirmngr \
+		gnupg
+
+###
+### Add apt repositories
+###
+RUN set -eux \
+{%- for repo in base_apt_repositories_enabled -%}
+	{#- Not disabled -#}
+	{%- if ('disabled' not in base_apt_repositories_available[repo]) or (php_version not in base_apt_repositories_available[repo]['disabled']) -%}
+		{#- -#}
+		{#- [PRE] -#}
+		{%- if fn.get_pre(php_version, repo, base_apt_repositories_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_pre(php_version, repo, base_apt_repositories_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [KEY] -#}
+		{%- if fn.tool_repo_get_key(php_version, repo, base_apt_repositories_available) | length -%}
+			{{ "\n\t" }}&& APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv {{ fn.tool_repo_get_key(php_version, repo, base_apt_repositories_available) }} \
+		{%- endif -%}
+		{#- -#}
+		{#- [DEB] -#}
+		{%- if fn.tool_repo_get_deb(php_version, repo, base_apt_repositories_available) | length -%}
+			{{ "\n\t" }}&& echo "{{ fn.tool_repo_get_deb(php_version, repo, base_apt_repositories_available) }}" > /etc/apt/sources.list.d/{{ repo }}.list \
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor -%}
+	{{ "\n\t" }}&& true
+
+{% set build_deps = [] -%}
+{%- for ext in base_software_enabled -%}
+	{%- for dep in fn.get_build_dep(php_version, ext, base_software_available) | from_json -%}
+		{%- if dep -%}
+			{{- build_deps.append(dep) -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endfor -%}
+{%- if build_deps -%}
+###
+### Install build_dep
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+{% for build_dep in build_deps | unique | sort %}
+		{{ build_dep }} \
+{% endfor %}
+	&& rm -rf /var/lib/apt/lists/*
+{%- endif %}
+
+###
+### Add common tools
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+		file \
+		git \
+{% if php_version in [7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2] %}
+		mariadb-client \
+{% else %}
+		mysql-client \
+{% endif %}
+		redis-tools \
+		sqlite3
+
+{% set tools_apt = [] -%}
+{%- for tool in base_software_enabled -%}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, base_software_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, base_software_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if tools_apt -%}
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
+
+###
+### Devilbox required cli tools from group_vars (slim.yml)
+###
+{% for tool in base_software_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{{- "\n" }}# -------------------- {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{#- -#}
+		{#- [PRE] -#}
+		{%- if fn.get_pre(php_version, tool, base_software_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_pre(php_version, tool, base_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [COMMAND] -#}
+		{%- if fn.get_type(php_version, tool, base_software_available) == 'custom' -%}
+			{{ "\n\t" }}&& {{ fn.tool_custom_get_command(php_version, tool, base_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [POST] -#}
+		{%- if fn.get_post(php_version, tool, base_software_available) | length -%}
+			{{ "\n\t" }}&& {{ fn.get_post(php_version, tool, base_software_available) | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- [CHECK] -#}
+		{%- if 'check' in base_software_available[tool] -%}
+			{{ "\n\t" }}&& {{ base_software_available[tool]['check'] | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- Finalize -#}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+###
+### Prepare required shared libraries for copying (keep symlinks)
+###
+RUN set -eux \
+	&& LIB_GNU_DIR="/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	&& USR_LIB_DIR="/usr/lib" \
+	&& USR_LIB_GNU_DIR="/usr/lib/$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	\
+	&& mkdir /tmp/lib-gnu \
+	&& mkdir /tmp/usr-lib \
+	&& mkdir /tmp/usr-lib-gnu \
+	\
+	&& LIB_GNU="libreadline" \
+	&& USR_LIB="libsnappy libtcmalloc libv8" \
+	&& USR_LIB_GNU="liblua libpq libpcrecpp libboost libjemalloc libunwind libhiredis libedit libyaml-cpp libstemmer libsnappy libpcap libbsd liblzf" \
+	\
+	&& for lib in ${LIB_GNU}; do \
+		if ls -1 "${LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${LIB_GNU_DIR}"; \
+			cp -r ${LIB_GNU_DIR}/${lib}* /tmp/lib-gnu/; \
+		fi \
+	done \
+	&& for lib in ${USR_LIB}; do \
+		if ls -1 "${USR_LIB_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${USR_LIB_DIR}"; \
+			cp -r ${USR_LIB_DIR}/${lib}* /tmp/usr-lib/; \
+		fi \
+	done \
+	&& for lib in ${USR_LIB_GNU}; do \
+		if ls -1 "${USR_LIB_GNU_DIR}/" | grep "^${lib}" >/dev/null; then \
+			echo "Coping '${lib}' from: ${USR_LIB_GNU_DIR}"; \
+			cp -r ${USR_LIB_GNU_DIR}/${lib}* /tmp/usr-lib-gnu/; \
+		fi \
+	done
+
+###
+### Fix expected PostgreSQL directories
+###
+### This might not exist on arm64 as software was not available,
+### but they are still needed to be present, so we can copy them.
+###
+RUN set -eux \
+	&& if [ ! -d "/usr/lib/postgresql" ]; then \
+		mkdir "/usr/lib/postgresql"; \
+	fi \
+	&& if [ ! -d "/usr/share/postgresql-common" ]; then \
+		mkdir "/usr/share/postgresql-common"; \
+	fi
+
+###
+### Prepare MongoDB binaries for copying.
+###
+### They might not be available on all architectures (e.g.: arm64).
+###
+RUN set -eux \
+	&& mkdir /tmp/mongo \
+	&& if ls -1 "/usr/bin/" | grep "^mongo" >/dev/null; then \
+		cp -r /usr/bin/mongo* /tmp/mongo/; \
+	fi
+
+###
+### Strip debugging information to smallen filesize
+###
+RUN set -eux \
+	&& STRIP_USR_BINS="blackfire mongo mysql redis sqlite" \
+	&& STRIP_DIRS="/usr/lib/postgresql/ /usr/share/postgresql-common/ /tmp" \
+	\
+	&& for bin in ${STRIP_USR_BINS}; do \
+		( \
+			find /usr/bin/ -name "${bin}"* -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& for dir in ${STRIP_DIRS}; do \
+		( \
+			find ${dir} -type f -print0 \
+			| xargs -n1 -0 -P$(getconf _NPROCESSORS_ONLN) sh -c \
+				'if [ -f "${1}" ]; then echo "Strip: ${1}"; strip --strip-all -p "${1}" 2>/dev/null || true; fi' -- \
+		) \
+	done \
+	\
+	&& strip --strip-all -p /usr/local/bin/mhsendmail 2>/dev/null || true \
+	&& strip --strip-all -p /usr/local/bin/mysqldump-secure 2>/dev/null || true
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 2/4: Devilbox slim image (BASE)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Copies all cli tools required to run Devilbox and its intranet into a clean image
+###
+FROM devilbox/php-fpm:{{ php_version }}-prod as devilbox-slim-base
+ARG ARCH
+
+{% set tools_apt = [] -%}
+{%- for tool in base_software_enabled -%}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{%- if fn.tool_apt_get_package(php_version, tool, base_software_available) -%}
+			{{- tools_apt.append(fn.tool_apt_get_package(php_version, tool, base_software_available)) -}}
+		{%- endif -%}
+	{%- endif -%}
+{%- endfor %}
+
+{%- if tools_apt -%}
+###
+### Install tools type: apt
+###
+RUN set -eux \
+	&& DEBIAN_FRONTEND=noninteractive apt-get update \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends --no-install-suggests \
+	{{- "\n" -}}
+	{%- if tools_apt -%}
+		{{- "\t\t# ---------- type: apt ----------\n" -}}
+		{%- for apt in tools_apt | unique | sort -%}
+				{{- "\t\t" + apt + " \\" + "\n" -}}
+		{%- endfor -%}
+	{%- endif -%}
+	{{- "\t" -}}&& rm -rf /var/lib/apt/lists/*{{- "\n" -}}
+{% endif %}
+
+###
+### Copy shared libraries (required by MongoDB, MySQL, PostgreSQL and Redis)
+###
+COPY --from=devilbox-slim-base-builder /tmp/lib-gnu/     /lib/${ARCH}-linux-gnu/
+COPY --from=devilbox-slim-base-builder /tmp/usr-lib-gnu/ /usr/lib/${ARCH}-linux-gnu/
+COPY --from=devilbox-slim-base-builder /tmp/usr-lib/     /usr/lib/
+
+###
+### Copy system files
+###
+COPY --from=devilbox-slim-base-builder /etc/group /etc/group
+COPY --from=devilbox-slim-base-builder /etc/passwd /etc/passwd
+COPY --from=devilbox-slim-base-builder /etc/shadow /etc/shadow
+
+###
+### Copy Blackfire
+###
+COPY --from=devilbox-slim-base-builder /etc/blackfire /etc/blackfire
+COPY --from=devilbox-slim-base-builder /etc/default/blackfire-agent /etc/default/blackfire-agent
+COPY --from=devilbox-slim-base-builder /usr/bin/blackfire* /usr/bin/
+COPY --from=devilbox-slim-base-builder /var/log/blackfire /var/log/blackfire
+
+###
+### Copy mhsendmail
+###
+COPY --from=devilbox-slim-base-builder /usr/local/bin/mhsendmail /usr/local/bin/
+
+###
+### Copy MongoDB client (if exists)
+###
+COPY --from=devilbox-slim-base-builder /tmp/mongo/ /usr/bin/
+
+###
+### Copy MysQL Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/mysql* /usr/bin/
+
+###
+### Copy mysqldump-secure
+###
+COPY --from=devilbox-slim-base-builder /usr/local/bin/mysqldump-secure /usr/local/bin/
+COPY --from=devilbox-slim-base-builder /etc/mysqldump-secure.conf /etc/
+COPY --from=devilbox-slim-base-builder /etc/mysqldump-secure.cnf /etc/
+COPY --from=devilbox-slim-base-builder /var/log/mysqldump-secure.log /var/log/
+
+###
+### Copy PostgreSQL
+###
+COPY --from=devilbox-slim-base-builder /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=devilbox-slim-base-builder /usr/share/postgresql-common /usr/share/postgresql-common
+COPY --from=devilbox-slim-base-builder /usr/share/perl5 /usr/share/perl5
+
+###
+### Create PostgreSQL symlinks
+###
+RUN set -eux \
+	&& if [ -f "/usr/share/postgresql-common/pg_wrapper" ]; then \
+		ln -s ../share/postgresql-common/pg_wrapper /usr/bin/clusterdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createlang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/createuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/droplang \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/dropuser \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_basebackup \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dump \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_dumpall \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_isready \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivewal \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_receivexlog \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_recvlogical \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pg_restore \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/pgbench \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/psql \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/reindexdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumdb \
+		&& ln -s ../share/postgresql-common/pg_wrapper /usr/bin/vacuumlo; \
+	fi
+
+###
+### Copy Redis Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/redis* /usr/bin/
+
+
+###
+### Copy SQLite Client
+###
+COPY --from=devilbox-slim-base-builder /usr/bin/sqlite* /usr/bin/
+
+###
+### ADD PHP configuration files
+###
+COPY ./data/php-ini.d/php-{{ php_version }}.ini /usr/local/etc/php/conf.d/xxx-devilbox-default-php.ini
+COPY ./data/php-fpm.conf/php-fpm-{{ php_version }}.conf /usr/local/etc/php-fpm.conf
+
+###
+### ADD Devilbox configuration files
+###
+COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
+COPY ./data/bash-devilbox /etc/bash-devilbox
+COPY ./data/sudo-devilbox /etc/sudoers.d/devilbox
+
+###
+### Configure Bash
+###
+RUN set -eux \
+	&& { \
+		echo; \
+		echo "# [Devilbox] Ensure /usr/local(s)?bin is in PATH"; \
+		echo 'PATH="${PATH}:/usr/local/bin:/usr/local/sbin"'; \
+		echo "export PATH"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox main bash config"; \
+		echo ". /etc/bash-devilbox"; \
+		echo; \
+		echo "# [Devilbox] Source Devilbox custom configs"; \
+		echo "if [ -d /etc/bashrc-devilbox.d/ ]; then"; \
+		echo "    for f in /etc/bashrc-devilbox.d/*.sh ; do"; \
+		echo "        if [ -r \"\${f}\" ]; then"; \
+		echo "            . \"\${f}\""; \
+		echo "        fi"; \
+		echo "    done"; \
+		echo "    unset f"; \
+		echo "fi"; \
+	} | tee -a /home/${MY_USER}/.bashrc /root/.bashrc \
+	&& chown ${MY_USER}:${MY_GROUP} /home/${MY_USER}/.bashrc
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 3/4: Devilbox slim image (BASE TEST)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Test all Devilbox cli utils if copying was successful
+###
+FROM devilbox-slim-base as devilbox-slim-base-test
+RUN set -eux \
+	&& mysql --version \
+	&& redis-cli --version \
+	&& sqlite3 --version
+
+###
+### Check if available tools slim
+###
+{% for tool in base_software_enabled -%}
+	{# Not disabled #}
+	{%- if ('disabled' not in base_software_available[tool]) or (php_version not in base_software_available[tool]['disabled']) -%}
+		{{- "\n" }}# -------------------- {{ tool }} --------------------
+		{{- "\n" }}RUN set -eux \
+		{#- -#}
+		{#- [CHECK] -#}
+		{%- if 'check' in base_software_available[tool] -%}
+			{{ "\n\t" }}&& {{ base_software_available[tool]['check'] | indent( "\t" ) }}{{ "\t\\" }}
+		{%- endif -%}
+		{#- -#}
+		{#- Finalize -#}
+		{{ "\n\t" }}&& true{{ "\n" }}
+	{%- endif -%}
+{%- endfor %}
+
+###
+### Re-activate modules which have been deactivated in mods (for testing).
+###
+RUN set -eux \
+	&& if find /usr/local/lib/php/extensions/ -name phalcon.so | grep phalcon; then \
+		echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini; \
+	fi \
+	&& if find /usr/local/lib/php/extensions/ -name psr.so | grep psr; then \
+		echo "extension=psr.so" > /usr/local/etc/php/conf.d/docker-php-ext-psr.ini; \
+	fi
+
+###
+### Check if PHP still works
+###
+RUN set -eux \
+	&& echo "date.timezone=UTC" > /usr/local/etc/php/php.ini \
+	&& php -v | grep -oE 'PHP\s[.0-9]+' | grep -oE '[.0-9]+' | grep '^{{ php_version }}' \
+	&& /usr/local/sbin/php-fpm --test \
+	\
+	&& PHP_ERROR="$( php -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	&& PHP_ERROR="$( php -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_ERROR}" ]; then echo "${PHP_ERROR}"; false; fi \
+	\
+	&& PHP_FPM_ERROR="$( php-fpm -v 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& PHP_FPM_ERROR="$( php-fpm -i 2>&1 1>/dev/null )" \
+	&& if [ -n "${PHP_FPM_ERROR}" ]; then echo "${PHP_FPM_ERROR}"; false; fi \
+	&& rm -f /usr/local/etc/php/php.ini
+
+
+
+########################################################################################################################
+########################################################################################################################
+###
+### Stage 4/4: Devilbox slim image (FINAL)
+###
+########################################################################################################################
+########################################################################################################################
+
+###
+### Prepare final base image (STAGE: slim)
+###
+FROM devilbox-slim-base as slim
+MAINTAINER "cytopia" <cytopia@everythingcli.org>
+
+###
+### Labels
+###
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+#LABEL "org.opencontainers.image.created"=""
+#LABEL "org.opencontainers.image.version"=""
+#LABEL "org.opencontainers.image.revision"=""
+LABEL "maintainer"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.authors"="cytopia <cytopia@everythingcli.org>"
+LABEL "org.opencontainers.image.url"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.documentation"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.source"="https://github.com/devilbox/docker-php-fpm"
+LABEL "org.opencontainers.image.vendor"="devilbox"
+LABEL "org.opencontainers.image.licenses"="MIT"
+LABEL "org.opencontainers.image.ref.name"="{{ php_version }}-slim"
+LABEL "org.opencontainers.image.title"="PHP-FPM {{ php_version }}-slim"
+LABEL "org.opencontainers.image.description"="PHP-FPM {{ php_version }}-slim"
+
+###
+### Volumes
+###
+VOLUME /shared/backups
+VOLUME /var/log/php
+VOLUME /var/mail
+
+###
+### Ports
+###
+EXPOSE 9000
+
+###
+### Where to start inside the container
+###
+WORKDIR /shared/httpd
+
+###
+### Entrypoint
+###
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,0 +1,9 @@
+---
+
+check: symfony --no-ansi -V | grep -E 'version [0-9][.0-9]+' || (symfony --no-ansi -V; false)
+
+all:
+  type: custom
+  command: curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir /usr/local/bin
+  build_dep: []
+  run_dep: []

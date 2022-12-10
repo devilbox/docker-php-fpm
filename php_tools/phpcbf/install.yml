@@ -1,0 +1,17 @@
+---
+
+check: phpcbf --version | grep -E 'version [0-9][.0-9]+' || (phpcbf --version; false)
+
+all:
+  type: custom
+  command: curl -sS -k -L --fail -L "${PHPCBF_URL}" -o /usr/local/bin/phpcbf
+  pre: PHPCBF_URL="https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar"
+  post: chmod +x /usr/local/bin/phpcbf
+
+5.3:
+  type: custom
+  pre: PHPCBF_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar"
+
+5.2:
+  type: custom
+  pre: PHPCBF_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcbf.phar"

@@ -1,3 +1,4 @@
+# vi: ft=dockerfile
 # Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-base.j2 instead.
 FROM php:7.0-fpm
 MAINTAINER "cytopia" <cytopia@everythingcli.org>

@@ -31,6 +31,7 @@ This repository also allows you to quickly generate and **build your own custom 
 * [`5.2-base`](Dockerfiles/base/Dockerfile-5.2), [`5.3-base`](Dockerfiles/base/Dockerfile-5.3), [`5.4-base`](Dockerfiles/base/Dockerfile-5.4), [`5.5-base`](Dockerfiles/base/Dockerfile-5.5), [`5.6-base`](Dockerfiles/base/Dockerfile-5.6), [`7.0-base`](Dockerfiles/base/Dockerfile-7.0), [`7.1-base`](Dockerfiles/base/Dockerfile-7.1), [`7.2-base`](Dockerfiles/base/Dockerfile-7.2), [`7.3-base`](Dockerfiles/base/Dockerfile-7.3), [`7.4-base`](Dockerfiles/base/Dockerfile-7.4), [`8.0-base`](Dockerfiles/base/Dockerfile-8.0), [`8.1-base`](Dockerfiles/base/Dockerfile-8.1), [`8.2-base`](Dockerfiles/base/Dockerfile-8.2)
 * [`5.2-mods`](Dockerfiles/mods/Dockerfile-5.2), [`5.3-mods`](Dockerfiles/mods/Dockerfile-5.3), [`5.4-mods`](Dockerfiles/mods/Dockerfile-5.4), [`5.5-mods`](Dockerfiles/mods/Dockerfile-5.5), [`5.6-mods`](Dockerfiles/mods/Dockerfile-5.6), [`7.0-mods`](Dockerfiles/mods/Dockerfile-7.0), [`7.1-mods`](Dockerfiles/mods/Dockerfile-7.1), [`7.2-mods`](Dockerfiles/mods/Dockerfile-7.2), [`7.3-mods`](Dockerfiles/mods/Dockerfile-7.3), [`7.4-mods`](Dockerfiles/mods/Dockerfile-7.4), [`8.0-mods`](Dockerfiles/mods/Dockerfile-8.0), [`8.1-mods`](Dockerfiles/mods/Dockerfile-8.1), [`8.2-mods`](Dockerfiles/mods/Dockerfile-8.2)
 * [`5.2-prod`](Dockerfiles/prod/Dockerfile-5.2), [`5.3-prod`](Dockerfiles/prod/Dockerfile-5.3), [`5.4-prod`](Dockerfiles/prod/Dockerfile-5.4), [`5.5-prod`](Dockerfiles/prod/Dockerfile-5.5), [`5.6-prod`](Dockerfiles/prod/Dockerfile-5.6), [`7.0-prod`](Dockerfiles/prod/Dockerfile-7.0), [`7.1-prod`](Dockerfiles/prod/Dockerfile-7.1), [`7.2-prod`](Dockerfiles/prod/Dockerfile-7.2), [`7.3-prod`](Dockerfiles/prod/Dockerfile-7.3), [`7.4-prod`](Dockerfiles/prod/Dockerfile-7.4), [`8.0-prod`](Dockerfiles/prod/Dockerfile-8.0), [`8.1-prod`](Dockerfiles/prod/Dockerfile-8.1), [`8.2-prod`](Dockerfiles/prod/Dockerfile-8.2)
+* [`5.2-slim`](Dockerfiles/slim/Dockerfile-5.2), [`5.3-slim`](Dockerfiles/slim/Dockerfile-5.3), [`5.4-slim`](Dockerfiles/slim/Dockerfile-5.4), [`5.5-slim`](Dockerfiles/slim/Dockerfile-5.5), [`5.6-slim`](Dockerfiles/slim/Dockerfile-5.6), [`7.0-slim`](Dockerfiles/slim/Dockerfile-7.0), [`7.1-slim`](Dockerfiles/slim/Dockerfile-7.1), [`7.2-slim`](Dockerfiles/slim/Dockerfile-7.2), [`7.3-slim`](Dockerfiles/slim/Dockerfile-7.3), [`7.4-slim`](Dockerfiles/slim/Dockerfile-7.4), [`8.0-slim`](Dockerfiles/slim/Dockerfile-8.0), [`8.1-slim`](Dockerfiles/slim/Dockerfile-8.1), [`8.2-slim`](Dockerfiles/slim/Dockerfile-8.2)
 * [`5.2-work`](Dockerfiles/work/Dockerfile-5.2), [`5.3-work`](Dockerfiles/work/Dockerfile-5.3), [`5.4-work`](Dockerfiles/work/Dockerfile-5.4), [`5.5-work`](Dockerfiles/work/Dockerfile-5.5), [`5.6-work`](Dockerfiles/work/Dockerfile-5.6), [`7.0-work`](Dockerfiles/work/Dockerfile-7.0), [`7.1-work`](Dockerfiles/work/Dockerfile-7.1), [`7.2-work`](Dockerfiles/work/Dockerfile-7.2), [`7.3-work`](Dockerfiles/work/Dockerfile-7.3), [`7.4-work`](Dockerfiles/work/Dockerfile-7.4), [`8.0-work`](Dockerfiles/work/Dockerfile-8.0), [`8.1-work`](Dockerfiles/work/Dockerfile-8.1), [`8.2-work`](Dockerfiles/work/Dockerfile-8.2)
 
 :information_source: For details see **[Documentation: Docker Tags](doc/docker-tags.md)**<br/>
@@ -60,8 +61,8 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
           ^              #
           |              #
           |              #
-        [base]           # Introduces env variables and adjusts entrypoint
-          ^              #
+        [base]           # Streamlined base images with host user mapping
+          ^              # environment variables and custom configs.
           |              #
           |              #
         [mods]           # Installs additional PHP modules
@@ -71,6 +72,10 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
         [prod]           # Devilbox flavour for production
           ^              # (locales, postifx, socat and injectables)
           |              # (custom *.ini files)
+          |              #
+        [slim]           # Devilbox flavour with only required
+          ^              # cli tools to have a functional intranet.
+          |              #
           |              #
         [work]           # Devilbox flavour for local development
                          # (includes backup and development tools)
@@ -195,7 +200,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 <!-- /modules -->
 
 :information_source: For details see **[Documentation: PHP Modules](doc/php-modules.md)**<br/>
-:information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**
+:information_source: For details see **[Contributor Documentation: PHP Module definition](php_modules/README.md)**
 
 
 
@@ -217,6 +222,10 @@ The provided Docker images offer environment variables to alter their startup be
 #### Flavour: prod
 
 `DEBUG_ENTRYPOINT`, `NEW_UID`, `NEW_GID`, `TIMEZONE`, `DOCKER_LOGS`, `ENABLE_MODULES`, `DISABLE_MODULES`, `ENABLE_MAIL`, `FORWARD_PORTS_TO_LOCALHOST`
+
+#### Flavour: slim
+
+`DEBUG_ENTRYPOINT`, `NEW_UID`, `NEW_GID`, `TIMEZONE`, `DOCKER_LOGS`, `ENABLE_MODULES`, `DISABLE_MODULES`, `ENABLE_MAIL`, `FORWARD_PORTS_TO_LOCALHOST`,` MYSQL_BACKUP_USER`, `MYSQL_BACKUP_PASS`, `MYSQL_BACKUP_HOST`
 
 #### Flavour: work
 
@@ -246,6 +255,16 @@ The provided Docker images offer different volumes to be mounted
 * **[`/var/log/php`]()**, **[`/var/mail`]()** - *logs and mail data*
 * **[`/etc/supervisor/custom.d`]()** - *custom supervisord config files*
 
+#### Flavour: slim
+
+* **[`/etc/php-custom.d`]()**, **[`/etc/php-fpm-custom.d`]()** - *custom PHP/PHP-FPM config files*
+* **[`/startup.1.d`]()**, **[`/startup.2.d`]()** - *custom startup scripts*
+* **[`/var/log/php`]()**, **[`/var/mail`]()** - *logs and mail data*
+* **[`/etc/supervisor/custom.d`]()** - *custom supervisord config files*
+* **[`/etc/bashrc-devilbox.d`]()** - *custom bashrc config files*
+* **[`/shared/backups`]()** - *backup data*
+* **[`/ca`]()** - *trusted Certificate Authorities*
+
 #### Flavour: work
 
 * **[`/etc/php-custom.d`]()**, **[`/etc/php-fpm-custom.d`]()** - *custom PHP/PHP-FPM config files*
@@ -271,7 +290,7 @@ Have a look at the following table to see all offered exposed ports for each Doc
  </thead>
  <tbody>
   <tr>
-   <td rowspan="1"><strong>base</strong><br/><strong>mods</strong><br/><strong>prod</strong><br/><strong>work</strong></td>
+   <td rowspan="1"><strong>base</strong><br/><strong>mods</strong><br/><strong>prod</strong><br/><strong>slim</strong><br/><strong>work</strong></td>
    <td><code>9000</code></td>
    <td>PHP-FPM listening port</td>
   </tr>
@@ -290,7 +309,8 @@ Each PHP version is using the same sane default php.ini values, making it pain-f
 | base    | [php.ini](Dockerfiles/base/data/php-ini.d/) and [php-fpm.conf](Dockerfiles/base/data/php-fpm.conf/) |
 | mods    | inherits from base                       |
 | prod    | inherits from base                       |
-| work    | [php.ini](Dockerfiles/work/data/php-ini.d/) [php-fpm.conf](Dockerfiles/work/data/php-fpm.conf/) |
+| slim    | [php.ini](Dockerfiles/work/data/php-ini.d/) and [php-fpm.conf](Dockerfiles/work/data/php-fpm.conf/) |
+| work    | inherits from slim                       |
 
 
 
@@ -300,7 +320,11 @@ If you plan to use the PHP-FPM image for development, hence being able to execut
 
 The **work** Docker image has many common tools already installed which on one hand increases its image size, but on the other hand removes the necessity to install those tools locally.
 
-You want to use tools such as `git`, `drush`, `composer`, `npm`, `eslint`, `phpcs` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by GitHub Actions it is assured that you are always at the latest version of your favorite dev tool.
+You want to use tools such as `angular-cli`, `codeception`, **`composer`**, `deployer`, `eslint`, `git`, `grunt-cli`, `gulp`, `laravel-installer`, **`node`**, **`npm`**, **`nvm`**, `phalcon-devtools`, `phpcs`, `phpunit`, `pm2`, `symfony-cli`, `tig`, `vue`, `webpack-cli`, `wp-cli`, **`yarn`**, `yq`, `zsh` as well as many others, simply do it directly inside the container. As all Docker images are auto-built every night by GitHub Actions it is assured that you are always at the latest version of your favorite dev tool.
+
+<!-- Generate as such
+cat doc/available-tools.md | grep -Eo '\| \[.+\]\[' | sed -e 's/| \[//g' -e 's/].*//g' -e 's/*//g' | xargs -n1 sh -c 'printf "["\`"${1}"\`"](../php_tools/${1}/)\n"' -- | xclip
+-->
 
 :information_source: For details see **[Documentation: Available Tools](doc/available-tools.md)**
 
@@ -422,7 +446,7 @@ $ docker exec -it php mysqldump-secure
 
 #### Docker Compose reference implementation
 
-If you want a fully functional Docker Compose setup, which allows to switch PHP versions easily, comes with web servers, database servers and much more, then head over to the rerefence implementation:
+If you want a fully functional Docker Compose setup, which allows to switch PHP versions easily, comes with web servers, database servers and much more, then head over to the **[Devilbox](https://github.com/cytopia/devilbox)** rerefence implementation :
 
 | Reference Implementation |
 |--------------------------|
@@ -440,13 +464,10 @@ Docker images are built and tested every night by **[GitHub Actions](https://git
 <h2><img id="build-your-own-image" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Build your own image</h2>
 
 You are not interested in the provided Docker images and want to (ab)use this repository purely to generate your own custom images?
-You can do so with four easy commands:
+You can do so with three easy commands:
 ```bash
-# Generate Ansible group_vars for the following PHP extensions
-make gen-modules ARGS="msgpack memcached pdo_mysql rdkafka"
-
-# Generate Dockerfiles
-make gen-dockerfiles
+# Generate Dockerfiles with only the following PHP extensions present
+make gen-dockerfiles MODS="msgpack memcached pdo_mysql rdkafka"
 
 # Pull base image for PHP 8.1 (if you don't have it locally already)
 make docker-pull-base-image STAGE=mods VERSION=8.1 ARCH=linux/arm64
@@ -462,7 +483,7 @@ make build STAGE=mods VERSION=8.1 ARCH=linux/arm64
 
 Contributors are welcome. Feel free to star and clone this repository and submit issues and pull-requests. Add examples and show what you have created with the provided images. If you see any errors or ways to improve this repository in any way, please do so.
 
-:information_source: For details see **[Contributor Documentation: PHP Modules](php_modules/README.md)**
+:information_source: For details see **[Contributor Documentation: PHP Module definitions](php_modules/README.md)**
 
 
 <h2><img id="contributing" width="20" src="https://github.com/devilbox/artwork/raw/master/submissions_logo/cytopia/01/png/logo_64_trans.png"> Related Project</h2>

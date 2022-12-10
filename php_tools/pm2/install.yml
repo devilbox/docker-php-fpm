@@ -1,0 +1,13 @@
+---
+
+check: pm2 --no-daemon --version | tail -1 | grep -E '[0-9][.0-9]+' || (pm2 --no-daemon --version; false)
+
+all:
+  type: npm
+  package: pm2
+  binary: pm2
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

@@ -1,0 +1,42 @@
+---
+
+check: laravel --version | grep ^Laravel | grep -E '[0-9]\.[0-9]+' || (laravel --version; false)
+
+all:
+  type: composer
+  composer: 2
+  package: laravel/installer
+  # version:
+  flags:
+  binary: bin/laravel
+  build_dep: []
+  run_dep: []
+
+7.2:
+  type: composer
+  version: 4.0.0
+
+7.1:
+  type: composer
+  binary: laravel
+  version: 2.3.0
+
+7.0:
+  type: composer
+  binary: laravel
+  version: 2.2.0
+
+5.6:
+  type: composer
+  binary: laravel
+  version: 2.2.0
+
+5.5:
+  type: composer
+  binary: laravel
+  version: 2.2.0
+
+5.4:
+  type: composer
+  binary: laravel
+  version: 1.3.7

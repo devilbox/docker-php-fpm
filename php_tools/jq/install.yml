@@ -1,0 +1,7 @@
+---
+
+check: jq --version 2>&1 | grep -E '[0-9][.0-9]+' || (jq --version; false)
+
+all:
+  type: apt
+  package: jq

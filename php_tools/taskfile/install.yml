@@ -1,0 +1,7 @@
+---
+
+check: task --version | grep -E '[0-9][.0-9]+' || (task --version; false)
+
+all:
+  type: custom
+  command: sh -c "$(curl -sS -K --fail -k https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin/

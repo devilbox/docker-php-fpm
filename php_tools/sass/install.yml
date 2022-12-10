@@ -1,0 +1,13 @@
+---
+
+check: sass --version | grep -E '[0-9][.0-9]+' || (sass --version; false)
+
+all:
+  type: npm
+  package: sass
+  binary: sass
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

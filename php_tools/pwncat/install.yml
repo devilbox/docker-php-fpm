@@ -1,0 +1,12 @@
+---
+
+check: pwncat --version 2>&1 | grep -E 'Version [0-9][.0-9]+' || (pwncat --version; false)
+
+all:
+  type: pip
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post: |
+    ln -s pwncat /usr/local/bin/netcat \

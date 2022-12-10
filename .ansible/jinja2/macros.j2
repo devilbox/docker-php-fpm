@@ -1,0 +1,90 @@
+{##################################################################################################
+# HELPER MACROS
+##################################################################################################}
+
+{#
+### Get generic string value of key if type value matches.
+###
+### php:     The PHP Version
+### name:    The item name
+### items:   The items_available list
+### key:     The key to retrieve the value for
+### type:    The type key must match this type string
+### default: Default value to return if none was found
+#}
+{%- macro get_val_by_type(php, name, items, key, type, default='' ) -%}
+	{#- Default return value -#}
+	{%- set result = default -%}
+
+	{#- PHP Version specific -#}
+	{%- if php in items[name] and items[name][php]['type'] == type -%}
+		{%- if key in items[name][php] and items[name][php][key] -%}
+			{%- set result = items[name][php][key] -%}
+		{%- elif key in items[name]['all'] and items[name]['all'][key] -%}
+			{%- set result = items[name]['all'][key] -%}
+		{%- endif -%}
+	{#- Defined in 'all' -#}
+	{%- elif 'all' in items[name] and items[name]['all']['type'] == type -%}
+		{%- if key in items[name]['all'] and items[name]['all'][key] -%}
+			{%- set result = items[name]['all'][key] -%}
+		{%- endif -%}
+	{%- endif -%}
+
+	{{- result -}}
+{%- endmacro -%}
+
+{#-
+### Get generic string value of key.
+###
+### php:     The PHP Version
+### name:    The item name
+### items:   The items_available list
+### key:     The key to retrieve the value for
+### default: Default value to return if none was found
+-#}
+{%- macro get_val(php, name, items, key, default='') -%}
+	{%- if php in items[name] and key in items[name][php] and items[name][php][key] -%}
+		{{- items[name][php][key] -}}
+	{%- elif 'all' in items[name] and key in items[name]['all'] and items[name]['all'][key] -%}
+		{{- items[name]['all'][key] -}}
+	{%- else -%}
+		{{- default -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+{#-
+### Get generic list value (space separated) of not disabled PHP versions.
+###
+### Returns jsonified string of a list.
+###
+### Usage:
+### {%- set list = [] -%}
+### {%- for val in get_enabled_list(php_version, item, items_available) | from_json -%}
+### 	{%- if val -%}
+###			{{- list.append(val) -}}
+### 	{%- endif -%}
+### {%- endfor -%}
+###
+### php:     The PHP Version
+### name:    The item name
+### items:   The items_available list
+### key:     The key to retrieve the value for
+-#}
+{%- macro get_list_if_enabled(php, name, items, key) -%}
+	{%- set list = [] %}
+	{# Not disabled #}
+	{%- if ('disabled' not in items[name]) or (php not in items[name]['disabled']) -%}
+		{#- Version specific build dependency available? -#}
+		{%- if php in items[name] and key in items[name][php] -%}
+			{%- for val in items[name][php][key] -%}
+				{{- list.append(val) -}}
+			{%- endfor -%}
+		{#- Generic build dependency available? -#}
+		{%- elif 'all' in items[name] and key in items[name]['all'] -%}
+			{%- for val in items[name]['all'][key] -%}
+				{{- list.append(val) -}}
+			{%- endfor -%}
+		{%- endif -%}
+	{%- endif -%}
+	{{- list | to_json -}}
+{%- endmacro -%}

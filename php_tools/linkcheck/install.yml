@@ -1,0 +1,10 @@
+---
+
+check: linkcheck --version | grep -E 'v[0-9][.0-9]+' || (linkcheck --version; false)
+
+all:
+  type: custom
+  command: curl -sS -L --fail -o /usr/local/bin/linkcheck https://raw.githubusercontent.com/cytopia/linkcheck/master/linkcheck
+  post: chmod +x /usr/local/bin/linkcheck
+  build_dep: []
+  run_dep: []

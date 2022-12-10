@@ -1,0 +1,13 @@
+---
+
+check: grunt --version | grep -E '[0-9][.0-9]+' || (grunt --version; false)
+
+all:
+  type: npm
+  package: "grunt-cli"
+  binary: grunt
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

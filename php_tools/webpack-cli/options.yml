@@ -1,0 +1,11 @@
+---
+
+# The name of the module
+name: webpack-cli
+
+# Exclude module build/installation for the following PHP versions
+exclude: []
+
+# In order for this tool to build/install correctly,
+# the following tools must have been installed first.
+depends: []

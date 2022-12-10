@@ -1,0 +1,15 @@
+---
+
+check: lumen --version 2>/dev/null | grep ^Lumen | grep -E '[0-9]\.[0-9]+' || (lumen --version; false)
+
+all:
+  type: composer
+  composer: 2
+  package: laravel/lumen-installer
+  # version:
+  flags:
+  binary: lumen
+  build_dep: []
+  run_dep: []
+  # pre:
+  # post:

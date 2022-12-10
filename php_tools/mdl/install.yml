@@ -1,0 +1,60 @@
+---
+
+check: mdl --version | grep -E '[.0-9]+' || (mdl --version; false)
+
+all:
+  type: rubygem
+  package: mdl
+  # version:
+  build_dep: [ruby-dev]
+  run_dep: [ruby]
+  # pre:
+  # post:
+
+7.2:
+  type: rubygem
+  version: 0.11.0
+  pre: |
+    gem install chef-utils -v 16.6.14 \
+
+7.1:
+  type: rubygem
+  version: 0.11.0
+  pre: |
+    gem install chef-utils -v 16.6.14 \
+
+7.0:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \
+
+5.6:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \
+
+5.5:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \
+
+5.4:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \
+
+5.3:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \
+
+5.2:
+  type: rubygem
+  version: 0.5.0
+  pre: |
+    gem install mixlib-config -v 2.2.4 \

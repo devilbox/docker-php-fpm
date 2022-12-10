@@ -1,0 +1,283 @@
+{##################################################################################################
+# IMPORTS
+##################################################################################################}
+{% import './jinja2/macros.j2' as fn %}
+
+
+
+{##################################################################################################
+# GENERIC MACROS
+##################################################################################################}
+
+{#-
+###
+### Check if not disabled
+###
+### Returns 'true' string if not disabled, otherwise returns nothing
+###
+-#}
+{%- macro is_not_disabled(php, name, items) -%}
+	{%- if ('disabled' not in items[name]) or (php not in items[name]['disabled']) -%}
+		{{- 'true' -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'type'
+###
+### Returns type string
+###
+-#}
+{%- macro get_type(php, name, items) -%}
+	{{- fn.get_val(php, name, items, 'type', '<WRONG TYPE>') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'pre'
+###
+### Returns pre string
+###
+-#}
+{%- macro get_pre(php, name, items) -%}
+	{{- fn.get_val(php, name, items, 'pre', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'post'
+###
+### Returns post string
+###
+-#}
+{%- macro get_post(php, name, items) -%}
+	{{- fn.get_val(php, name, items, 'post', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'build_dep'
+###
+### Returns json string (jsonified list) of build_dep (use '| to_json' to eval)
+###
+-#}
+{%- macro get_build_dep(php, name, items) -%}
+	{{- fn.get_list_if_enabled(php, name, items, 'build_dep') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'run_dep'
+###
+### Returns json string (jsonified list) of run_dep (use '| to_json' to eval)
+###
+-#}
+{%- macro get_run_dep(php, name, items) -%}
+	{{- fn.get_list_if_enabled(php, name, items, 'run_dep') -}}
+{%- endmacro -%}
+
+
+
+{##################################################################################################
+# TOOLS SPECIFIC MACROS
+##################################################################################################}
+
+{# --------------------------------------------- REPO ----------------------------------------- -#}
+{#-
+###
+### Get 'deb'
+### type: repo
+###
+-#}
+{%- macro tool_repo_get_deb(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'deb', 'repo', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'key'
+### type: repo
+###
+-#}
+{%- macro tool_repo_get_key(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'key', 'repo', '') -}}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- CUSTOM --------------------------------------- -#}
+{#-
+###
+### Get 'command'
+### type: custom
+###
+-#}
+{%- macro tool_custom_get_command(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'command', 'custom', '') -}}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- NPM ------------------------------------------ -#}
+{#-
+###
+### Get 'package'
+### type: npm
+###
+-#}
+{%- macro tool_npm_get_package(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'package', 'npm', name) -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'version'
+### type: npm
+###
+-#}
+{%- macro tool_npm_get_version(php, name, items) -%}
+	{%- set version = fn.get_val_by_type(php, name, items, 'version', 'npm', '') -%}
+	{%- if version | length -%}
+		{{- '@' ~ version -}}
+	{%- else -%}
+		{{- '' -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'binary'
+### type: npm
+###
+-#}
+{%- macro tool_npm_get_binary(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'binary', 'npm', '') -}}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- COMPOSER ------------------------------------- -#}
+
+{#-
+###
+### Get 'composer'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_composer(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'composer', 'composer', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'package'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_package(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'package', 'composer', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'version'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_version(php, name, items) -%}
+	{%- set version = fn.get_val_by_type(php, name, items, 'version', 'composer', '') -%}
+	{%- if version | length -%}
+		{{- ':' ~ version -}}
+	{%- else -%}
+		{{- '' -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'flags'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_flags(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'flags', 'composer', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'binary'
+### type: composer
+###
+-#}
+{%- macro tool_composer_get_binary(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'binary', 'composer', '') -}}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- RUBYGEM -------------------------------------- -#}
+
+{#-
+###
+### Get 'package'
+### type: rubygem
+###
+-#}
+{%- macro tool_rubygem_get_package(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'package', 'rubygem', '') -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'version'
+### type: rubygem
+###
+-#}
+{%- macro tool_rubygem_get_version(php, name, items) -%}
+	{%- set version = fn.get_val_by_type(php, name, items, 'version', 'rubygem', '') -%}
+	{%- if version | length -%}
+		{{- ' -v ' ~ version -}}
+	{%- else -%}
+		{{- '' -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- PIP ------------------------------------------ -#}
+
+{#-
+###
+### Get 'package'
+### type: pip
+###
+-#}
+{%- macro tool_pip_get_package(php, name, items) -%}
+	{{- fn.get_val_by_type(php, name, items, 'package', 'pip', name) -}}
+{%- endmacro -%}
+
+{#-
+###
+### Get 'version'
+### type: pip
+###
+-#}
+{%- macro tool_pip_get_version(php, name, items) -%}
+	{%- set version = fn.get_val_by_type(php, name, items, 'version', 'pip', '') -%}
+	{%- if version | length -%}
+		{{- '==' ~ version -}}
+	{%- else -%}
+		{{- '' -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+
+{# --------------------------------------------- APT ------------------------------------------ -#}
+
+{#-
+###
+### Get 'package'
+### type: apt
+###
+-#}
+{%- macro tool_apt_get_package(php, name, items) -%}
+	{%- if is_not_disabled(php, name, items) -%}
+		{{- fn.get_val_by_type(php, name, items, 'package', 'apt', '') -}}
+	{%- endif -%}
+{%- endmacro -%}

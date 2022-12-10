@@ -1,0 +1,17 @@
+---
+
+check: phpcs --version | grep -E 'version [0-9][.0-9]+' || (phpcs --version; false)
+
+all:
+  type: custom
+  command: curl -sS -k -L --fail -L "${PHPCS_URL}" -o /usr/local/bin/phpcs
+  pre: PHPCS_URL="https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar"
+  post: chmod +x /usr/local/bin/phpcs
+
+5.3:
+  type: custom
+  pre: PHPCS_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar"
+
+5.2:
+  type: custom
+  pre: PHPCS_URL="https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.0/phpcs.phar"

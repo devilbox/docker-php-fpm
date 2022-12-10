@@ -1,0 +1,8 @@
+---
+
+check: phpmd --version | grep -E '^PHPMD [0-9][.0-9]+' || (phpmd --version; false)
+
+all:
+  type: custom
+  command: curl -sS -k -L --fail https://phpmd.org/static/latest/phpmd.phar -L -o /usr/local/bin/phpmd
+  post: chmod +x /usr/local/bin/phpmd

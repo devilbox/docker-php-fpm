@@ -1,0 +1,7 @@
+---
+
+check: svn --version | grep version | grep -E '[0-9]+\.[0-9]+' || (svn --version; false)
+
+all:
+  type: apt
+  package: subversion

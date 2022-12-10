@@ -1,3 +1,4 @@
+# vi: ft=dockerfile
 # Auto-generated via Ansible: edit ./ansible/DOCKERFILES/Dockerfile-mods.j2 instead.
 FROM devilbox/php-fpm:8.1-base as builder
 
@@ -787,17 +788,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: xdebug --------------------
 RUN set -eux \
-	# Installation: Version specific
-	# Type:         GIT extension
-	&& git clone https://github.com/xdebug/xdebug /tmp/xdebug \
-	&& cd /tmp/xdebug \
-	# Custom:       Branch
-	&& git checkout $(git tag | grep -E '^[.0-9]+$' | sort -V | tail -1) \
-	# Default:      Install command
-	&& phpize \
-	&& ./configure  --enable-xdebug \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xdebug \
 	# Enabling
 	&& docker-php-ext-enable xdebug \
 	&& true
@@ -837,7 +831,7 @@ RUN set -eux \
 
 # Fix php.ini settings for enabled extensions
 RUN set -eux \
-	&& chmod +x "$(php -r 'echo ini_get("extension_dir");')"/*
+	&& find "$(php -r 'echo ini_get("extension_dir");')/" -type f -exec chmod +x {} \;
 
 # Fix oracle dir for images that don't have oci installed
 RUN set -eux \
