@@ -12,7 +12,29 @@ name: build
 on:
   # Push or pull_request will be determined in jobs.configure.enabled
   push:
+    paths:
+      - '.ansible/**'
+      - '.github/workflows/action.yml'
+      - '.github/workflows/params.yml'
+      - 'Dockerfiles/**'
+      - 'php_modules/**'
+      - 'php_tools/**'
+      - 'tests/**'
+      - 'Makefile'
+      - '!**.md'
+      - '!.ansible/ansible.cfg'
   pull_request:
+    paths:
+      - '.ansible/**'
+      - '.github/workflows/action.yml'
+      - '.github/workflows/params.yml'
+      - 'Dockerfiles/**'
+      - 'php_modules/**'
+      - 'php_tools/**'
+      - 'tests/**'
+      - 'Makefile'
+      - '!**.md'
+      - '!.ansible/ansible.cfg'
   # Dispatch: allows for manual trigger via GH UI
   workflow_dispatch:
 
