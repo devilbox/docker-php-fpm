@@ -17,22 +17,22 @@ Flavours |
 
 ### Flavours
 
-#### Image: base
+#### base
 
 Generic PHP-FPM base image. Use it to derive your own php-fpm docker image from it and add more extensions, tools and injectables.<br/><sub>(Does not offer any environment variables except for `NEW_UID` and `NEW_GID`)</sub>
 
-#### Image: mods
+#### mods
 
 Generic PHP-FPM image with fully loaded extensions. Use it to derive your own php-fpm docker image from it and add more extensions, tools and injectables.<br/><sub>(Does not offer any environment variables except for `NEW_UID` and `NEW_GID`)</sub>
 
-#### Image: prod
+#### prod
 
 Devilbox production image. This Docker image comes with many injectables, port-forwardings, mail-catch-all and user/group rewriting.
 
-#### Image: slim
+#### slim
 
 Devilbox intranet-ready image. Similar to `prod`, but contains least subset of required cli tools to make the Devilbox intranet work.
 
-#### Image: work
+#### work
 
-Devilbox development image. Same as prod, but comes with lots of locally installed tools to make development inside the container as convenient as possible. See [Integrated Development Environment](../README.md#integrated-development-environment) for more information about this.
+Devilbox development image. Same as `slim`, but comes with lots of locally installed [tools](available-tools.md) to make development inside the container as convenient as possible. See [Integrated Development Environment](../README.md#integrated-development-environment) for more information about this.

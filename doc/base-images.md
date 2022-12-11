@@ -17,7 +17,7 @@ Base Images
 
 ### Base Images
 
-Have a look at the following Devilbox base images for which no official versions exist yet, but are required to serve as a foundation for this repository:
+Have a look at the following Devilbox base images for which no official versions exist yet (as of the time of writing), but are required to serve as a foundation for this repository:
 
 * [PHP-FPM 5.2](https://github.com/devilbox/docker-php-fpm-5.2)
 * [PHP-FPM 5.3](https://github.com/devilbox/docker-php-fpm-5.3)

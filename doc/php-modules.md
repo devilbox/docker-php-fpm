@@ -637,9 +637,9 @@ The following PHP modules are available on the `base` flavour:
 
 
 
-### PHP Modules (`mods`, `prod` and `work`)
+### PHP Modules (`mods`, `prod`, `slim` and `work`)
 
-The following PHP modules are available on the `mods`, `prod` and `work` flavour:
+The following PHP modules are available on the `mods`, `prod`, `slim` and `work` flavour:
 
 > :information_source: Click on any extension name to find out what they are
 
