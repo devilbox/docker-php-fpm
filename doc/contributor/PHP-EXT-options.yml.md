@@ -18,7 +18,7 @@ These options are purely for the module generator to decide whether or not to bu
 * Required: Yes
 * Type: `str`
 
-The lower-case name of the extension as it is shown by `php -m`.
+The lower-case name of the extension as it is shown by `php -m` (must match directory name).
 
 
 ### `exclude`
