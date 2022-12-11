@@ -1,7 +1,6 @@
 [PHP Mods: Overview](../../php_modules/README.md) |
 [PHP Mods: `options.yml`](PHP-EXT-options.yml.md) |
-PHP Mods: `build.yml` |
-[PHP Mods: `test.yml`](PHP-EXT-test.yml.md)
+PHP Mods: `install.yml`
 
 ---
 
@@ -9,7 +8,7 @@ PHP Mods: `build.yml` |
 
 
 
-# Extension definition: `build.yml`
+# Extension definition: `install.yml`
 
 
 ## Top level defines

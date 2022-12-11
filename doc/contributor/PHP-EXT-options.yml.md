@@ -1,7 +1,6 @@
 [PHP Mods: Overview](../../php_modules/README.md) |
 PHP Mods: `options.yml` |
-[PHP Mods: `build.yml`](PHP-EXT-build.yml.md) |
-[PHP Mods: `test.yml`](PHP-EXT-test.yml.md)
+[PHP Mods: `install.yml`](PHP-EXT-install.yml.md)
 
 ---
 
@@ -36,7 +35,7 @@ Example:
 exclude: [5.2, 5.3]
 ```
 
-**Note:** If this extension is already present, do not exclude it in here, but rather use `already_avail` in `build.yml`.
+**Note:** If this extension is already present, do not exclude it in here, but rather use `already_avail` in `install.yml`.
 
 
 ### `depends_build`

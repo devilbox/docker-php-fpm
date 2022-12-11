@@ -64,9 +64,9 @@ def get_module_options(module_dirname: str) -> Dict[str, Any]:
     return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "options.yml"))
 
 
-def get_module_build(module_dirname: str) -> Dict[str, Any]:
-    """Returns yaml dict build configuration of a PHP module given by its absolute file path."""
-    return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "build.yml"))
+def get_module_install(module_dirname: str) -> Dict[str, Any]:
+    """Returns yaml dict install configuration of a PHP module given by its absolute file path."""
+    return load_yaml(os.path.join(PHP_MODULE_PATH, module_dirname, "install.yml"))
 
 
 def get_module_test(module_dirname: str) -> Dict[str, Any]:
@@ -196,7 +196,7 @@ def write_group_vars(modules: List[str]) -> None:
             opts = get_module_options(module)
             fp.write("  " + module + ":\n")
             fp.write("    disabled: [" + ", ".join(str(x) for x in opts["exclude"]) + "]\n")
-            fp.write(load_yaml_raw(os.path.join(PHP_MODULE_PATH, module, "build.yml"), 4))
+            fp.write(load_yaml_raw(os.path.join(PHP_MODULE_PATH, module, "install.yml"), 4))
 
 
 # --------------------------------------------------------------------------------------------------
