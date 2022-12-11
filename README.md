@@ -487,7 +487,8 @@ make build STAGE=mods VERSION=8.1 ARCH=linux/arm64
 
 Contributors are welcome. Feel free to star and clone this repository and submit issues and pull-requests. Add examples and show what you have created with the provided images. If you see any errors or ways to improve this repository in any way, please do so.
 
-:information_source: For details see **[Contributor Documentation: PHP Module definitions](php_modules/README.md)**
+:information_source: For details see **[Contributor Documentation: PHP Module definitions](php_modules/README.md)**<br/>
+:information_source: For details see **[Contributor Documentation: PHP Tools definitions](php_tools/README.md)**
 
 
 
