@@ -64,8 +64,8 @@ def get_tool_options(tool_dirname: str) -> Dict[str, Any]:
     return load_yaml(os.path.join(PHP_TOOL_PATH, tool_dirname, "options.yml"))
 
 
-def get_tool_build(tool_dirname: str) -> Dict[str, Any]:
-    """Returns yaml dict build configuration of a PHP tool given by its absolute file path."""
+def get_tool_install(tool_dirname: str) -> Dict[str, Any]:
+    """Returns yaml dict install configuration of a PHP tool given by its absolute file path."""
     return load_yaml(os.path.join(PHP_TOOL_PATH, tool_dirname, "install.yml"))
 
 

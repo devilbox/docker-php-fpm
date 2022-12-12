@@ -1,7 +1,6 @@
 [PHP Mods: Overview](../../php_modules/README.md) |
 [PHP Mods: `options.yml`](PHP-EXT-options.yml.md) |
-PHP Mods: `build.yml` |
-[PHP Mods: `test.yml`](PHP-EXT-test.yml.md)
+PHP Mods: `install.yml`
 
 ---
 
@@ -9,7 +8,7 @@ PHP Mods: `build.yml` |
 
 
 
-# Extension definition: `build.yml`
+# Extension definition: `install.yml`
 
 
 ## Top level defines
@@ -30,16 +29,21 @@ already_avail: "{{ php_all_versions }}"
 **Example:** Overwriting `git_ref` for a specific version
 ```yaml
 already_avail: [5.2]
+
 all:
   type: git
   git_url: https://github.com/phalcon/cphalcon
   git_ref: master
+
 # PHP 8.1 is using a different git_ref
 8.1:
+  type: git
   git_ref: v1.0.0
+
 # PHP 8.0 is using a different git_ref dynamically with latest tag found
 # See the usage of supported shell code
 8.0:
+  type: git
   git_ref: $( git tag | sort -V | tail -1 )
 ```
 
@@ -54,7 +58,7 @@ The following keys can be added below: `all`, `8.2`, `8.1`, `8.0`, `7.4`, ...
 | `post`      | No       | Yes | Specify a shell command to be run after module installation. |
 | `build_dep` | No       | No  | Array Debian packages required to build the module (they won't be present in the final image - only used to built the module) If you don't need any, assign it an empty array: `build_dep: []`. |
 | `run_dep`   | No       | No  | Array Debian packages required for the module run-time (they won't be present during the build stage - only in the final image). If you don't need any, assign it an empty array: `run_dep: []`. |
-| `type`      | **Yes**  | No  | On of the following types to build the module: `builtin`, `pecl`, `git`, `custom`. |
+| `type`      | **Yes**  | No  | On of the following types to build the module: `builtin`, `pecl`, `git` or `custom`. |
 
 **Example:**
 ```yaml
@@ -66,6 +70,7 @@ all:
     rm -f /tmp/file.txt \
   build_dep: [libmcrypt-dev]
   run_dep: [libmcrypt4]
+
 8.1:
   type: builtin
   build_dep: []
@@ -83,9 +88,11 @@ all:
 ```yaml
 all:
   type: builtin
+
 8.1:
   type: builtin
   configure: --with-jpeg --with-png
+
 8.0:
   type: builtin
   configure: --with-jpeg
@@ -106,6 +113,7 @@ all:
   command: echo "/usr" | pecl install amqp
   build_dep: [librabbitmq-dev]
   run_dep: [librabbitmq4]
+
 5.5:
   type: pecl
   version: 1.9.3
@@ -125,16 +133,22 @@ all:
 **Example:**
 ```yaml
 already_avail: [5.2]
+
+# Default for all PHP versions if no overwrite exists
 all:
   type: git
   git_url: https://github.com/phalcon/cphalcon
   git_ref: master
-# PHP 8.1 is using a different git_ref
+
+# PHP 8.1 is overwriting the git_ref
 8.1:
+  type: git
   git_ref: v1.0.0
+
 # PHP 8.0 is using a different git_ref dynamically with latest tag found
 # See the usage of supported shell code
 8.0:
+  type: git
   git_ref: $( git tag | sort -V | tail -1 )
 ```
 
@@ -166,12 +180,12 @@ all:
 
 **Note:** All keys that support shell code can be written as a single line yaml definition or as a multi line yaml definition. Multi-line yaml definitions need a trailing `\` at the end of each line, including the last line.<br/>
 **Single-line:**
-```bash
+```yaml
 all:
   pre: VERSION="$( curl http://url | grep -Eo '[0-9.]+' )"
 ```
 **Multi-line:**
-```bash
+```yaml
 all:
   pre: |
     VERSION="$( \
@@ -184,7 +198,7 @@ all:
 
 **Note:** All keys that support shell code also support to write multiple shell commands. If you use multiple shell commands, you need to separate them with `&&`.<br/>
 **Single-command:**
-```bash
+```yaml
 all:
   pre: |
     VERSION="$( \
@@ -193,7 +207,7 @@ all:
     )" \
 ```
 **Multi-command:**
-```bash
+```yaml
 all:
   pre: |
     URL="http://url" \

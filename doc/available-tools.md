@@ -17,9 +17,131 @@ Tools |
 :information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**<br/>
 
 
-### PHP Tools (`slim`)
+### PHP Tools ([`prod`](flavours.md#prod))
 
-The following PHP cli tools are available on the `slim` flavour:
+The following PHP cli tools are available on the [`prod`](flavours.md#prod) flavour:
+
+> :information_source: Click on any tool name to find out what they are
+
+<table>
+ <tr>
+   <th>Tool</th>
+   <th>PHP 5.2</th>
+   <th>PHP 5.3</th>
+   <th>PHP 5.4</th>
+   <th>PHP 5.5</th>
+   <th>PHP 5.6</th>
+   <th>PHP 7.0</th>
+   <th>PHP 7.1</th>
+   <th>PHP 7.2</th>
+   <th>PHP 7.3</th>
+   <th>PHP 7.4</th>
+   <th>PHP 8.0</th>
+   <th>PHP 8.1</th>
+   <th>PHP 8.2</th>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="https://linux.die.net/man/8/cron">Cron</a></td>
+  <td class="tool_prod_cron_5.2">✓</td>
+  <td class="tool_prod_cron_5.3">✓</td>
+  <td class="tool_prod_cron_5.4">✓</td>
+  <td class="tool_prod_cron_5.5">✓</td>
+  <td class="tool_prod_cron_5.6">✓</td>
+  <td class="tool_prod_cron_7.0">✓</td>
+  <td class="tool_prod_cron_7.1">✓</td>
+  <td class="tool_prod_cron_7.2">✓</td>
+  <td class="tool_prod_cron_7.3">✓</td>
+  <td class="tool_prod_cron_7.4">✓</td>
+  <td class="tool_prod_cron_8.0">✓</td>
+  <td class="tool_prod_cron_8.1">✓</td>
+  <td class="tool_prod_cron_8.2">✓</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="http://www.postfix.org/">Postfix</a></td>
+  <td class="tool_prod_postfix_5.2">✓</td>
+  <td class="tool_prod_postfix_5.3">✓</td>
+  <td class="tool_prod_postfix_5.4">✓</td>
+  <td class="tool_prod_postfix_5.5">✓</td>
+  <td class="tool_prod_postfix_5.6">✓</td>
+  <td class="tool_prod_postfix_7.0">✓</td>
+  <td class="tool_prod_postfix_7.1">✓</td>
+  <td class="tool_prod_postfix_7.2">✓</td>
+  <td class="tool_prod_postfix_7.3">✓</td>
+  <td class="tool_prod_postfix_7.4">✓</td>
+  <td class="tool_prod_postfix_8.0">✓</td>
+  <td class="tool_prod_postfix_8.1">✓</td>
+  <td class="tool_prod_postfix_8.2">✓</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="http://www.postfix.org/pcre_table.5.html">Postfix PCRE</a></td>
+  <td class="tool_prod_postfix_pcre_5.2">✓</td>
+  <td class="tool_prod_postfix_pcre_5.3">✓</td>
+  <td class="tool_prod_postfix_pcre_5.4">✓</td>
+  <td class="tool_prod_postfix_pcre_5.5">✓</td>
+  <td class="tool_prod_postfix_pcre_5.6">✓</td>
+  <td class="tool_prod_postfix_pcre_7.0">✓</td>
+  <td class="tool_prod_postfix_pcre_7.1">✓</td>
+  <td class="tool_prod_postfix_pcre_7.2">✓</td>
+  <td class="tool_prod_postfix_pcre_7.3">✓</td>
+  <td class="tool_prod_postfix_pcre_7.4">✓</td>
+  <td class="tool_prod_postfix_pcre_8.0">✓</td>
+  <td class="tool_prod_postfix_pcre_8.1">✓</td>
+  <td class="tool_prod_postfix_pcre_8.2">✓</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="https://www.rsyslog.com/">Rsyslog</a></td>
+  <td class="tool_prod_rsyslog_5.2">✓</td>
+  <td class="tool_prod_rsyslog_5.3">✓</td>
+  <td class="tool_prod_rsyslog_5.4">✓</td>
+  <td class="tool_prod_rsyslog_5.5">✓</td>
+  <td class="tool_prod_rsyslog_5.6">✓</td>
+  <td class="tool_prod_rsyslog_7.0">✓</td>
+  <td class="tool_prod_rsyslog_7.1">✓</td>
+  <td class="tool_prod_rsyslog_7.2">✓</td>
+  <td class="tool_prod_rsyslog_7.3">✓</td>
+  <td class="tool_prod_rsyslog_7.4">✓</td>
+  <td class="tool_prod_rsyslog_8.0">✓</td>
+  <td class="tool_prod_rsyslog_8.1">✓</td>
+  <td class="tool_prod_rsyslog_8.2">✓</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="http://www.dest-unreach.org/socat/">Socat</a></td>
+  <td class="tool_prod_socat_5.2">✓</td>
+  <td class="tool_prod_socat_5.3">✓</td>
+  <td class="tool_prod_socat_5.4">✓</td>
+  <td class="tool_prod_socat_5.5">✓</td>
+  <td class="tool_prod_socat_5.6">✓</td>
+  <td class="tool_prod_socat_7.0">✓</td>
+  <td class="tool_prod_socat_7.1">✓</td>
+  <td class="tool_prod_socat_7.2">✓</td>
+  <td class="tool_prod_socat_7.3">✓</td>
+  <td class="tool_prod_socat_7.4">✓</td>
+  <td class="tool_prod_socat_8.0">✓</td>
+  <td class="tool_prod_socat_8.1">✓</td>
+  <td class="tool_prod_socat_8.2">✓</td>
+ </tr>
+ <tr>
+  <td><a target="_blank" href="http://supervisord.org/">Supervisor</a></td>
+  <td class="tool_prod_supervisor_5.2">✓</td>
+  <td class="tool_prod_supervisor_5.3">✓</td>
+  <td class="tool_prod_supervisor_5.4">✓</td>
+  <td class="tool_prod_supervisor_5.5">✓</td>
+  <td class="tool_prod_supervisor_5.6">✓</td>
+  <td class="tool_prod_supervisor_7.0">✓</td>
+  <td class="tool_prod_supervisor_7.1">✓</td>
+  <td class="tool_prod_supervisor_7.2">✓</td>
+  <td class="tool_prod_supervisor_7.3">✓</td>
+  <td class="tool_prod_supervisor_7.4">✓</td>
+  <td class="tool_prod_supervisor_8.0">✓</td>
+  <td class="tool_prod_supervisor_8.1">✓</td>
+  <td class="tool_prod_supervisor_8.2">✓</td>
+ </tr>
+</table>
+
+
+### PHP Tools ([`slim`](flavours.md#slim))
+
+Additionally to all of the `prod` tools shown above, the following PHP cli tools are available on the [`slim`](flavours.md#slim) flavour:
 
 > :information_source: Click on any tool name to find out what they are
 
@@ -237,10 +359,9 @@ The following PHP cli tools are available on the `slim` flavour:
 > :exclamation: **\[1\]** Not available on `arm64` Docker image.
 
 
+### PHP Tools ([`work`](flavours.md#work))
 
-### PHP Tools (`work`)
-
-Additionally to all of the `slim` tools shown above, the following PHP cli tools are available on the `work` flavour:
+Additionally to all of the `slim` tools shown above, the following PHP cli tools are available on the [`work`](flavours.md#work) flavour:
 
 > :information_source: Click on any tool name to find out what they are
 

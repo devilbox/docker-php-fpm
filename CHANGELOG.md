@@ -4,6 +4,14 @@
 ## Unreleased
 
 
+## Release 0.146
+
+This release adds lots of documentation about recently added features.
+
+### Added
+- Documentation
+
+
 ## Release 0.145
 
 This is a massive restructuring release, which adds another layer on top of Ansible to easily manage/edit/add PHP tools and to configure their respective order of building and installing.

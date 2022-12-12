@@ -17,65 +17,95 @@ Volumes |
 
 ### Docker Volumes
 
-Have a look at the following table to see all offered volumes for each Docker image flavour.
+1. [Overview](#overview)
+2. [`/etc/php-custom.d/`][lnk_vol_php_custom]
+3. [`/etc/php-fpm-custom.d/`][lnk_vol_php_fpm_custom]
+4. [`/startup.1.d/`][lnk_vol_startup1]
+5. [`/startup.2.d/`][lnk_vol_startup2]
+6. [`/var/log/php/`][lnk_vol_log_php]
+7. [`/var/mail/`][lnk_vol_mail]
+8. [`/etc/supervisor/custom.d/`][lnk_vol_supervisor]
+9. [`/etc/bashrc-devilbox.d/`][lnk_vol_bashrc]
+10. [`/shared/backups/`][lnk_vol_backups]
+11. [`/ca/`][lnk_vol_ca]
 
-<table>
- <thead>
-  <tr>
-   <th>Image</th>
-   <th width="240">Volumes</th>
-   <th>Description</th>
-  </tr>
- </thead>
- <tbody>
-  <tr>
-   <td rowspan="8"><strong>prod</strong><br/><br/><strong>slim</strong><br/><br/><strong>work</strong></td>
-   <td><code>/etc/php-custom.d</code></td>
-   <td>Mount this directory into your host computer and add custom <code>\*.ini</code> files in order to alter php behaviour.</td>
-  </tr>
-  <tr>
-   <td><code>/etc/php-fpm-custom.d</code></td>
-   <td>Mount this directory into your host computer and add custom PHP-FPM <code>\*.conf</code> files in order to alter PHP-FPM behaviour.</td>
-  </tr>
-  <tr>
-   <td><code>/etc/php-modules.d</code></td>
-   <td>Mount this directory into your host computer and add custo <code>\*.so</code> files in order to add your php modules.<br/><br/><strong>Note:</strong>Your should then also provide a custom <code>\*.ini</code> file in order to actually load your custom provided module.</td>
-  </tr>
-  <tr>
-   <td><code>/startup.1.d</code></td>
-   <td>Any executable scripts ending by <code>\*.sh</code> found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run before <code>/startup.2.d</code>)</td>
-  </tr>
-  <tr>
-   <td><code>/startup.2.d</code></td>
-   <td>Any executable scripts ending by <code>\*.sh</code> found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run after <code>/startup.1.d</code>)</td>
-  </tr>
-  <tr>
-   <td><code>/var/log/php</code></td>
-   <td>When setting environment variable <code>DOCKER_LOGS</code> to <code>0</code>, log files will be available under this directory.</td>
-  </tr>
-  <tr>
-   <td><code>/var/mail</code></td>
-   <td>Emails caught be the postfix catch-all (<code>ENABLE_MAIL=2</code>) will be available in this directory.</td>
-  </tr>
-  <tr>
-   <td><code>/etc/supervisor/custom.d</code></td>
-   <td>Mount this directory into your host computer and add your own `*.conf` supervisor start-up files.<br/><br/>**Note:** Directory and file permission will be recursively set to this of `NEW_UID` and `NEW_GID`.</td>
-  </tr>
-  <tr>
-   <td colspan="3"></td>
-  </tr>
-  <tr>
-   <td rowspan="3"><strong>slim</strong><br/><br/><strong>work</strong></td>
-   <td><code>/etc/bashrc-devilbox.d</code></td>
-   <td>Mount this directory into your host computer and add custom configuration files for <code>bash</code> and other tools.</td>
-  </tr>
-  <tr>
-   <td><code>/shared/backups</code></td>
-   <td>Mount this directory into your host computer to access MySQL backups created by <a href="https://mysqldump-secure.org" >mysqldump-secure</a>.</td>
-  </tr>
-  <tr>
-   <td><code>/ca</code></td>
-   <td>Mount this directory into your host computer to bake any *.crt file that is located in there as a trusted SSL entity.</td>
-  </tr>
- </tbody>
-</table>
+[lnk_vol_php_custom]: #-etcphp-customd
+[lnk_vol_php_fpm_custom]: #-etcphp-fpm-customd
+[lnk_vol_startup1]: #-startup1d
+[lnk_vol_startup2]: #-startup2d
+[lnk_vol_log_php]: #-varlogphp
+[lnk_vol_mail]: #-varmail
+[lnk_vol_supervisor]: #-etcsupervisorcustomd
+[lnk_vol_bashrc]: #-etcbashrc-devilboxd
+[lnk_vol_backups]: #-sharedbackups
+[lnk_vol_ca]: #-ca
+
+
+### Overview
+
+The following table gives an overview about which volume is available to which flavour.
+
+| Docker Volume               | `base` | `mods` | `prod` | `slim` | `work` |
+|-----------------------------|--------|--------|--------|--------|--------|
+| `/etc/php-custom.d/`        |        |        |   ✓    |   ✓    |   ✓    |
+| `/etc/php-fpm-custom.d/`    |        |        |   ✓    |   ✓    |   ✓    |
+| `/startup.1.d/`             |        |        |   ✓    |   ✓    |   ✓    |
+| `/startup.2.d/`             |        |        |   ✓    |   ✓    |   ✓    |
+| `/var/log/php/`             |        |        |   ✓    |   ✓    |   ✓    |
+| `/var/mail/`                |        |        |   ✓    |   ✓    |   ✓    |
+| `/etc/supervisor/custom.d/` |        |        |   ✓    |   ✓    |   ✓    |
+| `/etc/bashrc-devilbox.d/`   |        |        |        |   ✓    |   ✓    |
+| `/shared/backups/`          |        |        |        |   ✓    |   ✓    |
+| `/ca/`                      |        |        |        |   ✓    |   ✓    |
+
+
+### 📂 `/etc/php-custom.d/`
+
+Mount this directory into your host system and add custom PHP `*.ini` files in order to alter PHP behaviour.
+
+
+### 📂 `/etc/php-fpm-custom.d/`
+
+Mount this directory into your host system and add custom PHP-FPM `*.conf` files in order to alter PHP-FPM behaviour.
+
+
+### 📂 `/startup.1.d/`
+
+Any executable scripts ending by `*.sh` found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run before `/startup.2.d`).
+
+
+### 📂 `/startup.2.d/`
+
+Any executable scripts ending by `*.sh` found in this directory will be executed during startup. This is useful to supply additional commands (such as installing custom software) when the container starts up. (will run after `/startup.1.d`).
+
+
+### 📂 `/var/log/php/`
+
+When setting environment variable `DOCKER_LOGS` to `0`, PHP and PHP-FPM log files will be available in this directory.
+
+
+### 📂 `/var/mail/`
+
+Emails caught be the postfix catch-all (`ENABLE_MAIL=2`) will be available in this directory.
+
+
+### 📂 `/etc/supervisor/custom.d/`
+
+Mount this directory into your host computer and add your own `*.conf` supervisor start-up files.
+
+**Note:** Directory and file permission will be recursively set to this of `NEW_UID` and `NEW_GID`.
+
+
+### 📂 `/etc/bashrc-devilbox.d/`
+
+Mount this directory into your host computer and add custom configuration files for `bash` and other tools.
+
+
+### 📂 `/shared/backups/`
+
+Mount this directory into your host computer to access MySQL backups created by [mysqldump-secure](https://mysqldump-secure.org/).
+
+
+### 📂 `/ca/`
+
+Mount this directory into your host computer to bake any `*.crt` file that is located in there as a trusted SSL entity.

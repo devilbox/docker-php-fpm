@@ -38,7 +38,11 @@ DEFAULT_TOOLS = [
     {"name": "**composer**", "dir": "https://getcomposer.org/", "exclude": []},
     {"name": "**corepack**", "dir": "https://nodejs.org/api/corepack.html", "exclude": []},
     {"name": "**nvm**", "dir": "https://github.com/nvm-sh/nvm", "exclude": []},
-    {"name": "**npm**", "dir": "https://nodejs.org/en/knowledge/getting-started/npm/what-is-npm/", "exclude": []},
+    {
+        "name": "**npm**",
+        "dir": "https://nodejs.org/en/knowledge/getting-started/npm/what-is-npm/",
+        "exclude": [],
+    },
     {"name": "**node**", "dir": "https://nodejs.org/en/", "exclude": []},
     {"name": "**yarn**", "dir": "https://yarnpkg.com/cli/install", "exclude": []},
     {"name": "**pip**", "dir": "https://pypi.org/", "exclude": []},

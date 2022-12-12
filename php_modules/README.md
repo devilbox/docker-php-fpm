@@ -1,7 +1,6 @@
 PHP Mods: Overview |
 [PHP Mods: `options.yml`](../doc/contributor/PHP-EXT-options.yml.md) |
-[PHP Mods: `build.yml`](../doc/contributor/PHP-EXT-build.yml.md) |
-[PHP Mods: `test.yml`](../doc/contributor/PHP-EXT-test.yml.md)
+[PHP Mods: `install.yml`](../doc/contributor/PHP-EXT-install.yml.md)
 
 ---
 
@@ -9,49 +8,151 @@ PHP Mods: Overview |
 
 
 
-# PHP Module definitions
+## PHP Module definitions
 
-This document describes how to create new or alter existing PHP module definitions.
+This document describes how to create new or alter existing PHP modules.
 
-All PHP modules/extensions (for all PHP versions and both for `amd64` and `arm64` platforms) are defined in the `php_modules/` directory in their corresponding sub directory. These definitions are then transformed to Ansible group_vars and afterwards Ansible will generate the corresponding Dockerfiles (Stage: `mods`).
+All PHP modules (for all PHP versions and both for `amd64` and `arm64` platforms) are defined in the `php_modules/` directory in their corresponding sub directory. Modules defined in there will be built for the `mods` flavour.
+
+**Directory Structure:**
+```bash
+php_modules/
+└── <php-mod>/
+    ├── install.yml
+    ├── options.yml
+    └── README.md
+```
+
+
+### Requirements
+
+In order to create new or altere existing PHP modules you need to have the following tools installed locally:
+* Python3
+* Python [`PyYAML`](https://pypi.org/project/PyYAML/) module
+* Docker
+* The `make` command
+
+Additionally you should have a brief understanding about what flavours exist and how they derive from each other: **[Documentation: Flavours](../doc/flavours.md)**.
 
 
 ## How to add PHP modules?
 
-> **Note:** The below listed steps require you to have the following on your local machine installed: `python3`, `PyYAML` Python module, `docker` and `make`.
+Simply add your new module definitions into `php_modules/` as shown in the above directory structure.
 
-1. **Inside `php_modules/` directory:**
-    1. Create a new directory with the name of the PHP module in `php_modules/`
-    2. Add `build.yml`, `options.yml` and `test.yml` into your newly created directory
-    3. Alter `build.yml`, `options.yml` and `test.yml` according to documentation below
+You can either look at existing modules to find out what needs to be added to `install.yml` and `options.yml` or you check out the documentation for that:
 
-2. **Inside the root of this git repository:**
-    1. Run `make gen-dockerfiles` to generate Dockerfiles via Ansible
-    2. Run `make build STAGE=mods VERSION=8.1 ARCH=linux/amd64` to build the `mods` Docker image with version `8.1` for platform `linux/amd64`
+* See **[PHP-EXT-install.yml.md](../doc/contributor/PHP-EXT-install.yml.md)** how to alter the `install.yml` file.
+* See **[PHP-EXT-options.yml.md](../doc/contributor/PHP-EXT-options.yml.md)** how to alter the `options.yml` file.
 
-**Note:** If you want to test if your new module builds correctly, you can generate Dockerfiles which only contain this one module and all others removed. This allows for much faster Docker builds and you don't have to wait for all other modules to be built. To do so, generate only group_vars for your one module via:
+Below is a simple example of how the `xls` module was created:
 
 ```bash
-# Commands shown here are executed from root of this repository
+# Enter the php_modules directory
+cd php_modules/
 
-# Only generate Dockerfiles with PHP extension curl
-# Note: if curl has other modules as requirements to be built beforehand, those will also be added
-make gen-dockerfiles MODS="curl"
+# Create the xls directory
+mkdir xls
+
+# Create necessary empty files
+touch xls/install.yml
+touch xls/options.yml
 ```
 
-:information_source: For details on how to generate modules see **[Abuser Documentation: Build your own image](../doc/abuser/README.md)**
+Now let's edit `options.yml`:
+```yaml
+---
+name: xls    # The name must match the directory name
+exclude: []  # Any PHP versions to exclude?
+
+depends_build: [libxml]  # The libxml module must be built before xls
+```
+
+Now let's edit the `install.yml`:
+```yaml
+---
+all:
+  type: builtin
+  build_dep: [libxslt-dev]  # This Debian package is required to build xls
+  run_rep: [libxslt1.1]     # This Debian package is required during run-time
+```
 
 
-## Extension definition: `build.yml`
+## How to generate the Dockerfiles?
 
-See **[PHP-EXT-build.yml.md](../doc/contributor/PHP-EXT-build.yml.md)** how to alter the `build.yml` file.
+Dockerfiles are generated for all PHP versions with a single `make` command. If you do not specify any arguments, then all PHP modules found in the `php_modules/` directory are being added to the Dockerfiles.
+
+You can however also generate Dockerfiles only containing the module that you have created/altered. This makes the `docker build` process much faster and you can troubleshoot potential errors quicker.
+
+### Generate Dockerfiles for all PHP modules
+
+Inside the root of this git repository execute the following:
+```bash
+# Generate Dockerfiles with all available PHP modules found in php_modules/ dir
+make gen-dockerfiles
+```
+
+### Generate Dockerfiles for a single PHP module
+
+Inside the root of this git repository execute the following:
+```bash
+# Generate Dockerfiles with only xls module
+make gen-dockerfiles PHP_MODS="xls"
+```
+
+> **🛈 Note:** This will also add any modules that `xls` depends on (specified via `depends_build:` in `options.yml`)
+
+You can also exlcude any dependent modules by specifying the `-i` flag.
+
+```bash
+# Generate Dockerfiles with only xls module and no dependent modules
+make gen-dockerfiles PHP_MODS="-i xls"
+```
+
+> **⚠ Warning:** The `-i` option might break your build.
+
+### Generate Dockerfiles for multiple PHP modules
+
+Inside the root of this git repository execute the following:
+```bash
+# Generate Dockerfiles with only xls and xmlwriter module
+make gen-dockerfiles PHP_MODS="xls xmlwriter"
+```
+
+> **🛈 Note:** This will also add any modules that `xls` and `xmlwriter` depends on (specified via `depends_build:` in `options.yml`)
+
+You can also exlcude any dependent modules by specifying the `-i` flag.
+
+```bash
+# Generate Dockerfiles with only xls and xmlwriter module and no dependent modules
+make gen-dockerfiles PHP_MODS="-i xls xmlwriter"
+```
 
 
-## Extension definition: `options.yml`
+## How to build the Dockerfiles?
 
-See **[PHP-EXT-options.yml.md](../doc/contributor/PHP-EXT-options.yml.md)** how to alter the `options.yml` file.
+Once you have generated the Dockerfiles, pick a PHP version and an architecture (`linux/am64` or `linux/arm64`) and then build it via `make`.
 
+> **🛈 Note 1:** PHP modules are generated into Dockerfiles of the `mods` flavour, so you will have to use `STAGE=mods` to build this flavour.<br/>
+> **🛈 Note 2:** The `mods` flavour depends on the `base` flavour, so you need to ensure to either pull this Docker image or build it yourself.
 
-## Extension definition: `test.yml`
+The following example will show the build for:
+* PHP version: `8.1`
+* Architecture: `linux/amd64`
 
-See **[PHP-EXT-test.yml.md](../doc/contributor/PHP-EXT-test.yml.md)** how to alter the `test.yml` file.
+### Ensure to have `base` flavour
+
+Either build it yourself for the specific PHP version and architecture.
+```bash
+make build STAGE=base VERSION=8.1 ARCH=linux/amd64
+```
+Or pull it from Dockerhub
+```
+make docker-pull-base-image STAGE=mods VERSION=8.1 ARCH=linux/amd64
+```
+
+### Build the `mods` flavour
+
+This flavour will include the PHP modules you have generated above.
+```bash
+make build STAGE=mods VERSION=8.1 ARCH=linux/amd64
+```
