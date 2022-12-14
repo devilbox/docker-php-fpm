@@ -13,7 +13,7 @@ body:
       value: |
         Report something to the maintainer such as versions are outdated or pipelines are not running, etc. For anything else please use other issue types. Thanks for taking the time!
 
-  - type: input
+  - type: textarea
     attributes:
       label: Report
       description: What do you want to report?
