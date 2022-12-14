@@ -3,7 +3,7 @@
 # -------------------------------------------------------------------------------------------------
 # Job Name
 # -------------------------------------------------------------------------------------------------
-name: lint
+name: generator
 
 
 # -------------------------------------------------------------------------------------------------
@@ -13,14 +13,25 @@ on:
   # Runs on Pull Requests
   workflow_dispatch:
   pull_request:
+    paths:
+      - '.ansible/**'
+      - '.github/workflows/action.yml'
+      - '.github/workflows/params.yml'
+      - 'Dockerfiles/**'
+      - 'php_modules/**'
+      - 'php_tools/**'
+      - 'tests/**'
+      - 'Makefile'
+      - '!**.md'
+      - '!.ansible/ansible.cfg'
 
 
 # -------------------------------------------------------------------------------------------------
 # What to run
 # -------------------------------------------------------------------------------------------------
 jobs:
-  lint:
-    name: "Lint"
+  generator:
+    name: "Generator"
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------
@@ -31,13 +42,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install required Python packages
+        run: |
+          pip install yamllib
+          pip install typing
+
       # ------------------------------------------------------------
       # Lint repository
       # ------------------------------------------------------------
-      - name: Lint Files
+      - name: Lint Changelog
         run: |
-          make lint-files
+          make lint-changelog
 
-      - name: Lint Yaml
+      - name: Diff generated Docker files
         run: |
-          make lint-yaml
+          make gen-dockerfiles
+          git diff --quiet || { echo "Build Changes"; git diff; git status; false; }
