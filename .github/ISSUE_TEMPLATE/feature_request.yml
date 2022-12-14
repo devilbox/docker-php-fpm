@@ -3,7 +3,7 @@ name: "✨ Feature request"
 description: Suggest an idea or feature for this project
 title: "[Feature]: "
 labels: ["feature", "status:triage"]
-assignees: []
+assignees: [cytopia]
 
 body:
 
