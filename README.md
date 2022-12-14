@@ -349,17 +349,17 @@ Apart from the provided tools, you will also be able to use the container simila
 
 #### Provide PHP-FPM port to host
 ```shell
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### Alter PHP-FPM and system timezone
 ```shell
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
     -e TIMEZONE=Europe/Berlin \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### Load custom PHP configuration
@@ -367,48 +367,48 @@ $ docker run -d \
 `config/` is a local directory that will hold the PHP *.ini files you want to load into the Docker container.
 ```shell
 # Create config directory to be mounted with dummy configuration
-$ mkdir config
+mkdir config
 # Xdebug 2
-$ echo "xdebug.enable = 1" > config/xdebug.ini
+echo "xdebug.enable = 1" > config/xdebug.ini
 # Xdebug 3
-$ echo "xdebug.mode = debug" > config/xdebug.ini
+echo "xdebug.mode = debug" > config/xdebug.ini
 
 # Run container and mount it
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
     -v config:/etc/php-custom.d \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### MySQL connect via 127.0.0.1 (via port-forward)
 
 Forward MySQL Port from `172.168.0.30` (or any other IP address/hostname) and Port `3306` to the PHP docker on `127.0.0.1:3306`. By this, your PHP files inside the docker can use `127.0.0.1` to connect to a MySQL database.
 ```shell
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
     -e FORWARD_PORTS_TO_LOCALHOST='3306:172.168.0.30:3306' \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### MySQL and Redis connect via 127.0.0.1 (via port-forward)
 
 Forward MySQL Port from `172.168.0.30:3306` and Redis port from `redis:6379` to the PHP docker on `127.0.0.1:3306` and `127.0.0.1:6379`. By this, your PHP files inside the docker can use `127.0.0.1` to connect to a MySQL or Redis database.
 ```shell
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
     -e FORWARD_PORTS_TO_LOCALHOST='3306:172.168.0.30:3306, 6379:redis:6379' \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### Launch Postfix for mail-catching
 
 Once you set `$ENABLE_MAIL=2`, all mails sent via any of your PHP applications no matter to which domain, are catched locally into the `devilbox` account. You can also mount the mail directory locally to hook in with mutt and read those mails.
 ```shell
-$ docker run -d \
+docker run -d -it \
     -p 127.0.0.1:9000:9000 \
     -v /tmp/mail:/var/mail \
     -e ENABLE_MAIL=2 \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 ```
 
 #### Webserver and PHP-FPM
@@ -416,20 +416,20 @@ $ docker run -d \
 `~/my-host-www` will be the directory that serves the php files (your document root). Make sure to mount it into both, php and the webserver.
 ```shell
 # Start PHP-FPM container
-$ docker run -d \
+docker run -d -it \
     -v ~/my-host-www:/var/www/default/htdocs \
     --name php \
-    -t devilbox/php-fpm:7.2-prod
+    devilbox/php-fpm:7.2-prod
 
 # Start webserver and link with PHP-FPM
-$ docker run -d \
+docker run -d -it \
     -p 80:80 \
     -v ~/my-host-www:/var/www/default/htdocs \
     -e PHP_FPM_ENABLE=1 \
     -e PHP_FPM_SERVER_ADDR=php \
     -e PHP_FPM_SERVER_PORT=9000 \
     --link php \
-    -t devilbox/nginx-mainline
+    devilbox/nginx-mainline
 ```
 
 #### Create MySQL Backups
@@ -440,16 +440,16 @@ The MySQL server could be another Docker container linked to the PHP-FPM contain
 
 ```
 # Start container
-$ docker run -d \
+docker run -d -it \
     -e MYSQL_BACKUP_USER=root \
     -e MYSQL_BACKUP_PASS=somepass \
     -e MYSQL_BACKUP_HOST=mysql \
     -v ~/backups:/shared/backups \
     --name php \
-    -t devilbox/php-fpm:7.2-work
+    devilbox/php-fpm:7.2-work
 
 # Run database dump
-$ docker exec -it php mysqldump-secure
+docker exec -it php mysqldump-secure
 ```
 
 #### Docker Compose reference implementation
