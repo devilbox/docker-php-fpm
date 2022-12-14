@@ -4,6 +4,13 @@
 ## Unreleased
 
 
+## Release 0.147
+
+### Fixed
+- Fixed wkhtmltopdf version finder during install
+- Fixed wp-cli runtime requirements (needs `less` in order to function)
+
+
 ## Release 0.146
 
 This release adds lots of documentation about recently added features.
