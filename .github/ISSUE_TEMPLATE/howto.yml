@@ -1,0 +1,45 @@
+---
+name: "❔ Question"
+description: How do I do X or Y?
+title: "[Question]: "
+labels: ["question", "issue:triage"]
+assignees: [cytopia]
+
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+          If this is a generic question, please consider using the [Discord Chat](https://discord.gg/2wP3V6kBj4) or the [Devilbox forum](https://devilbox.discourse.group/) instead.
+
+  - type: checkboxes
+    attributes:
+      label: Have you already checked elsewhere?
+      description: You may select more than one.
+      options:
+        - label: I have checked existing issues
+        - label: I have googled already with no luck
+        - label: I have not done any of the above
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What is your question?
+      description: Tell the community, what your question is. Be as specific as possible to make it easier for other people to answer your question.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What have you tried already?
+      description: Add some details on what you have tried already, so this can be ruled out.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What is your goal?
+      description: Tell the community, what you want to accomplish? This might be helpful to know in order to prevent [XY problems](https://en.wikipedia.org/wiki/XY_problem).
+    validations:
+      required: true

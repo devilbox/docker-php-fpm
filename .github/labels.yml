@@ -1,0 +1,105 @@
+# The labels in this file are automatically synced with the repository
+# using the micnncim/action-label-syncer action.
+---
+
+###
+### Pull Requests
+###
+- name: C-dependency
+  color: 1abc9c
+  description: "Category: Dependency"
+- name: PR-block
+  color: 3498db
+  description: "Pull Request: Do not merge"
+- name: PR-merge
+  color: 3498db
+  description: "Pull Request: Merge when ready"
+
+###
+### General Issues
+###
+- name: bug
+  description: "Bug Report"
+  color: ee0701
+- name: report
+  description: "General Report"
+  color: ef561f
+- name: feature
+  description: "Feature Request"
+  color: dc8b10
+- name: question
+  description: "General question"
+  color: cc317c
+- name: documentation
+  description: "Documentation related"
+  color: 45b046
+
+###
+### Status: Issue progress
+###
+- name: "status:triage"
+  description: "Issue needs Triaging"
+  color: f2a7cf
+- name: "status:confirmed"
+  description: "Issue is confirmed"
+  color: f2a7cf
+- name: "status:needs-more-info"
+  description: "Issue needs more info"
+  color: f2a7cf
+
+###
+### Close
+###
+- name: "issue:invalid"
+  description: ""
+  color: f5c7fc
+- name: "issue:invalid-type"
+  description: ""
+  color: f5c7fc
+- name: "issue:duplicate"
+  description: ""
+  color: f5c7fc
+- name: "issue:wontfix"
+  description: ""
+  color: f5c7fc
+- name: "issue:stale"
+  description: ""
+  color: f5c7fc
+
+###
+### Issue types
+###
+- name: "type:extension"
+  description: ""
+  color: 0c9cf2
+- name: "type:tool"
+  description: ""
+  color: 0c9cf2
+- name: "type:env-var"
+  description: ""
+  color: 0c9cf2
+- name: "type:config"
+  description: ""
+  color: 0c9cf2
+
+###
+### Issue Host specific
+###
+- name: "host:linux"
+  description: ""
+  color: fbca04
+- name: "host:macos"
+  description: ""
+  color: fbca04
+- name: "host:windows"
+  description: ""
+  color: fbca04
+- name: "arch:amd64"
+  description: ""
+  color: fbca04
+- name: "arch:arm64"
+  description: ""
+  color: fbca04
+- name: "arch:other"
+  description: ""
+  color: fbca04
