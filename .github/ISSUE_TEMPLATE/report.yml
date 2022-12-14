@@ -1,0 +1,21 @@
+---
+name: "🕬 Report"
+description: Report something to the maintainer
+title: "[Report]: "
+labels: ["report", "status:triage"]
+assignees:
+  - cytopia
+
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Report something to the maintainer such as versions are outdated or pipelines are not running, etc. For anything else please use other issue types. Thanks for taking the time!
+
+  - type: input
+    attributes:
+      label: Report
+      description: What do you want to report?
+    validations:
+      required: true
