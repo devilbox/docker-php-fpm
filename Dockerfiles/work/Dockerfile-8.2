@@ -569,12 +569,12 @@ RUN set -eux \
 	&& OS_RELEASE="bullseye"	\
 	&& DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
 	&& WK_URL="$( \
-	  curl -sS -L --fail 'https://wkhtmltopdf.org/downloads.html' \
+	  curl -sS -k -L --fail 'https://wkhtmltopdf.org/downloads.html' \
 	  | awk -F'"' "/wkhtmltopdf.*${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
 	  | head -1 \
 	)" \
 	&& echo "URL: ${WK_URL}" \
-	&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb "${WK_URL}" \
+	&& curl -sS -k -L --fail -o /tmp/wkhtmltopdf.deb "${WK_URL}" \
 	&& dpkg -i /tmp/wkhtmltopdf.deb \
 	&& rm -f /tmp/wkhtmltopdf.deb \
 	\
