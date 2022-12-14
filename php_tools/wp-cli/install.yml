@@ -6,7 +6,9 @@ all:
   type: custom
   command: curl -sS -L --fail "${WPCLI_URL}" -L -o /usr/local/bin/wp
   build_dep: []
-  run_dep: []
+  # Fixes: sh: 1: less: not found during 'wp help'
+  # It internally pipes it to less.
+  run_dep: [less]
   pre: WPCLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
   post: chmod +x /usr/local/bin/wp
 

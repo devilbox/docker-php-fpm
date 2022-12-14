@@ -623,8 +623,8 @@ tools_available:
       command: |
         DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
         && WK_URL="$( \
-          curl -sSL -L --fail https://api.github.com/repos/wkhtmltopdf/packaging/releases \
-          | awk -F\" "/wkhtmltopdf.*.${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
+          curl -sS -L --fail 'https://wkhtmltopdf.org/downloads.html' \
+          | awk -F'"' "/wkhtmltopdf.*${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
           | head -1 \
         )" \
         && echo "URL: ${WK_URL}" \
@@ -677,7 +677,9 @@ tools_available:
       type: custom
       command: curl -sS -L --fail "${WPCLI_URL}" -L -o /usr/local/bin/wp
       build_dep: []
-      run_dep: []
+      # Fixes: sh: 1: less: not found during 'wp help'
+      # It internally pipes it to less.
+      run_dep: [less]
       pre: WPCLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
       post: chmod +x /usr/local/bin/wp
     5.5:

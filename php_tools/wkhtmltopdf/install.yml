@@ -8,8 +8,8 @@ all:
   command: |
     DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
     && WK_URL="$( \
-      curl -sSL -L --fail https://api.github.com/repos/wkhtmltopdf/packaging/releases \
-      | awk -F\" "/wkhtmltopdf.*.${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
+      curl -sS -L --fail 'https://wkhtmltopdf.org/downloads.html' \
+      | awk -F'"' "/wkhtmltopdf.*${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
       | head -1 \
     )" \
     && echo "URL: ${WK_URL}" \
