@@ -273,6 +273,7 @@ RUN set -eux \
 		dos2unix \
 		file \
 		fontconfig \
+		less \
 		libfontenc1 \
 		libxfont2 \
 		libxrender1 \
@@ -615,12 +616,12 @@ RUN set -eux \
 	&& OS_RELEASE="bullseye"	\
 	&& DEB_HOST_ARCH="$( dpkg-architecture --query DEB_HOST_ARCH )" \
 	&& WK_URL="$( \
-	  curl -sSL -L --fail https://api.github.com/repos/wkhtmltopdf/packaging/releases \
-	  | awk -F\" "/wkhtmltopdf.*.${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
+	  curl -sS -k -L --fail 'https://wkhtmltopdf.org/downloads.html' \
+	  | awk -F'"' "/wkhtmltopdf.*${OS_RELEASE}_${DEB_HOST_ARCH}\.deb/{print \$(NF-1)}" \
 	  | head -1 \
 	)" \
 	&& echo "URL: ${WK_URL}" \
-	&& curl -sS -L --fail -o /tmp/wkhtmltopdf.deb "${WK_URL}" \
+	&& curl -sS -k -L --fail -o /tmp/wkhtmltopdf.deb "${WK_URL}" \
 	&& dpkg -i /tmp/wkhtmltopdf.deb \
 	&& rm -f /tmp/wkhtmltopdf.deb \
 	\
@@ -685,6 +686,7 @@ RUN set -eux \
 		dos2unix \
 		file \
 		fontconfig \
+		less \
 		libfontenc1 \
 		libxfont2 \
 		libxrender1 \
