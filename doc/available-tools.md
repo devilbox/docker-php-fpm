@@ -416,6 +416,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 | [webpack-cli][lnk_webpack-cli]             |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [wkhtmltopdf][lnk_wkhtmltopdf]             |         |         |         |         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [wp-cli][lnk_wp-cli]                       |         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
+| [wscat][lnk_wscat]                         |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [yamllint][lnk_yamllint]                   |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [**yarn**][lnk_**yarn**]                   |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
 | [yq][lnk_yq]                               |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |    ✓    |
@@ -467,6 +468,7 @@ Additionally to all of the `slim` tools shown above, the following PHP cli tools
 [lnk_webpack-cli]: ../php_tools/webpack-cli
 [lnk_wkhtmltopdf]: ../php_tools/wkhtmltopdf
 [lnk_wp-cli]: ../php_tools/wp-cli
+[lnk_wscat]: ../php_tools/wscat
 [lnk_yamllint]: ../php_tools/yamllint
 [lnk_**yarn**]: https://yarnpkg.com/cli/install
 [lnk_yq]: ../php_tools/yq

@@ -1,0 +1,13 @@
+---
+
+check: wscat --version | grep -E '[0-9][.0-9]+' || (wscat --version; false)
+
+all:
+  type: npm
+  package: wscat
+  binary: wscat
+  version:
+  build_dep: []
+  run_dep: []
+  pre:
+  post:

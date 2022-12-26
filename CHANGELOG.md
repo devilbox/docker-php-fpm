@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.148
+
+### Added
+- Added `wscat` to work with websockets
+
+
 ## Release 0.147
 
 ### Fixed
