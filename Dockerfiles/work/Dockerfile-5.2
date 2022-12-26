@@ -461,6 +461,13 @@ RUN set -eux \
 	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
 	&& true
 
+# -------------------- (npm) wscat --------------------
+RUN set -eux \
+	&& su -c '. /opt/nvm/nvm.sh; npm install --location=global wscat' devilbox \
+	&& ln -s /opt/nvm/versions/node/$(su -c '. /opt/nvm/nvm.sh; node --version' devilbox)/bin/wscat /usr/local/bin/ \
+	&& wscat --version | grep -E '[0-9][.0-9]+' || (wscat --version; false)	\
+	&& true
+
 # -------------------- (pip) yamllint --------------------
 RUN set -eux \
 	&& pip install --no-cache-dir --no-compile --force-reinstall yamllint \
@@ -722,6 +729,11 @@ RUN set -eux \
 # -------------------- (npm) webpack-cli --------------------
 RUN set -eux \
 	&& webpack-cli --version | grep -E '[0-9][.0-9]+' || (webpack-cli --version; false)	\
+	&& true
+
+# -------------------- (npm) wscat --------------------
+RUN set -eux \
+	&& wscat --version | grep -E '[0-9][.0-9]+' || (wscat --version; false)	\
 	&& true
 
 # -------------------- (pip) yamllint --------------------
