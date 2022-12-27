@@ -1,0 +1,7 @@
+---
+
+check: netstat --version | grep net-tools || (netstat --version; false)
+
+all:
+  type: apt
+  package: net-tools

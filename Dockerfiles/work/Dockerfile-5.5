@@ -277,6 +277,7 @@ RUN set -eux \
 		git \
 		jq \
 		mupdf-tools \
+		net-tools \
 		openssh-client \
 		rsync \
 		shellcheck \
@@ -432,6 +433,11 @@ RUN set -eux \
 	  && rm test.pdf; \
 	fi \
 	\
+	&& true
+
+# -------------------- (apt) net-tools --------------------
+RUN set -eux \
+	&& netstat --version | grep net-tools || (netstat --version; false)	\
 	&& true
 
 # -------------------- (composer) phalcon-devtools --------------------
@@ -674,6 +680,7 @@ RUN set -eux \
 		git \
 		jq \
 		mupdf-tools \
+		net-tools \
 		openssh-client \
 		rsync \
 		shellcheck \
@@ -825,6 +832,11 @@ RUN set -eux \
 	  && rm test.pdf; \
 	fi \
 	\
+	&& true
+
+# -------------------- (apt) net-tools --------------------
+RUN set -eux \
+	&& netstat --version | grep net-tools || (netstat --version; false)	\
 	&& true
 
 # -------------------- (composer) phalcon-devtools --------------------
