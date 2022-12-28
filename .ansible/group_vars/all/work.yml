@@ -22,6 +22,7 @@ tools_enabled:
   - linkcheck
   - mdlint
   - mupdf-tools
+  - net-tools
   - phalcon-devtools
   - php-cs-fixer
   - phpcbf
@@ -337,6 +338,12 @@ tools_available:
     all:
       type: apt
       package: mupdf-tools
+  net-tools:
+    disabled: []
+    check: netstat --version | grep net-tools || (netstat --version; false)
+    all:
+      type: apt
+      package: net-tools
   phalcon-devtools:
     disabled: [5.2, 5.3, 5.4, 8.2]
     check: |
