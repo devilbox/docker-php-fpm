@@ -97,6 +97,10 @@ get_modules_from_image() {
 		modules="$( printf "%s\n%s\n" "${modules}" "phalcon" )";
 	fi
 
+	if docker run --rm --platform "${ARCH}" --entrypoint=find "${IMAGE}:${img_tag}" /usr/local/lib/php/extensions -name 'xhprof.so' | grep -q xhprof.so; then
+		modules="$( printf "%s\n%s\n" "${modules}" "xhprof" )";
+	fi
+
 	# Sort alphabetically
 	modules="$( echo "${modules}" | sort -fu )"
 

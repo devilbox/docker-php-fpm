@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.150
+
+### Added
+- Added `xhprof` PHP extension
+
+
 ## Release 0.149
 
 ### Added

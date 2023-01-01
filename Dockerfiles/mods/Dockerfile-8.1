@@ -797,6 +797,17 @@ RUN set -eux \
 	&& true
 
 
+# -------------------- Installing PHP Extension: xhprof --------------------
+RUN set -eux \
+	# Installation: Generic
+	# Type:         PECL extension
+	# Default:      Pecl command
+	&& pecl install xhprof \
+	# Enabling
+	&& docker-php-ext-enable xhprof \
+	&& true
+
+
 # -------------------- Installing PHP Extension: xlswriter --------------------
 RUN set -eux \
 	# Installation: Generic
@@ -1146,6 +1157,8 @@ RUN set -eux \
 	&& php-fpm -m | grep -oiE '^vips$' \
 	&& php -m | grep -oiE '^xdebug$' \
 	&& php-fpm -m | grep -oiE '^xdebug$' \
+	&& php -m | grep -oiE '^xhprof$' \
+	&& php-fpm -m | grep -oiE '^xhprof$' \
 	&& php -m | grep -oiE '^xlswriter$' \
 	&& php-fpm -m | grep -oiE '^xlswriter$' \
 	&& php -m | grep -oiE '^xmlreader$' \
@@ -1161,11 +1174,13 @@ RUN set -eux \
 	&& true
 
 
-# Deactive PSR and Phalcon:
+# Deactivate PSR and Phalcon:
 # https://github.com/devilbox/docker-php-fpm/issues/201
+# Deactivate xhprof (might collide with Xdebug)
 RUN set -eux \
 	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
 	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-xhprof.ini || true \
 
 
 ###
