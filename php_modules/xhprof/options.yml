@@ -4,7 +4,7 @@
 name: xhprof
 
 # Exclude module build/installation for the following PHP versions
-exclude: [5.2]
+exclude: [5.2, 5.3, 5.4, 5.5, 5.6]
 
 # In order for this module to built correctly against all dependencies,
 # the following modules must have been built first.

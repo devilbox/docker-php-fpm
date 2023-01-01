@@ -2199,10 +2199,10 @@ The following PHP modules are available on the `mods`, `prod`, `slim` and `work`
  <tr>
   <td><a href="../php_modules/xhprof">xhprof</a></td>
   <td class="ext_mods_xhprof_5.2"></td>
-  <td class="ext_mods_xhprof_5.3">✓</td>
-  <td class="ext_mods_xhprof_5.4">✓</td>
-  <td class="ext_mods_xhprof_5.5">✓</td>
-  <td class="ext_mods_xhprof_5.6">✓</td>
+  <td class="ext_mods_xhprof_5.3"></td>
+  <td class="ext_mods_xhprof_5.4"></td>
+  <td class="ext_mods_xhprof_5.5"></td>
+  <td class="ext_mods_xhprof_5.6"></td>
   <td class="ext_mods_xhprof_7.0">✓</td>
   <td class="ext_mods_xhprof_7.1">✓</td>
   <td class="ext_mods_xhprof_7.2">✓</td>
