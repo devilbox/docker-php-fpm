@@ -105,6 +105,7 @@ extensions_enabled:
   - vips
   - wddx
   - xdebug
+  - xhprof
   - xlswriter
   - xmlreader
   - xmlrpc
@@ -1547,6 +1548,10 @@ extensions_available:
     5.2:
       type: pecl
       version: 2.2.7
+  xhprof:
+    disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
+    all:
+      type: pecl
   xlswriter:
     disabled: [5.2, 5.3, 5.4, 5.5, 5.6]
     all:

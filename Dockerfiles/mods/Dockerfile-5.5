@@ -1047,11 +1047,13 @@ RUN set -eux \
 	&& true
 
 
-# Deactive PSR and Phalcon:
+# Deactivate PSR and Phalcon:
 # https://github.com/devilbox/docker-php-fpm/issues/201
+# Deactivate xhprof (might collide with Xdebug)
 RUN set -eux \
 	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-phalcon.ini || true \
 	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-psr.ini || true \
+	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-xhprof.ini || true \
 
 
 ###

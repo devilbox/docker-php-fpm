@@ -199,6 +199,7 @@ The provided Docker images heavily rely on inheritance to guarantee smallest pos
 [`vips`](php_modules/vips/)
 [`wddx`](php_modules/wddx/)
 [`Xdebug`](php_modules/xdebug/)
+[`xhprof`](php_modules/xhprof/)
 [`xlswriter`](php_modules/xlswriter/)
 [`xml`](php_modules/xml/)
 [`xmlreader`](php_modules/xmlreader/)

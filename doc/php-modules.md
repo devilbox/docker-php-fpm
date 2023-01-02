@@ -2197,6 +2197,22 @@ The following PHP modules are available on the `mods`, `prod`, `slim` and `work`
   <td class="ext_mods_xdebug_8.2">✓</td>
  </tr>
  <tr>
+  <td><a href="../php_modules/xhprof">xhprof</a></td>
+  <td class="ext_mods_xhprof_5.2"></td>
+  <td class="ext_mods_xhprof_5.3"></td>
+  <td class="ext_mods_xhprof_5.4"></td>
+  <td class="ext_mods_xhprof_5.5"></td>
+  <td class="ext_mods_xhprof_5.6"></td>
+  <td class="ext_mods_xhprof_7.0">✓</td>
+  <td class="ext_mods_xhprof_7.1">✓</td>
+  <td class="ext_mods_xhprof_7.2">✓</td>
+  <td class="ext_mods_xhprof_7.3">✓</td>
+  <td class="ext_mods_xhprof_7.4">✓</td>
+  <td class="ext_mods_xhprof_8.0">✓</td>
+  <td class="ext_mods_xhprof_8.1">✓</td>
+  <td class="ext_mods_xhprof_8.2">✓</td>
+ </tr>
+ <tr>
   <td><a href="../php_modules/xlswriter">xlswriter</a></td>
   <td class="ext_mods_xlswriter_5.2"></td>
   <td class="ext_mods_xlswriter_5.3"></td>
