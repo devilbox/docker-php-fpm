@@ -79,7 +79,6 @@ RUN set -eux \
 COPY ./data/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./data/docker-entrypoint.d/*.sh /docker-entrypoint.d/
 COPY ./data/postfix.sh /usr/local/sbin/postfix.sh
-COPY ./data/supervisord.conf /etc/supervisor/supervisord.conf
 
 
 ###

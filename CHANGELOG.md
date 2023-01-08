@@ -4,6 +4,12 @@
 ## Unreleased
 
 
+## Release 0.151
+
+### Added
+- Allow to use supervisorctl to be able to reload PHP configuration without restarting
+
+
 ## Release 0.150
 
 ### Added
