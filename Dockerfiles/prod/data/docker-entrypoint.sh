@@ -121,6 +121,12 @@ fi
 
 
 ###
+### Supvervisor: supervisord.conf
+###
+supervisor_create_config "/etc/supervisor/supervisord.conf"
+
+
+###
 ### Supervisor: socat
 ###
 for line in $( port_forward_get_lines "FORWARD_PORTS_TO_LOCALHOST" ); do
@@ -185,7 +191,6 @@ execute_custom_scripts "/startup.1.d" "${DEBUG_LEVEL}"
 execute_custom_scripts "/startup.2.d" "${DEBUG_LEVEL}"
 
 
-###
 ###
 ### Startup
 ###

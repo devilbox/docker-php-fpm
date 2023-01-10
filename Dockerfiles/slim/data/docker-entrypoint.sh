@@ -121,6 +121,12 @@ fi
 
 
 ###
+### Supvervisor: supervisord.conf
+###
+supervisor_create_config "/etc/supervisor/supervisord.conf"
+
+
+###
 ### Supervisor: socat
 ###
 for line in $( port_forward_get_lines "FORWARD_PORTS_TO_LOCALHOST" ); do
@@ -162,7 +168,7 @@ copy_ini_files "${DVL_PHP_CUST_INI_DIR}" "${DVL_PHP_INI_DIR}" "${DEBUG_LEVEL}"
 if [ "${PHP_VERSION}" = "5.2" ]; then
 	copy_fpm_5_2_conf_file "${DVL_PHP_CUST_FPM_DIR}/php-fpm.xml" "${DEBUG_LEVEL}"
 else
-copy_fpm_files "${DVL_PHP_CUST_FPM_DIR}" "${DVL_PHP_FPM_DIR}" "${DEBUG_LEVEL}"
+	copy_fpm_files "${DVL_PHP_CUST_FPM_DIR}" "${DVL_PHP_FPM_DIR}" "${DEBUG_LEVEL}"
 fi
 
 
