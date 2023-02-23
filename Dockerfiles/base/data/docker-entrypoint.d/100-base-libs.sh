@@ -13,6 +13,8 @@ set -o pipefail
 ### Log to stdout/stderr
 ###
 log() {
+	set -o noglob         # prevent message from being expanded
+
 	local type="${1}"     # ok, warn or err
 	local message="${2}"  # msg to print
 	local debug="${3}"    # 0: only warn and error, >0: ok and info
@@ -38,7 +40,10 @@ log() {
 	else
 		printf "${clr_err}[???]  %s${clr_rst}\n" "${message}" 1>&2	# stdout -> stderr
 	fi
+
+	set +o noglob
 }
+export -f log
 
 
 ###
@@ -57,7 +62,7 @@ run() {
 	fi
 	/bin/sh -c "LANG=C LC_ALL=C ${cmd}"
 }
-
+export -f run
 
 ###
 ### Is argument a positive integer?
@@ -73,7 +78,7 @@ isint() {
 env_set() {
 	printenv "${1}" >/dev/null 2>&1
 }
-
+export -f env_set
 
 ###
 ### Get env variable by name
@@ -91,6 +96,7 @@ env_get() {
 	# Just output the env value
 	printenv "${1}"
 }
+export -f env_get
 
 
 ############################################################

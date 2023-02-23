@@ -10,7 +10,7 @@ set -o pipefail
 ############################################################
 
 ###
-### Execute custom uesr-supplied scripts
+### Execute custom user-supplied scripts
 ###
 execute_custom_scripts() {
 	local script_dir="${1}"
@@ -27,7 +27,7 @@ execute_custom_scripts() {
 	for script_f in ${script_files}; do
 		script_name="$( basename "${script_f}" )"
 		log "info" "Executing custom startup script: ${script_name}" "${debug}"
-		if ! bash "${script_f}"; then
+		if ! bash "${script_f}" "${debug}"; then
 			log "err" "Failed to execute script" "${debug}"
 			exit 1
 		fi
@@ -41,6 +41,10 @@ execute_custom_scripts() {
 
 if ! command -v find >/dev/null 2>&1; then
 	echo "find not found, but required."
+	exit 1
+fi
+if ! command -v sort >/dev/null 2>&1; then
+	echo "sort not found, but required."
 	exit 1
 fi
 if ! command -v basename >/dev/null 2>&1; then
