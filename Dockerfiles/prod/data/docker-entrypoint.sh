@@ -192,6 +192,12 @@ execute_custom_scripts "/startup.2.d" "${DEBUG_LEVEL}"
 
 
 ###
+### Run project supplied scripts
+###
+execute_project_scripts "${DEBUG_LEVEL}"
+
+
+###
 ### Startup
 ###
 log "info" "Starting supervisord" "${DEBUG_LEVEL}"
