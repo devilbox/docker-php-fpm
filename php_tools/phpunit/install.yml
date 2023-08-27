@@ -16,6 +16,14 @@ all:
   pre: PHP_UNIT_VERSION=""
   post: chmod +x /usr/local/bin/phpunit
 
+7.4:
+  type: custom
+  pre: PHP_UNIT_VERSION="9"
+
+7.3:
+  type: custom
+  pre: PHP_UNIT_VERSION="9"
+
 7.2:
   type: custom
   pre: PHP_UNIT_VERSION="8"
