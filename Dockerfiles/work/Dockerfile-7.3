@@ -523,7 +523,7 @@ RUN set -eux \
 
 # -------------------- (custom) phpunit --------------------
 RUN set -eux \
-	&& PHP_UNIT_VERSION=""	\
+	&& PHP_UNIT_VERSION="9"	\
 	&& if [ -n "${PHP_UNIT_VERSION}" ]; then \
 	  PHP_UNIT_URL="https://phar.phpunit.de/phpunit-${PHP_UNIT_VERSION}.phar"; \
 	else \
