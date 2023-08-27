@@ -545,10 +545,10 @@ RUN set -eux \
 
 # -------------------- Installing PHP Extension: pdo_sqlsrv --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install pdo_sqlsrv \
+	&& pecl install pdo_sqlsrv-5.10.1 \
 	# Enabling
 	&& docker-php-ext-enable pdo_sqlsrv \
 	&& true
@@ -633,10 +633,10 @@ phpize \
 
 # -------------------- Installing PHP Extension: sqlsrv --------------------
 RUN set -eux \
-	# Installation: Generic
+	# Installation: Version specific
 	# Type:         PECL extension
 	# Default:      Pecl command
-	&& pecl install sqlsrv \
+	&& pecl install sqlsrv-5.10.1 \
 	# Enabling
 	&& docker-php-ext-enable sqlsrv \
 	&& true

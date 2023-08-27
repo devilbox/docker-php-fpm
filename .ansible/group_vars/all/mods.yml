@@ -931,6 +931,9 @@ extensions_available:
       type: pecl
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
+    7.4:
+      type: pecl
+      version: 5.10.1
     7.3:
       type: pecl
       version: 5.9.0
@@ -1136,6 +1139,9 @@ extensions_available:
       type: pecl
       build_dep: [unixodbc-dev]
       run_dep: [unixodbc]
+    7.4:
+      type: pecl
+      version: 5.10.1
     7.3:
       type: pecl
       version: 5.9.0
